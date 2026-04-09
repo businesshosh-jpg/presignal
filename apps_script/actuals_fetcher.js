@@ -34,6 +34,7 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
   var shEvent = ss.getSheetByName(EVENT);
   var shLog   = ss.getSheetByName(LOG);
   if (!shEvent || !shLog) throw new Error('Missing required sheet: Event or log');
+  ensureActualsAuditHeaders_(shEvent);
 
   var started = new Date();
   _log_(shLog, 'info', 'Actuals: scan start (window)', {
@@ -118,81 +119,39 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
     var indicator_name = String(r[H('indicator_name')] || '');
     var country        = String(r[H('country')] || '').toUpperCase();
     var release_ts     = r[H('release_ts')];
+    var relDate        = (release_ts instanceof Date) ? release_ts : new Date(String(release_ts || ''));
     if (!event_id || !indicator_name || !release_ts) continue;
 
-    // Resolve provider/series/transform
-    var map = null;
+    var eventObj = {
+      event_id: event_id,
+      indicator_name: indicator_name,
+      country: country,
+      release_ts: release_ts
+    };
 
-    // Preferred: canonical resolver signature (eventObj, seriesMap)
-    if (typeof resolveSeriesForEvent === 'function') {
-    map = resolveSeriesForEvent({ country: country, indicator_name: indicator_name }, seriesMap);
-    }
-
-    // Backward-compat: some builds use _resolveSeriesForEvent_(indicator_name, country, seriesMap)
-    if (!map && typeof _resolveSeriesForEvent_ === 'function') {
-    map = _resolveSeriesForEvent_(seriesMap, indicator_name, country);
-    }
-
-    // Last resort: try the legacy order you currently have (in case your _resolveSeriesForEvent_ expects it)
-    _log_(shLog, 'info', 'Actuals: SeriesMap inputs', {
-    event_id: event_id,
-    country: country,
-    indicator_name: indicator_name,
-    has_resolveSeriesForEvent: (typeof resolveSeriesForEvent === 'function'),
-    has__resolveSeriesForEvent_: (typeof _resolveSeriesForEvent_ === 'function'),
-    seriesMap_rows: (seriesMap && seriesMap.length) ? seriesMap.length : 0,
-    map_resolved: !!map,
-    map_provider: map ? map.provider : '',
-    map_series_id: map ? map.series_id : ''
-    });
-
-    if (!map) {
-    _log_(shLog, 'warn', 'Actuals: No SeriesMap match', {
-    event_id: event_id,
-    indicator_name: indicator_name,
-    country: country
-    });
-
-    var _k = (country + '|' + indicator_name).toUpperCase();
-    if (!_suggestedKeys[_k] && typeof appendSeriesMapSuggestion_ === 'function') {
-    appendSeriesMapSuggestion_(country, indicator_name, relDate);
-    _suggestedKeys[_k] = true;
-    }
-    continue;
-    }
-    
-    if (map && (map.provider === 'FILTER' || /synthetic batch event/i.test(map.notes || ''))) {
-      _log_(shLog, 'info', 'Actuals: skipped by SeriesMap filter', { indicator_name: indicator_name, event_id: event_id });
-      continue;
-    }
-
-    // Reference period (month end heuristic)
-    var ref = (typeof _refMonthEnd_ === 'function') ? _refMonthEnd_(release_ts) : new Date(release_ts);
-
-    // Fetch from providers (FRED-first, then FMP, etc.)
-    var res = (typeof _fetchActualFromProviders_ === 'function')
-      ? _fetchActualFromProviders_({
-          provider: map.provider,
-          series_id: map.series_id,
-          transform: map.transform,
-          freq: map.freq || '',
-          ref: ref,
-          event_id: event_id,
-          indicator_name: indicator_name
-        })
-      : { hasActual: false };
-
+    var res = _resolveActualHybrid_(eventObj, seriesMap, shLog);
     if (!res || !res.hasActual) {
-      _log_(shLog, 'info', 'Actuals: fetch skipped', {
-        event_id: event_id,
-        indicator_name: indicator_name,
-        country: country,
-        map_provider: map ? map.provider : '',
-        map_series_id: map ? map.series_id : '',
-        map_transform: map ? map.transform : '',
-        reason: (res && res.reason) ? res.reason : 'UNKNOWN',
-        provider_tried: (res && res.provider) ? res.provider : (map ? map.provider : '')
-      });
+      var _k = (country + '|' + indicator_name).toUpperCase();
+      if (res && res.resolution_method === 'seriesmap' && res.reason === 'NO_SERIESMAP_MATCH' &&
+          !_suggestedKeys[_k] && typeof appendSeriesMapSuggestion_ === 'function') {
+        appendSeriesMapSuggestion_(country, indicator_name, relDate);
+        _suggestedKeys[_k] = true;
+      }
+
+      var alreadyReleased = H('released_value') >= 0 &&
+        !(r[H('released_value')] === '' || r[H('released_value')] === null || r[H('released_value')] === undefined);
+      if (!alreadyReleased) {
+        pending[idx] = {
+          released_value: r[H('released_value')],
+          released_ts: r[H('released_ts')],
+          source_provider: r[H('source_provider')],
+          source_series_id: r[H('source_series_id')],
+          transform: r[H('transform')],
+          release_status: 'unresolved',
+          resolution_method: '',
+          confidence_level: ''
+        };
+      }
       continue;
     }
 
@@ -211,16 +170,45 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
 
     // Stage updates (apply consistent rounding if available)
     var rounded = (typeof roundByUnit === 'function')
-      ? roundByUnit(res.value, map.unit_type, (map.transform || 'level').toUpperCase())
+      ? roundByUnit(
+          res.value,
+          res.unit_type || '',
+          String(res.transform || 'level').toUpperCase()
+        )
       : ((res.value === 0 || res.value) ? Number(res.value) : '');
+
+    var existingProvider = H('source_provider') >= 0 ? String(r[H('source_provider')] || '') : '';
+    var existingMethod = H('resolution_method') >= 0 ? String(r[H('resolution_method')] || '') : '';
+    var existingValue = H('released_value') >= 0 ? r[H('released_value')] : '';
+    var existingHasValue = !(existingValue === '' || existingValue === null || existingValue === undefined);
+    var existingIsSeriesMap = (existingMethod.toLowerCase() === 'seriesmap');
+    var incomingIsDirect = (String(res.resolution_method || '') === 'direct');
+
+    if (incomingIsDirect && existingHasValue && existingIsSeriesMap) {
+      var existingNum = Number(existingValue);
+      var roundedNum = Number(rounded);
+      if (isFinite(existingNum) && isFinite(roundedNum) && existingNum.toFixed(10) !== roundedNum.toFixed(10)) {
+        _log_(shLog, 'warn', 'Actuals: direct/seriesmap discrepancy preserved seriesmap', {
+          event_id: event_id,
+          existing_provider: existingProvider,
+          existing_resolution_method: existingMethod,
+          existing_value: existingNum,
+          direct_provider: res.provider || '',
+          direct_value: roundedNum
+        });
+        continue;
+      }
+    }
 
     pending[idx] = {
       released_value: (rounded === 0 || rounded) ? rounded : '',
       released_ts: res.ts ? _parseReleaseTsUtcMinute_(res.ts) : (r[H('released_ts')] || ''),
-      source_provider: res.provider || map.provider || '',
-      source_series_id: res.series_id || map.series_id || '',
-      transform: res.transform || map.transform || '',
-      release_status: newStatus
+      source_provider: res.provider || '',
+      source_series_id: res.series_id || '',
+      transform: res.transform || '',
+      release_status: newStatus,
+      resolution_method: res.resolution_method || '',
+      confidence_level: res.confidence_level || ''
     };
 
 
@@ -241,6 +229,8 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
       if (H.has('source_series_id'))data[i][H('source_series_id')]= upd.source_series_id;
       if (H.has('transform'))       data[i][H('transform')]       = upd.transform;
       if (H.has('release_status'))  data[i][H('release_status')]  = upd.release_status;
+      if (H.has('resolution_method')) data[i][H('resolution_method')] = upd.resolution_method;
+      if (H.has('confidence_level'))  data[i][H('confidence_level')]  = upd.confidence_level;
     }
     shEvent.getRange(2, 1, data.length, lastCol).setValues(data);
     SpreadsheetApp.flush();
@@ -828,8 +818,6 @@ function _shouldSkipActuals_(name) {
 function runFetchActualsHourly_() {
   return runFetchActualsWindow_(ACTUALS_CFG.LOOKBACK_MINUTES, ACTUALS_CFG.LOOKAHEAD_MINUTES, ACTUALS_CFG.MAX_ROWS_PER_RUN);
 }
-
-
 
 
 
