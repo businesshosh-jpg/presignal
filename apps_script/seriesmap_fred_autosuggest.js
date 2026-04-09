@@ -126,8 +126,6 @@ function runSeriesMapAutoSuggestFromFRED_(opt) {
   // Ensure output columns exist (append if missing)
   var outCols = [
     'cand_1_provider','cand_1_series_id','cand_1_title','cand_1_score','cand_1_freq',
-    'cand_2_provider','cand_2_series_id','cand_2_title','cand_2_score','cand_2_freq',
-    'cand_3_provider','cand_3_series_id','cand_3_title','cand_3_score','cand_3_freq',
     'auto_classification','auto_notes','auto_run_ts'
   ];
   var outIndexMap = _ensureHeaders_(sheet, headers, outCols);
@@ -581,7 +579,7 @@ function _applyWrites_(sheet, writes) {
     var maxC = rowWrites[rowWrites.length - 1].c;
     var width = maxC - minC + 1;
 
-    // Read existing cells so we don't wipe unrelated columns (e.g., cand_2/cand_3)
+    // Read existing cells so we don't wipe unrelated columns.
     var existing = sheet.getRange(r, minC, 1, width).getValues()[0];
 
     // Apply only the queued writes

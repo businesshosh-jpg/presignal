@@ -312,9 +312,7 @@ function _ensureSuggestionsSheet_() {
   ];
 
   var candHeaders = [
-    'cand_1_provider','cand_1_series_id','cand_1_title','cand_1_score','cand_1_freq',
-    'cand_2_provider','cand_2_series_id','cand_2_title','cand_2_score','cand_2_freq',
-    'cand_3_provider','cand_3_series_id','cand_3_title','cand_3_score','cand_3_freq'
+    'cand_1_provider','cand_1_series_id','cand_1_title','cand_1_score','cand_1_freq'
   ];
 
   if (sh.getLastRow() === 0) {
@@ -325,18 +323,54 @@ function _ensureSuggestionsSheet_() {
   // Ensure headers exist (append missing to the right, do not reorder)
   var lastCol = Math.max(1, sh.getLastColumn());
   var headerRow = sh.getRange(1, 1, 1, lastCol).getValues()[0];
+  _repairSuggestionsHeaders_(sh, headerRow);
+  lastCol = Math.max(1, sh.getLastColumn());
+  headerRow = sh.getRange(1, 1, 1, lastCol).getValues()[0];
   var have = {};
   for (var i = 0; i < headerRow.length; i++) have[String(headerRow[i] || '').trim()] = true;
 
+  var requiredHeaders = baseHeaders.concat(candHeaders);
   var toAdd = [];
-  for (var j = 0; j < candHeaders.length; j++) {
-    if (!have[candHeaders[j]]) toAdd.push(candHeaders[j]);
+  for (var j = 0; j < requiredHeaders.length; j++) {
+    if (!have[requiredHeaders[j]]) toAdd.push(requiredHeaders[j]);
   }
   if (toAdd.length) {
     sh.getRange(1, lastCol + 1, 1, toAdd.length).setValues([toAdd]);
   }
 
   return sh;
+}
+
+function _repairSuggestionsHeaders_(sh, headerRow) {
+  var headers = (headerRow || []).map(function(h){ return String(h || '').trim(); });
+  if (!headers.length) return;
+
+  var seen = {};
+  var renamed = false;
+  var hasPrecision = false;
+
+  for (var i = 0; i < headers.length; i++) {
+    var key = String(headers[i] || '').trim().toLowerCase();
+    if (key === 'precision_dp') hasPrecision = true;
+  }
+
+  for (var j = 0; j < headers.length; j++) {
+    var name = String(headers[j] || '').trim();
+    var low = name.toLowerCase();
+    seen[low] = (seen[low] || 0) + 1;
+
+    // Self-heal the known bad schema where precision_dp was accidentally duplicated
+    // as a second seasonal_adjustment header.
+    if (low === 'seasonal_adjustment' && seen[low] >= 2 && !hasPrecision) {
+      headers[j] = 'precision_dp';
+      hasPrecision = true;
+      renamed = true;
+    }
+  }
+
+  if (renamed) {
+    sh.getRange(1, 1, 1, headers.length).setValues([headers]);
+  }
 }
 
 function appendSeriesMapSuggestion_(country, indicatorName, releaseTs) {
@@ -672,6 +706,992 @@ function buildSeriesMapSuggestionsUsingWindow_() {
   return res;
 }
 
+function rebuildSeriesMapSuggestionsFromFmpCatalog_(opt) {
+  opt = opt || {};
+  var clearExisting = (opt.clearExisting !== false);
+  var notesPrefix = String(opt.notesPrefix || 'FMP_CATALOG_V1').trim();
+  var aiReviewer = _resolveSeriesMapAiReviewer_();
+  var maxAiReviews = Number(opt.maxAiReviews);
+  if (!isFinite(maxAiReviews) || maxAiReviews < 0) maxAiReviews = 0;
+  var aiBudget = { enabled: !!aiReviewer, remaining: maxAiReviews, attempted: 0 };
+
+  var sh = _ensureSuggestionsSheet_();
+  var extraHeaders = [
+    'indicator_name',
+    'source_observations_count',
+    'source_unit',
+    'source_frequency',
+    'source_impact',
+    'source_first_release_ts',
+    'source_last_release_ts',
+    'source_avg_actual',
+    'source_avg_estimate',
+    'suggested_provider',
+    'suggested_series_id',
+    'suggested_title',
+    'suggested_confidence',
+    'suggested_reasoning',
+    'review_status',
+    'review_method',
+    'auto_classification',
+    'auto_notes',
+    'auto_run_ts'
+  ];
+  var outIndexMap = _ensureHeaders_(sh, sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0], extraHeaders);
+  if (outIndexMap._headersChanged) {
+    outIndexMap = _indexMapFromHeaders_(
+      sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(function(h){ return String(h || '').trim(); }),
+      extraHeaders
+    );
+  }
+
+  var existingRowsCleared = 0;
+  if (clearExisting && sh.getLastRow() >= 2) {
+    existingRowsCleared = sh.getLastRow() - 1;
+    sh.getRange(2, 1, existingRowsCleared, sh.getLastColumn()).clearContent();
+  }
+
+  var catalogRows = _loadFmpCatalogRowsForSeriesMapSuggestions_();
+  var fredCatalog = _loadFredCatalogRowsForSeriesMapRebuild_();
+  if (!fredCatalog.length) throw new Error('FRED_Series_ID is empty or missing required headers');
+
+  var rows = [];
+  var rebuilt = 0;
+  var reviewOnly = 0;
+  var filteredOut = 0;
+  var filteredReasons = {};
+  var aiReviewed = 0;
+  var aiSuggested = 0;
+
+  for (var i = 0; i < catalogRows.length; i++) {
+    var item = catalogRows[i];
+    var skipReason = _fmpCatalogSuggestionSkipReason_(item);
+    if (skipReason) {
+      filteredOut++;
+      filteredReasons[skipReason] = (filteredReasons[skipReason] || 0) + 1;
+      continue;
+    }
+
+    var row = _buildSeriesMapSuggestionRowFromFmpCatalog_(item, fredCatalog, outIndexMap, notesPrefix, aiBudget);
+    if (!row) continue;
+
+    if (outIndexMap['review_method'] != null && String(row[outIndexMap['review_method']] || '') === 'ai') aiReviewed++;
+    if (outIndexMap['suggested_series_id'] != null && String(row[outIndexMap['suggested_series_id']] || '').trim()) aiSuggested++;
+    rows.push(row);
+    rebuilt++;
+    reviewOnly++;
+  }
+
+  if (rows.length) {
+    sh.getRange(2, 1, rows.length, sh.getLastColumn()).setValues(rows);
+  }
+
+  var result = {
+    cleared_existing_rows: existingRowsCleared,
+    scanned_catalog_rows: catalogRows.length,
+    catalog_rows_after_filter: rows.length,
+    fred_catalog_rows: fredCatalog.length,
+    rebuilt: rebuilt,
+    review_only: reviewOnly,
+    filtered_out: filteredOut,
+    filtered_reasons: filteredReasons,
+    ai_reviewer_enabled: !!aiReviewer,
+    ai_review_budget: maxAiReviews,
+    ai_reviewed: aiReviewed,
+    ai_suggested: aiSuggested,
+    clear_existing: clearExisting,
+    notes_prefix: notesPrefix
+  };
+
+  if (typeof appendLog === 'function') {
+    appendLog('INFO', 'SeriesMap suggestions rebuilt from FMP catalog', {
+      module: 'series_map',
+      step: 'rebuild_from_fmp_catalog',
+      result: result
+    });
+  }
+
+  return result;
+}
+
+function reviewSeriesMapSuggestionsBatch_(opt) {
+  opt = opt || {};
+  var batchSize = Number(opt.batchSize);
+  if (!isFinite(batchSize) || batchSize < 1) batchSize = 12;
+
+  var aiReviewer = _resolveSeriesMapAiReviewer_();
+  if (!aiReviewer) throw new Error('Missing OPENAI_API_KEY for SeriesMap AI review');
+
+  var ss = SpreadsheetApp.getActive();
+  var sh = _ensureSuggestionsSheet_();
+  var headers = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(function(h){ return String(h || '').trim(); });
+  var outIndexMap = _indexMapFromHeaders_(headers, [
+    'indicator_name',
+    'suggested_provider',
+    'suggested_series_id',
+    'suggested_title',
+    'suggested_confidence',
+    'suggested_reasoning',
+    'review_status',
+    'review_method',
+    'auto_classification',
+    'auto_notes',
+    'auto_run_ts',
+    'cand_1_provider',
+    'cand_1_series_id',
+    'cand_1_title',
+    'cand_1_score',
+    'cand_1_freq'
+  ]);
+
+  if (sh.getLastRow() < 2) return { reviewed: 0, suggested: 0, remaining_uncertain: 0, batch_size: batchSize };
+
+  var values = sh.getDataRange().getValues();
+  var idx = _hdrIndex_(values[0]);
+  var catalogRows = _loadFmpCatalogRowsForSeriesMapSuggestions_();
+  var fredCatalog = _loadFredCatalogRowsForSeriesMapRebuild_();
+  var fmpByName = {};
+  for (var i = 0; i < catalogRows.length; i++) {
+    var item = catalogRows[i];
+    fmpByName[_normalizeSeriesMapRebuildText_(item.indicator_name_sample || item.indicator_name_norm || '')] = item;
+  }
+
+  var toProcess = [];
+  var remainingUncertain = 0;
+  for (var r = 1; r < values.length; r++) {
+    var row = values[r];
+    var classification = String(row[idx('auto_classification')] || '').trim().toUpperCase();
+    var reviewMethod = String(row[idx('review_method')] || '').trim().toLowerCase();
+    var reviewStatus = String(row[idx('review_status')] || '').trim().toUpperCase();
+    if (classification !== 'UNCERTAIN') continue;
+    if (reviewMethod === 'ai') continue;
+    if (reviewStatus && reviewStatus !== 'NEEDS_HUMAN_REVIEW') continue;
+    remainingUncertain++;
+    if (toProcess.length < batchSize) toProcess.push(r);
+  }
+
+  if (!toProcess.length) {
+    return { reviewed: 0, suggested: 0, remaining_uncertain: remainingUncertain, batch_size: batchSize };
+  }
+
+  var writes = [];
+  var reviewed = 0;
+  var suggested = 0;
+  var aiBudget = { enabled: true, remaining: batchSize, attempted: 0 };
+
+  for (var j = 0; j < toProcess.length; j++) {
+    var rIdx = toProcess[j];
+    var rowVals = values[rIdx];
+    var indicatorName = String(rowVals[idx('indicator_name')] || rowVals[idx('indicator_name_pattern')] || '').trim();
+    var itemKey = _normalizeSeriesMapRebuildText_(indicatorName);
+    var item = fmpByName[itemKey];
+    if (!item) continue;
+
+    var ranked = _rankFredCatalogCandidatesForFmpCatalog_(item, fredCatalog).slice(0, 3);
+    var decision = _reviewSeriesMapSuggestionWithAi_(item, ranked, aiBudget);
+    if (!decision) continue;
+
+    reviewed++;
+    if (decision.series_id) suggested++;
+
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'suggested_provider', decision.provider || '');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'suggested_series_id', decision.series_id || '');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'suggested_title', decision.title || '');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'suggested_confidence', decision.confidence || '');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'suggested_reasoning', decision.reasoning || '');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'review_status', decision.review_status || '');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'review_method', 'ai');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'auto_notes', _buildFredCatalogAutoNotesForFmp_(item, decision, 'UNCERTAIN'));
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'auto_run_ts', _nowIso_());
+
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'cand_1_provider', decision.series_id ? 'FRED' : '');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'cand_1_series_id', decision.series_id || '');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'cand_1_title', decision.title || '');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'cand_1_score', decision.score || '');
+    _queueSuggestionBatchWrite_(writes, rIdx + 1, outIndexMap, 'cand_1_freq', decision.freq || '');
+  }
+
+  if (writes.length) _applyWrites_(sh, writes);
+
+  return {
+    reviewed: reviewed,
+    suggested: suggested,
+    remaining_uncertain: Math.max(0, remainingUncertain - reviewed),
+    batch_size: batchSize
+  };
+}
+
+function _loadFmpCatalogRowsForSeriesMapSuggestions_() {
+  var ss = SpreadsheetApp.getActive();
+  var sh = ss.getSheetByName('FMP_EventCatalog');
+  if (!sh || sh.getLastRow() < 2) throw new Error('FMP_EventCatalog is empty or missing');
+
+  var values = sh.getDataRange().getValues();
+  var headers = values[0].map(function(h){ return String(h || '').trim().toLowerCase(); });
+  var idx = _hdrIndex_(headers);
+
+  var cCountry = idx('country');
+  var cNorm = idx('indicator_name_norm');
+  var cSample = idx('indicator_name_sample');
+  if (cCountry < 0 || cNorm < 0 || cSample < 0) {
+    throw new Error('FMP_EventCatalog missing required headers: country, indicator_name_norm, indicator_name_sample');
+  }
+
+  var out = [];
+  for (var r = 1; r < values.length; r++) {
+    var row = values[r];
+    var country = String(row[cCountry] || '').trim().toUpperCase();
+    var indicatorNameNorm = String(row[cNorm] || '').trim();
+    var indicatorNameSample = String(row[cSample] || '').trim();
+    if (!country || !indicatorNameNorm || !indicatorNameSample) continue;
+
+    out.push({
+      country: country,
+      indicator_name_norm: indicatorNameNorm,
+      indicator_name_sample: indicatorNameSample,
+      unit: (idx('unit') >= 0) ? String(row[idx('unit')] || '').trim() : '',
+      inferred_frequency: (idx('inferred_frequency') >= 0) ? String(row[idx('inferred_frequency')] || '').trim().toUpperCase() : '',
+      impact: (idx('impact') >= 0) ? String(row[idx('impact')] || '').trim() : '',
+      observations_count: (idx('observations_count') >= 0) ? Number(row[idx('observations_count')] || 0) : 0,
+      first_release_ts: (idx('first_release_ts') >= 0) ? String(row[idx('first_release_ts')] || '').trim() : '',
+      last_release_ts: (idx('last_release_ts') >= 0) ? String(row[idx('last_release_ts')] || '').trim() : '',
+      avg_actual: (idx('avg_actual') >= 0) ? row[idx('avg_actual')] : '',
+      avg_estimate: (idx('avg_estimate') >= 0) ? row[idx('avg_estimate')] : ''
+    });
+  }
+
+  out.sort(function(a, b) {
+    var ka = a.country + '|' + a.indicator_name_norm;
+    var kb = b.country + '|' + b.indicator_name_norm;
+    return ka < kb ? -1 : (ka > kb ? 1 : 0);
+  });
+  return out;
+}
+
+function _loadFredCatalogRowsForSeriesMapRebuild_() {
+  var ss = SpreadsheetApp.getActive();
+  var sh = ss.getSheetByName('FRED_Series_ID');
+  if (!sh || sh.getLastRow() < 2) return [];
+
+  var values = sh.getDataRange().getValues();
+  var headers = values[0].map(function(h){ return String(h || '').trim().toLowerCase(); });
+  var idx = _hdrIndex_(headers);
+
+  var cId = idx('series_id');
+  var cTitle = idx('title');
+  if (cId < 0 || cTitle < 0) return [];
+
+  var out = [];
+  for (var r = 1; r < values.length; r++) {
+    var seriesId = String(values[r][cId] || '').trim();
+    var title = String(values[r][cTitle] || '').trim();
+    if (!seriesId || !title) continue;
+
+    out.push({
+      id: seriesId,
+      title: title,
+      search_query: (idx('search_query') >= 0) ? String(values[r][idx('search_query')] || '') : '',
+      frequency: (idx('frequency') >= 0) ? String(values[r][idx('frequency')] || '') : '',
+      frequency_short: (idx('frequency_short') >= 0) ? String(values[r][idx('frequency_short')] || '') : '',
+      units: (idx('units') >= 0) ? String(values[r][idx('units')] || '') : '',
+      units_short: (idx('units_short') >= 0) ? String(values[r][idx('units_short')] || '') : '',
+      seasonal_adjustment: (idx('seasonal_adjustment') >= 0) ? String(values[r][idx('seasonal_adjustment')] || '') : '',
+      seasonal_adjustment_short: (idx('seasonal_adjustment_short') >= 0) ? String(values[r][idx('seasonal_adjustment_short')] || '') : '',
+      notes: (idx('notes') >= 0) ? String(values[r][idx('notes')] || '') : ''
+    });
+  }
+  return out;
+}
+
+function _buildSeriesMapSuggestionRowFromFmpCatalog_(item, catalog, outIndexMap, notesPrefix, aiBudget) {
+  var country = String(item && item.country || '').trim().toUpperCase();
+  var indicatorName = String(item && item.indicator_name_sample || '').trim();
+  if (!country || !indicatorName) return null;
+
+  var query = (typeof _normalizeIndicatorForFREDQuery_ === 'function')
+    ? _normalizeIndicatorForFREDQuery_(String(item.indicator_name_norm || indicatorName))
+    : buildDefaultPattern_(indicatorName);
+  var ranked = _rankFredCatalogCandidatesForFmpCatalog_(item, catalog).slice(0, 3);
+  var classification = _classifyFredCandidatesForFmpCatalog_(item, ranked);
+  var decision = _buildSeriesMapSuggestionDecision_(item, ranked, classification, aiBudget);
+
+  var row = suggestFromName_(country, indicatorName, null);
+  row = _fillSeriesMapDefaults_(row);
+  row[2] = '';
+  row[3] = '';
+  row[7] = '';
+  row[10] = 'REVIEW: human approval required';
+
+  var noteParts = [];
+  if (notesPrefix) noteParts.push(notesPrefix);
+  noteParts.push('classification=' + classification);
+  noteParts.push('query=' + query);
+  noteParts.push('source_freq=' + String(item.inferred_frequency || ''));
+  noteParts.push('source_unit=' + String(item.unit || ''));
+  noteParts.push('source_impact=' + String(item.impact || ''));
+  if (decision.series_id) noteParts.push('suggested=' + decision.series_id);
+  row[10] = noteParts.join(' | ') + (row[10] ? ' | ' + row[10] : '');
+
+  if (item.inferred_frequency) row[4] = String(item.inferred_frequency || '').trim().toUpperCase();
+
+  _clearFredCandidateSlots_(row);
+  if (decision.series_id) {
+    _writeFredCandidateIntoSuggestionRow_(row, 1, {
+      id: decision.series_id,
+      title: decision.title,
+      score: decision.score,
+      frequency_short: decision.freq
+    });
+  }
+
+  if (outIndexMap['indicator_name'] != null) row[outIndexMap['indicator_name']] = indicatorName;
+  if (outIndexMap['source_observations_count'] != null) row[outIndexMap['source_observations_count']] = item.observations_count || '';
+  if (outIndexMap['source_unit'] != null) row[outIndexMap['source_unit']] = item.unit || '';
+  if (outIndexMap['source_frequency'] != null) row[outIndexMap['source_frequency']] = item.inferred_frequency || '';
+  if (outIndexMap['source_impact'] != null) row[outIndexMap['source_impact']] = item.impact || '';
+  if (outIndexMap['source_first_release_ts'] != null) row[outIndexMap['source_first_release_ts']] = item.first_release_ts || '';
+  if (outIndexMap['source_last_release_ts'] != null) row[outIndexMap['source_last_release_ts']] = item.last_release_ts || '';
+  if (outIndexMap['source_avg_actual'] != null) row[outIndexMap['source_avg_actual']] = item.avg_actual;
+  if (outIndexMap['source_avg_estimate'] != null) row[outIndexMap['source_avg_estimate']] = item.avg_estimate;
+  if (outIndexMap['suggested_provider'] != null) row[outIndexMap['suggested_provider']] = decision.provider || '';
+  if (outIndexMap['suggested_series_id'] != null) row[outIndexMap['suggested_series_id']] = decision.series_id || '';
+  if (outIndexMap['suggested_title'] != null) row[outIndexMap['suggested_title']] = decision.title || '';
+  if (outIndexMap['suggested_confidence'] != null) row[outIndexMap['suggested_confidence']] = decision.confidence || '';
+  if (outIndexMap['suggested_reasoning'] != null) row[outIndexMap['suggested_reasoning']] = decision.reasoning || '';
+  if (outIndexMap['review_status'] != null) row[outIndexMap['review_status']] = decision.review_status || '';
+  if (outIndexMap['review_method'] != null) row[outIndexMap['review_method']] = decision.review_method || '';
+  if (outIndexMap['auto_classification'] != null) row[outIndexMap['auto_classification']] = classification;
+  if (outIndexMap['auto_notes'] != null) row[outIndexMap['auto_notes']] = _buildFredCatalogAutoNotesForFmp_(item, decision, classification);
+  if (outIndexMap['auto_run_ts'] != null) row[outIndexMap['auto_run_ts']] = _nowIso_();
+
+  return _normalizeSuggestionRowWidth_(row, _suggestionsSheetWidth_());
+}
+
+function _buildSeriesMapSuggestionDecision_(item, ranked, classification, aiBudget) {
+  var top = ranked && ranked.length ? ranked[0] : null;
+  if (classification === 'LIKELY_FRED' && top) {
+    return {
+      provider: 'FRED',
+      series_id: String(top.id || ''),
+      title: String(top.title || ''),
+      freq: String(top.frequency_short || top.frequency || ''),
+      score: top.score,
+      confidence: 'HIGH',
+      reasoning: 'System high-confidence match based on title, frequency, unit, and domain checks.',
+      review_status: 'READY_FOR_HUMAN_CHECK',
+      review_method: 'system'
+    };
+  }
+
+  if (classification === 'UNCERTAIN') {
+    var aiDecision = _reviewSeriesMapSuggestionWithAi_(item, ranked || [], aiBudget);
+    if (aiDecision) return aiDecision;
+  }
+
+  return {
+    provider: '',
+    series_id: '',
+    title: '',
+    freq: '',
+    score: '',
+    confidence: (classification === 'NOT_FRED') ? 'LOW' : 'UNSURE',
+    reasoning: (classification === 'NOT_FRED')
+      ? 'No acceptable FRED match surfaced. Leave this for human review.'
+      : ((aiBudget && aiBudget.enabled && aiBudget.remaining <= 0)
+          ? 'AI review budget was exhausted for this run. Leave this for human review or rerun.'
+          : 'System found no safe single match. Leave this for human review.'),
+    review_status: 'NEEDS_HUMAN_REVIEW',
+    review_method: 'system'
+  };
+}
+
+function _rankFredCatalogCandidatesForFmpCatalog_(item, catalogRows) {
+  var query = (typeof _normalizeIndicatorForFREDQuery_ === 'function')
+    ? _normalizeIndicatorForFREDQuery_(String(item && (item.indicator_name_norm || item.indicator_name_sample) || ''))
+    : buildDefaultPattern_(String(item && item.indicator_name_sample || ''));
+  var baseRanked = _rankFredCatalogCandidates_(item.country, query, item.indicator_name_sample || item.indicator_name_norm, catalogRows);
+  var targetFreq = _normalizeFmpSuggestionFreq_(item.inferred_frequency);
+  var targetUnit = _normalizeFmpSuggestionUnit_(item.unit);
+  var impact = String(item && item.impact || '').trim().toLowerCase();
+
+  for (var i = 0; i < baseRanked.length; i++) {
+    var cand = baseRanked[i];
+    var score = Number(cand.score || 0);
+    var candFreq = _normalizeFmpSuggestionFreq_(cand.frequency_short || cand.frequency);
+    var candUnit = _normalizeFmpSuggestionUnit_(cand.units_short || cand.units);
+    var candTitle = _normalizeSeriesMapRebuildText_(cand.title || '');
+    var pattern = _normalizeSeriesMapRebuildText_(item.indicator_name_norm || item.indicator_name_sample || '');
+
+    if (targetFreq && candFreq === targetFreq) score += 8;
+    else if (targetFreq && candFreq) score -= 3;
+
+    if (targetUnit && candUnit === targetUnit) score += 8;
+    else if (targetUnit && candUnit && targetUnit !== candUnit) score -= 2;
+
+    if (impact && impact !== 'none') score += 1;
+    if (_tokenOverlap_(_tokens_(pattern), candTitle) >= 3) score += 4;
+
+    cand.score = score;
+  }
+
+  baseRanked.sort(function(a, b) { return Number(b.score || 0) - Number(a.score || 0); });
+  return baseRanked;
+}
+
+function _rankFredCatalogCandidates_(country, query, indicatorName, catalogRows) {
+  var cc = String(country || '').trim().toUpperCase();
+  var q = String(query || '').toLowerCase();
+  var p = String(indicatorName || '').toLowerCase();
+  var qTokens = _tokens_(q);
+  var pTokens = _tokens_(p);
+  var normalizedQuery = _normalizeSeriesMapRebuildText_(query);
+  var normalizedPattern = _normalizeSeriesMapRebuildText_(indicatorName);
+
+  var scored = [];
+  for (var i = 0; i < catalogRows.length; i++) {
+    var s = catalogRows[i] || {};
+    var title = String(s.title || '');
+    var id = String(s.id || '');
+    if (!title || !id) continue;
+
+    var freq = String(s.frequency_short || s.frequency || '');
+    var units = String(s.units_short || s.units || '');
+    var notes = String(s.notes || '');
+    var searchQuery = String(s.search_query || '');
+    var seasonal = String(s.seasonal_adjustment_short || s.seasonal_adjustment || '');
+    var hay = (title + ' ' + id + ' ' + freq + ' ' + units + ' ' + notes + ' ' + searchQuery + ' ' + seasonal).toLowerCase();
+
+    var score = 0;
+    score += 3 * _tokenOverlap_(qTokens, hay);
+    score += 2 * _tokenOverlap_(pTokens, hay);
+
+    var normalizedTitle = _normalizeSeriesMapRebuildText_(title);
+    if (normalizedTitle === normalizedPattern || normalizedTitle === normalizedQuery) score += 12;
+    if (normalizedTitle.indexOf(normalizedQuery) >= 0) score += 6;
+    if (normalizedTitle.indexOf(normalizedPattern) >= 0) score += 4;
+    if (_normalizeSeriesMapRebuildText_(searchQuery) === normalizedQuery && normalizedQuery) score += 8;
+
+    if (/\b(alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming)\b/.test(hay)) score -= 6;
+    if (/\b(county|msa|metropolitan|city of|saint |st\. )\b/.test(hay)) score -= 5;
+    if (/\b(bank|federal reserve bank of|commercial bank|deposit|loans)\b/.test(hay) && !/\b(rate|yield|treasury|fed funds|policy)\b/.test(hay)) score -= 3;
+    if (/\b(d|w|m|q)\b/i.test(freq)) score += 1;
+    if (/daily/i.test(freq)) score -= 1;
+    if (/weekly|monthly|quarterly/i.test(freq)) score += 1;
+    if (id && qTokens.indexOf(id.toLowerCase()) >= 0) score += 10;
+
+    score += _countrySpecificFredScore_(cc, hay);
+    score += _domainSpecificFredScore_(normalizedPattern, normalizedTitle, hay);
+
+    scored.push({
+      id: id,
+      title: title,
+      frequency: s.frequency || '',
+      frequency_short: s.frequency_short || '',
+      units: s.units || '',
+      units_short: s.units_short || '',
+      seasonal_adjustment: s.seasonal_adjustment || '',
+      seasonal_adjustment_short: s.seasonal_adjustment_short || '',
+      score: score
+    });
+  }
+
+  scored.sort(function(a, b) { return b.score - a.score; });
+  return scored;
+}
+
+function _classifyFredCatalogCandidatesFallback_(top) {
+  if (!top || !top.length) return 'NOT_FRED';
+  var s1 = Number(top[0].score || 0);
+  var s2 = Number(top[1] ? top[1].score : -999);
+  if (s1 >= 18 && (s1 - s2) >= 4) return 'LIKELY_FRED';
+  if (s1 >= 12) return 'UNCERTAIN';
+  return 'NOT_FRED';
+}
+
+function _classifyFredCandidatesForFmpCatalog_(item, top) {
+  if (!top || !top.length) return 'NOT_FRED';
+
+  var first = top[0];
+  var second = top[1] || null;
+  var s1 = Number(first.score || 0);
+  var s2 = Number(second ? second.score : -999);
+  var normalizedPattern = _normalizeSeriesMapRebuildText_(item.indicator_name_norm || item.indicator_name_sample || '');
+  var normalizedTitle = _normalizeSeriesMapRebuildText_(first.title || '');
+  var requiredHit = _hasRequiredDomainHit_(normalizedPattern, normalizedTitle);
+  var targetFreq = _normalizeFmpSuggestionFreq_(item.inferred_frequency);
+  var candFreq = _normalizeFmpSuggestionFreq_(first.frequency_short || first.frequency);
+
+  if (_shouldForceNotFredForRebuild_(normalizedPattern)) return 'NOT_FRED';
+  if (String(item.country || '').toUpperCase() === 'US' && !_looksUsMacroSeries_(first.title || '')) return 'UNCERTAIN';
+
+  if (s1 >= 28 && (s1 - s2) >= 5 && requiredHit && (!targetFreq || !candFreq || targetFreq === candFreq)) return 'LIKELY_FRED';
+  if (s1 >= 18) return 'UNCERTAIN';
+  return 'NOT_FRED';
+}
+
+function _normalizeFredSeasonalAdjustment_(cand) {
+  var raw = String((cand && (cand.seasonal_adjustment_short || cand.seasonal_adjustment)) || '').trim().toUpperCase();
+  if (!raw) return '';
+  if (raw === 'SA') return 'SA';
+  if (raw === 'NSA') return 'NSA';
+  if (raw.indexOf('SEASONALLY ADJUSTED') >= 0) return 'SA';
+  if (raw.indexOf('NOT SEASONALLY ADJUSTED') >= 0) return 'NSA';
+  return '';
+}
+
+function _countrySpecificFredScore_(country, hay) {
+  var score = 0;
+  var cc = String(country || '').toUpperCase();
+  if (cc === 'US') {
+    if (/\b(united states|u\.s\.|us\b|national)\b/.test(hay)) score += 10;
+    if (/\b(alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming)\b/.test(hay)) score -= 35;
+    if (/\b(germany|berlin|euro area|europe|france|italy|spain|united kingdom|uk\b|japan|china|canada|australia|new zealand|sweden|norway|switzerland|korea|singapore|india|brazil|mexico)\b/.test(hay)) score -= 18;
+  }
+  return score;
+}
+
+function _domainSpecificFredScore_(normalizedPattern, normalizedTitle, hay) {
+  var score = 0;
+
+  if (/\bmortgage\b/.test(normalizedPattern)) {
+    if (/\bmortgage\b/.test(normalizedTitle)) score += 12;
+    else score -= 10;
+    if (/\b15 year\b/.test(normalizedPattern) && /\b15 year\b/.test(normalizedTitle)) score += 10;
+    if (/\bfixed rate mortgage\b/.test(hay)) score += 8;
+  }
+
+  if (/\bfactory orders\b/.test(normalizedPattern)) {
+    if (/\bfactory orders\b/.test(normalizedTitle)) score += 10;
+  }
+
+  if (/\bcpi\b|\bconsumer price index\b/.test(normalizedPattern)) {
+    if (/\bconsumer price index\b|\bcpi\b/.test(normalizedTitle)) score += 8;
+    if (/\bcore\b|\bexcluding food and energy\b/.test(normalizedPattern) && /\bexcluding food and energy\b|\bcore\b/.test(normalizedTitle)) score += 10;
+    if (!/\bcore\b|\bexcluding food and energy\b/.test(normalizedPattern) && /\bexcluding food and energy\b|\bcore\b/.test(normalizedTitle)) score -= 8;
+    if (!/\bcore\b|\bexcluding food and energy\b|\bnon food non energy\b/.test(normalizedPattern) && /\bnon food non energy\b/.test(normalizedTitle)) score -= 18;
+    if (/\bresearch consumer price index\b/.test(hay)) score -= 16;
+  }
+
+  if (/\bppi\b|\bproducer price index\b/.test(normalizedPattern)) {
+    if (/\bproducer price index\b|\bppi\b/.test(normalizedTitle)) score += 10;
+    if (/\bfinal demand\b/.test(normalizedTitle)) score += 4;
+    if (/\bexcluding food and energy\b|\bcore\b/.test(normalizedTitle) && !/\bcore\b|\bexcluding food and energy\b/.test(normalizedPattern)) score -= 8;
+  }
+
+  if (/\bjobless claims\b|\binitial claims\b/.test(normalizedPattern)) {
+    if (/\bjobless claims\b|\binitial claims\b/.test(normalizedTitle)) score += 8;
+    if (/\binitial claims\b/.test(normalizedTitle)) score += 12;
+    if (/\bcontinued claims\b|\binsured unemployment\b/.test(normalizedTitle)) score -= 18;
+  }
+
+  if (/\bhousing starts\b/.test(normalizedPattern)) {
+    if (/\bhousing starts\b/.test(normalizedTitle)) score += 14;
+    if (!/\bhousing starts\b/.test(normalizedTitle)) score -= 12;
+    if (/\bsquare feet|floor area|one family units\b/.test(hay)) score -= 40;
+  }
+
+  if (/\bimports\b/.test(normalizedPattern)) {
+    if (/\bimports\b/.test(normalizedTitle)) score += 8;
+    if (/\btrade balance|excess of total exports over general imports|contributions to percent change in gdpnow\b/.test(hay)) score -= 16;
+    if (/\bbalance of payments basis\b/.test(hay)) score += 3;
+  }
+
+  if (/\bhouse price index\b/.test(normalizedPattern)) {
+    if (/\bhouse price index\b/.test(normalizedTitle)) score += 10;
+    if (/\bpurchase only\b/.test(hay)) score -= 5;
+    if (/\ball transactions\b/.test(hay)) score += 2;
+    if (/\breal residential property prices\b/.test(hay)) score -= 8;
+  }
+
+  if (/\bbuilding permits\b|\bbuild permits\b/.test(normalizedPattern)) {
+    if (/\bbuilding permits\b/.test(normalizedTitle)) score += 16;
+    else score -= 12;
+    if (/\bauthorized\b/.test(normalizedTitle)) score += 4;
+    if (/\bsingle family\b|\bprivately owned housing units authorized\b/.test(normalizedTitle) && !/\bsingle family\b/.test(normalizedPattern)) score -= 8;
+    if (/\bfor (alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming)\b/.test(hay)) score -= 40;
+  }
+
+  if (/\bretail sales\b/.test(normalizedPattern)) {
+    if (/\bretail sales\b|\bretail and food services\b/.test(normalizedTitle)) score += 16;
+    else score -= 12;
+    if (/\badvance retail sales\b/.test(normalizedTitle)) score += 6;
+    if (/\bexcluding autos\b|\bex autos\b/.test(normalizedTitle) && !/\bexcluding autos\b|\bex autos\b/.test(normalizedPattern)) score -= 10;
+    if (/\bfood services\b/.test(normalizedTitle) && !/\bfood services\b/.test(normalizedPattern)) score += 1;
+  }
+
+  if (/\bpayroll\b|\bnonfarm payroll\b|\bnfp\b/.test(normalizedPattern)) {
+    if (/\bnonfarm payroll\b|\btotal nonfarm payroll employment\b/.test(normalizedTitle)) score += 18;
+    if (/\bprivate payroll\b|\btotal nonfarm private payroll employment\b/.test(normalizedTitle)) score += 10;
+    if (/\bleisure and hospitality\b|\bdurable goods\b|\bmanufacturing\b|\bconstruction\b|\bgovernment\b/.test(normalizedTitle)) score -= 14;
+    if (/\breal\b/.test(normalizedTitle)) score -= 10;
+  }
+
+  if (/\badp\b/.test(normalizedPattern)) {
+    if (/\bprivate payroll\b|\btotal nonfarm private payroll employment\b/.test(normalizedTitle)) score += 18;
+    if (/\bnonfarm payroll\b|\btotal nonfarm payroll employment\b/.test(normalizedTitle)) score += 4;
+    if (/\bleisure and hospitality\b|\bdurable goods\b|\bmanufacturing\b|\bconstruction\b|\bgovernment\b/.test(normalizedTitle)) score -= 16;
+  }
+
+  if (/\baverage hourly earnings\b/.test(normalizedPattern)) {
+    if (/\baverage hourly earnings\b/.test(normalizedTitle)) score += 16;
+    else score -= 12;
+    if (/\ball employees\b|\btotal private\b/.test(normalizedTitle)) score += 10;
+    if (/\bproduction and nonsupervisory employees\b/.test(normalizedTitle) && !/\bproduction\b|\bnonsupervisory\b/.test(normalizedPattern)) score -= 8;
+    if (/\bleisure and hospitality\b|\bdurable goods\b|\bmanufacturing\b|\bconstruction\b|\bgovernment\b/.test(normalizedTitle) && !/\bmanufacturing\b|\bconstruction\b|\bgovernment\b/.test(normalizedPattern)) score -= 14;
+    if (/\breal\b/.test(normalizedTitle)) score -= 16;
+  }
+
+  if (/\bconsumer confidence\b|\bconsumer sentiment\b/.test(normalizedPattern)) {
+    if (/\bconsumer confidence\b|\bconsumer sentiment\b/.test(normalizedTitle)) score += 12;
+    if (/\bmichigan\b|\bconference board\b/.test(normalizedTitle)) score += 4;
+    if (/\bstate\b|\bregional\b/.test(normalizedTitle)) score -= 10;
+  }
+
+  if (/\bcrude oil\b|\bcrude petroleum\b/.test(normalizedPattern)) {
+    if (/\bcrude petroleum\b|\bcrude oil\b/.test(normalizedTitle)) score += 10;
+    if (/\bfinished gasoline\b/.test(hay)) score -= 14;
+    if (/\bstocks change\b|\bstock change\b|\binventories change\b|\binventory change\b/.test(normalizedPattern) && !/\bchange\b|\bchanges\b/.test(normalizedTitle)) score -= 10;
+  }
+
+  if (/\bmanufacturing production\b/.test(normalizedPattern)) {
+    if (/\bindustrial production\b/.test(normalizedTitle)) score += 12;
+    if (/\bmanufacturing\b/.test(normalizedTitle)) score += 6;
+    if (/\baverage hourly earnings\b/.test(normalizedTitle)) score -= 30;
+    if (/\bcement stocks\b|\bstocks for united states\b/.test(hay)) score -= 24;
+  }
+
+  if (/\bretail inventories\b/.test(normalizedPattern)) {
+    if (/\bretail trade inventories\b/.test(normalizedTitle)) score += 12;
+    if (/\bex autos\b|\bexcluding autos\b/.test(normalizedPattern) && /\bex autos\b|\bexcluding autos\b/.test(normalizedTitle)) score += 12;
+    if (/\bex autos\b|\bexcluding autos\b/.test(normalizedPattern) && !/\bex autos\b|\bexcluding autos\b/.test(normalizedTitle)) score -= 34;
+    if (/\brefined copper\b|\bcopper stocks\b/.test(normalizedTitle)) score -= 30;
+  }
+
+  if (/\bcushing\b/.test(normalizedPattern)) {
+    if (/\bcushing\b/.test(normalizedTitle)) score += 14;
+    else score -= 20;
+  }
+
+  if (/\bstocks change\b|\binventories change\b/.test(normalizedPattern)) {
+    if (/\bstocks\b|\binventories\b/.test(normalizedTitle)) score += 3;
+    if (/\bchange\b|\bchanges\b/.test(normalizedTitle)) score += 6;
+  }
+
+  if (/\bauction\b/.test(normalizedPattern)) {
+    if (/\bauction\b/.test(normalizedTitle)) score += 8;
+    else score -= 30;
+    if (/\bmortgage\b/.test(normalizedTitle)) score -= 20;
+    if (/\bdiscontinued\b/.test(hay)) score -= 10;
+  }
+
+  if (/\bdiscontinued\b/.test(hay)) score -= 8;
+
+  return score;
+}
+
+function _hasRequiredDomainHit_(normalizedPattern, normalizedTitle) {
+  if (!normalizedPattern || !normalizedTitle) return false;
+  if (/\bmortgage\b/.test(normalizedPattern)) return /\bmortgage\b/.test(normalizedTitle);
+  if (/\bfactory orders\b/.test(normalizedPattern)) return /\bfactory orders\b/.test(normalizedTitle);
+  if (/\bcpi\b|\bconsumer price index\b/.test(normalizedPattern)) return /\bcpi\b|\bconsumer price index\b/.test(normalizedTitle);
+  if (/\bppi\b|\bproducer price index\b/.test(normalizedPattern)) return /\bppi\b|\bproducer price index\b/.test(normalizedTitle);
+  if (/\bbuilding permits\b|\bbuild permits\b/.test(normalizedPattern)) return /\bbuilding permits\b/.test(normalizedTitle);
+  if (/\bretail sales\b/.test(normalizedPattern)) return /\bretail sales\b|\bretail and food services\b/.test(normalizedTitle);
+  if (/\bretail inventories\b/.test(normalizedPattern)) {
+    if (!/\bretail trade inventories\b/.test(normalizedTitle)) return false;
+    if (/\bexcluding autos\b|\bex autos\b/.test(normalizedPattern)) {
+      return /\bexcluding autos\b|\bex autos\b/.test(normalizedTitle);
+    }
+    return true;
+  }
+  if (/\bpayroll\b|\bnonfarm payroll\b|\bnfp\b/.test(normalizedPattern)) return /\bpayroll\b/.test(normalizedTitle);
+  if (/\badp\b/.test(normalizedPattern)) return /\bprivate payroll\b|\btotal nonfarm private payroll employment\b/.test(normalizedTitle);
+  if (/\baverage hourly earnings\b/.test(normalizedPattern)) return /\baverage hourly earnings\b/.test(normalizedTitle);
+  if (/\bjobless claims\b|\binitial claims\b/.test(normalizedPattern)) return /\bjobless claims\b|\binitial claims\b/.test(normalizedTitle);
+  if (/\bmanufacturing production\b/.test(normalizedPattern)) return /\bindustrial production\b/.test(normalizedTitle) && /\bmanufacturing\b/.test(normalizedTitle);
+  if (/\bhousing starts\b/.test(normalizedPattern)) return /\bhousing starts\b/.test(normalizedTitle) && !/\bsquare feet|floor area|one family units\b/.test(normalizedTitle);
+  if (/\bimports\b/.test(normalizedPattern)) return /\bimports\b/.test(normalizedTitle) && !/\btrade balance\b/.test(normalizedTitle);
+  if (/\bhouse price index\b/.test(normalizedPattern)) return /\bhouse price index\b/.test(normalizedTitle);
+  if (/\bcushing\b/.test(normalizedPattern)) return /\bcushing\b/.test(normalizedTitle);
+  if (/\bcrude oil\b|\bcrude petroleum\b/.test(normalizedPattern)) return /\bcrude petroleum\b|\bcrude oil\b/.test(normalizedTitle);
+  return normalizedTitle.indexOf(normalizedPattern) >= 0 || normalizedPattern.indexOf(normalizedTitle) >= 0 || _tokenOverlap_(_tokens_(normalizedPattern), normalizedTitle) >= 2;
+}
+
+function _shouldForceNotFredForRebuild_(normalizedPattern) {
+  return /\bauction\b/.test(normalizedPattern);
+}
+
+function _shouldForceReviewForRebuild_(normalizedPattern, cand) {
+  var title = _normalizeSeriesMapRebuildText_((cand && cand.title) || '');
+  var freq = String((cand && (cand.frequency_short || cand.frequency)) || '').trim().toUpperCase();
+
+  if (/\bhousing starts\b/.test(normalizedPattern) && /\bsquare feet|floor area|one family units\b/.test(title)) return true;
+  if (/\bstocks change\b|\bstock change\b|\binventories change\b|\binventory change\b/.test(normalizedPattern) && !/\bchange\b|\bchanges\b/.test(title)) return true;
+  if (/\bhouse price index\b/.test(normalizedPattern) && freq === 'Q') return true;
+  if (/\baverage hourly earnings\b/.test(normalizedPattern) && /\breal\b|\bleisure and hospitality\b|\bdurable goods\b|\bmanufacturing\b/.test(title)) return true;
+  if (/\badp\b/.test(normalizedPattern) && !/\bprivate payroll\b|\btotal nonfarm private payroll employment\b/.test(title)) return true;
+  if (/\bjobless claims\b|\binitial claims\b/.test(normalizedPattern) && /\bcontinued claims\b|\binsured unemployment\b/.test(title)) return true;
+  if (/\bretail sales\b/.test(normalizedPattern) && /\bexcluding autos\b|\bex autos\b/.test(title) && !/\bexcluding autos\b|\bex autos\b/.test(normalizedPattern)) return true;
+  if (/\bretail inventories\b/.test(normalizedPattern) && /\bexcluding autos\b|\bex autos\b/.test(normalizedPattern) && !/\bexcluding autos\b|\bex autos\b/.test(title)) return true;
+  if (/\bbuilding permits\b/.test(normalizedPattern) && /\b(alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming)\b/.test(title)) return true;
+  if (/\bcpi\b|\bconsumer price index\b/.test(normalizedPattern) && !/\bcore\b|\bexcluding food and energy\b|\bnon food non energy\b/.test(normalizedPattern) && /\bnon food non energy\b|\bexcluding food and energy\b|\bcore\b/.test(title)) return true;
+  if (/\bmanufacturing production\b/.test(normalizedPattern) && !/\bindustrial production\b/.test(title)) return true;
+  if (/\bretail inventories\b/.test(normalizedPattern) && /\bcopper stocks\b/.test(title)) return true;
+
+  return false;
+}
+
+function _looksUsMacroSeries_(title) {
+  var s = String(title || '').toLowerCase();
+  if (!s) return false;
+  if (/\b(germany|berlin|euro area|france|italy|spain|united kingdom|japan|china|canada|australia|sweden|norway|switzerland|korea|singapore|india|brazil|mexico)\b/.test(s)) return false;
+  if (/\b(alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming)\b/.test(s)) return false;
+  if (/\b(united states|u\.s\.|us\b|national)\b/.test(s)) return true;
+  if (/\bmortgage\b/.test(s)) return true;
+  if (/\bhousing starts\b|\bimports\b|\bhouse price index\b|\bcrude petroleum\b|\bcrude oil\b|\bbuilding permits\b|\bretail sales\b|\bconsumer price index\b|\bproducer price index\b|\baverage hourly earnings\b|\bjobless claims\b|\binitial claims\b|\bpayroll employment\b|\bprivate payroll employment\b|\bindustrial production\b|\bretail trade inventories\b/.test(s)) return true;
+  return false;
+}
+
+function _writeFredCandidateIntoSuggestionRow_(row, slot, cand) {
+  var base = 12 + (slot - 1) * 5;
+  row[base + 0] = cand ? 'FRED' : '';
+  row[base + 1] = cand ? String(cand.id || '') : '';
+  row[base + 2] = cand ? String(cand.title || '') : '';
+  row[base + 3] = cand && cand.score != null ? cand.score : '';
+  row[base + 4] = cand ? String(cand.frequency_short || cand.frequency || '') : '';
+}
+
+function _clearFredCandidateSlots_(row) {
+  _writeFredCandidateIntoSuggestionRow_(row, 1, null);
+}
+
+function _buildFredCatalogAutoNotesForFmp_(item, decision, classification) {
+  var label = String(item && (item.indicator_name_sample || item.indicator_name_norm) || '').trim();
+  if (decision && decision.series_id && decision.review_method === 'system') return 'FMP_CATALOG_V1: system found a strong single FRED suggestion for ' + label;
+  if (decision && decision.series_id && decision.review_method === 'ai') return 'FMP_CATALOG_V1: AI suggested one FRED row for human review for ' + label;
+  if (classification === 'UNCERTAIN') return 'FMP_CATALOG_V1: no safe single match; leave this row to human review for ' + label;
+  return 'FMP_CATALOG_V1: FRED catalog hits exist but look mismatched for ' + label;
+}
+
+function _resolveSeriesMapAiReviewer_() {
+  var key = (typeof _getKey_ === 'function') ? _getKey_(['OPENAI_API_KEY']) : '';
+  if (!key) return null;
+  var model = (typeof CFG !== 'undefined' && CFG.OPENAI_MODEL && String(CFG.OPENAI_MODEL).trim())
+    ? String(CFG.OPENAI_MODEL).trim()
+    : 'gpt-4o-mini';
+  return { provider: 'OpenAI', key: key, model: model };
+}
+
+function _reviewSeriesMapSuggestionWithAi_(item, ranked, aiBudget) {
+  var ai = _resolveSeriesMapAiReviewer_();
+  if (!ai || !ranked || !ranked.length) return null;
+  if (aiBudget && (!aiBudget.enabled || aiBudget.remaining <= 0)) return null;
+
+  try {
+    if (aiBudget) {
+      aiBudget.remaining--;
+      aiBudget.attempted++;
+    }
+    var payload = {
+      task: 'review_seriesmap_suggestion',
+      country: item.country || '',
+      indicator_name_sample: item.indicator_name_sample || '',
+      indicator_name_norm: item.indicator_name_norm || '',
+      unit: item.unit || '',
+      inferred_frequency: item.inferred_frequency || '',
+      impact: item.impact || '',
+      candidates: ranked.slice(0, 3).map(function(c) {
+        return {
+          provider: 'FRED',
+          series_id: c.id || '',
+          title: c.title || '',
+          frequency: c.frequency_short || c.frequency || '',
+          units: c.units_short || c.units || '',
+          score: c.score || ''
+        };
+      })
+    };
+    var prompt = _buildSeriesMapAiPrompt_(payload);
+    var reviewed = _callSeriesMapOpenAIReviewer_(ai, prompt);
+    return _normalizeSeriesMapAiDecision_(reviewed, ranked);
+  } catch (e) {
+    if (typeof appendLog === 'function') {
+      appendLog('WARN', 'SeriesMap AI review failed', {
+        module: 'series_map',
+        step: 'ai_review',
+        indicator_name: item.indicator_name_sample || '',
+        error: String(e && e.message || e)
+      });
+    }
+    return null;
+  }
+}
+
+function _buildSeriesMapAiPrompt_(payload) {
+  return {
+    system: 'You review macroeconomic indicator mapping suggestions. Pick at most one candidate only if the match is conceptually strong. If uncertain, choose no suggestion.',
+    user: JSON.stringify(payload),
+    instruction: 'Return strict JSON only with keys: decision, series_id, confidence, reasoning. decision must be one of SUGGEST or HUMAN_REVIEW. confidence must be one of HIGH, MEDIUM, LOW. If decision is HUMAN_REVIEW, series_id must be an empty string.'
+  };
+}
+
+function _callSeriesMapOpenAIReviewer_(prov, prompt) {
+  var url = 'https://api.openai.com/v1/chat/completions';
+  var body = {
+    model: prov.model,
+    response_format: { type: 'json_object' },
+    messages: [
+      { role: 'system', content: prompt.system },
+      { role: 'user', content: prompt.user + '\n\n' + prompt.instruction }
+    ]
+  };
+
+  var runner = (typeof _withRetries_ === 'function')
+    ? _withRetries_
+    : function(fn) { return fn(); };
+
+  return runner(function() {
+    var resp = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { 'Authorization': 'Bearer ' + prov.key },
+      muteHttpExceptions: true,
+      payload: JSON.stringify(body)
+    });
+    var code = resp.getResponseCode();
+    if (code === 429) throw new Error('quota_exceeded: OpenAI 429');
+    if (code >= 500) throw new Error('provider_error: OpenAI ' + code);
+    if (code < 200 || code > 299) throw new Error('provider_error: OpenAI ' + code + ': ' + resp.getContentText());
+    var j = JSON.parse(resp.getContentText());
+    var c = j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+    if (!c) throw new Error('provider_error: OpenAI empty content');
+    return JSON.parse(c);
+  }, { provider: 'OpenAI' });
+}
+
+function _normalizeSeriesMapAiDecision_(raw, ranked) {
+  if (!raw || typeof raw !== 'object') return null;
+  var decision = String(raw.decision || '').trim().toUpperCase();
+  var seriesId = String(raw.series_id || '').trim();
+  var confidence = String(raw.confidence || '').trim().toUpperCase();
+  var reasoning = String(raw.reasoning || '').trim();
+
+  if (decision !== 'SUGGEST' || !seriesId) {
+    return {
+      provider: '',
+      series_id: '',
+      title: '',
+      freq: '',
+      score: '',
+      confidence: confidence || 'LOW',
+      reasoning: reasoning || 'AI could not make a safe single suggestion. Leave this for human review.',
+      review_status: 'NEEDS_HUMAN_REVIEW',
+      review_method: 'ai'
+    };
+  }
+
+  var chosen = null;
+  for (var i = 0; i < ranked.length; i++) {
+    if (String(ranked[i].id || '').trim() === seriesId) {
+      chosen = ranked[i];
+      break;
+    }
+  }
+  if (!chosen) {
+    return {
+      provider: '',
+      series_id: '',
+      title: '',
+      freq: '',
+      score: '',
+      confidence: confidence || 'LOW',
+      reasoning: 'AI selected a series outside the reviewed shortlist. Leave this for human review.',
+      review_status: 'NEEDS_HUMAN_REVIEW',
+      review_method: 'ai'
+    };
+  }
+
+  return {
+    provider: 'FRED',
+    series_id: String(chosen.id || ''),
+    title: String(chosen.title || ''),
+    freq: String(chosen.frequency_short || chosen.frequency || ''),
+    score: chosen.score,
+    confidence: confidence || 'MEDIUM',
+    reasoning: reasoning || 'AI suggested this as the best available single match from the shortlist.',
+    review_status: 'READY_FOR_HUMAN_CHECK',
+    review_method: 'ai'
+  };
+}
+
+function _normalizeSeriesMapRebuildText_(text) {
+  var s = String(text || '').trim().toLowerCase();
+  if (!s) return '';
+  s = s.replace(/\b(month over month)\b/g, 'mom');
+  s = s.replace(/\b(year over year)\b/g, 'yoy');
+  s = s.replace(/\b(m\/m)\b/g, 'mom');
+  s = s.replace(/\b(y\/y)\b/g, 'yoy');
+  s = s.replace(/[^a-z0-9]+/g, ' ');
+  s = s.replace(/\b(preliminary|final|flash|advance|revised|estimate|est)\b/g, ' ');
+  s = s.replace(/\s+/g, ' ').trim();
+  return s;
+}
+
+function _suggestionsSheetWidth_() {
+  var sh = _ensureSuggestionsSheet_();
+  return sh.getLastColumn();
+}
+
+function _normalizeSuggestionRowWidth_(row, width) {
+  var out = row.slice(0);
+  for (var i = out.length; i < width; i++) out[i] = '';
+  if (out.length > width) out = out.slice(0, width);
+  return out;
+}
+
+function _fmpCatalogSuggestionSkipReason_(item) {
+  var impact = String(item && item.impact || '').trim().toLowerCase();
+  var name = _normalizeSeriesMapRebuildText_(item && (item.indicator_name_sample || item.indicator_name_norm) || '');
+  if (!name) return 'blank_name';
+  if (impact === 'none') return 'impact_none';
+  if (/\bauction\b/.test(name)) return 'auction';
+  if (/\bcftc\b/.test(name)) return 'cftc';
+  if (/\bholiday\b|\bbank holiday\b|\bmarket holiday\b|\bclosed\b/.test(name)) return 'holiday';
+  return '';
+}
+
+function _normalizeFmpSuggestionFreq_(freq) {
+  var s = String(freq || '').trim().toUpperCase();
+  if (!s) return '';
+  if (s === 'WEEKLY' || s === 'W') return 'W';
+  if (s === 'MONTHLY' || s === 'M') return 'M';
+  if (s === 'QUARTERLY' || s === 'Q') return 'Q';
+  if (s === 'SEMIANNUAL' || s === 'SA') return 'SA';
+  if (s === 'ANNUAL' || s === 'A' || s === 'YEARLY') return 'A';
+  if (s === 'DAILY' || s === 'D') return 'D';
+  if (s === 'IRREGULAR') return 'IRREGULAR';
+  return s;
+}
+
+function _normalizeFmpSuggestionUnit_(unit) {
+  var s = _normalizeSeriesMapRebuildText_(unit);
+  if (!s) return '';
+  if (/\bpercent(age)?\b|\bpercent change\b|\bchange percentage\b|\b%\b/.test(s)) return 'percent';
+  if (/\bindex\b/.test(s)) return 'index';
+  if (/\bdollar\b|\busd\b/.test(s)) return 'usd';
+  if (/\bthousand\b/.test(s)) return 'thousands';
+  if (/\bmillion\b/.test(s)) return 'millions';
+  if (/\bbillion\b/.test(s)) return 'billions';
+  if (/\bpersons\b|\bpeople\b|\bemployees\b|\bjobs\b/.test(s)) return 'count';
+  return s;
+}
+
+function _queueSuggestionBatchWrite_(writes, row1, outIndexMap, key, value) {
+  if (typeof _queueWrite_ !== 'function') throw new Error('_queueWrite_ not found');
+  if (outIndexMap[key] == null || outIndexMap[key] < 0) return;
+  _queueWrite_(writes, row1, outIndexMap[key] + 1, value);
+}
+
 // -----------------------------------------------------------------------------
 // Legacy wrappers (kept for operators / compatibility)
 // -----------------------------------------------------------------------------
@@ -821,36 +1841,6 @@ function _augmentSuggestionWithFmp_(row, country, indicatorName, releaseTs) {
   }).join(' | ');
   notes = (notes ? notes + ' | ' : '') + 'FMP_CANDIDATES: ' + candStr;
   row[10] = notes;
-
-  // Write candidates into the first available empty cand_* slots (do NOT touch provider/series_id)
-  // Cand slots start after created_ts, i.e. at row[12] if you appended headers as instructed.
-  function _findNextCandSlot_() {
-    // POLICY: FMP must NOT write to cand_1 (reserved for FRED primary).
-    // Use cand_2 first, then cand_3.
-    var order = [2, 3];
-    for (var k = 0; k < order.length; k++) {
-      var s = order[k];
-      var sidIdx = 12 + (s - 1) * 5 + 1; // cand_n_series_id index
-      var existing = String(row[sidIdx] || '').trim();
-      if (!existing) return s;
-    }
-    return 0;
-  }
-
-  function _writeCand_(slot, ev, score) {
-    var base = 12 + (slot - 1) * 5;
-    row[base + 0] = 'FMP';                 // cand_n_provider
-    row[base + 1] = 'calendar:' + ev;      // cand_n_series_id
-    row[base + 2] = ev;                    // cand_n_title
-    row[base + 3] = score;                 // cand_n_score
-    row[base + 4] = '';                    // cand_n_freq (calendar has no stable freq)
-  }
-
-  for (var i = 0; i < Math.min(3, cands.length); i++) {
-    var slot = _findNextCandSlot_();
-    if (!slot) break;
-    _writeCand_(slot, cands[i].event, cands[i].score);
-  }
 
   return row;
 }
@@ -1043,6 +2033,3 @@ function _inferYearFromRelease(releaseDate, month) {
   if (month > relMonth + 2) return y - 1;
   return y;
 }
-
-
-

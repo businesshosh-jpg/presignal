@@ -30,7 +30,7 @@ function ensureEventHeaders_(sh) {
     'source_cal','consensus_value','prev_revision',
     'released_value','released_ts',
     'source_provider','source_series_id','transform',
-    'release_status','notes'
+    'release_status','notes','resolution_method','confidence_level'
   ];
 
   var rng = sh.getRange(1, 1, 1, Math.max(1, sh.getLastColumn()));
@@ -211,6 +211,8 @@ function normalizeFmpRow_(raw) {
 
   // 3) Status follows the presence of an actual (not the presence of scheduled time)
   var releaseStatus = hasActual ? 'released' : 'scheduled';
+  var resolutionMethod = hasActual ? 'direct' : '';
+  var confidenceLevel = hasActual ? 'medium' : '';
 
   // --- Source lineage (only stamp if the calendar provided an actual) ---
   var sourceProvider = hasActual ? 'FMP' : '';
@@ -254,7 +256,9 @@ function normalizeFmpRow_(raw) {
     source_series_id: sourceSeriesId,
     transform: transform,
     release_status: releaseStatus,
-    notes: notes
+    notes: notes,
+    resolution_method: resolutionMethod,
+    confidence_level: confidenceLevel
   };
 }
 
@@ -361,6 +365,8 @@ function _upsertEventsToEvent_(normRows) {
     if ((c = col('transform'))        >= 0) arr[c] = String(n.transform || '');
     if ((c = col('release_status'))   >= 0) arr[c] = String(n.release_status || 'scheduled');
     if ((c = col('notes'))            >= 0) arr[c] = String(n.notes || '');
+    if ((c = col('resolution_method')) >= 0) arr[c] = String(n.resolution_method || '');
+    if ((c = col('confidence_level'))  >= 0) arr[c] = String(n.confidence_level || '');
 
     if (Object.prototype.hasOwnProperty.call(existingByKey, key)) {
       // Update in place
@@ -562,8 +568,459 @@ function runFmpRangeToEvent_(fromUtcIso, toUtcIso) {
   return _upsertEventsToEvent_(norm);
 }
 
+/** ===== FMP Event Catalog (for SeriesMap suggestion workflows) ===== **/
 
+function _getOrCreateSheet_(name) {
+  var ss = SpreadsheetApp.getActive();
+  var sh = ss.getSheetByName(name);
+  if (sh) return sh;
+  return ss.insertSheet(name);
+}
 
+function _ensureHeadersExact_(sh, headers) {
+  var existing = sh.getLastColumn() ? sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0] : [];
+  var isEmpty = !existing || existing.length === 0 || (existing.length === 1 && String(existing[0] || '') === '');
+  if (isEmpty) {
+    sh.getRange(1, 1, 1, headers.length).setValues([headers]);
+    return headers;
+  }
+  // If the sheet already exists, do not reorder; only append missing headers.
+  var have = {};
+  for (var i = 0; i < existing.length; i++) have[String(existing[i] || '').trim().toLowerCase()] = true;
+  var toAppend = [];
+  for (var j = 0; j < headers.length; j++) {
+    var h = String(headers[j] || '').trim();
+    if (!have[h.toLowerCase()]) toAppend.push(h);
+  }
+  if (toAppend.length) {
+    sh.getRange(1, existing.length + 1, 1, toAppend.length).setValues([toAppend]);
+  }
+  return headers;
+}
+
+function _normalizeIndicatorForCatalog_(name) {
+  var s = String(name || '').trim().toLowerCase();
+  if (!s) return '';
+  try { if (typeof stripDateSuffix_ === 'function') s = stripDateSuffix_(s); } catch (e) {}
+  s = s.replace(/[%]/g, ' percent ');
+  s = s.replace(/\b(preliminary|prelim|final|flash|advance|revised|estimate|est\.?)\b/g, ' ');
+  s = s.replace(/[^a-z0-9]+/g, ' ');
+  s = s.replace(/\s+/g, ' ').trim();
+  return s;
+}
+
+function _median_(arr) {
+  if (!arr || !arr.length) return null;
+  var a = arr.slice().sort(function(x, y){ return x - y; });
+  var mid = Math.floor(a.length / 2);
+  return (a.length % 2) ? a[mid] : (a[mid - 1] + a[mid]) / 2;
+}
+
+function _inferFreqFromMedianDays_(medianDays) {
+  if (medianDays === null || medianDays === undefined) return '';
+  var d = Number(medianDays);
+  if (!isFinite(d) || d <= 0) return '';
+  if (d >= 5 && d <= 9) return 'W';
+  if (d >= 25 && d <= 35) return 'M';
+  if (d >= 80 && d <= 100) return 'Q';
+  if (d >= 330 && d <= 400) return 'A';
+  return 'IRREGULAR';
+}
+
+function _filterFmpRowsToUtcWindow_(rows, fromDate, toDate) {
+  var fromMs = fromDate.getTime();
+  var toMs = toDate.getTime();
+  return (rows || []).filter(function(row) {
+    var iso = _parseReleaseTsUtcMinute_(_coalesce_(
+      row && row.release_ts,
+      row && row.datetime,
+      row && row.date,
+      row && row.time
+    ));
+    if (!iso) return false;
+    var t = new Date(iso).getTime();
+    return isFinite(t) && t >= fromMs && t <= toMs;
+  });
+}
+
+function _filterFmpRowsForCatalog_(rows) {
+  return (rows || []).filter(function(row) {
+    var country = String(_coalesce_(row && row.country, row && row.ccy, row && row.region) || '').trim().toUpperCase();
+    var currency = String(_pickFirst_(row || {}, ['currency', 'ccy']) || '').trim().toUpperCase();
+    return country === 'US' && currency === 'USD';
+  });
+}
+
+function _fmpRawRowKey_(row) {
+  row = row || {};
+  return [
+    String(row.date || row.datetime || row.time || row.release_ts || ''),
+    String(row.country || row.ccy || row.region || ''),
+    String(row.event || row.indicator_name || row.title || row.name || row.category || ''),
+    String(row.currency || ''),
+    String(row.unit || '')
+  ].join('|');
+}
+
+function fmpFetchRangeUtcChunked_(fromUtcIso, toUtcIso) {
+  var fromDate = (fromUtcIso instanceof Date) ? new Date(fromUtcIso.getTime()) : new Date(String(fromUtcIso || ''));
+  var toDate = (toUtcIso instanceof Date) ? new Date(toUtcIso.getTime()) : new Date(String(toUtcIso || ''));
+  if (!isFinite(fromDate.getTime()) || !isFinite(toDate.getTime())) {
+    throw new Error('fmpFetchRangeUtcChunked_: invalid from/to');
+  }
+  if (toDate.getTime() < fromDate.getTime()) return [];
+
+  var out = [];
+  var seen = Object.create(null);
+  var cursor = new Date(Date.UTC(fromDate.getUTCFullYear(), fromDate.getUTCMonth(), fromDate.getUTCDate()));
+  var endMs = toDate.getTime();
+
+  while (cursor.getTime() <= endMs) {
+    var chunkStart = new Date(cursor.getTime());
+    var chunkEnd = new Date(Date.UTC(chunkStart.getUTCFullYear(), chunkStart.getUTCMonth() + 1, 0, 23, 59, 59));
+    if (chunkEnd.getTime() > endMs) chunkEnd = new Date(endMs);
+
+    var rows = fmpFetchRangeUtc_(chunkStart, chunkEnd);
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i] || {};
+      var key = _fmpRawRowKey_(row);
+      if (seen[key]) continue;
+      seen[key] = true;
+      out.push(row);
+    }
+
+    cursor = new Date(Date.UTC(chunkStart.getUTCFullYear(), chunkStart.getUTCMonth() + 1, 1));
+  }
+
+  return out;
+}
+
+/**
+ * Build/update `FMP_EventCatalog` by fetching FMP economic calendar rows and aggregating.
+ *
+ * - Pulls a window of events from FMP (past + future) so we can capture recent history and upcoming schedule.
+ * - Aggregates by (country, normalized indicator_name).
+ * - Captures `unit` if present in the FMP payload (field assumed: `unit`).
+ * - Computes simple cadence stats from release timestamps.
+ *
+ * This is an operator tool for SeriesMap suggestion workflows; it does not change Event rows.
+ */
+function buildFmpEventCatalog(lookbackDays, lookaheadDays) {
+  var minFrom = new Date(Date.UTC(2025, 0, 1, 0, 0, 0));
+  var maxTo   = new Date(Date.UTC(2025, 11, 31, 23, 59, 59));
+  var from = new Date(minFrom.getTime());
+  var to = new Date(maxTo.getTime());
+
+  if (lookbackDays === 0 || lookbackDays) {
+    var lb = Number(lookbackDays);
+    if (isFinite(lb) && lb >= 1) {
+      var now = new Date();
+      from = new Date(now.getTime() - lb * 24 * 60 * 60 * 1000);
+    }
+  }
+  if (lookaheadDays === 0 || lookaheadDays) {
+    var lf = Number(lookaheadDays);
+    if (isFinite(lf) && lf >= 0) {
+      var now2 = new Date();
+      to = new Date(now2.getTime() + lf * 24 * 60 * 60 * 1000);
+    }
+  }
+
+  if (from.getTime() < minFrom.getTime()) from = minFrom;
+  if (to.getTime() > maxTo.getTime()) to = maxTo;
+  if (to.getTime() < from.getTime()) {
+    to = new Date(from.getTime());
+  }
+
+  var rawAll = fmpFetchRangeUtcChunked_(from, to);
+  var rawWindow = _filterFmpRowsToUtcWindow_(rawAll, from, to);
+  var raw = _filterFmpRowsForCatalog_(rawWindow);
+  var updatedIso = new Date().toISOString();
+
+  var groups = Object.create(null); // key -> catalog aggregate
+  for (var i = 0; i < raw.length; i++) {
+    var row = raw[i] || {};
+    var country = String(_coalesce_(row.country, row.ccy, row.region) || '').trim().toUpperCase();
+    var name = String(_coalesce_(row.indicator_name, row.title, row.event, row.name, row.category) || '').trim();
+    var norm = _normalizeIndicatorForCatalog_(name);
+    if (!country || !norm) continue;
+
+    var iso = _parseReleaseTsUtcMinute_(_coalesce_(row.release_ts, row.datetime, row.date, row.time));
+    if (!iso) continue;
+
+    var unit = String(_pickFirst_(row, ['unit', 'units', 'unitName', 'unit_name']) || '').trim();
+    var currency = String(_pickFirst_(row, ['currency', 'ccy']) || '').trim().toUpperCase();
+    var impact = String(_pickFirst_(row, ['impact', 'importance', 'importanceText', 'importance_level']) || '').trim();
+    var actual = _parseNumber_(_pickFirst_(row, ['actual']));
+    var estimate = _parseNumber_(_pickFirst_(row, ['estimate', 'consensus', 'forecast', 'expected']));
+    var previous = _parseNumber_(_pickFirst_(row, ['previous', 'prev', 'prior']));
+    var change = _parseNumber_(_pickFirst_(row, ['change']));
+    var changePct = _parseNumber_(_pickFirst_(row, ['changePercentage', 'change_percentage']));
+
+    var key = country + '|' + norm;
+    if (!groups[key]) {
+      groups[key] = {
+        country: country,
+        indicator_name_norm: norm,
+        namesCount: Object.create(null),
+        units: Object.create(null),
+        currencies: Object.create(null),
+        impacts: Object.create(null),
+        dates: [],
+        actualCount: 0,
+        estimateCount: 0,
+        previousCount: 0,
+        changeCount: 0,
+        changePctCount: 0,
+        actualSum: 0,
+        estimateSum: 0,
+        previousSum: 0,
+        changeSum: 0,
+        changePctSum: 0
+      };
+    }
+    groups[key].dates.push(iso);
+    groups[key].namesCount[name] = (groups[key].namesCount[name] || 0) + 1;
+    if (unit) groups[key].units[unit] = (groups[key].units[unit] || 0) + 1;
+    if (currency) groups[key].currencies[currency] = (groups[key].currencies[currency] || 0) + 1;
+    if (impact) groups[key].impacts[impact] = (groups[key].impacts[impact] || 0) + 1;
+    if (actual !== null) { groups[key].actualCount++; groups[key].actualSum += actual; }
+    if (estimate !== null) { groups[key].estimateCount++; groups[key].estimateSum += estimate; }
+    if (previous !== null) { groups[key].previousCount++; groups[key].previousSum += previous; }
+    if (change !== null) { groups[key].changeCount++; groups[key].changeSum += change; }
+    if (changePct !== null) { groups[key].changePctCount++; groups[key].changePctSum += changePct; }
+  }
+
+  var rowsOut = [];
+  var nowMs = (new Date()).getTime();
+  var keys = Object.keys(groups);
+  for (var k = 0; k < keys.length; k++) {
+    var g = groups[keys[k]];
+    var dates = g.dates.slice().sort(); // ISO UTC minutes sorts lexicographically
+    if (!dates.length) continue;
+
+    // Most common raw indicator name
+    var sampleName = '';
+    var bestCount = -1;
+    var nameKeys = Object.keys(g.namesCount);
+    for (var n = 0; n < nameKeys.length; n++) {
+      var nm = nameKeys[n];
+      var c = g.namesCount[nm] || 0;
+      if (c > bestCount) { bestCount = c; sampleName = nm; }
+    }
+
+    // Unit: pick most common if present, and keep distinct examples
+    var unitBest = '';
+    var unitExamples = '';
+    var unitKeys = Object.keys(g.units);
+    if (unitKeys.length) {
+      unitKeys.sort(function(a, b){ return (g.units[b] || 0) - (g.units[a] || 0); });
+      unitBest = unitKeys[0];
+      unitExamples = unitKeys.slice(0, 5).join(' | ');
+    }
+
+    var currencyBest = '';
+    var currencyKeys = Object.keys(g.currencies);
+    if (currencyKeys.length) {
+      currencyKeys.sort(function(a, b){ return (g.currencies[b] || 0) - (g.currencies[a] || 0); });
+      currencyBest = currencyKeys[0];
+    }
+
+    var impactBest = '';
+    var impactExamples = '';
+    var impactKeys = Object.keys(g.impacts);
+    if (impactKeys.length) {
+      impactKeys.sort(function(a, b){ return (g.impacts[b] || 0) - (g.impacts[a] || 0); });
+      impactBest = impactKeys[0];
+      impactExamples = impactKeys.slice(0, 5).join(' | ');
+    }
+
+    // Cadence stats (median gap in days)
+    var gaps = [];
+    for (var d = 1; d < dates.length; d++) {
+      var prev = new Date(dates[d - 1]).getTime();
+      var cur  = new Date(dates[d]).getTime();
+      var gapDays = (cur - prev) / (24 * 60 * 60 * 1000);
+      if (isFinite(gapDays) && gapDays > 0.5 && gapDays < 800) gaps.push(gapDays);
+    }
+    var medianGap = _median_(gaps);
+    var freq = _inferFreqFromMedianDays_(medianGap);
+
+    // Last and next release relative to now
+    var lastRelease = '';
+    var nextRelease = '';
+    for (var z = dates.length - 1; z >= 0; z--) {
+      if (new Date(dates[z]).getTime() <= nowMs) { lastRelease = dates[z]; break; }
+    }
+    for (var y = 0; y < dates.length; y++) {
+      if (new Date(dates[y]).getTime() >= nowMs) { nextRelease = dates[y]; break; }
+    }
+
+    rowsOut.push([
+      updatedIso,
+      g.country,
+      g.indicator_name_norm,
+      sampleName,
+      unitBest,
+      unitExamples,
+      freq,
+      (medianGap === null ? '' : Number(medianGap.toFixed(2))),
+      dates.length,
+      lastRelease,
+      nextRelease,
+      currencyBest,
+      impactBest,
+      impactExamples,
+      g.actualCount,
+      g.estimateCount,
+      g.previousCount,
+      g.changeCount,
+      g.changePctCount,
+      g.actualCount ? Number((g.actualSum / g.actualCount).toFixed(6)) : '',
+      g.estimateCount ? Number((g.estimateSum / g.estimateCount).toFixed(6)) : '',
+      g.previousCount ? Number((g.previousSum / g.previousCount).toFixed(6)) : '',
+      g.changeCount ? Number((g.changeSum / g.changeCount).toFixed(6)) : '',
+      g.changePctCount ? Number((g.changePctSum / g.changePctCount).toFixed(6)) : '',
+      dates[0]
+    ]);
+  }
+
+  // Sort for stable output (country, indicator_name_norm)
+  rowsOut.sort(function(a, b){
+    if (a[1] !== b[1]) return String(a[1]).localeCompare(String(b[1]));
+    return String(a[2]).localeCompare(String(b[2]));
+  });
+
+  var sh = _getOrCreateSheet_('FMP_EventCatalog');
+  var headers = [
+    'catalog_updated_ts',
+    'country',
+    'indicator_name_norm',
+    'indicator_name_sample',
+    'unit',
+    'unit_examples',
+    'inferred_frequency',
+    'median_gap_days',
+    'observations_count',
+    'last_release_ts',
+    'next_release_ts',
+    'currency',
+    'impact',
+    'impact_examples',
+    'actual_observations_count',
+    'estimate_observations_count',
+    'previous_observations_count',
+    'change_observations_count',
+    'change_percentage_observations_count',
+    'avg_actual',
+    'avg_estimate',
+    'avg_previous',
+    'avg_change',
+    'avg_change_percentage',
+    'first_release_ts'
+  ];
+  _ensureHeadersExact_(sh, headers);
+
+  // Clear existing body (keep headers)
+  var lastRow = sh.getLastRow();
+  if (lastRow > 1) {
+    sh.getRange(2, 1, lastRow - 1, sh.getLastColumn()).clearContent();
+  }
+  if (rowsOut.length) {
+    sh.getRange(2, 1, rowsOut.length, headers.length).setValues(rowsOut);
+  }
+  SpreadsheetApp.flush();
+
+  // Log (prefer the repo-standard appendLog shim when available).
+  try {
+    var payload = {
+      fromUtcIso: from.toISOString(),
+      toUtcIso: to.toISOString(),
+      groups: rowsOut.length,
+      rows_fetched: rawAll.length,
+      rows_kept: rawWindow.length,
+      rows_catalog_kept: raw.length,
+      updated_ts: updatedIso
+    };
+    if (typeof appendLog === 'function') {
+      appendLog('INFO', 'FMP EventCatalog: rebuilt', payload);
+      try { if (typeof flushLogs_ === 'function') flushLogs_(); } catch (_) {}
+    } else {
+      Logger.log('[FMP EventCatalog] rebuilt ' + JSON.stringify(payload));
+    }
+  } catch (e) {}
+
+  return { sheet: 'FMP_EventCatalog', groups: rowsOut.length, rows_fetched: rawAll.length, rows_kept: rawWindow.length, rows_catalog_kept: raw.length, fromUtcIso: from.toISOString(), toUtcIso: to.toISOString() };
+}
+
+// Backward-compat wrapper (older internal callers may reference the underscore name).
+function buildFmpEventCatalog_(lookbackDays, lookaheadDays) {
+  return buildFmpEventCatalog(lookbackDays, lookaheadDays);
+}
+
+/**
+ * Write a small raw FMP economic-calendar sample for inspecting available payload fields.
+ *
+ * This is intentionally separate from Event/FMP_EventCatalog so schema exploration does
+ * not mutate operational tabs.
+ */
+function inspectFmpEconomicCalendarSample(fromUtcIso, toUtcIso, rowLimit) {
+  var from = fromUtcIso || '2025-01-01T00:00:00Z';
+  var to = toUtcIso || '2025-12-31T23:59:59Z';
+  var limit = Number(rowLimit || 25);
+  if (!isFinite(limit) || limit < 1) limit = 25;
+  if (limit > 200) limit = 200;
+
+  var fromDate = new Date(String(from));
+  var toDate = new Date(String(to));
+  var rawAll = fmpFetchRangeUtcChunked_(from, to);
+  var raw = _filterFmpRowsToUtcWindow_(rawAll, fromDate, toDate);
+  var sample = raw.slice(0, limit);
+  var keySet = {};
+  for (var i = 0; i < sample.length; i++) {
+    var row = sample[i] || {};
+    Object.keys(row).forEach(function(k){ keySet[k] = true; });
+  }
+  var keys = Object.keys(keySet).sort();
+
+  var sh = _getOrCreateSheet_('FMP_RawCalendarSample');
+  var headers = ['sample_updated_ts', 'fromUtcIso', 'toUtcIso', 'row_number', 'raw_keys', 'raw_json'];
+  _ensureHeadersExact_(sh, headers);
+
+  var lastRow = sh.getLastRow();
+  if (lastRow > 1) {
+    sh.getRange(2, 1, lastRow - 1, sh.getLastColumn()).clearContent();
+  }
+
+  var updatedIso = new Date().toISOString();
+  var rowsOut = [];
+  for (var j = 0; j < sample.length; j++) {
+    rowsOut.push([
+      updatedIso,
+      from,
+      to,
+      j + 1,
+      keys.join(', '),
+      JSON.stringify(sample[j] || {})
+    ]);
+  }
+  if (rowsOut.length) {
+    sh.getRange(2, 1, rowsOut.length, headers.length).setValues(rowsOut);
+  }
+  SpreadsheetApp.flush();
+
+  try {
+    var payload = { fromUtcIso: from, toUtcIso: to, rows_fetched: rawAll.length, rows_kept: raw.length, rows_written: rowsOut.length, raw_keys: keys };
+    if (typeof appendLog === 'function') {
+      appendLog('INFO', 'FMP RawCalendarSample: rebuilt', payload);
+      try { if (typeof flushLogs_ === 'function') flushLogs_(); } catch (_) {}
+    } else {
+      Logger.log('[FMP RawCalendarSample] rebuilt ' + JSON.stringify(payload));
+    }
+  } catch (e) {}
+
+  return { sheet: 'FMP_RawCalendarSample', rows_fetched: rawAll.length, rows_kept: raw.length, rows_written: rowsOut.length, raw_keys: keys };
+}
 
 
 /** ===== Orchestrator used by menu handlers (in Code.gs) ===== **/
@@ -596,6 +1053,3 @@ function runFmpUpcomingToEvent_(daysAhead) {
   });
   return _upsertEventsToEvent_(norm);
 }
-
-
-
