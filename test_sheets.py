@@ -37,7 +37,7 @@ def main():
 
     # 👉 PUT YOUR SHEET ID HERE
     SPREADSHEET_ID = '1_gZGnd6h3VzdiBvGBHRSxn78KW8tsOi2UEc6Y_Sc23Q'
-    RANGE = 'RawCalendar!A1'
+    RANGE = 'Config!B2'
 
     # Read value
     result = service.spreadsheets().values().get(

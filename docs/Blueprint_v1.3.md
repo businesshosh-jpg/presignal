@@ -9,9 +9,9 @@ PreSignal ver.1.3.1 is a Google Sheets + Apps Script system that:
 - Deterministically assigns identity + batching (event_id / batch_id / type) using the canonical batching rules implemented in the Apps Script codebase.
 - Generates AI predictions for events into the Predictions sheet via a multi-provider runner (manual menu actions and a configurable window runner).
 - Fetches released actual values for events and writes them back into the Event sheet (released_value / released_ts / provider metadata), using a deterministic hybrid resolver: direct FMP calendar resolution first, then selective SeriesMap fallback where needed.
-- Computes a minimal USD/JPY “market reaction” move around release timestamps and records the result to logs (the scorer is log-oriented and does not act as a full scoring database in the current code).
+- Computes a short-horizon USD/JPY “market reaction” move around release timestamps, logs the result, and writes best-effort evaluation fields back into matching Predictions rows.
 
-Operationally, this blueprint documents only what is implemented in the uploaded Apps Script code. It does not assume any extra “evaluation/correction module” beyond what the code currently executes (e.g., “market reaction” is computed and logged, but the code does not currently build a complete metrics table of MAE/band-hit/etc. as a persistent dataset).
+Operationally, this blueprint documents only what is implemented in the uploaded Apps Script code. It does not assume any extra “evaluation/correction module” beyond what the code currently executes. Market reaction now performs a lightweight join back into Predictions for best-effort evaluation fields, but it still does not build a standalone scoring warehouse or leaderboard dataset.
 
 
 ## 2) Data Model & Tabs (Blueprint ver.1.3.1)
@@ -34,6 +34,9 @@ SeriesMap_Proposals: optional human triage queue (default mode is manual triage 
 SeriesMap_Suggestions: generated review queue for possible fallback mappings; not every suggestion is expected to be promoted.
 (These tables are part of the system’s operational data model even though they are not “event” or “prediction” rows.)
 
+#### MarketReactionProviderRun
+An append-only provider-level audit row stored in the optional `MR_ProviderRuns` sheet. Each row captures one market-reaction scoring result for one event and one market-data provider. This table is for provider comparison and debugging; the canonical final MR evaluation still lands on `Predictions`.
+
 ### Sheets (Tab Names)
 
 The system is built around named sheets. Default names are defined in CFG and are treated as authoritative unless overridden in code at runtime.
@@ -47,6 +50,9 @@ log (CFG.SHEET_LOG default: "log")
 SeriesMap (CFG.SHEET_SERIESMAP default: "SeriesMap")
 SeriesMap_Proposals (CFG.SHEET_SERIESMAP_PROPOSALS default: "SeriesMap_Proposals")
 SeriesMap_Suggestions (CFG.SHEET_SERIESMAP_SUGGESTIONS default: "SeriesMap_Suggestions")
+
+#### Optional market reaction audit sheet
+MR_ProviderRuns
 
 #### Optional / legacy / compatibility
 Config (optional): If present, the runner can read key-value configuration from it (best-effort; absence is allowed).
@@ -72,7 +78,13 @@ The codebase contains an earlier “sanity check” concept for core Event heade
 #### Predictions sheet headers (enforced by prediction runner when it runs)
 
 Before writing predictions, the runner enforces the following Predictions headers by appending any missing headers to the end of row 1:
-object, run_id, prediction_id, schema_version, created_ts, event_id, batch_id, type, ai_name, ai_version, ai_model, model_version, consensus_value, prev_revision, source_cal, genre, importance, fx_pair, ai_forecast_value, qualitative_result, expected_move_dir, expected_move_pips_min, expected_move_pips_max, expected_holding_minutes, rationale_short, rationale, prompt_tokens, completion_tokens, latency_ms, raw_output, status, error_message, qualitative_only
+object, run_id, prediction_id, schema_version, created_ts, event_id, batch_id, type, ai_name, ai_version, ai_model, model_version, consensus_value, prev_revision, source_cal, genre, importance, fx_pair, ai_forecast_value, qualitative_result, expected_move_dir, expected_move_pips_min, expected_move_pips_max, expected_holding_minutes, rationale_short, rationale, prompt_tokens, completion_tokens, latency_ms, raw_output, status, error_message, qualitative_only, released_value, forecast_error_abs, forecast_error_pct, forecast_dir_ok, eval_ts, eval_interval, start_ts, end_ts, start_price, end_price, realized_pips, dir_ok, band_ok, overall_ok, eval_note, indicator_name, country, release_ts, mr_window_min, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min, mr_real_dir, mr_strength_ok, mr_real_sustain_min, mr_sustain_error_min, mr_sustain_grade, mr_sustain_ok, mr_dir_ok, mr_real_max_up_pips, mr_real_max_down_pips, mr_final_provider, mr_compare_status, mr_compare_dir_agree, mr_compare_anchor_delta_min, mr_compare_pips_delta, mr_compare_confidence, mr_compare_note
+
+#### MR_ProviderRuns audit headers
+
+When market reaction scoring runs, the system may also append provider-level results to `MR_ProviderRuns`. The audit schema is append-only and includes:
+
+score_run_ts, score_source, event_id, indicator_name, country, release_ts, provider, status, anchor_detected, anchor_phase, anchor_ts, start_ts, end_ts, start_price, end_price, realized_pips, real_dir, real_strength, realized_sustain_min, max_up_pips, max_down_pips, candle_count, provider_meta_json, compare_status, compare_confidence, error_note
 
 #### log sheet headers (best-effort, non-reordering)
 
@@ -228,7 +240,7 @@ This invokes menuUpsertNext72h_() (in Code.gs), which performs:
 - Writes a structured info log “Upsert (next 72h) finished” to log
 - Displays a toast with fetched/appended/upserts and batching assigned count
 
-Note: There is also a menuUpsertToEvent_() handler that attempts to use a Config window and calls runFmpRangeToEvent_(), but runFmpRangeToEvent_() is not present in the uploaded code, so only the “next 72h” path is reliably actionable.
+Note: There is also a menuUpsertToEvent_() handler that uses a Config window and calls runFmpRangeToEvent_(). In the current code set, that range worker is present, but the “next 72h” path remains the canonical operator entrypoint.
 
 ### 4.3 Fetch logic (FMP)
 
@@ -422,10 +434,10 @@ From Menu → PreSignal v1.3 → ② Predictions:
   - Window: 24h before now → 36h after now
   - Providers: CFG.PROVIDERS (filtered by available API keys)
 
-- Run Predictions (Config Window) → runPredictionsUsingWindow_()
-  - Uses CFG.WINDOW_MIN_BEFORE_MIN
-  - Uses CFG.WINDOW_MAX_AFTER_MIN
-  - Optional Config sheet override
+- Run Predictions (Config Window) → runPredictionsWindow()
+  - Dispatches to the dedicated prediction window path
+  - Uses `PRED_WINDOW_*` keys when present
+  - Falls back to shared `WINDOW_*` keys only if prediction-specific keys are absent
 
 - Gemini (manual) → menuRunPredictionsGemini_()
   - Same window
@@ -1523,19 +1535,20 @@ End summary:
 
 ### 9.1 Purpose and scope (what exists)
 
-Market Reaction Scoring in ver.1.3.1 is implemented in market_scoring.gs. Its purpose is to compute a USD/JPY move (in pips) around an event timestamp and log the computed move.
+Market Reaction Scoring in ver.1.3.1 is implemented in market_scoring.gs. Its purpose is to compute a short-horizon USD/JPY move (in pips) around an event timestamp, log the computed move, and write best-effort evaluation fields back into matching Predictions rows.
 
 What it does:
 
 - Reads timestamps from the Event sheet (or common fallbacks, depending on the entrypoint)
 - For each eligible timestamp, calls _computeUsdJpyMove_() to compute the move
+- Applies best-effort evaluation updates to Predictions rows matched by `event_id`
 - Emits the result via a logger hook (if present), and appends a summary log row at the end of the run
 
 What it does not do in code:
 
-- It does not read or join to the Predictions sheet
-- It does not compute “accuracy vs prediction”
-- It does not write back to Event or Predictions (no persistent score columns)
+- It does not build a standalone reaction database or leaderboard
+- It does not persist raw candle arrays to sheets
+- It does not write back to Event rows
 - It does not support arbitrary FX pairs (USD/JPY only in this module)
 
 ### 9.2 Critical dependencies (must exist elsewhere for scoring to work)
@@ -1578,7 +1591,7 @@ If missing: returns { status: 'no_base' }
 
 Find horizon candle (t0 + horizon):
 
-- horizonMs = t0 + (horizonMin||30)*60*1000
+- horizonMs = t0 + (horizonMin||15)*60*1000
 - h = _nearestAtOrBefore_(out.candles, horizonMs) || lastCandle
 
 Compute move:
@@ -1607,11 +1620,20 @@ Return object includes at minimum:
 
 - status: 'ok'
 - provider: out.provider
+- t0_ts, tH_ts
 - t0_price, tH_price
 - horizon_min
 - pips
 - dir
+- max_up_pips
+- max_down_pips
+- realized_sustain_min
 - plus any supplied meta fields
+
+Important retrieval detail:
+
+- The scorer makes one candle-window request per event and then evaluates the returned 1-minute candle array in memory.
+- It does not perform one provider request per minute.
 
 ### 9.4 Entry points exposed on the menu
 
@@ -1641,12 +1663,9 @@ Eligibility rules (strict):
 
 For each eligible row it calls:
 
-- _computeUsdJpyMove_(ts, 30, 120, 30, { event_id, row_index, source:'past24h' })
+- _computeUsdJpyMove_(ts, 30, 120, _getMarketReactionHorizonMin_(cfg), { event_id, row_index, source:'past24h' })
 
-Important implementation detail (bug/behavior):
-
-- count is initialized but never incremented, so the final summary log writes:
-  - checked_events: 0 even if it scored events.
+It also attempts to apply evaluation results to matching Predictions rows via `_applyEvaluationToPredictions_()`.
 
 At end it attempts:
 
@@ -1657,22 +1676,25 @@ At end it attempts:
 This worker:
 
 - Requires a Config sheet (throws if missing)
-- Requires WINDOW_ENABLED == 'TRUE' (string compare uppercased)
+- Requires MR_WINDOW_ENABLED == 'TRUE' (string compare uppercased)
   - otherwise logs skipped and returns
 
 Parses:
 
-- WINDOW_TZ (defaults to 'UTC')
-- WINDOW_FROM_LOCAL
-- WINDOW_TO_LOCAL
+- MR_WINDOW_TZ
+- MR_WINDOW_FROM_LOCAL
+- MR_WINDOW_TO_LOCAL
+- MR_ANCHOR_MIN_ABS_MOVE_PIPS (optional; defaults to 3 pips for anchor-detection thresholding)
+- MR_ANCHOR_LOOKBACK_MIN (optional; defaults to 1 minute)
+- MR_ANCHOR_LOOKAHEAD_MIN (optional; defaults to 5 minutes)
 
 It converts them to UTC Dates with _parseLocalToUtc_():
 
-- accepts Date cells, ISO strings, or strict YYYY-MM-DD HH:mm interpreted in WINDOW_TZ
+- accepts Date cells, ISO strings, or strict YYYY-MM-DD HH:mm interpreted in MR_WINDOW_TZ
 
 If parse fails:
 
-- logs parse_error and returns
+- logs parse_error and throws
 
 Event sheet resolution:
 
@@ -1692,7 +1714,28 @@ Window filter:
 
 Scoring call:
 
-- _computeUsdJpyMove_(ts, 30, 120, 30, { event_id, row_index, source:'config_window' })
+- _computeUsdJpyMove_(ts, 30, 120, _getMarketReactionHorizonMin_(cfg), { event_id, row_index, source:'config_window' })
+
+Anchor-detection behavior inside `_computeUsdJpyMove_()`:
+
+- compute baseline from the nearest candle close at or before `release_ts`
+- search for a meaningful reaction candle inside:
+  - `release_ts - MR_ANCHOR_LOOKBACK_MIN`
+  - `release_ts + MR_ANCHOR_LOOKAHEAD_MIN`
+- use `MR_ANCHOR_MIN_ABS_MOVE_PIPS` as the minimum absolute move threshold
+- prefer the first post-release threshold-crossing candle
+- fall back to a pre-release candidate only when no post-release candidate exists
+- if no candidate exists, return a `flat` reaction with `pips = 0`
+- classify realized direction as `flat` when `abs(pips) < MR_FLAT_MAX_ABS_PIPS` while preserving the raw measured pip value
+- use the same flat threshold when comparing provider directions
+- when `MR_SKIP_ALREADY_SCORED = TRUE`, skip Config-window events that already have market-reaction results in matching Predictions rows before fetching candles
+
+For each successful reaction object, the scorer writes best-effort evaluation fields into matching Predictions rows, including:
+
+- legacy evaluation fields such as `realized_pips`, `dir_ok`, `band_ok`, `overall_ok`
+- market-reaction prediction fields such as `mr_real_dir`, `mr_strength_ok`, `mr_real_sustain_min`, `mr_sustain_error_min`, `mr_sustain_grade`, `mr_sustain_ok`, `mr_real_max_up_pips`, `mr_real_max_down_pips`
+
+Realized and default predicted strength are classified from absolute net pips as weak < 5, medium < 15, and strong >= 15.
 
 Safety cap:
 
@@ -1702,7 +1745,39 @@ End-of-run log:
 
 - appendLog(... 'ScoreMarketReaction(config)', { window_from_utc, window_to_utc, total_rows, parsed_ts_rows, rows_in_window, checked_events })
 
-### 9.7 Debug tool: debugEventTimestampSample_()
+### 9.7 Sustain evaluation model
+
+`realized_sustain_min` is computed from the fetched 1-minute candles after the event start.
+
+Effective behavior:
+
+- Determine the dominant initial direction from the larger absolute value of `max_up_pips` vs `max_down_pips` inside the configured reaction horizon
+- Scan forward on 1-minute candle closes up to `max(horizon, 60)` minutes
+- Treat sustain as directionally valid while the close remains at least 1 pip on the correct side of the start price
+- Allow up to 2 consecutive violating closes before sustain ends
+- Return the last valid minute as `realized_sustain_min`
+
+This is a directional-validity measure, not a requirement to retain a fixed share of the initial spike.
+
+Here, “event start” means the detected anchor when one exists; otherwise the scorer records a flat/no-reaction outcome and sustain remains `0`.
+
+### 9.8 Debug tools
+
+`debugMarketReactionCandlesForEvent_(eventId)`:
+
+- resolves the Event row by `event_id`
+- fetches the same candle window used by normal scoring
+- returns and logs:
+  - `start_point`
+  - `end_point`
+  - `horizon_min`
+  - `pips`
+  - `dir`
+  - provider metadata
+
+It is intended for event-specific candle verification without writing the full candle array to the sheet.
+
+`debugEventTimestampSample_()`:
 
 This function exists to inspect how timestamps are parsed across different column layouts and timezones. It does not score; it is a diagnostics helper to validate that event timestamps can be interpreted as UTC Dates.
 
@@ -1894,7 +1969,10 @@ This menu is the primary control plane for manual operations (ingestion, predict
 This submenu contains both event ingestion and SeriesMap workflow actions:
 
 - Fetch & Upsert (next 72h) → menuUpsertNext72h_()  
-  Calls the ingestion wrapper _menuRunWrapper_(3) internally (FMP upsert + batching + log/toast)
+  Calls runFmpUpcomingToEvent_(3), then applyBatchingForKeys_(), then logs/toasts completion
+
+- Fetch & Upsert (Config Window) → menuUpsertToEvent_()  
+  Uses resolveWindow_('upsert_event') when enabled and falls back to upcoming 7d otherwise
 
 - Build FRED Series Catalog → menuBuildFredSeriesCatalog_()
 
@@ -1917,7 +1995,7 @@ This submenu contains both event ingestion and SeriesMap workflow actions:
 #### ② Predictions
 
 - Run Predictions (All Providers) → runPredictionsAll_()  
-- Run Predictions (Config Window) → runPredictionsWindow (wired, but missing in code — see 11.6)  
+- Run Predictions (Config Window) → runPredictionsWindow()  
 - Gemini (manual) → menuRunPredictionsGemini_()  
 - OpenAI (manual) → menuRunPredictionsOpenAI_()  
 - Claude (manual) → menuRunPredictionsClaude_()  
@@ -1995,7 +2073,7 @@ Function presence (symbol exists as function):
 
 - menuUpsertToEvent_  
 - menuPredAll_ (currently missing in uploaded code)  
-- runPredictionsWindow (currently missing in uploaded code)  
+- runPredictionsWindow  
 - menuActualsStartHourly_  
 - menuActualsManualFetch_  
 - scoreMarketReactionPast24h_  
@@ -2021,14 +2099,14 @@ Menu actions generally assume required tabs exist. Where wrappers explicitly gua
 
 ### 11.6 Known wiring gaps (present in code as of ver.1.3.1)
 
-These are not documentation issues—they are literal code wiring issues:
+These are not documentation issues—they are literal code-state issues:
 
-- The menu item “Run Predictions (Config Window)” points to runPredictionsWindow, but no such function exists in the uploaded .gs files.  
-- Health check also expects runPredictionsWindow and menuPredAll_, but menuPredAll_ is also missing in the uploaded .gs files.  
+- The menu item “Run Predictions (Config Window)” points to runPredictionsWindow(), which exists in the current code.  
+- Health check also expects `menuPredAll_`, which is still missing in the uploaded .gs files.  
 
 These mismatches mean:
 
-The Predictions “Config Window” menu item will fail at runtime unless runPredictionsWindow is added or menu wiring is updated to the existing function.
+The Predictions “Config Window” menu item is callable, but health check can still report “NOT OK” until `menuPredAll_` is implemented or removed from the checklist.
 
 
 
@@ -2048,6 +2126,17 @@ This means Code.gs CFG is primary, and prediction-runner defaults fill any missi
 #### Spreadsheet tab: Config (key/value overrides) — Prediction Runner only
 prediction_runner.gs reads Config!A:B and overrides selected keys (providers, window override, etc.).  
 Other modules in this codebase do not use this Config sheet override path.
+
+Supported prediction-specific keys include:
+
+- PREDICTION_MODE = LIVE | BACKTEST
+- BACKTRACK is accepted as an alias for BACKTEST
+- In LIVE mode, rows with existing actuals markers on Event are skipped
+- In BACKTEST mode, those rows remain eligible for selection
+- PREDICTION_TEMPERATURE = numeric sampling control
+- PREDICTION_SEED = integer seed for provider requests
+- PRED_WINDOW_ENABLED / PRED_WINDOW_FROM_LOCAL / PRED_WINDOW_TO_LOCAL / PRED_WINDOW_TZ for prediction-only windowing
+- Legacy shared `WINDOW_*` values are used only as fallback by the prediction runner
 
 #### Apps Script Properties (API keys) — multiple modules
 FMP: Script Properties FMP_API_KEY (fallback if CFG.FMP_API_KEY is empty)  
@@ -2341,7 +2430,7 @@ ensures a synthetic "batch" row exists in Predictions with ai_name='BatchSynth'
 
 Important wiring note (code-authoritative):
 
-The menu item “Run Predictions (Config Window)” is wired to runPredictionsWindow, which is missing in the uploaded code. Only the “All Providers” and manual provider runs are reliably callable via menu as-is.
+The menu item “Run Predictions (Config Window)” is wired to runPredictionsWindow(), which exists in the current code. Health-check output can still be partially stale because `menuPredAll_` remains absent.
 
 Outputs:
 
@@ -2987,7 +3076,7 @@ Default rolling window:
 start = now - CFG.WINDOW_MIN_BEFORE_MIN  
 end = now + CFG.WINDOW_MAX_AFTER_MIN  
 
-Optional override via Config sheet (WINDOW_ENABLED, WINDOW_FROM_LOCAL, WINDOW_TO_LOCAL, WINDOW_TZ).
+Optional override via Config sheet (`PRED_WINDOW_ENABLED`, `PRED_WINDOW_FROM_LOCAL`, `PRED_WINDOW_TO_LOCAL`, `PRED_WINDOW_TZ`), with legacy fallback to shared `WINDOW_*` keys if the dedicated prediction keys are absent.
 
 Actuals harvester windowing (actuals_fetcher.gs)
 
@@ -2998,7 +3087,7 @@ Manual fetch may attempt to use resolveWindow_('actuals_manual') if present, but
 
 Market reaction (Config Window) (market_scoring.gs)
 
-Requires Config sheet window keys and WINDOW_ENABLED == TRUE  
+Requires Config sheet window keys and MR_WINDOW_ENABLED == TRUE  
 Parses local window into UTC Dates and filters events by fromUtc <= ts <= toUtc.
 
 Event ingestion (next 72h) does not use resolveWindow_(); it uses a fixed “days ahead” parameter.
@@ -3009,7 +3098,7 @@ Event ingestion (next 72h) does not use resolveWindow_(); it uses a fixed “day
 
 Config-window parsing behavior is used by:
 
-Prediction Runner (when WINDOW_ENABLED)  
+Prediction Runner (when PRED_WINDOW_ENABLED, with fallback to WINDOW_*)  
 Market reaction scorer (Config window)  
 
 Parsing accepts:
@@ -3020,7 +3109,7 @@ strict string format: YYYY-MM-DD HH:mm
 
 Timezone handling:
 
-WINDOW_TZ is treated as the interpretation timezone for the local strings.  
+PRED_WINDOW_TZ / MR_WINDOW_TZ are treated as the interpretation timezone for the local strings for their respective modules.  
 
 If missing, callers default to either:  
 script timezone, or  
@@ -3034,7 +3123,7 @@ fromUtcIso and toUtcIso used by some modules for comparisons/logging
 If parsing fails:
 
 callers do not throw in all cases:  
-market scoring logs parse_error and returns  
+market scoring logs parse_error and throws  
 prediction runner falls back to the default rolling window  
 
 ---
@@ -3128,32 +3217,24 @@ log_ (not defined in uploaded set)
 
 ### 17.2 Menu wiring that references non-existent functions (broken handlers)
 
-#### 17.2.1 Predictions “Config Window” is wired but missing
+#### 17.2.1 Predictions “Config Window” is now wired
 
 onOpen() wires a menu item to:
 
 runPredictionsWindow
 
-But runPredictionsWindow does not exist in the uploaded code.  
-The implemented function is runPredictionsUsingWindow_(), but it is not wired.
-
-Effect:
-
-Clicking “Run Predictions (Config Window)” will fail unless you patch either:
-
-the menu wiring, or  
-add an alias function runPredictionsWindow() that calls runPredictionsUsingWindow_().
+This function exists in the current code and dispatches to the windowed predictions path.
 
 #### 17.2.2 Health check expects functions that are missing
 
 menuMaintenanceHealthCheck_() checks for these:
 
-runPredictionsWindow (missing)  
-menuPredAll_ (missing in uploaded set)
+runPredictionsWindow  
+menuPredAll_ (still missing in the current uploaded set)
 
 Effect:
 
-Health check will report “NOT OK” even if core ingestion/predictions/actuals can run via other menu items.
+Health check may still report “NOT OK” because `menuPredAll_` remains missing, even though the Config Window prediction handler itself now exists.
 
 ---
 
@@ -3310,7 +3391,7 @@ In SeriesMap_Suggestions, review suggested rows and promote only the fallback ma
 
 Run predictions  
 Menu → ② Predictions → Run Predictions (All Providers)  
-(Avoid “Config Window” until wiring is fixed.)  
+Use “Run Predictions (Config Window)” when you intentionally want the prediction-only Config window path.  
 
 Fetch actuals  
 Menu → ③ Actuals → Fetch Actuals (Manual)  
@@ -3857,7 +3938,7 @@ The following sections were rewritten after direct code verification and must be
 
 #### Section 9) Market Reaction Scoring → superseded by Section 9 (REWRITTEN, code-authoritative)
 
-Reason: code uses _computeUsdJpyMove_() + requires external getFxCandlesForWindow_(); it is not Predictions-joined and uses 30/120/30 defaults.
+Reason: code uses _computeUsdJpyMove_() + requires external getFxCandlesForWindow_(); it now writes best-effort evaluation fields into Predictions and uses a configurable short reaction horizon.
 
 #### Section 11) Menus, Triggers, and Control Plane → superseded by Section 11 (REWRITTEN, code-authoritative)
 
@@ -3874,7 +3955,7 @@ Some functionality is present in code but cannot run end-to-end without addition
 Market Reaction requires getFxCandlesForWindow_() (not included in uploaded code set).  
 Without it, market scoring will throw at runtime.
 
-Predictions “Config Window” menu entry is wired to runPredictionsWindow which does not exist in the uploaded set.
+Predictions health check still references `menuPredAll_`, which does not exist in the uploaded set.
 
 These are “code-state facts” of ver.1.3.1 and not documentation issues.
 

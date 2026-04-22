@@ -424,22 +424,34 @@ function promoteSelectedSeriesMapSuggestions_() {
   if (!sug) throw new Error('SeriesMap_Suggestions sheet not found');
   if (!map) throw new Error('SeriesMap sheet not found');
 
-  // Must run while user has a selection
-  var range = ss.getActiveRange();
-  if (!range) return { promoted: 0, skipped: 0, reason: 'no_active_range' };
-  if (range.getSheet().getName() !== 'SeriesMap_Suggestions') {
-    return { promoted: 0, skipped: 0, reason: 'active_range_not_on_suggestions' };
+  // Must run while user has a selection. Support non-contiguous multi-select.
+  var rangeList = ss.getActiveRangeList();
+  var ranges = rangeList ? rangeList.getRanges() : null;
+  if (!ranges || !ranges.length) {
+    var fallbackRange = ss.getActiveRange();
+    if (fallbackRange) ranges = [fallbackRange];
   }
+  if (!ranges || !ranges.length) return { promoted: 0, skipped: 0, reason: 'no_active_range' };
 
-  var r0 = range.getRow();
-  var nRows = range.getNumRows();
+  var selectedRows = [];
+  var seenRows = {};
+  for (var rg = 0; rg < ranges.length; rg++) {
+    var range = ranges[rg];
+    if (!range || range.getSheet().getName() !== 'SeriesMap_Suggestions') {
+      return { promoted: 0, skipped: 0, reason: 'active_range_not_on_suggestions' };
+    }
 
-  // Do not allow header-only selection
-  if (r0 === 1) {
-    if (nRows <= 1) return { promoted: 0, skipped: 0, reason: 'header_selected' };
-    r0 = 2;
-    nRows = nRows - 1;
+    var rowStart = range.getRow();
+    var rowEnd = rowStart + range.getNumRows() - 1;
+    for (var rowNum = rowStart; rowNum <= rowEnd; rowNum++) {
+      if (rowNum < 2) continue; // skip header row
+      if (seenRows[rowNum]) continue;
+      seenRows[rowNum] = true;
+      selectedRows.push(rowNum);
+    }
   }
+  selectedRows.sort(function(a, b) { return a - b; });
+  if (!selectedRows.length) return { promoted: 0, skipped: 0, reason: 'header_selected' };
 
   // Read suggestion headers (expects your 12-col schema but handles extra cols)
   var sugHeaders = sug.getRange(1, 1, 1, sug.getLastColumn()).getValues()[0]
@@ -514,15 +526,13 @@ function promoteSelectedSeriesMapSuggestions_() {
     }
   }
 
-  // Pull selected suggestion rows (read full row width)
-  var values = sug.getRange(r0, 1, nRows, sug.getLastColumn()).getValues();
-
   var toAppend = [];
   var promoted = 0;
   var skipped = 0;
 
-  for (var r = 0; r < values.length; r++) {
-    var row = values[r];
+  for (var r = 0; r < selectedRows.length; r++) {
+    var sheetRow = selectedRows[r];
+    var row = sug.getRange(sheetRow, 1, 1, sug.getLastColumn()).getValues()[0];
 
     var country = String(row[cCountry - 1] || '').trim().toUpperCase();
     var pattern = String(row[cPattern - 1] || '').trim();

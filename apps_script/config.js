@@ -75,7 +75,6 @@ function _toIsoMinuteZ_(d) {
  * Accepts:
  *  - Date object (from a Sheets datetime cell)
  *  - "YYYY-MM-DD HH:mm"
- *  - Any JS-parsable date string (e.g., "Tue Jul 01 2025 09:00:00 GMT+0900 …")
  * Returns ISO minute (UTC), e.g., "2025-07-01T00:00Z".
  */
 function _parseLocalToUtcIsoMinute_(localInput, tz) {
@@ -107,16 +106,7 @@ function _parseLocalToUtcIsoMinute_(localInput, tz) {
     return _toIsoMinuteZ_(new Date(trueUtcMs));
   }
 
-  // 3) Otherwise, try generic JS parsing, then normalize through the TZ
-  var d = new Date(s);
-  if (isFinite(d.getTime())) {
-    // Interpret this instant in the provided tz and reformat to the canonical local pattern,
-    // then parse again via branch (2) to ensure DST-safe conversion.
-    var localStr2 = Utilities.formatDate(d, tz, 'yyyy-MM-dd HH:mm');
-    return _parseLocalToUtcIsoMinute_(localStr2, tz);
-  }
-
-  throw new Error('Invalid local datetime format (expected YYYY-MM-DD HH:mm or Date): ' + s);
+  throw new Error('Invalid local datetime format (expected YYYY-MM-DD HH:mm or Date cell): ' + s);
 }
 
 

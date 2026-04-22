@@ -18,7 +18,7 @@ Ingests upcoming macroeconomic events from the FMP economic calendar and upserts
 Assigns deterministic identity and batching (event_id, batch_id, type) via a post-pass implemented in code.  
 Generates AI predictions into the Predictions sheet using enabled providers (Gemini/OpenAI/Anthropic), enforcing strict JSON contracts.  
 Fetches released actuals using a deterministic hybrid resolver: direct FMP calendar resolution first, then selective SeriesMap fallback for indicators where direct FMP actuals are weak or unavailable.  
-Computes a USD/JPY market reaction move around event timestamps and logs the result (no persistent scoring table in current code).  
+Computes a USD/JPY market reaction move around event timestamps and writes best-effort evaluation fields back into the Predictions sheet, while also logging the result.  
 
 ### Explicit non-scope (not implemented).
 
@@ -55,6 +55,7 @@ An append-only operational log row with structured JSON context. Logging is best
 **SeriesMap:** Selective fallback mapping used by actuals fetching only when direct FMP resolution does not deterministically resolve an actual.  
 **SeriesMap_Suggestions:** Human review queue for possible fallback mappings; not every indicator is expected to be promoted.  
 **SeriesMap_Proposals:** Optional proposal workflow table (used by menu tools).
+**MR_ProviderRuns:** Optional provider-level market reaction audit table. This stores per-provider scoring outputs for comparison and debugging. Final evaluation fields remain on Predictions.
 
 ---
 
@@ -73,6 +74,10 @@ log
 SeriesMap  
 SeriesMap_Suggestions  
 SeriesMap_Proposals  
+
+**Optional market reaction audit**
+
+MR_ProviderRuns
 
 **Legacy compatibility (read-only fallbacks in limited modules)**
 
@@ -132,7 +137,15 @@ expected_move_dir, expected_move_pips_min, expected_move_pips_max,
 expected_holding_minutes,  
 rationale_short, rationale,  
 prompt_tokens, completion_tokens, latency_ms,  
-raw_output, status, error_message, qualitative_only  
+raw_output, status, error_message, qualitative_only,  
+released_value, forecast_error_abs, forecast_error_pct, forecast_dir_ok,  
+eval_ts, eval_interval, start_ts, end_ts, start_price, end_price,  
+realized_pips, dir_ok, band_ok, overall_ok, eval_note,  
+indicator_name, country, release_ts,  
+mr_window_min, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min,  
+mr_real_dir, mr_strength_ok, mr_real_sustain_min, mr_sustain_error_min, mr_sustain_grade, mr_sustain_ok,  
+mr_dir_ok, mr_real_max_up_pips, mr_real_max_down_pips,  
+mr_final_provider, mr_compare_status, mr_compare_dir_agree, mr_compare_anchor_delta_min, mr_compare_pips_delta, mr_compare_confidence, mr_compare_note  
 
 **Upsert identity**
 
@@ -150,6 +163,23 @@ Logging is append-only, best-effort, and never blocks execution.
 
 ---
 
+### 2.6A MR_ProviderRuns audit tab
+
+When market reaction scoring runs, the system may append provider-level audit rows into `MR_ProviderRuns`.
+
+This tab is append-only and is intended for provider comparison, traceability, and debugging. It is not the canonical final evaluation store; final event-level evaluation remains on `Predictions`.
+
+Representative fields include:
+
+score_run_ts, score_source, event_id, indicator_name, country, release_ts,  
+provider, status, anchor_detected, anchor_phase, anchor_ts,  
+start_ts, end_ts, start_price, end_price,  
+realized_pips, real_dir, real_strength, realized_sustain_min,  
+max_up_pips, max_down_pips, candle_count, provider_meta_json,  
+compare_status, compare_confidence, error_note
+
+---
+
 ### 2.7 Required field presence by module (read requirements)
 
 Batching post-pass requires: country, indicator_name, release_ts, event_id, batch_id, type headers to exist (throws if missing).  
@@ -159,6 +189,7 @@ Prediction runner requires per-row event_id and type to be non-empty; release_ts
 Actuals fetcher requires event_id, country, indicator_name, release_ts; reads/writes lifecycle fields.  
 
 Market reaction (past 24h) requires timestamp cells to be Date objects (strings are ignored in that path).  
+Market reaction (Config Window) accepts Date cells or parseable strings and writes best-effort evaluation fields into matching Predictions rows by event_id.  
 
 Code-authoritative note.  
 These requirements reflect explicit checks and parsing behavior in the uploaded .gs files; they are not inferred guarantees.
@@ -316,7 +347,7 @@ Handler behavior (effective path):
 - Writes an info log and shows a toast summary (best-effort)  
 
 Known limitation (wiring / missing function)  
-There is another handler path intended to use a configurable window (menuUpsertToEvent_() calling runFmpRangeToEvent_()), but runFmpRangeToEvent_() is not present in the uploaded code set. Therefore, only the “next 72h” path is reliably actionable as-is.
+There is another handler path for a configurable window (menuUpsertToEvent_() calling runFmpRangeToEvent_()). In the current code set, that range worker is present, but the canonical operator path remains the explicit “next 72h” entrypoint.
 
 ---
 
@@ -493,8 +524,7 @@ Menu → PreSignal v1.3 → ② Predictions
 - Providers: CFG.PROVIDERS filtered to only those with API keys present
 
 **Run Predictions (Config Window)**  
-Menu references runPredictionsWindow, which does not exist in uploaded code.  
-The implemented function is runPredictionsUsingWindow_() but is not wired.
+Menu calls runPredictionsWindow(), which dispatches to the configured window path.
 
 **Gemini (manual) → menuRunPredictionsGemini_()**
 
@@ -532,11 +562,22 @@ windowMaxAfterMin = 36 × 60
 
 If a sheet named Config exists and:
 
-- WINDOW_ENABLED is truthy
-- WINDOW_FROM_LOCAL and WINDOW_TO_LOCAL are valid
-- WINDOW_TZ is set (or defaults to script timezone)
+- PRED_WINDOW_ENABLED is truthy
+- PRED_WINDOW_FROM_LOCAL and PRED_WINDOW_TO_LOCAL are valid
+- PRED_WINDOW_TZ is set (or defaults to script timezone)
 
 Then the runner replaces the rolling window with the Config-derived UTC window.
+
+Prediction mode can also be set from Config:
+
+- PREDICTION_MODE = LIVE → skip Event rows that already have actuals markers
+- PREDICTION_MODE = BACKTEST → allow Event rows even if actuals are already present
+- BACKTRACK is accepted as an alias for BACKTEST
+- PREDICTION_TEMPERATURE = numeric sampling control (use `0` for most stable behavior)
+- PREDICTION_SEED = integer seed used for provider requests
+- Prediction window keys should use `PRED_WINDOW_ENABLED`, `PRED_WINDOW_FROM_LOCAL`, `PRED_WINDOW_TO_LOCAL`, `PRED_WINDOW_TZ`
+- Legacy shared `WINDOW_*` keys remain as fallback for prediction runs if `PRED_WINDOW_*` is not present
+- Market-reaction horizon used by the prediction prompt is read from `MR_HORIZON_MIN` and clamped to 1..15 minutes
 
 If parsing fails:  
 The runner falls back to the rolling window without failing.
@@ -840,8 +881,20 @@ qualitative_result:
 expected_move_dir:
 
 - parsed if valid
+- else derived from `mr_pred_dir`
 - else derived from qualitative_result
 - else flat
+
+Market-reaction prediction fields:
+
+- `mr_window_min` must match the configured market-reaction horizon
+- `mr_pred_dir` defaults to `expected_move_dir` when omitted
+- `mr_pred_net_pips` defaults to the midpoint of the importance band when omitted
+- `mr_pred_strength` defaults from `mr_pred_net_pips`:
+  - weak < 5
+  - medium < 15
+  - strong >= 15
+- `mr_pred_sustain_min` defaults to `expected_holding_minutes`, else 15
 
 Pips band defaults by importance:
 
@@ -1740,11 +1793,14 @@ A change of even one minute in release_ts will generate a different event_id/bat
 
 ### 9.1 Purpose and scope (what is and is not implemented)
 
-The Market Reaction module measures post-event USD/JPY price movement around an event’s release time and records the result only via logs. There is no persistent scoring table in ver.1.3.1, and no automatic feedback loop into Predictions or Event rows.
+The Market Reaction module measures short-horizon post-event USD/JPY price movement around an event’s release time, logs the computed move, and writes best-effort evaluation fields back into matching Predictions rows. There is still no standalone reaction database or leaderboard table in ver.1.3.1.
 
 In scope  
 Fetching short-horizon FX candles around release_ts  
 Computing direction and magnitude (pips)  
+Computing max up/down excursion inside the reaction horizon  
+Computing realized sustain duration from 1-minute candles  
+Writing evaluation results into the Predictions sheet by matching `event_id`  
 Emitting a structured log entry per evaluated event  
 
 Out of scope (not implemented)  
@@ -1760,8 +1816,9 @@ Code-authoritative note. Any scoring metrics mentioned in legacy rule1.3 are i
 
 Implemented menu entrypoints in market_scoring.gs:
 
-④ Market Reaction → Run (past 24h) → runMarketReactionPast24h_()  
-④ Market Reaction → Run (manual window) → runMarketReactionManual_()  
+④ Market Reaction → Score Market Reaction (past 24h) → scoreMarketReactionPast24h_()  
+④ Market Reaction → Score Market Reaction (Config Window) → scoreMarketReactionByConfigWindow_()  
+④ Market Reaction → Debug Timestamp Sample → debugEventTimestampSample_()  
 
 There is no installable trigger for market reaction in the uploaded code.
 
@@ -1771,31 +1828,39 @@ There is no installable trigger for market reaction in the uploaded code.
 
 An Event row is eligible for market reaction evaluation only if all conditions hold:
 
-release_ts cell is a Date object (not a string).  
-release_ts is within the evaluated window (past 24h or manual window).  
-country == "US" (hard-coded in current implementation).  
-fx_pair resolves to USDJPY (explicit or default).  
-type is "single" or "member" (synthetic batch rows are not evaluated).  
+release_ts / released_ts resolves to a valid UTC timestamp.  
+release_ts is within the evaluated window (past 24h or Config window).  
+The scorer can locate a matching Event row timestamp and a working USD/JPY candle provider.  
 
-Rows failing any condition are silently skipped (no error thrown).
+Important distinction:
 
-Code-authoritative note. The Date-object requirement is a concrete gate in runMarketReactionPast24h_() and is not relaxed.
+- `scoreMarketReactionPast24h_()` requires the sheet timestamp cell itself to be a `Date` object.
+- `scoreMarketReactionByConfigWindow_()` accepts `Date` cells or parseable strings.
+
+Rows failing eligibility are skipped or logged with a best-effort failure status, depending on where the failure occurs.
 
 ---
 
-### 9.4 Candle data sources and priority
+### 9.4 Candle data sources and retrieval model
 
-The module attempts to fetch FX candles in this order:
+The scorer calls the project-level candle provider through:
 
-Alpha Vantage (primary)  
-Twelve Data (fallback)  
+- `getFxCandlesForWindow_('USD/JPY', releaseTsUtc, preMin, postMin)`
 
-If both fail or return insufficient data → the event is logged with a no_candles outcome.
+The default candle-fetch layer currently attempts the supported USD/JPY providers in this order:
 
-External dependency limitation  
-API keys must be present in Script Properties.  
-Provider rate limits and outages are not retried beyond basic error handling.  
-Candle availability is not guaranteed around illiquid times.
+- `tiingo`
+- `twelvedata`
+- `massive`
+
+The primary scorer consumes whichever provider the external candle-fetch layer returns. Comparison scoring may call provider-specific fetches through `getFxCandlesForWindowByProvider_()` when `MR_COMPARE_PROVIDER` and/or `MR_COMPARE_PROVIDER_2` are configured.
+
+For one evaluated event, the scorer requests one candle window, not one request per minute:
+
+- `preMin = 30`
+- `postMin = 120`
+
+The returned 1-minute candles are processed in memory during the run. The raw candle array is not written to the sheet during normal scoring.
 
 ---
 
@@ -1803,67 +1868,136 @@ Candle availability is not guaranteed around illiquid times.
 
 For each eligible event:
 
-t₀ (anchor) = release_ts  
+t₀ starts from `release_ts`, but the scorer now attempts anchor detection inside a configurable local reaction window. If a meaningful move is detected, the measured reaction window begins from the detected anchor candle; otherwise the event is classified as `flat` / `no_reaction_detected`.  
 
-Candles are fetched for a fixed short horizon around t₀ (implementation-defined in code; not user-configurable via UI in v1.3.1).
+Candles are fetched around t₀ using a fixed fetch window of 30 minutes before and 120 minutes after the event.
 
-The module derives:
+The reaction horizon itself is configurable through `MR_HORIZON_MIN`, clamped to 1..15 minutes.
 
-An initial move shortly after t₀  
-A sustained move further out in the window  
+The minimum absolute move threshold reserved for anchor-detection logic is configurable through `MR_ANCHOR_MIN_ABS_MOVE_PIPS`, defaulting to `3` pips and clamped to `0.5..20`.
 
-Exact candle counts and offsets are code-defined constants and should be treated as implementation details.
+The minimum non-flat direction threshold is configurable through `MR_FLAT_MAX_ABS_PIPS`, defaulting to `1` pip and clamped to `0..10`. Realized pip values are preserved, but moves below this threshold are classified as `flat` for direction, prediction grading, and provider direction comparison.
+
+Repeated Config-window scoring can optionally skip events that already have market-reaction results in `Predictions` by setting `MR_SKIP_ALREADY_SCORED = TRUE`. This avoids spending candle-provider API calls on already-scored event_ids unless the operator disables the skip flag for a forced rescore.
+
+The anchor-detection search span is configurable through:
+
+- `MR_ANCHOR_LOOKBACK_MIN` (default `1`)
+- `MR_ANCHOR_LOOKAHEAD_MIN` (default `5`)
+
+Both are clamped to `0..15` minutes.
+
+Anchor-detection behavior:
+
+- baseline price = nearest candle close at or before `release_ts`
+- detection window = `release_ts - MR_ANCHOR_LOOKBACK_MIN` through `release_ts + MR_ANCHOR_LOOKAHEAD_MIN`
+- detection threshold = `MR_ANCHOR_MIN_ABS_MOVE_PIPS`
+- the scorer selects the first meaningful candle that crosses the threshold, preferring post-release candles over pre-release candles
+- if no candle crosses the threshold, the event is treated as `flat` / `no_reaction_detected`
+
+Config-window scoring uses a dedicated Market Reaction window:
+
+- `MR_WINDOW_ENABLED`
+- `MR_WINDOW_FROM_LOCAL`
+- `MR_WINDOW_TO_LOCAL`
+- `MR_WINDOW_TZ`
+- `MR_COMPARE_PROVIDER`
+- `MR_COMPARE_PROVIDER_2`
+- `MR_ANCHOR_MIN_ABS_MOVE_PIPS`
+- `MR_ANCHOR_LOOKBACK_MIN`
+- `MR_ANCHOR_LOOKAHEAD_MIN`
+- `MR_FLAT_MAX_ABS_PIPS`
+- `MR_SKIP_ALREADY_SCORED`
+
+These keys must use the strict local format `YYYY-MM-DD HH:mm` when entered as strings.
 
 ---
 
 ### 9.6 Price normalization and pips calculation
 
 Price selection  
-If bid/ask are available → mid = (bid + ask) / 2  
-Else → uses close  
+The scorer uses:
+
+- baseline price from the nearest candle `close` at or before `release_ts`
+- anchor start price from the detected anchor candle `open` when a meaningful anchor is found
+- horizon price from the nearest candle `close` at or before `anchor_ts + MR_HORIZON_MIN`
 
 Pips conversion  
-For USD/JPY, pip value is computed using the standard JPY convention (0.01).
+For USD/JPY, pip value is computed using the standard JPY convention (`0.01` JPY = 1 pip).
 
-Direction logic  
-Direction is determined by the sign of (price_after − price_at_t₀).  
-If both initial and sustained absolute moves are < 1 pip → direction is treated as flat.
+Additional realized metrics  
+The scorer also computes:
+
+- `max_up_pips`
+- `max_down_pips`
+- `realized_sustain_min`
+
+If a meaningful anchor is detected but the final realized move is below `MR_FLAT_MAX_ABS_PIPS`, the raw `pips` value remains unchanged, but realized direction is classified as `flat` and `eval_note` is suffixed with `below_flat_threshold`.
+
+Realized strength uses absolute net pips:
+
+- `weak` for moves below 5 pips
+- `medium` for moves from 5 pips up to but not including 15 pips
+- `strong` for moves of 15 pips or more
+
+If no meaningful anchor is detected:
+
+- `status = flat`
+- `pips = 0`
+- `dir = flat`
+- `realized_sustain_min = 0`
+- `eval_note` is suffixed with `no_reaction_detected`
+
+`realized_sustain_min` uses the dominant initial reaction direction inside the reaction horizon, then checks 1-minute candle closes forward up to 60 minutes. Sustain remains valid while price stays at least 1 pip on the correct side of the start price, with tolerance for 2 consecutive violating closes before sustain ends.
 
 ---
 
-### 9.7 Comparison to prediction (best-effort, non-persistent)
+### 9.7 Comparison to prediction (best-effort, sheet-persistent)
 
 If a matching Prediction row exists for the same event_id:
 
 The module compares:  
 expected_move_dir vs observed direction  
 Observed pips vs [expected_move_pips_min, expected_move_pips_max]  
+`mr_pred_dir` vs realized direction  
+`mr_pred_strength` vs realized net move strength  
+`mr_pred_sustain_min` vs realized sustain duration  
 
-These comparisons are used only to enrich the log output. They do not update Prediction or Event rows.
+These comparisons update Predictions fields best-effort, including:
+
+- `released_value`
+- `forecast_error_abs`, `forecast_error_pct`, `forecast_dir_ok`
+- `eval_ts`, `eval_interval`, `start_ts`, `end_ts`, `start_price`, `end_price`
+- `realized_pips`, `dir_ok`, `band_ok`, `overall_ok`, `eval_note`
+- `mr_real_dir`, `mr_dir_ok`, `mr_strength_ok`
+- `mr_real_sustain_min`, `mr_sustain_error_min`, `mr_sustain_grade`, `mr_sustain_ok`
+- `mr_real_max_up_pips`, `mr_real_max_down_pips`
 
 If no Prediction row exists, market reaction is still computed and logged.
 
 ---
 
-### 9.8 Logging output (only durable artifact)
+### 9.8 Logging output
 
 For each evaluated event, the module writes a log entry including (best-effort):
 
 event_id  
 release_ts  
-fx_pair  
+t0_ts, tH_ts  
 observed direction (up|down|flat)  
-observed pips (initial and sustained)  
-prediction comparison flags (when applicable)  
+observed pips  
+max_up_pips, max_down_pips  
+realized_sustain_min  
+provider metadata  
 
 status:  
 ok  
 no_candles  
 provider_error  
 
-Logs are appended via appendLog() and are the only persistent record of market reaction results in v1.3.1.
+Logs remain append-only best-effort telemetry, but they are no longer the only durable artifact because evaluation fields are also written back into Predictions.
 
-Code-authoritative note. Any downstream analytics must parse logs; there is no scoring table to query.
+Code-authoritative note. Downstream analytics should use `Predictions` for final event-level market-reaction evaluation and `MR_ProviderRuns` for provider-level audit details. Logs remain useful for runtime diagnostics and failure investigation.
 
 
 ## 10) Logging, Status Codes, and Error Semantics (rule1.3.1)
@@ -2227,7 +2361,10 @@ FRED_API_KEY (for primary path)
 SeriesMap entries for events you care about  
 
 Market reaction  
-Candle provider keys (Alpha Vantage and/or Twelve Data) in Script Properties  
+Candle provider keys in Script Properties as needed:  
+TIINGO_API_KEY  
+TWELVEDATA_API_KEY  
+MASSIVE_API_KEY  
 
 ---
 
@@ -2237,7 +2374,7 @@ Predictions run selects 0 events Likely cause: event_id/type missing due to up
 
 Actuals keeps logging “No SeriesMap match” Cause: the fallback layer has no maintained mapping for that indicator. Remedy: first confirm whether direct FMP resolution should already cover the event; if not, triage SeriesMap_Suggestions and promote only the fallback mappings worth maintaining.  
 
-Market reaction finds no eligible events Cause: release_ts stored as text, not Date object. Remedy: ensure release_ts column is Date-typed for relevant rows (Sheets formatting/storage).  
+Market reaction finds no eligible events Causes: wrong `MR_WINDOW_*` config, parse failures in the configured local window, missing candle-provider capacity, or Date-typed timestamp requirements when using the past-24h scorer. Remedy: prefer Config Window scoring for string timestamps, verify `MR_WINDOW_FROM_LOCAL` / `MR_WINDOW_TO_LOCAL` use `YYYY-MM-DD HH:mm`, and check logs for `parse_error` / `no_candles`.  
 
 Hourly actuals trigger exists but no updates happen Causes: direct FMP resolution did not match, fallback SeriesMap coverage is missing, FRED key is missing, or events are classified as qualitative and skipped. Remedy: check logs for skip reasons, direct-match behavior, and fallback mapping coverage.
 
@@ -2291,7 +2428,7 @@ L2 — Rolling FMP actuals fallback is narrow Rolling actuals supports FMP onl
 
 L3 — Backfill uses different provider labels and status vocabulary Backfill uses FMP_CAL and status values like pending/fetched/error, which are not reconciled into rolling lifecycle automatically.  
 
-L4 — Menu wiring gaps exist Some menu items reference non-existent functions (e.g., runPredictionsWindow, runFmpRangeToEvent_). Operator workflows should use the implemented entrypoints described in this Rule Book.
+L4 — Some health-check expectations still lag the live menu wiring `runPredictionsWindow()` now exists, but maintenance health checks may still flag unrelated missing symbols such as `menuPredAll_`. Operator workflows should follow the implemented entrypoints described in this Rule Book.
 
 ## 14) Appendix: Glossary & Field Semantics (rule1.3.1)
 

@@ -32,6 +32,7 @@ function onOpen() {
   menu.addSubMenu(
     ui.createMenu('① Events')
       .addItem('Fetch & Upsert (next 72h)', 'menuUpsertNext72h_')
+      .addItem('Fetch & Upsert (Config Window)', 'menuUpsertToEvent_')
       .addItem('Build SeriesMap Suggestions (Window / next 72h fallback)', 'menuSeriesMapBuildSuggestions_')
       .addItem('SeriesMap → Auto-suggest from FRED (Selected rows)', 'menuSeriesMapAutoSuggestFRED_')
       .addItem('Build FRED Series Catalog', 'menuBuildFredSeriesCatalog_')
@@ -43,8 +44,8 @@ function onOpen() {
   // ② Predictions
   menu.addSubMenu(
     ui.createMenu('② Predictions')
-      .addItem('Run Predictions (All Providers)', 'runPredictionsAll_')
-      .addItem('Run Predictions (Config Window)', 'runPredictionsWindow')
+      .addItem('Run Predictions (All Providers)', 'menuRunPredictionsAll_')
+      .addItem('Run Predictions (Config Window)', 'menuRunPredictionsWindow_')
       .addSeparator()
       .addItem('Gemini (manual)', 'menuRunPredictionsGemini_')
       .addItem('OpenAI (manual)', 'menuRunPredictionsOpenAI_')
@@ -228,17 +229,37 @@ function menuSeriesMapAiReviewBatch_() {
 }
 
 
+function menuRunPredictionsAll_(){          return menuPredDispatch_('all'); }
+function menuRunPredictionsWindow_(){       return menuPredDispatch_('window'); }
 function menuRunPredictionsGemini_(){       return menuPredDispatch_('gemini'); }
 function menuRunPredictionsOpenAI_(){       return menuPredDispatch_('openai'); }
 function menuRunPredictionsClaude_(){       return menuPredDispatch_('claude'); }
 function runPredictionsAll_(){          return menuPredDispatch_('all'); }
+function runPredictionsWindow(){        return menuPredDispatch_('window'); }
 
 function menuPredDispatch_(mode){
   var ss = SpreadsheetApp.getActive();
   var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
   var started = new Date();
   try {
-    var res = runPredictionsUsingWindow_(mode);
+    var res;
+    if (String(mode || '').toLowerCase() === 'all') {
+      res = (typeof runPredictionsCore_ === 'function')
+        ? runPredictionsCore_({ windowMinBeforeMin: 24*60, windowMaxAfterMin: 36*60, providers: CFG.PROVIDERS })
+        : runPredictionsAll_();
+    } else if (String(mode || '').toLowerCase() === 'window') {
+      res = (typeof runPredictionsUsingWindow_ === 'function')
+        ? runPredictionsUsingWindow_()
+        : runPredictionsCore_({ windowMinBeforeMin: CFG.WINDOW_MIN_BEFORE_MIN, windowMaxAfterMin: CFG.WINDOW_MAX_AFTER_MIN, providers: CFG.PROVIDERS });
+    } else if (String(mode || '').toLowerCase() === 'gemini') {
+      res = runPredictionsCore_({ windowMinBeforeMin: 24*60, windowMaxAfterMin: 36*60, providers: ['Gemini'] });
+    } else if (String(mode || '').toLowerCase() === 'openai') {
+      res = runPredictionsCore_({ windowMinBeforeMin: 24*60, windowMaxAfterMin: 36*60, providers: ['OpenAI'] });
+    } else if (String(mode || '').toLowerCase() === 'claude') {
+      res = runPredictionsCore_({ windowMinBeforeMin: 24*60, windowMaxAfterMin: 36*60, providers: ['Anthropic'] });
+    } else {
+      throw new Error('Unknown prediction mode: ' + mode);
+    }
     if (typeof _log_ === 'function' && shLog) {
       _log_(shLog, 'info', 'Predictions → ' + String(mode||'all').toUpperCase(), {
         result: res,
@@ -246,7 +267,17 @@ function menuPredDispatch_(mode){
         ended_ts: (new Date()).toISOString()
       });
     }
-    SpreadsheetApp.getActive().toast('Predictions (' + String(mode||'all').toUpperCase() + '): selected=' + (res.selected||0) + ', submitted=' + (res.submitted||0), 'Predictions', 8);
+    if (typeof flushLogs_ === 'function') flushLogs_();
+    SpreadsheetApp.getActive().toast(
+      'Predictions (' + String(mode||'all').toUpperCase() + '): status=' + String((res && res.status) || 'ok') +
+      ', inspected=' + Number((res && res.inspected) || 0) +
+      ', created=' + Number((res && res.created) || 0) +
+      ', updated=' + Number((res && res.updated) || 0) +
+      ', errors=' + Number((res && res.errors) || 0),
+      'Predictions',
+      8
+    );
+    return res;
   } catch (e) {
     if (typeof showErrorPopup_ === 'function') {
       showErrorPopup_('Predictions — Error', (e && e.message) ? e.message : String(e));
@@ -258,6 +289,7 @@ function menuPredDispatch_(mode){
         ended_ts: (new Date()).toISOString()
       });
     }
+    if (typeof flushLogs_ === 'function') flushLogs_();
     throw e;
   }
 }

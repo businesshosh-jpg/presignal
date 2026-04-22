@@ -25,7 +25,10 @@ var CFG = (typeof CFG !== 'undefined') ? CFG : {
   PROVIDERS: ['Gemini','OpenAI','Anthropic'],
   GEMINI_MODEL: 'gemini-2.5-flash-lite',
   OPENAI_MODEL: 'gpt-4o-mini',
-  CLAUDE_MODEL: 'claude-3-5-sonnet-latest',
+  CLAUDE_MODEL: 'claude-haiku-4-5',
+  PREDICTION_MODE: 'LIVE',
+  PREDICTION_TEMPERATURE: 0,
+  PREDICTION_SEED: 42,
   DEFAULT_FX: 'USDJPY',
   WINDOW_MIN_BEFORE_MIN: 24*60,  // fallback minutes window (used if local override disabled/invalid)
   WINDOW_MAX_AFTER_MIN: 36*60,
@@ -41,7 +44,10 @@ function _ensureCfgDefaults_() {
     PROVIDERS: ['Gemini','OpenAI','Anthropic'],
     GEMINI_MODEL: 'gemini-2.5-flash-lite',
     OPENAI_MODEL: 'gpt-4o-mini',
-    CLAUDE_MODEL: 'claude-3-5-sonnet-latest',
+    CLAUDE_MODEL: 'claude-haiku-4-5',
+    PREDICTION_MODE: 'LIVE',
+    PREDICTION_TEMPERATURE: 0,
+    PREDICTION_SEED: 42,
     DEFAULT_FX: 'USDJPY',
     WINDOW_MIN_BEFORE_MIN: 24*60,
     WINDOW_MAX_AFTER_MIN: 36*60,
@@ -64,10 +70,15 @@ function _ensureCfgDefaults_() {
 // Reads key/value pairs from sheet "Config" (A:key, B:value) and overrides CFG.
 // Supports:
 // - PROVIDERS (comma list: Gemini,OpenAI,Anthropic / "Claude" alias → Anthropic)
+// - OPENAI_MODEL, GEMINI_MODEL, CLAUDE_MODEL
+// - PREDICTION_MODE (LIVE|BACKTEST; BACKTRACK alias → BACKTEST)
+// - PREDICTION_TEMPERATURE (number), PREDICTION_SEED (integer)
 // - DEFAULT_FX, DRY_RUN_PREDICT (bool), PIPS_*_MIN/MAX
-// - Local window override (preferred):
-//     WINDOW_ENABLED (true/false), WINDOW_FROM_LOCAL ("YYYY-MM-DD HH:mm" or Date),
-//     WINDOW_TO_LOCAL, WINDOW_TZ (IANA, e.g., "Asia/Tokyo")
+// - Prediction-specific local window override (preferred):
+//     PRED_WINDOW_ENABLED (true/false), PRED_WINDOW_FROM_LOCAL ("YYYY-MM-DD HH:mm" or Date),
+//     PRED_WINDOW_TO_LOCAL, PRED_WINDOW_TZ (IANA, e.g., "Asia/Tokyo")
+// - Legacy shared window fallback:
+//     WINDOW_ENABLED, WINDOW_FROM_LOCAL, WINDOW_TO_LOCAL, WINDOW_TZ
 function _applyConfigOverridesFromSheet_() {
   var sh;
   try {
@@ -93,6 +104,18 @@ function _applyConfigOverridesFromSheet_() {
     var filtered = normalized.filter(function(p){ return known.indexOf(p)>=0; });
     if (filtered.length) CFG.PROVIDERS = filtered;
   }
+  if (map.GEMINI_MODEL != null) CFG.GEMINI_MODEL = String(map.GEMINI_MODEL).trim() || CFG.GEMINI_MODEL;
+  if (map.OPENAI_MODEL != null) CFG.OPENAI_MODEL = String(map.OPENAI_MODEL).trim() || CFG.OPENAI_MODEL;
+  if (map.CLAUDE_MODEL != null) CFG.CLAUDE_MODEL = String(map.CLAUDE_MODEL).trim() || CFG.CLAUDE_MODEL;
+  if (map.PREDICTION_MODE != null) {
+    CFG.PREDICTION_MODE = _normalizePredictionMode_(map.PREDICTION_MODE);
+  }
+  if (map.PREDICTION_TEMPERATURE != null) {
+    CFG.PREDICTION_TEMPERATURE = _cfgNumber_(map.PREDICTION_TEMPERATURE, CFG.PREDICTION_TEMPERATURE);
+  }
+  if (map.PREDICTION_SEED != null) {
+    CFG.PREDICTION_SEED = _cfgInteger_(map.PREDICTION_SEED, CFG.PREDICTION_SEED);
+  }
   if (map.DEFAULT_FX != null) CFG.DEFAULT_FX = String(map.DEFAULT_FX).trim();
   if (map.DRY_RUN_PREDICT != null) CFG.DRY_RUN_PREDICT = _cfgBoolean_(map.DRY_RUN_PREDICT, CFG.DRY_RUN_PREDICT);
 
@@ -108,24 +131,37 @@ function _applyConfigOverridesFromSheet_() {
   if (map.PIPS_CRITICAL_MAX != null) p.critical[1] = _cfgNumber_(map.PIPS_CRITICAL_MAX, p.critical[1]);
   CFG.PIPS_BY_IMPORTANCE = p;
 
-  // Local window override keys
+  // Prediction-specific window override keys
   CFG.WINDOW_OVERRIDE = CFG.WINDOW_OVERRIDE || { enabled:false };
-  if (map.WINDOW_ENABLED != null) CFG.WINDOW_OVERRIDE.enabled = _cfgBoolean_(map.WINDOW_ENABLED, false);
-  if (map.WINDOW_FROM_LOCAL != null) CFG.WINDOW_OVERRIDE.fromLocal = map.WINDOW_FROM_LOCAL;
-  if (map.WINDOW_TO_LOCAL   != null) CFG.WINDOW_OVERRIDE.toLocal   = map.WINDOW_TO_LOCAL;
-  if (map.WINDOW_TZ         != null) CFG.WINDOW_OVERRIDE.tz        = String(map.WINDOW_TZ).trim();
+  var predWindowEnabled = (map.PRED_WINDOW_ENABLED != null) ? map.PRED_WINDOW_ENABLED : map.WINDOW_ENABLED;
+  var predWindowFromLocal = (map.PRED_WINDOW_FROM_LOCAL != null) ? map.PRED_WINDOW_FROM_LOCAL : map.WINDOW_FROM_LOCAL;
+  var predWindowToLocal = (map.PRED_WINDOW_TO_LOCAL != null) ? map.PRED_WINDOW_TO_LOCAL : map.WINDOW_TO_LOCAL;
+  var predWindowTz = (map.PRED_WINDOW_TZ != null) ? map.PRED_WINDOW_TZ : map.WINDOW_TZ;
+  if (predWindowEnabled != null) CFG.WINDOW_OVERRIDE.enabled = _cfgBoolean_(predWindowEnabled, false);
+  if (predWindowFromLocal != null) CFG.WINDOW_OVERRIDE.fromLocal = predWindowFromLocal;
+  if (predWindowToLocal   != null) CFG.WINDOW_OVERRIDE.toLocal   = predWindowToLocal;
+  if (predWindowTz        != null) CFG.WINDOW_OVERRIDE.tz        = String(predWindowTz).trim();
 }
 
-// Convert local window (Config) into UTC ISO bounds; fallback to given bounds if invalid/disabled.
+// Convert local window (Config) into UTC ISO bounds.
+// Invalid enabled config is treated as an operator error rather than silently ignored.
 function _maybeOverrideWindowFromConfig_(bounds) {
   var o = CFG.WINDOW_OVERRIDE || {};
   if (!o.enabled) return bounds;
 
   var tz = o.tz || Session.getScriptTimeZone() || 'UTC';
+  if (o.fromLocal == null || o.toLocal == null || String(o.fromLocal).trim() === '' || String(o.toLocal).trim() === '') {
+    throw new Error('Prediction window config requires FROM and TO in YYYY-MM-DD HH:mm format.');
+  }
   var fromIso = _localToUtcIso_(o.fromLocal, tz);
   var toIso   = _localToUtcIso_(o.toLocal,   tz);
 
-  if (!fromIso || !toIso) return bounds; // fallback gracefully
+  if (!fromIso || !toIso) {
+    throw new Error('Invalid prediction window config. Use PRED_WINDOW_FROM_LOCAL / PRED_WINDOW_TO_LOCAL in YYYY-MM-DD HH:mm format.');
+  }
+  if (Date.parse(fromIso) >= Date.parse(toIso)) {
+    throw new Error('Invalid prediction window config. FROM must be earlier than TO.');
+  }
 
   return { window_start_iso: fromIso, window_end_iso: toIso };
 }
@@ -166,6 +202,12 @@ function _tzOffsetAt_(utcMillis, tz) {
   return sign*((hh*60+mm)*60*1000);
 }
 
+function _normalizePredictionMode_(raw) {
+  var s = String(raw == null ? '' : raw).trim().toUpperCase();
+  if (s === 'BACKTRACK') s = 'BACKTEST';
+  return (s === 'BACKTEST') ? 'BACKTEST' : 'LIVE';
+}
+
 /** =========================
  *  Public entrypoints
  *  ========================= */
@@ -185,9 +227,17 @@ function menuRunPredictionsClaude_()  { return runPredictionsCore_({ windowMinBe
 function runPredictionsCore_(opts) {
   _applyConfigOverridesFromSheet_(); // read Config sheet overrides
   _ensureCfgDefaults_();
+  CFG.PREDICTION_MODE = _normalizePredictionMode_(CFG.PREDICTION_MODE);
   
   var runId = _uuidFromString_('predict:'+new Date().toISOString());
-  var context = { module:'prediction_runner', rule_version: CFG.RULE_VERSION, run_id: runId };
+  var context = {
+    module:'prediction_runner',
+    rule_version: CFG.RULE_VERSION,
+    run_id: runId,
+    prediction_mode: CFG.PREDICTION_MODE,
+    prediction_temperature: CFG.PREDICTION_TEMPERATURE,
+    prediction_seed: CFG.PREDICTION_SEED
+  };
 
   var eventSheet = getSheet('Event');
   var predSheet  = getSheet('Predictions');
@@ -203,13 +253,14 @@ function runPredictionsCore_(opts) {
     window_start_iso: windowBounds.window_start_iso, window_end_iso: windowBounds.window_end_iso
   }));
 
-  var selStats = { scanned:0, skipped_bad_ts:0, skipped_out_of_window:0, skipped_missing_id_type:0, selected:0 };
+  var selStats = { scanned:0, skipped_bad_ts:0, skipped_out_of_window:0, skipped_missing_id_type:0, skipped_has_actuals:0, selected:0 };
   var events = _selectEventsForWindow_(eventSheet, windowBounds, selStats);
 
   appendLog('info','Event selection summary', Object.assign({}, context, selStats));
 
   if (events.length === 0) {
     appendLog('info','No events found in window', Object.assign({}, context, windowBounds, { status:'no_events' }));
+    _flushPredictionLogs_();
     return { status:'no_events', inspected:0, created:0, updated:0, duplicates:0, errors:0 };
   }
 
@@ -233,6 +284,7 @@ function runPredictionsCore_(opts) {
       requested: providerOverride,
       available: resolvedAll.map(function (p) { return p.name; })
     });
+    _flushPredictionLogs_();
     return { status: 'validation_error', message: 'No providers enabled' };
   }
 
@@ -242,6 +294,7 @@ function runPredictionsCore_(opts) {
       module: 'prediction_runner',
       requested: CFG.PROVIDERS
     });
+    _flushPredictionLogs_();
     return { status: 'validation_error', message: 'No providers enabled' };
   }
 
@@ -309,9 +362,17 @@ function runPredictionsCore_(opts) {
   });
 
   SpreadsheetApp.flush();
+  _sortPredictionsSheet_(predSheet);
   var summary = Object.assign({ status:'ok' }, results, windowBounds, { providers: enabledProviders.map(function(p){return p.name;}) });
   appendLog('info','Prediction run summary', Object.assign({}, context, summary));
+  _flushPredictionLogs_();
   return summary;
+}
+
+function _flushPredictionLogs_() {
+  if (typeof flushLogs_ === 'function') {
+    flushLogs_();
+  }
 }
 
 /** =========================
@@ -361,6 +422,9 @@ function _selectEventsForWindow_(sheet, bounds, stats) {
     var releaseTs = _cell(row, idx['release_ts']);
     var eventId   = _cell(row, idx['event_id']);
     var type      = _cell(row, idx['type']);
+    var releasedValue = _cell(row, idx['released_value']);
+    var releasedTs = _cell(row, idx['released_ts']);
+    var releaseStatus = _cell(row, idx['release_status']);
     var importance= _cell(row, idx['importance']);
     var indicator = _cell(row, idx['indicator_name']);
 
@@ -371,6 +435,11 @@ function _selectEventsForWindow_(sheet, bounds, stats) {
 
     var relMs = Date.parse(relIso);
     if (!(relMs >= ws && relMs <= we)) { stats.skipped_out_of_window++; continue; }
+    if (_normalizePredictionMode_(CFG.PREDICTION_MODE) === 'LIVE' &&
+        _eventHasActuals_(releasedValue, releasedTs, releaseStatus)) {
+      stats.skipped_has_actuals++;
+      continue;
+    }
 
     out.push({
       object: 'econ_event',
@@ -393,11 +462,20 @@ function _selectEventsForWindow_(sheet, bounds, stats) {
   return out;
 }
 
+function _eventHasActuals_(releasedValue, releasedTs, releaseStatus) {
+  var hasReleasedValue = !(releasedValue === '' || releasedValue === null || releasedValue === undefined);
+  var hasReleasedTs = !(releasedTs === '' || releasedTs === null || releasedTs === undefined);
+  var status = String(releaseStatus || '').trim().toLowerCase();
+  var statusImpliesActual = (status === 'released' || status === 'revised' || status === 'fetched');
+  return hasReleasedValue || hasReleasedTs || statusImpliesActual;
+}
+
 /** =========================
  *  Prompt & parsing
  *  ========================= */
 function _buildPredictionJsonPrompt_(ev, opt) {
   var qualOnly = !!opt.qualOnly;
+  var mrWindowMin = _getPredictionMrWindowMin_();
   var payload = {
     schema_version: CFG.SCHEMA_VERSION,
     object: 'econ_event',
@@ -411,7 +489,12 @@ function _buildPredictionJsonPrompt_(ev, opt) {
     fx_pair: opt.fxPair || CFG.DEFAULT_FX,
     policy: {
       qualitative_only: qualOnly,
-      defaults: { pips_band_by_importance: CFG.PIPS_BY_IMPORTANCE }
+      defaults: { pips_band_by_importance: CFG.PIPS_BY_IMPORTANCE },
+      market_reaction: {
+        prediction_window_min: mrWindowMin,
+        max_window_min: 15,
+        strength_allowed: ['weak','medium','strong']
+      }
     },
     required_output: {
       object: 'ai_prediction',
@@ -419,18 +502,21 @@ function _buildPredictionJsonPrompt_(ev, opt) {
       type: ev.type,
       ai_forecast_value: qualOnly ? null : '(number or null)',
       qualitative_result: '(stronger|weaker|inline)',
-      expected_move_dir: '(up|down|flat)',
-      expected_move_pips_min: '(number)',
-      expected_move_pips_max: '(number)',
-      expected_holding_minutes: '(number)',
+      mr_window_min: '(' + mrWindowMin + ' only)',
+      mr_pred_dir: '(up|down|flat)',
+      mr_pred_net_pips: '(number)',
+      mr_pred_strength: '(weak|medium|strong)',
+      mr_pred_sustain_min: '(number, can exceed mr_window_min if you expect continuation)',
       rationale_short: '(short string)',
       rationale: '(longer string)'
     }
   };
   var instruction =
     "Return ONLY strict JSON (no code fences). Keys required: " +
-    "object,event_id,type,ai_forecast_value,qualitative_result,expected_move_dir," +
-    "expected_move_pips_min,expected_move_pips_max,expected_holding_minutes,rationale_short,rationale. " +
+    "object,event_id,type,ai_forecast_value,qualitative_result,mr_window_min," +
+    "mr_pred_dir,mr_pred_net_pips,mr_pred_strength,mr_pred_sustain_min,rationale_short,rationale. " +
+    "mr_window_min must equal " + mrWindowMin + ". " +
+    "mr_pred_net_pips must be a plain number in pips. " +
     "ai_forecast_value must be a PLAIN number with no units or symbols (no %, k, m, bn).";
   return {
     system: "You are a macroeconomic forecasting model. Output must be strict JSON and safe for parsing.",
@@ -512,6 +598,8 @@ function _callOpenAI_(prov, prompt) {
   var url = 'https://api.openai.com/v1/chat/completions';
   var body = {
     model: prov.model,
+    temperature: CFG.PREDICTION_TEMPERATURE,
+    seed: CFG.PREDICTION_SEED,
     response_format: { type: 'json_object' },
     messages: [
       { role:'system', content: prompt.system },
@@ -552,7 +640,11 @@ function _callGemini_(prov, prompt) {
   var url = 'https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(prov.model)+':generateContent?key='+encodeURIComponent(prov.key);
   var body = {
     contents: [{ role:'user', parts:[{ text: prompt.system+"\n\n"+prompt.user+"\n\n"+prompt.instruction }] }],
-    generationConfig: { response_mime_type: 'application/json' }
+    generationConfig: {
+      response_mime_type: 'application/json',
+      temperature: CFG.PREDICTION_TEMPERATURE,
+      seed: CFG.PREDICTION_SEED
+    }
   };
   return _withRetries_(function(){
     var resp = UrlFetchApp.fetch(url, {
@@ -617,6 +709,7 @@ function _callClaude_(prov, prompt) {
   var body = {
     model: prov.model,
     max_tokens: 2048,
+    temperature: CFG.PREDICTION_TEMPERATURE,
     system: prompt.system,
     messages: [ { role:'user', content: prompt.user+"\n\n"+prompt.instruction } ]
   };
@@ -636,7 +729,9 @@ function _callClaude_(prov, prompt) {
     var j = JSON.parse(txt);
     var c = (j.content && j.content[0] && j.content[0].text) || '';
     if (!c) throw _providerErr_('Anthropic: empty content');
-    var parsed = _strictParsePredictionJson_(c);
+    var cleaned = _stripCodeFences_(c);
+    var jsonText = _extractFirstJsonObject_(cleaned) || cleaned;
+    var parsed = _strictParsePredictionJson_(jsonText);
     var usage = j.usage || {};
     return {
       ai_name: 'Anthropic',
@@ -655,13 +750,18 @@ function _callClaude_(prov, prompt) {
  *  ========================= */
 function _normalizePrediction_(ev, providerResp, opt) {
   var parsed = providerResp.parsed || {};
-    parsed.event_id = ev.event_id;
-    parsed.type     = ev.type;
+  parsed.event_id = ev.event_id;
+  parsed.type = ev.type;
+  var mrWindowMin = _getPredictionMrWindowMin_();
+  var mrPredDir = _oneOf_((parsed.mr_pred_dir || '').toLowerCase(), ['up','down','flat']);
+  var mrPredNetPips = _numOrNull_(parsed.mr_pred_net_pips);
+  var mrPredStrength = _oneOf_((parsed.mr_pred_strength || '').toLowerCase(), ['weak','medium','strong']);
+  var mrPredSustainMin = _numOrNull_(parsed.mr_pred_sustain_min);
   var out = {
     ai_name: providerResp.ai_name,
     ai_version: providerResp.ai_version,
     ai_model: providerResp.ai_model || providerResp.ai_version,
-    raw_output: providerResp.raw_output,
+    raw_output: _formatPredictionRawOutputCsv_(parsed, providerResp.raw_output),
     prompt_tokens: providerResp.prompt_tokens || null,
     completion_tokens: providerResp.completion_tokens || null,
     latency_ms: providerResp.latency_ms || null,
@@ -672,21 +772,80 @@ function _normalizePrediction_(ev, providerResp, opt) {
     type: ev.type,
     ai_forecast_value: (opt.qualOnly ? null : _numOrNull_(parsed.ai_forecast_value)),
     qualitative_result: _oneOf_((parsed.qualitative_result||'').toLowerCase(), ['stronger','weaker','inline']) || _inferQualFromConsensus_(ev, parsed),
-    expected_move_dir: _oneOf_((parsed.expected_move_dir||'').toLowerCase(), ['up','down','flat']) || _dirFromQual_((parsed.qualitative_result||'').toLowerCase()),
+    expected_move_dir: mrPredDir || _oneOf_((parsed.expected_move_dir||'').toLowerCase(), ['up','down','flat']) || _dirFromQual_((parsed.qualitative_result||'').toLowerCase()),
     expected_move_pips_min: _numOrNull_(parsed.expected_move_pips_min),
     expected_move_pips_max: _numOrNull_(parsed.expected_move_pips_max),
-    expected_holding_minutes: _numOrNull_(parsed.expected_holding_minutes),
+    expected_holding_minutes: mrPredSustainMin != null ? mrPredSustainMin : _numOrNull_(parsed.expected_holding_minutes),
+    mr_window_min: mrWindowMin,
+    mr_pred_dir: mrPredDir,
+    mr_pred_net_pips: mrPredNetPips,
+    mr_pred_strength: mrPredStrength,
+    mr_pred_sustain_min: mrPredSustainMin,
     rationale_short: parsed.rationale_short || '',
     rationale: parsed.rationale || ''
   };
 
   var imp = (ev.importance || 'medium').toLowerCase();
   var band = CFG.PIPS_BY_IMPORTANCE[imp] || CFG.PIPS_BY_IMPORTANCE.medium;
-  if (!(out.expected_move_pips_min>=0)) out.expected_move_pips_min = band[0];
-  if (!(out.expected_move_pips_max>=out.expected_move_pips_min)) out.expected_move_pips_max = band[1];
+  if (!(out.mr_pred_net_pips >= 0)) out.mr_pred_net_pips = _midpointPips_(band[0], band[1]);
+  if (!out.mr_pred_dir) out.mr_pred_dir = out.expected_move_dir || ((out.mr_pred_net_pips<=1) ? 'flat' : 'up');
+  if (!out.mr_pred_strength) out.mr_pred_strength = _mrStrengthFromPips_(out.mr_pred_net_pips);
+  if (!(out.mr_pred_sustain_min > 0)) out.mr_pred_sustain_min = out.expected_holding_minutes;
+  if (!(out.mr_pred_sustain_min > 0)) out.mr_pred_sustain_min = 15;
+
+  if (!(typeof out.expected_move_pips_min === 'number' && isFinite(out.expected_move_pips_min)) && typeof out.mr_pred_net_pips === 'number') {
+    out.expected_move_pips_min = Math.max(0, Math.round((out.mr_pred_net_pips - 2) * 100) / 100);
+  }
+  if (!(typeof out.expected_move_pips_min === 'number' && isFinite(out.expected_move_pips_min))) {
+    out.expected_move_pips_min = band[0];
+  }
+  if (!(typeof out.expected_move_pips_max === 'number' && isFinite(out.expected_move_pips_max) && out.expected_move_pips_max >= out.expected_move_pips_min) && typeof out.mr_pred_net_pips === 'number') {
+    out.expected_move_pips_max = Math.max(out.expected_move_pips_min, Math.round((out.mr_pred_net_pips + 2) * 100) / 100);
+  }
+  if (!(typeof out.expected_move_pips_max === 'number' && isFinite(out.expected_move_pips_max) && out.expected_move_pips_max >= out.expected_move_pips_min)) {
+    out.expected_move_pips_max = band[1];
+  }
   if (!out.expected_move_dir) out.expected_move_dir = (out.expected_move_pips_max<=1) ? 'flat' : 'up';
   if (!out.expected_holding_minutes) out.expected_holding_minutes = 60;
   return out;
+}
+
+function _formatPredictionRawOutputCsv_(parsed, rawOutput) {
+  var obj = (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) ? parsed : null;
+  if (obj) {
+    var orderedKeys = [
+      'object','event_id','type','ai_forecast_value','qualitative_result',
+      'mr_window_min','mr_pred_dir','mr_pred_net_pips','mr_pred_strength',
+      'mr_pred_sustain_min',
+      'expected_move_dir','expected_move_pips_min','expected_move_pips_max',
+      'expected_holding_minutes','rationale_short','rationale'
+    ];
+    var keys = orderedKeys.filter(function(k){ return obj[k] !== undefined; });
+    Object.keys(obj).forEach(function(k){
+      if (keys.indexOf(k) === -1) keys.push(k);
+    });
+    return keys.map(function(k){
+      return _csvEscape_(obj[k]);
+    }).join(',');
+  }
+  return _collapseToSingleLine_(rawOutput);
+}
+
+function _csvEscape_(val) {
+  if (val === null || val === undefined) return '';
+  var s = _collapseToSingleLine_(val);
+  if (/[",\n]/.test(s)) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
+function _collapseToSingleLine_(val) {
+  return String(val == null ? '' : val)
+    .replace(/\r\n/g, ' ')
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function _inferQualFromConsensus_(ev, parsed) {
@@ -703,20 +862,56 @@ function _dirFromQual_(qual) {
   return 'flat';
 }
 
+function _getPredictionMrWindowMin_() {
+  var cfg = _readConfigMap_('Config');
+  var n = Number(cfg && cfg['MR_HORIZON_MIN']);
+  if (!isFinite(n)) n = 5;
+  n = Math.floor(n);
+  if (n < 1) n = 1;
+  if (n > 15) n = 15;
+  return n;
+}
+
+function _midpointPips_(minPips, maxPips) {
+  if (typeof minPips === 'number' && typeof maxPips === 'number') {
+    return Math.round(((minPips + maxPips) / 2) * 100) / 100;
+  }
+  if (typeof maxPips === 'number') return maxPips;
+  if (typeof minPips === 'number') return minPips;
+  return null;
+}
+
+function _mrStrengthFromPips_(pips) {
+  var n = Math.abs(Number(pips));
+  if (!isFinite(n)) return '';
+  if (n < 5) return 'weak';
+  if (n < 15) return 'medium';
+  return 'strong';
+}
+
 /** =========================
  *  Predictions sheet schema
  *  ========================= */
 function _ensurePredHeaders_(sheet) {
   var required = [
-    'object','run_id','prediction_id','schema_version','created_ts',
-    'event_id','batch_id','type',
+    'object','event_id','batch_id','type',
+    'indicator_name','country','release_ts','source_cal','genre','importance','fx_pair',
     'ai_name','ai_version','ai_model','model_version',
-    'consensus_value','prev_revision','source_cal','genre','importance','fx_pair',
-    'ai_forecast_value','qualitative_result','expected_move_dir',
-    'expected_move_pips_min','expected_move_pips_max','expected_holding_minutes',
-    'rationale_short','rationale',
-    'prompt_tokens','completion_tokens','latency_ms','raw_output','status','error_message',
-    'qualitative_only'
+    'run_id','prediction_id','created_ts','schema_version','status','error_message',
+    'consensus_value','prev_revision','ai_forecast_value','released_value',
+    'forecast_error_abs','forecast_error_pct','forecast_dir_ok',
+    'qualitative_result','qualitative_only',
+    'expected_move_dir','expected_move_pips_min','expected_move_pips_max','expected_holding_minutes',
+    'mr_window_min','mr_pred_dir','mr_pred_net_pips','mr_pred_strength','mr_pred_sustain_min',
+    'mr_real_dir','mr_dir_ok','mr_real_strength','mr_strength_ok',
+    'mr_real_sustain_min','mr_sustain_error_min','mr_sustain_grade','mr_sustain_ok',
+    'mr_real_max_up_pips','mr_real_max_down_pips',
+    'mr_final_provider','mr_compare_status','mr_compare_dir_agree','mr_compare_anchor_delta_min',
+    'mr_compare_pips_delta','mr_compare_confidence','mr_compare_note',
+    'eval_ts','eval_interval','start_ts','end_ts','start_price','end_price',
+    'realized_pips','dir_ok','band_ok','overall_ok','eval_note',
+    'rationale_short','rationale','raw_output',
+    'prompt_tokens','completion_tokens','latency_ms'
   ];
   var headers = getHeaderNames(sheet);
   var lower = headers.map(function(h){return String(h).toLowerCase();});
@@ -727,9 +922,55 @@ function _ensurePredHeaders_(sheet) {
 }
 function _getPredHeaderIndex_(headers) { var idx={}; headers.forEach(function(h,i){ idx[String(h).toLowerCase()] = i; }); return idx; }
 
+function _sortPredictionsSheet_(sheet) {
+  if (!sheet || CFG.DRY_RUN_PREDICT) return;
+  var lastRow = sheet.getLastRow();
+  var lastCol = sheet.getLastColumn();
+  if (lastRow < 3 || lastCol < 1) return;
+
+  var headers = getHeaderNames(sheet);
+  var idx = _getPredHeaderIndex_(headers);
+  var eventCol = idx['event_id'];
+  var aiNameCol = idx['ai_name'];
+  var releaseTsCol = idx['release_ts'];
+  if (eventCol == null || aiNameCol == null || releaseTsCol == null) return;
+
+  var range = sheet.getRange(2, 1, lastRow - 1, lastCol);
+  var rows = range.getValues();
+  rows.sort(function(a, b) {
+    var at = _predictionSortTimestampMs_(a[releaseTsCol]);
+    var bt = _predictionSortTimestampMs_(b[releaseTsCol]);
+    if (at !== bt) return at - bt;
+
+    var ae = String(a[eventCol] || '');
+    var be = String(b[eventCol] || '');
+    if (ae < be) return -1;
+    if (ae > be) return 1;
+
+    var aa = String(a[aiNameCol] || '');
+    var ba = String(b[aiNameCol] || '');
+    if (aa < ba) return -1;
+    if (aa > ba) return 1;
+    return 0;
+  });
+  range.setValues(rows);
+}
+
+function _predictionSortTimestampMs_(value) {
+  if (value instanceof Date && isFinite(value.getTime())) return value.getTime();
+  var raw = String(value || '').trim();
+  if (!raw) return Number.POSITIVE_INFINITY;
+  var parsed = Date.parse(raw);
+  return isFinite(parsed) ? parsed : Number.POSITIVE_INFINITY;
+}
+
 function _buildPredictionRow_(ev, norm, runId) {
   var createdTs = new Date().toISOString();
   var predictionId = _uuidFromString_(ev.event_id + '|' + norm.ai_name);
+  var mrNetPips = (typeof norm.mr_pred_net_pips === 'number') ? norm.mr_pred_net_pips : _midpointPips_(norm.expected_move_pips_min, norm.expected_move_pips_max);
+  var mrWindowMin = (typeof norm.mr_window_min === 'number') ? norm.mr_window_min : _getPredictionMrWindowMin_();
+  var mrSustainMin = (typeof norm.mr_pred_sustain_min === 'number') ? norm.mr_pred_sustain_min :
+    ((typeof norm.expected_holding_minutes === 'number') ? norm.expected_holding_minutes : '');
 
   return {
     object: 'ai_prediction',
@@ -760,6 +1001,11 @@ function _buildPredictionRow_(ev, norm, runId) {
     expected_move_pips_min: (typeof norm.expected_move_pips_min==='number') ? norm.expected_move_pips_min : '',
     expected_move_pips_max: (typeof norm.expected_move_pips_max==='number') ? norm.expected_move_pips_max : '',
     expected_holding_minutes: (typeof norm.expected_holding_minutes==='number') ? norm.expected_holding_minutes : '',
+    mr_window_min: mrWindowMin,
+    mr_pred_dir: norm.mr_pred_dir || norm.expected_move_dir || '',
+    mr_pred_net_pips: (typeof mrNetPips === 'number') ? mrNetPips : '',
+    mr_pred_strength: norm.mr_pred_strength || _mrStrengthFromPips_(mrNetPips),
+    mr_pred_sustain_min: mrSustainMin,
     rationale_short: norm.rationale_short || '',
     rationale: norm.rationale || '',
 
@@ -787,6 +1033,11 @@ function _buildErrorPredictionRow_(ev, runId, err) {
     fx_pair: ev && (ev.fx_pair || CFG.DEFAULT_FX) || CFG.DEFAULT_FX,
     ai_forecast_value:'', qualitative_result:'', expected_move_dir:'',
     expected_move_pips_min:'', expected_move_pips_max:'', expected_holding_minutes:'',
+    mr_window_min: '',
+    mr_pred_dir: '',
+    mr_pred_net_pips: '',
+    mr_pred_strength: '',
+    mr_pred_sustain_min: '',
     rationale_short:'', rationale:'',
     prompt_tokens:'', completion_tokens:'', latency_ms:'', raw_output:'',
     status: _statusFromErr_(err), error_message: String(err),
@@ -817,11 +1068,13 @@ function _upsertPredictions_(sheet, rowObj, idxMap) {
     }
   }
 
-  var valsToWrite = _rowObjToRow_(rowObj, headers);
   if (foundRow > -1) {
+    var existingRow = data[foundRow - 2];
+    var valsToWrite = _mergeRowObjOverExisting_(rowObj, headers, existingRow);
     if (!CFG.DRY_RUN_PREDICT) sheet.getRange(foundRow, 1, 1, headers.length).setValues([valsToWrite]);
     return 'updated';
   } else {
+    var valsToWrite = _rowObjToRow_(rowObj, headers);
     if (!CFG.DRY_RUN_PREDICT) sheet.appendRow(valsToWrite);
     return 'created';
   }
@@ -834,6 +1087,21 @@ function _rowObjToRow_(obj, headers) {
     var v = (obj.hasOwnProperty(key) ? obj[key] : (obj[headers[i]]));
     if (v === undefined) v = '';
     arr.push(v);
+  }
+  return arr;
+}
+
+function _mergeRowObjOverExisting_(obj, headers, existingRow) {
+  var arr = [];
+  for (var i = 0; i < headers.length; i++) {
+    var key = String(headers[i]).toLowerCase();
+    var hasValue = obj.hasOwnProperty(key) || obj.hasOwnProperty(headers[i]);
+    if (hasValue) {
+      var v = obj.hasOwnProperty(key) ? obj[key] : obj[headers[i]];
+      arr.push(v === undefined ? '' : v);
+    } else {
+      arr.push(existingRow && i < existingRow.length ? existingRow[i] : '');
+    }
   }
   return arr;
 }
@@ -1056,6 +1324,11 @@ function _cfgNumber_(val, fallback) {
   return isFinite(n) ? n : fallback;
 }
 
+function _cfgInteger_(val, fallback) {
+  var n = _cfgNumber_(val, fallback);
+  return isFinite(n) ? Math.round(n) : fallback;
+}
+
 function _cfgBoolean_(val, fallback) {
   // Accept boolean, 1/0, yes/no, true/false (case-insensitive)
   if (typeof val === 'boolean') return val;
@@ -1179,6 +1452,3 @@ function debugQualFor_(eventId) {
   try { SpreadsheetApp.getUi().alert(JSON.stringify(explain, null, 2)); } catch(e) {}
   return explain;
 }
-
-
-
