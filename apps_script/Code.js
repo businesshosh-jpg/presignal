@@ -26,7 +26,7 @@ var CFG = {
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
 
-  var menu = ui.createMenu('PreSignal v1.3');
+  var menu = ui.createMenu('PreSignal v1.4');
 
   // ① Events
   menu.addSubMenu(
@@ -510,7 +510,7 @@ function menuRunActualsPast7d_() {
 
 /**
  * Events → Fetch & Upsert (next 72h)
- * v1.3.x control-plane wrapper: MUST bypass Config windowing.
+ * v1.4 control-plane wrapper: MUST bypass Config windowing.
  * Uses upcoming 3 days (72h) in UTC, then applies batching patch.
  */
 function menuUpsertNext72h_() {
@@ -870,7 +870,7 @@ function fetchEventsLast3Months_() {
 }
 
 
-/** ===== v1.3.x Menu Maintenance Wrappers (control-plane only) ===== **/
+/** ===== v1.4 Menu Maintenance Wrappers (control-plane only) ===== **/
 
 function menuMaintenanceBackfillActuals_() {
   if (typeof fetchActualsIgnoreWindowOnce !== 'function') {

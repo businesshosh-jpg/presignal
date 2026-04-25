@@ -885,6 +885,8 @@ function _buildEventEvalMeta_(row, idx, ts) {
   }
   return {
     event_id: pick('event_id'),
+    batch_id: pick('batch_id'),
+    type: pick('type'),
     indicator_name: pick('indicator_name'),
     country: pick('country'),
     release_ts: _validDate_(ts) ? ts.toISOString() : String(pick('release_ts') || ''),
@@ -1185,12 +1187,10 @@ function _applyComparisonToPredictions_(ctx, eventMeta, primaryReaction, seconda
     ? _compareMarketReactionResultsMulti_(primaryReaction, secondaryReaction)
     : _compareMarketReactionResults_(primaryReaction, secondaryReaction);
   cmp = _mergeComparisonWithSelection_(cmp, finalSelection, primaryReaction);
-  var eventCol = ctx.idx['event_id'];
-  if (eventCol == null) return;
 
   for (var r = 0; r < ctx.data.length; r++) {
     var row = ctx.data[r];
-    if (String(row[eventCol] || '').trim() !== String(eventMeta.event_id).trim()) continue;
+    if (!_predictionRowMatchesEvalTarget_(ctx, row, eventMeta)) continue;
     _writePredictionComparisonFields_(row, ctx.idx, (finalSelection && finalSelection.reaction) ? finalSelection.reaction : primaryReaction, cmp);
     ctx.dirty[r + 2] = true;
   }
@@ -1199,15 +1199,27 @@ function _applyComparisonToPredictions_(ctx, eventMeta, primaryReaction, seconda
 function _applyEvaluationToPredictions_(ctx, eventMeta, reaction) {
   if (!ctx || !eventMeta || !eventMeta.event_id) return;
 
-  var eventCol = ctx.idx['event_id'];
-  if (eventCol == null) return;
-
   for (var r = 0; r < ctx.data.length; r++) {
     var row = ctx.data[r];
-    if (String(row[eventCol] || '').trim() !== String(eventMeta.event_id).trim()) continue;
+    if (!_predictionRowMatchesEvalTarget_(ctx, row, eventMeta)) continue;
     _writePredictionEvalFields_(row, ctx.idx, eventMeta, reaction);
     ctx.dirty[r + 2] = true;
   }
+}
+
+function _predictionRowMatchesEvalTarget_(ctx, row, eventMeta) {
+  if (!ctx || !row || !eventMeta) return false;
+  var eventCol = ctx.idx['event_id'];
+  if (eventCol == null) return false;
+  var typeCol = ctx.idx['type'];
+
+  var rowEventId = String(row[eventCol] || '').trim();
+  var targetEventId = String(eventMeta.event_id || '').trim();
+  if (rowEventId === targetEventId) return true;
+
+  if (!eventMeta.batch_id) return false;
+  var rowType = (typeCol == null) ? '' : String(row[typeCol] || '').trim().toLowerCase();
+  return rowType === 'batch' && rowEventId === String(eventMeta.batch_id || '').trim();
 }
 
 function _writePredictionEvalFields_(row, idx, eventMeta, reaction) {
@@ -1225,15 +1237,19 @@ function _writePredictionEvalFields_(row, idx, eventMeta, reaction) {
   var forecastValue = _numOrBlank_(get('ai_forecast_value'));
   var consensusValue = _numOrBlank_(get('consensus_value'));
   var prevRevision = _numOrBlank_(get('prev_revision'));
+  var rowType = String(get('type') || '').trim().toLowerCase();
+  var preserveIdentity = (rowType === 'batch');
   var baseline = (releasedValue !== '' && consensusValue !== '') ? consensusValue :
     ((releasedValue !== '' && prevRevision !== '') ? prevRevision :
     ((forecastValue !== '' && consensusValue !== '') ? consensusValue :
     ((forecastValue !== '' && prevRevision !== '') ? prevRevision : '')));
 
   set('released_value', releasedValue);
-  set('indicator_name', eventMeta.indicator_name || '');
-  set('country', eventMeta.country || '');
-  set('release_ts', eventMeta.release_ts || '');
+  if (!preserveIdentity) {
+    set('indicator_name', eventMeta.indicator_name || '');
+    set('country', eventMeta.country || '');
+    set('release_ts', eventMeta.release_ts || '');
+  }
   set('eval_ts', new Date().toISOString());
   _writePredictionComparisonFields_(row, idx, reaction, {
     status: 'single_provider',

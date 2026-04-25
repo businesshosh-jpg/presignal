@@ -1,4 +1,4 @@
-// prediction_runner.gs — v1.3.1 Robust Window + Config + Providers
+// prediction_runner.gs — v1.4 Robust Window + Config + Providers
 // ------------------------------------------------------------------
 // Purpose:
 // * Read upcoming events from the Event sheet (canonical).
@@ -34,8 +34,8 @@ var CFG = (typeof CFG !== 'undefined') ? CFG : {
   WINDOW_MAX_AFTER_MIN: 36*60,
   DRY_RUN_PREDICT: false,
   PIPS_BY_IMPORTANCE: { low:[3,10], medium:[8,25], high:[15,45], critical:[25,80] },
-  SCHEMA_VERSION: '1.3',
-  RULE_VERSION: '1.3'
+  SCHEMA_VERSION: '1.4',
+  RULE_VERSION: '1.4'
 };
 
 
@@ -53,8 +53,8 @@ function _ensureCfgDefaults_() {
     WINDOW_MAX_AFTER_MIN: 36*60,
     DRY_RUN_PREDICT: false,
     PIPS_BY_IMPORTANCE: { low:[3,10], medium:[8,25], high:[15,45], critical:[25,80] },
-    SCHEMA_VERSION: '1.3',
-    RULE_VERSION: '1.3'
+    SCHEMA_VERSION: '1.4',
+    RULE_VERSION: '1.4'
   };
   if (typeof CFG !== 'object' || CFG === null) CFG = {};
   // Fill any missing key
@@ -304,7 +304,7 @@ function runPredictionsCore_(opts) {
     enabled: enabledProviders.map(function (p) { return p.name + '(' + p.model + ')'; })
   });
 
-
+  var batchGroups = _groupBatchEvents_(events);
 
   var results = { inspected:0, created:0, updated:0, duplicates:0, errors:0 };
   var seenKey = {};
@@ -330,10 +330,6 @@ function runPredictionsCore_(opts) {
               : up === 'duplicate' ? 'duplicates'
               : 'created' ]++;
 
-        if (ev.type === 'member' && ev.batch_id) {
-          _ensureSyntheticBatchRow_(predSheet, ev, runId, predIdx);
-        }
-
         appendLog('info','Prediction ok', Object.assign({}, context, {
           provider: norm.ai_name,
           model_name: norm.ai_version,
@@ -354,6 +350,49 @@ function runPredictionsCore_(opts) {
           provider: p.name,
           model: p.model,
           event_id: ev.event_id,
+          status: _statusFromErr_(err),
+          message: String(err)
+        }));
+      }
+    });
+  });
+
+  Object.keys(batchGroups).forEach(function(batchId){
+    var batchRef = _buildBatchReferenceEvent_(batchGroups[batchId]);
+    enabledProviders.forEach(function(p){
+      try {
+        var batchPrompt = _buildBatchPredictionJsonPrompt_(batchRef, { fxPair: batchRef.fx_pair || CFG.DEFAULT_FX });
+        var t0 = Date.now();
+        var r = p.fn(p, batchPrompt);
+        r.latency_ms = r.latency_ms || (Date.now() - t0);
+
+        var norm = _normalizePrediction_(batchRef, r, { qualOnly: true, fxPair: batchRef.fx_pair || CFG.DEFAULT_FX, isBatch: true });
+        var row = _buildPredictionRow_(batchRef, norm, runId);
+        var up = _upsertPredictions_(predSheet, row, predIdx);
+        results[ up === 'updated' ? 'updated'
+              : up === 'duplicate' ? 'duplicates'
+              : 'created' ]++;
+
+        appendLog('info','Batch prediction ok', Object.assign({}, context, {
+          provider: norm.ai_name,
+          model_name: norm.ai_version,
+          batch_id: batchRef.event_id,
+          member_count: batchRef.member_count,
+          status: 'ok',
+          duration_ms: r.latency_ms || null
+        }));
+      } catch (err) {
+        results.errors++;
+        try {
+          var errRow = _buildErrorPredictionRow_(batchRef, runId, err);
+          errRow.ai_name = p.name;
+          errRow.model_version = p.model;
+          _upsertPredictions_(predSheet, errRow, predIdx);
+        } catch(inner) {}
+        appendLog('error','Batch prediction error', Object.assign({}, context, {
+          provider: p.name,
+          model: p.model,
+          batch_id: batchRef.event_id,
           status: _statusFromErr_(err),
           message: String(err)
         }));
@@ -490,6 +529,15 @@ function _buildPredictionJsonPrompt_(ev, opt) {
     policy: {
       qualitative_only: qualOnly,
       defaults: { pips_band_by_importance: CFG.PIPS_BY_IMPORTANCE },
+      prediction_discipline: {
+        primary_baseline: 'Compare expected release value against consensus_value when consensus_value is available.',
+        previous_value_role: 'Use prev_revision as context only; do not treat it as the market surprise baseline when consensus_value exists.',
+        missing_consensus: 'Missing consensus lowers confidence. If there is no consensus, avoid precise directional surprise unless the indicator is high-importance and has a direct USDJPY transmission path.',
+        low_importance: 'Low-importance or indirect indicators should usually be flat/weak unless the rationale explains a clear direct FX channel.',
+        indirect_examples: 'Fiscal statements, budget data, auctions, balance-sheet/liquidity data, and oil/gas inventory data are usually indirect for USDJPY and should default to small or flat reactions.',
+        hidden_detail_rule: 'If market-moving surprise usually depends on subcomponents or post-release internals that are not present in this payload, default to conservative flat/weak behavior instead of inventing directional confidence.',
+        consistency: 'qualitative_result, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, and rationale must describe the same view.'
+      },
       market_reaction: {
         prediction_window_min: mrWindowMin,
         max_window_min: 15,
@@ -517,7 +565,79 @@ function _buildPredictionJsonPrompt_(ev, opt) {
     "mr_pred_dir,mr_pred_net_pips,mr_pred_strength,mr_pred_sustain_min,rationale_short,rationale. " +
     "mr_window_min must equal " + mrWindowMin + ". " +
     "mr_pred_net_pips must be a plain number in pips. " +
-    "ai_forecast_value must be a PLAIN number with no units or symbols (no %, k, m, bn).";
+    "ai_forecast_value must be a PLAIN number with no units or symbols (no %, k, m, bn). " +
+    "Use consensus_value as the primary market-surprise baseline when present; prev_revision is context. " +
+    "When consensus_value is null, be conservative: low-importance or indirect events should normally be flat/weak with small pips. " +
+    "Fiscal statements, budget releases, auctions, balance-sheet/liquidity updates, and oil/gas inventory data are usually indirect USDJPY drivers and should stay small unless the transmission path is unusually direct. " +
+    "If the true market surprise usually lives in hidden subcomponents or post-release internals not present here, do not invent confidence; default to flat or weak. " +
+    "Before assigning up/down pips, explain the USDJPY transmission path in rationale.";
+  return {
+    system: "You are a macroeconomic forecasting model. Output must be strict JSON and safe for parsing.",
+    user: JSON.stringify(payload),
+    instruction: instruction
+  };
+}
+
+function _buildBatchPredictionJsonPrompt_(batchEv, opt) {
+  var mrWindowMin = _getPredictionMrWindowMin_();
+  var members = (batchEv.batch_members || []).map(function(m){
+    return {
+      event_id: m.event_id,
+      indicator_name: m.indicator_name,
+      genre: m.genre || _inferGenreFromName_(m.indicator_name || ''),
+      importance: m.importance || 'medium',
+      consensus_value: (typeof m.consensus_value === 'number') ? m.consensus_value : null,
+      prev_revision: (typeof m.prev_revision === 'number') ? m.prev_revision : null
+    };
+  });
+  var payload = {
+    schema_version: CFG.SCHEMA_VERSION,
+    object: 'econ_event_batch',
+    batch_id: batchEv.event_id,
+    country: batchEv.country,
+    release_ts: batchEv.release_ts,
+    fx_pair: opt.fxPair || CFG.DEFAULT_FX,
+    member_count: batchEv.member_count || members.length,
+    members: members,
+    policy: {
+      qualitative_only: true,
+      defaults: { pips_band_by_importance: CFG.PIPS_BY_IMPORTANCE },
+      prediction_discipline: {
+        primary_goal: 'Predict the combined 5-minute USDJPY market reaction of the full release cluster, not each member separately.',
+        dominance_rule: 'Acknowledge when one member is likely to dominate the cluster reaction, but do not invent hidden details not present in the payload.',
+        offset_rule: 'If member effects offset or no direct member clearly dominates, prefer flat or weak.',
+        hidden_detail_rule: 'If the true surprise usually depends on subcomponents or post-release internals not present here, default to conservative flat/weak behavior.',
+        consistency: 'qualitative_result, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, and rationale must describe the same combined batch view.'
+      },
+      market_reaction: {
+        prediction_window_min: mrWindowMin,
+        max_window_min: 15,
+        strength_allowed: ['weak','medium','strong']
+      }
+    },
+    required_output: {
+      object: 'ai_prediction',
+      event_id: batchEv.event_id,
+      type: 'batch',
+      ai_forecast_value: null,
+      qualitative_result: '(stronger|weaker|inline)',
+      mr_window_min: '(' + mrWindowMin + ' only)',
+      mr_pred_dir: '(up|down|flat)',
+      mr_pred_net_pips: '(number)',
+      mr_pred_strength: '(weak|medium|strong)',
+      mr_pred_sustain_min: '(number)',
+      rationale_short: '(short string)',
+      rationale: '(longer string describing the combined batch view)'
+    }
+  };
+  var instruction =
+    "Return ONLY strict JSON (no code fences). Keys required: " +
+    "object,event_id,type,ai_forecast_value,qualitative_result,mr_window_min," +
+    "mr_pred_dir,mr_pred_net_pips,mr_pred_strength,mr_pred_sustain_min,rationale_short,rationale. " +
+    "event_id must equal the batch_id and type must equal batch. " +
+    "Assess the combined release cluster, not each member separately. " +
+    "If the members offset each other or no direct member clearly dominates, default to flat or weak. " +
+    "If the true surprise depends on hidden details not present here, do not invent confidence.";
   return {
     system: "You are a macroeconomic forecasting model. Output must be strict JSON and safe for parsing.",
     user: JSON.stringify(payload),
@@ -749,6 +869,7 @@ function _callClaude_(prov, prompt) {
  *  Normalization
  *  ========================= */
 function _normalizePrediction_(ev, providerResp, opt) {
+  opt = opt || {};
   var parsed = providerResp.parsed || {};
   parsed.event_id = ev.event_id;
   parsed.type = ev.type;
@@ -807,6 +928,227 @@ function _normalizePrediction_(ev, providerResp, opt) {
   }
   if (!out.expected_move_dir) out.expected_move_dir = (out.expected_move_pips_max<=1) ? 'flat' : 'up';
   if (!out.expected_holding_minutes) out.expected_holding_minutes = 60;
+  var beforeGuardrails = _snapshotPredictionShape_(out);
+  out = _applyPredictionQualityGuardrails_(ev, out, band, opt);
+  out = _annotatePredictionNormalization_(out, beforeGuardrails);
+  return out;
+}
+
+function _applyPredictionQualityGuardrails_(ev, out, band, opt) {
+  opt = opt || {};
+  var imp = String(ev.importance || 'medium').toLowerCase();
+  var hasConsensus = (typeof ev.batch_has_consensus === 'boolean') ? ev.batch_has_consensus : _hasNumericValue_(ev.consensus_value);
+  var hasPrev = _hasNumericValue_(ev.prev_revision);
+  var directFx = _isDirectFxIndicator_(ev);
+  var indirectCap = directFx ? null : _indirectIndicatorPipsCap_(imp);
+  var missingConsensusCap = _missingConsensusPipsCap_(imp, directFx, hasPrev);
+  var bandMax = (band && typeof band[1] === 'number') ? band[1] : null;
+  var cap = bandMax;
+
+  if (typeof indirectCap === 'number') {
+    cap = (typeof cap === 'number') ? Math.min(cap, indirectCap) : indirectCap;
+  }
+
+  if (!hasConsensus) {
+    cap = (typeof cap === 'number') ? Math.min(cap, missingConsensusCap) : missingConsensusCap;
+  }
+
+  if (typeof cap === 'number' && isFinite(cap) && typeof out.mr_pred_net_pips === 'number' && out.mr_pred_net_pips > cap) {
+    out.mr_pred_net_pips = _roundPips_(cap);
+  }
+
+  if (!hasConsensus && (!directFx || imp === 'low' || !hasPrev || opt.qualOnly)) {
+    out.mr_pred_strength = 'weak';
+    if (!directFx || !hasPrev || opt.qualOnly) {
+      out.mr_pred_dir = 'flat';
+      out.qualitative_result = 'inline';
+      out.mr_pred_net_pips = Math.min(out.mr_pred_net_pips, 2);
+    }
+  }
+
+  if (typeof indirectCap === 'number') {
+    if (imp === 'low') {
+      out.mr_pred_dir = 'flat';
+      out.qualitative_result = 'inline';
+      out.mr_pred_net_pips = Math.min(out.mr_pred_net_pips, 2);
+    } else if (imp === 'medium' && out.mr_pred_net_pips <= 5) {
+      out.mr_pred_strength = 'weak';
+    }
+  }
+
+  if (out.mr_pred_dir === 'flat') {
+    out.mr_pred_net_pips = Math.min(out.mr_pred_net_pips, 2);
+    out.qualitative_result = 'inline';
+  }
+
+  if (opt.isBatch) {
+    var batchHorizon = (typeof out.mr_window_min === 'number' && out.mr_window_min > 0) ? out.mr_window_min : 5;
+    if (!(out.mr_pred_sustain_min > 0)) out.mr_pred_sustain_min = batchHorizon;
+    out.mr_pred_sustain_min = Math.min(_roundPips_(out.mr_pred_sustain_min), batchHorizon);
+    out.expected_holding_minutes = out.mr_pred_sustain_min;
+  }
+
+  out.mr_pred_net_pips = _roundPips_(Math.max(0, Number(out.mr_pred_net_pips) || 0));
+  out.mr_pred_strength = _mrStrengthFromPips_(out.mr_pred_net_pips);
+  out.expected_move_dir = out.mr_pred_dir;
+  out.expected_move_pips_min = Math.max(0, _roundPips_(out.mr_pred_net_pips - 2));
+  out.expected_move_pips_max = Math.max(out.expected_move_pips_min, _roundPips_(out.mr_pred_net_pips + 2));
+  return out;
+}
+
+function _hasNumericValue_(v) {
+  return typeof v === 'number' && isFinite(v);
+}
+
+function _missingConsensusPipsCap_(importance, directFx, hasPrev) {
+  var imp = String(importance || 'medium').toLowerCase();
+  if (!hasPrev) return directFx && (imp === 'high' || imp === 'critical') ? 8 : 2;
+  if (!directFx) return 3;
+  if (imp === 'critical') return 12;
+  if (imp === 'high') return 8;
+  if (imp === 'medium') return 5;
+  return 3;
+}
+
+function _indirectIndicatorPipsCap_(importance) {
+  var imp = String(importance || 'medium').toLowerCase();
+  if (imp === 'critical') return 8;
+  if (imp === 'high') return 6;
+  if (imp === 'medium') return 4;
+  return 2;
+}
+
+function _isDirectFxIndicator_(ev) {
+  if (typeof ev.batch_direct_fx === 'boolean') return ev.batch_direct_fx;
+  var genre = String(ev.genre || '').toLowerCase();
+  var name = String(ev.indicator_name || '').toLowerCase();
+  if (/energy|fiscal|markets|auction|fedbalance|liquidity|balance/.test(genre)) return false;
+  if (/\bauction\b|bond auction|note auction|oil|crude|inventory|inventories|balance sheet|fed balance|walcl|budget|fiscal|refund/i.test(name)) return false;
+  if (/inflation|labor|gdp|manufacturing|sentiment/.test(genre)) return true;
+  if (/cpi|pce|inflation|payroll|employment|jobless|claims|unemployment|wage|earnings|gdp|retail sales|ism|pmi|consumer confidence|umich|fed rate|fomc/.test(name)) return true;
+  return false;
+}
+
+function _roundPips_(value) {
+  var n = Number(value);
+  if (!isFinite(n)) return 0;
+  return Math.round(n * 100) / 100;
+}
+
+function _groupBatchEvents_(events) {
+  var groups = {};
+  (events || []).forEach(function(ev){
+    if (String(ev.type || '').toLowerCase() !== 'member' || !ev.batch_id) return;
+    if (!groups[ev.batch_id]) groups[ev.batch_id] = [];
+    groups[ev.batch_id].push(ev);
+  });
+  return groups;
+}
+
+function _buildBatchReferenceEvent_(members) {
+  members = members || [];
+  if (!members.length) throw new Error('batch_members_required');
+  var first = members[0];
+  var memberIds = members.map(function(m){ return m.event_id; });
+  var memberNames = members.map(function(m){ return m.indicator_name; });
+  return {
+    object: 'econ_event_batch',
+    event_id: first.batch_id,
+    batch_id: first.batch_id,
+    type: 'batch',
+    country: first.country,
+    indicator_name: 'Batch: ' + memberNames.join(' | '),
+    genre: 'Batch',
+    importance: _maxImportance_(members.map(function(m){ return m.importance; })),
+    release_ts: first.release_ts,
+    source_cal: first.source_cal || '',
+    fx_pair: first.fx_pair || CFG.DEFAULT_FX,
+    consensus_value: null,
+    prev_revision: null,
+    qualitative_only: true,
+    member_count: members.length,
+    member_event_ids: memberIds.join('|'),
+    member_indicator_names: memberNames.join(' | '),
+    batch_members: members,
+    batch_has_consensus: members.some(function(m){ return _hasNumericValue_(m.consensus_value); }),
+    batch_direct_fx: members.some(function(m){ return _isDirectFxIndicator_(m); })
+  };
+}
+
+function _maxImportance_(vals) {
+  var rank = { low:1, medium:2, high:3, critical:4 };
+  var best = 'medium';
+  var bestRank = rank[best];
+  (vals || []).forEach(function(v){
+    var key = String(v || '').toLowerCase();
+    var r = rank[key];
+    if (r && r > bestRank) {
+      best = key;
+      bestRank = r;
+    }
+  });
+  return best;
+}
+
+function _snapshotPredictionShape_(out) {
+  return {
+    qualitative_result: out.qualitative_result || '',
+    expected_move_dir: out.expected_move_dir || '',
+    expected_move_pips_min: _roundPips_(out.expected_move_pips_min),
+    expected_move_pips_max: _roundPips_(out.expected_move_pips_max),
+    mr_pred_dir: out.mr_pred_dir || '',
+    mr_pred_net_pips: _roundPips_(out.mr_pred_net_pips),
+    mr_pred_strength: out.mr_pred_strength || '',
+    mr_pred_sustain_min: _roundPips_(out.mr_pred_sustain_min)
+  };
+}
+
+function _annotatePredictionNormalization_(out, before) {
+  if (!before) return out;
+  var parts = [];
+  if ((before.mr_pred_dir || '') !== (out.mr_pred_dir || '')) {
+    parts.push('dir ' + (before.mr_pred_dir || 'blank') + ' -> ' + (out.mr_pred_dir || 'blank'));
+  }
+  if (_roundPips_(before.mr_pred_net_pips) !== _roundPips_(out.mr_pred_net_pips)) {
+    parts.push('net_pips ' + _roundPips_(before.mr_pred_net_pips) + ' -> ' + _roundPips_(out.mr_pred_net_pips));
+  }
+  if ((before.mr_pred_strength || '') !== (out.mr_pred_strength || '')) {
+    parts.push('strength ' + (before.mr_pred_strength || 'blank') + ' -> ' + (out.mr_pred_strength || 'blank'));
+  }
+  if ((before.qualitative_result || '') !== (out.qualitative_result || '')) {
+    parts.push('qual ' + (before.qualitative_result || 'blank') + ' -> ' + (out.qualitative_result || 'blank'));
+  }
+  if (_roundPips_(before.expected_move_pips_min) !== _roundPips_(out.expected_move_pips_min) ||
+      _roundPips_(before.expected_move_pips_max) !== _roundPips_(out.expected_move_pips_max)) {
+    parts.push(
+      'range ' + _roundPips_(before.expected_move_pips_min) + '-' + _roundPips_(before.expected_move_pips_max) +
+      ' -> ' + _roundPips_(out.expected_move_pips_min) + '-' + _roundPips_(out.expected_move_pips_max)
+    );
+  }
+  if ((before.expected_move_dir || '') !== (out.expected_move_dir || '')) {
+    parts.push('expected_dir ' + (before.expected_move_dir || 'blank') + ' -> ' + (out.expected_move_dir || 'blank'));
+  }
+  if (_roundPips_(before.mr_pred_sustain_min) !== _roundPips_(out.mr_pred_sustain_min)) {
+    parts.push('sustain ' + _roundPips_(before.mr_pred_sustain_min) + ' -> ' + _roundPips_(out.mr_pred_sustain_min));
+  }
+
+  if (!parts.length) return out;
+
+  var note = 'Normalized for consistency: ' + parts.join('; ') + '.';
+  if (!out.rationale_short) {
+    out.rationale_short = 'Normalized prediction output.';
+  }
+  if (out.rationale) {
+    if (out.rationale.indexOf(note) === -1) out.rationale += ' ' + note;
+  } else {
+    out.rationale = note;
+  }
+  if (out.raw_output) {
+    var rawNote = ' normalization_note=' + _collapseToSingleLine_(note);
+    if (out.raw_output.indexOf(rawNote.trim()) === -1) out.raw_output += rawNote;
+  } else {
+    out.raw_output = 'normalization_note=' + _collapseToSingleLine_(note);
+  }
   return out;
 }
 
@@ -988,6 +1330,9 @@ function _buildPredictionRow_(ev, norm, runId) {
     ai_model: norm.ai_model,
     model_version: norm.ai_version,
 
+    indicator_name: ev.indicator_name || '',
+    country: ev.country || '',
+    release_ts: ev.release_ts || '',
     consensus_value: (typeof ev.consensus_value==='number') ? ev.consensus_value : '',
     prev_revision: (typeof ev.prev_revision==='number') ? ev.prev_revision : '',
     source_cal: ev.source_cal || '',
@@ -1027,6 +1372,9 @@ function _buildErrorPredictionRow_(ev, runId, err) {
     object:'ai_prediction', run_id:runId, prediction_id:predictionId, schema_version:CFG.SCHEMA_VERSION, created_ts:createdTs,
     event_id: ev && ev.event_id || '', batch_id: ev && ev.batch_id || '', type: ev && ev.type || '',
     ai_name:'runner', ai_version:'', ai_model:'', model_version:'',
+    indicator_name: ev && ev.indicator_name || '',
+    country: ev && ev.country || '',
+    release_ts: ev && ev.release_ts || '',
     consensus_value: ev && typeof ev.consensus_value==='number' ? ev.consensus_value : '',
     prev_revision:   ev && typeof ev.prev_revision==='number'   ? ev.prev_revision   : '',
     source_cal: ev && ev.source_cal || '', genre: ev && (ev.genre || _inferGenreFromName_(ev.indicator_name||'')) || '',
@@ -1106,74 +1454,6 @@ function _mergeRowObjOverExisting_(obj, headers, existingRow) {
   return arr;
 }
 
-/** =========================
- *  Synthetic batch summary
- *  ========================= */
-function _ensureSyntheticBatchRow_(predSheet, ev, runId, idx) {
-  var headers = getHeaderNames(predSheet);
-  var i = idx || _getPredHeaderIndex_(headers);
-
-  var eventCol = i['event_id'], typeCol=i['type'];
-  var last = predSheet.getLastRow();
-  var exists = false;
-  if (last>=2) {
-    var vals = predSheet.getRange(2,1,last-1,headers.length).getValues();
-    for (var r=0; r<vals.length; r++) {
-      if (String(vals[r][eventCol]) === String(ev.batch_id) && String(vals[r][typeCol]).toLowerCase()==='batch') { exists = true; break; }
-    }
-  }
-  if (exists) return;
-
-  var band = CFG.PIPS_BY_IMPORTANCE[(ev.importance||'medium').toLowerCase()] || CFG.PIPS_BY_IMPORTANCE.medium;
-
-  var _ruleVer = String(CFG.RULE_VERSION || CFG.SCHEMA_VERSION || '1.0');
-
-  var row = {
-    object:'ai_prediction',
-    run_id: runId,
-    prediction_id: _uuidFromString_(ev.batch_id+'|BatchSynth'),
-    schema_version: CFG.SCHEMA_VERSION,
-    created_ts: new Date().toISOString(),
-
-    event_id: ev.batch_id,
-    batch_id: '',
-    type: 'batch',
-
-    ai_name: 'BatchSynth',
-    ai_version: 'batch-synth-' + _ruleVer,   // e.g., "batch-synth-1.3"
-    ai_model: 'BatchAggregator',             // instead of "batch_synth"
-    model_version: _ruleVer,
-
-
-    consensus_value: '',
-    prev_revision: '',
-    source_cal: ev.source_cal || '',
-    genre: ev.genre || _inferGenreFromName_(ev.indicator_name||''),
-    importance: (ev.importance != null && ev.importance !== '') ? String(ev.importance) : '',
-    fx_pair: ev.fx_pair || CFG.DEFAULT_FX,
-
-    ai_forecast_value: '',
-    qualitative_result: 'inline',
-    expected_move_dir: 'flat',
-    expected_move_pips_min: band[0],
-    expected_move_pips_max: band[1],
-    expected_holding_minutes: 60,
-    rationale_short: 'Synthetic batch summary',
-    rationale: 'Aggregated batch summary row (v1.3).',
-
-    prompt_tokens: '',
-    completion_tokens: '',
-    latency_ms: '',
-    raw_output: '',
-    status: 'ok',
-    error_message: '',
-
-    qualitative_only: 'true'
-  };
-
-  var vals = _rowObjToRow_(row, headers);
-  if (!CFG.DRY_RUN_PREDICT) predSheet.appendRow(vals);
-}
 
 /** =========================
  *  Qualitative detection
