@@ -65,6 +65,7 @@ function onOpen() {
     ui.createMenu('④ Market Reaction')
       .addItem('Score Market Reaction (past 24h)', 'scoreMarketReactionPast24h_')
       .addItem('Score Market Reaction (Config Window)', 'scoreMarketReactionByConfigWindow_')
+      .addItem('Build Evaluation Sheets', 'menuBuildEvaluationSheets_')
       .addItem('Debug Timestamp Sample', 'debugEventTimestampSample_')
   );
 
