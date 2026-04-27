@@ -19,13 +19,14 @@ Assigns deterministic identity and batching (event_id, batch_id, type) via a pos
 Generates AI predictions into the Predictions sheet using enabled providers (Gemini/OpenAI/Anthropic), enforcing strict JSON contracts.  
 Fetches released actuals using a deterministic hybrid resolver: direct FMP calendar resolution first, then selective SeriesMap fallback for indicators where direct FMP actuals are weak or unavailable.  
 Computes a USD/JPY market reaction move around event timestamps and writes best-effort evaluation fields back into the Predictions sheet, while also logging the result.  
+Builds derived evaluation/report tabs from scored Predictions rows for readable review and provider comparison.  
 
 ### Explicit non-scope (not implemented).
 
 The following are not guaranteed or persisted by ver.1.4 code and therefore are out of scope for this Rule Book:
 
-A closed-loop accuracy database (prediction vs actual vs market reaction).  
-Provider leaderboards or persistent scoring tables.  
+A standalone scoring warehouse beyond the operational sheets and derived evaluation tabs.  
+Automated provider leaderboards beyond the derived reporting summaries built from Predictions.  
 Market reaction for FX pairs other than USD/JPY.  
 
 ### Operational boundaries.
@@ -56,6 +57,7 @@ An append-only operational log row with structured JSON context. Logging is best
 **SeriesMap_Suggestions:** Human review queue for possible fallback mappings; not every indicator is expected to be promoted.  
 **SeriesMap_Proposals:** Optional proposal workflow table (used by menu tools).
 **MR_ProviderRuns:** Optional provider-level market reaction audit table. This stores per-provider scoring outputs for comparison and debugging. Final evaluation fields remain on Predictions.
+**Evaluation_Rows / Evaluation_Summary:** Derived reporting tabs built from scored Predictions rows. These are readable projections for analysis, not new sources of truth.
 
 ---
 
@@ -78,6 +80,11 @@ SeriesMap_Proposals
 **Optional market reaction audit**
 
 MR_ProviderRuns
+
+**Optional derived evaluation/reporting**
+
+Evaluation_Rows  
+Evaluation_Summary
 
 **Legacy compatibility (read-only fallbacks in limited modules)**
 
@@ -177,6 +184,36 @@ start_ts, end_ts, start_price, end_price,
 realized_pips, real_dir, real_strength, realized_sustain_min,  
 max_up_pips, max_down_pips, candle_count, provider_meta_json,  
 compare_status, compare_confidence, error_note
+
+---
+
+### 2.6B Evaluation_Rows / Evaluation_Summary derived tabs
+
+When `Build Evaluation Sheets` runs, the system rewrites two derived reporting tabs:
+
+- `Evaluation_Rows`
+- `Evaluation_Summary`
+
+These sheets are not canonical sources of truth. They are rebuilt projections derived from `Predictions`, preserving traceability back to prediction rows and market-reaction audit fields.
+
+`Evaluation_Rows` stores one scored reporting row per eligible prediction, including trace fields such as:
+
+generated_ts, release_date, release_ts, event_id, batch_id, prediction_id, run_id,  
+type, indicator_name, country, genre, importance, fx_pair,  
+ai_name, ai_model, schema_version, status, qualitative_result,  
+consensus_value, prev_revision, ai_forecast_value, released_value,  
+mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min,  
+mr_real_dir, mr_real_strength, mr_real_sustain_min,  
+mr_dir_ok, mr_strength_ok, mr_sustain_ok, overall_ok,  
+realized_pips, mr_real_max_up_pips, mr_real_max_down_pips,  
+mr_final_provider, mr_compare_status, mr_compare_note, eval_ts, trace_prediction_key
+
+`Evaluation_Summary` stores grouped rollups built from `Evaluation_Rows`, grouped by `release_date`, `ai_name`, and scope (`all`, `single`, `member`, `batch`), including:
+
+rows_scored, dir_ok_count / rate, strength_ok_count / rate, sustain_ok_count / rate, overall_ok_count / rate, avg_realized_abs_pips, avg_pred_abs_pips
+
+Implementation note.  
+These tabs are fully rewritten on each build; they do not append history and they do not modify `Event`, `Predictions`, or `MR_ProviderRuns`.
 
 ---
 
@@ -1788,7 +1825,7 @@ A change of even one minute in release_ts will generate a different event_id/bat
 
 ### 9.1 Purpose and scope (what is and is not implemented)
 
-The Market Reaction module measures short-horizon post-event USD/JPY price movement around an event’s release time, logs the computed move, and writes best-effort evaluation fields back into matching Predictions rows. It now evaluates both member rows (`event_id == event_id`) and batch rows (`type == "batch"` and `event_id == batch_id`). There is still no standalone reaction database or leaderboard table in ver.1.4.
+The Market Reaction module measures short-horizon post-event USD/JPY price movement around an event’s release time, logs the computed move, and writes best-effort evaluation fields back into matching Predictions rows. It now evaluates both member rows (`event_id == event_id`) and batch rows (`type == "batch"` and `event_id == batch_id`). The system also supports rebuilding derived evaluation tabs from those scored Predictions rows. There is still no separate warehouse-style reaction database or automated leaderboard service in ver.1.4.
 
 In scope  
 Fetching short-horizon FX candles around release_ts  
@@ -1799,11 +1836,11 @@ Writing evaluation results into the Predictions sheet by matching either `event_
 Emitting a structured log entry per evaluated event  
 
 Out of scope (not implemented)  
-Persistent accuracy metrics (MAE, hit rate tables)  
-Provider/model comparison dashboards  
+A separate scoring warehouse beyond `Predictions`, `MR_ProviderRuns`, and the derived evaluation tabs  
+Automated provider/model leaderboard services beyond the rebuilt summary sheet  
 Automatic recalibration of bands or models  
 
-Code-authoritative note. Any scoring metrics mentioned in legacy rule1.3 are informational only unless explicitly written to a sheet in code. In v1.4, they are not.
+Code-authoritative note. Any scoring metrics mentioned in legacy rule1.3 are informational only unless explicitly written to a sheet in code. In v1.4, scored metrics persist on `Predictions`, provider-level audit may persist on `MR_ProviderRuns`, and derived reporting may persist on `Evaluation_Rows` / `Evaluation_Summary`.
 
 ---
 
@@ -1813,6 +1850,7 @@ Implemented menu entrypoints in market_scoring.gs:
 
 ④ Market Reaction → Score Market Reaction (past 24h) → scoreMarketReactionPast24h_()  
 ④ Market Reaction → Score Market Reaction (Config Window) → scoreMarketReactionByConfigWindow_()  
+④ Market Reaction → Build Evaluation Sheets → menuBuildEvaluationSheets_()  
 ④ Market Reaction → Debug Timestamp Sample → debugEventTimestampSample_()  
 
 There is no installable trigger for market reaction in the uploaded code.
@@ -1992,7 +2030,7 @@ provider_error
 
 Logs remain append-only best-effort telemetry, but they are no longer the only durable artifact because evaluation fields are also written back into Predictions.
 
-Code-authoritative note. Downstream analytics should use `Predictions` for final event-level market-reaction evaluation and `MR_ProviderRuns` for provider-level audit details. Logs remain useful for runtime diagnostics and failure investigation.
+Code-authoritative note. Downstream analytics should use `Predictions` as the canonical scored prediction store, `MR_ProviderRuns` for provider-level audit details, and `Evaluation_Rows` / `Evaluation_Summary` as derived reporting layers. Logs remain useful for runtime diagnostics and failure investigation.
 
 
 ## 10) Logging, Status Codes, and Error Semantics (rule1.4)

@@ -10,8 +10,9 @@ PreSignal ver.1.4 is a Google Sheets + Apps Script system that:
 - Generates AI predictions for events into the Predictions sheet via a multi-provider runner (manual menu actions and a configurable window runner).
 - Fetches released actual values for events and writes them back into the Event sheet (released_value / released_ts / provider metadata), using a deterministic hybrid resolver: direct FMP calendar resolution first, then selective SeriesMap fallback where needed.
 - Computes a short-horizon USD/JPY “market reaction” move around release timestamps, logs the result, and writes best-effort evaluation fields back into matching Predictions rows.
+- Builds derived evaluation/report tabs from scored Predictions rows for operator review and provider comparison.
 
-Operationally, this blueprint documents only what is implemented in the uploaded Apps Script code. It does not assume any extra “evaluation/correction module” beyond what the code currently executes. Market reaction now performs a lightweight join back into Predictions for best-effort evaluation fields, but it still does not build a standalone scoring warehouse or leaderboard dataset.
+Operationally, this blueprint documents only what is implemented in the uploaded Apps Script code. It does not assume any extra “evaluation/correction module” beyond what the code currently executes. Market reaction now performs a lightweight join back into Predictions for best-effort evaluation fields, and the evaluation builder now rewrites derived reporting tabs from those scored prediction rows. The system still does not build a separate scoring warehouse or autonomous leaderboard service.
 
 
 ## 2) Data Model & Tabs (Blueprint ver.1.4)
@@ -37,6 +38,9 @@ SeriesMap_Suggestions: generated review queue for possible fallback mappings; no
 #### MarketReactionProviderRun
 An append-only provider-level audit row stored in the optional `MR_ProviderRuns` sheet. Each row captures one market-reaction scoring result for one event and one market-data provider. This table is for provider comparison and debugging; the canonical final MR evaluation still lands on `Predictions`.
 
+#### EvaluationRow / EvaluationSummary
+Derived reporting entities stored in `Evaluation_Rows` and `Evaluation_Summary`. These are rebuilt from scored `Predictions` rows and exist for traceable analysis only; they do not replace `Event`, `Predictions`, or `MR_ProviderRuns` as canonical stores.
+
 ### Sheets (Tab Names)
 
 The system is built around named sheets. Default names are defined in CFG and are treated as authoritative unless overridden in code at runtime.
@@ -53,6 +57,10 @@ SeriesMap_Suggestions (CFG.SHEET_SERIESMAP_SUGGESTIONS default: "SeriesMap_Sugge
 
 #### Optional market reaction audit sheet
 MR_ProviderRuns
+
+#### Optional derived evaluation/reporting sheets
+Evaluation_Rows
+Evaluation_Summary
 
 #### Optional / legacy / compatibility
 Config (optional): If present, the runner can read key-value configuration from it (best-effort; absence is allowed).
@@ -85,6 +93,23 @@ object, run_id, prediction_id, schema_version, created_ts, event_id, batch_id, t
 When market reaction scoring runs, the system may also append provider-level results to `MR_ProviderRuns`. The audit schema is append-only and includes:
 
 score_run_ts, score_source, event_id, indicator_name, country, release_ts, provider, status, anchor_detected, anchor_phase, anchor_ts, start_ts, end_ts, start_price, end_price, realized_pips, real_dir, real_strength, realized_sustain_min, max_up_pips, max_down_pips, candle_count, provider_meta_json, compare_status, compare_confidence, error_note
+
+#### Evaluation_Rows / Evaluation_Summary derived headers
+
+When `Build Evaluation Sheets` runs, the system rewrites two derived reporting tabs from scored `Predictions` rows:
+
+- `Evaluation_Rows`
+- `Evaluation_Summary`
+
+`Evaluation_Rows` includes trace and scored fields such as:
+
+generated_ts, release_date, release_ts, event_id, batch_id, prediction_id, run_id, type, indicator_name, country, genre, importance, fx_pair, ai_name, ai_model, schema_version, status, qualitative_result, consensus_value, prev_revision, ai_forecast_value, released_value, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min, mr_real_dir, mr_real_strength, mr_real_sustain_min, mr_dir_ok, mr_strength_ok, mr_sustain_ok, overall_ok, realized_pips, mr_real_max_up_pips, mr_real_max_down_pips, mr_final_provider, mr_compare_status, mr_compare_note, eval_ts, trace_prediction_key
+
+`Evaluation_Summary` includes grouped aggregates such as:
+
+generated_ts, release_date, ai_name, scope, rows_scored, dir_ok_count, dir_ok_rate, strength_ok_count, strength_ok_rate, sustain_ok_count, sustain_ok_rate, overall_ok_count, overall_ok_rate, avg_realized_abs_pips, avg_pred_abs_pips
+
+These sheets are rebuilt from scratch on each run and are derived reporting layers only.
 
 #### log sheet headers (best-effort, non-reordering)
 
@@ -1544,7 +1569,7 @@ What it does:
 
 What it does not do in code:
 
-- It does not build a standalone reaction database or leaderboard
+- It does not build a separate warehouse-style reaction database or autonomous leaderboard service
 - It does not persist raw candle arrays to sheets
 - It does not write back to Event rows
 - It does not support arbitrary FX pairs (USD/JPY only in this module)
@@ -2012,6 +2037,7 @@ This submenu contains both event ingestion and SeriesMap workflow actions:
 
 - Score Market Reaction (past 24h) → scoreMarketReactionPast24h_()  
 - Score Market Reaction (Config Window) → scoreMarketReactionByConfigWindow_()  
+- Build Evaluation Sheets → menuBuildEvaluationSheets_()  
 - Debug Timestamp Sample → debugEventTimestampSample_()  
 
 ---
@@ -3308,19 +3334,23 @@ In practice, the overall resolver is FMP-direct first. SeriesMap is a narrower m
 
 ---
 
-### 17.8 No built-in “prediction accuracy scoring” module
+### 17.8 No standalone scoring warehouse or autonomous leaderboard service
 
-Despite system design intent, the uploaded .gs files do not implement a persistent accuracy scoring module:
+Despite system design intent, the uploaded .gs files still do not implement a separate scoring warehouse or autonomous leaderboard service:
 
-No table of per-event error vs consensus/actual  
-No model leaderboard  
-No automated grading against realized market reaction  
+No independent warehouse outside `Predictions`, `MR_ProviderRuns`, and the derived evaluation tabs  
+No autonomous model leaderboard service  
+No automatic recalibration loop based on realized outcomes  
 
-Market reaction scorer does not join Predictions  
+However, the current code does implement:
+
+Best-effort market-reaction grading written back into `Predictions`  
+Provider-level audit in `MR_ProviderRuns`  
+Derived reporting rebuilds in `Evaluation_Rows` and `Evaluation_Summary`  
 
 Effect:
 
-ver.1.4 is a pipeline + logging system, not a full closed-loop evaluation engine.
+ver.1.4 is now a pipeline + scored prediction store + derived evaluation reporting system, but not a separate warehouse-style evaluation platform.
 
 
 ## 18) Operational Playbooks (Blueprint ver.1.4)
@@ -3398,6 +3428,10 @@ Menu → ③ Actuals → Fetch Actuals (Manual)
 If candle fetcher exists:  
 Menu → ④ Market Reaction → Score Market Reaction (Config Window)  
 (More robust if timestamps are strings.)  
+
+(Optional) Rebuild evaluation reports  
+Menu → ④ Market Reaction → Build Evaluation Sheets  
+Rewrites `Evaluation_Rows` and `Evaluation_Summary` from current scored `Predictions` rows.
 
 ---
 
@@ -3978,9 +4012,9 @@ Logging shim and best-effort operational logs
 
 #### Explicitly not included (not implemented in uploaded code):
 
-Closed-loop “accuracy scoring” (prediction vs actual vs market reaction)  
-Provider leaderboards / dashboards  
-Persistent reaction/score tables written to sheets  
+Closed-loop warehouse-style accuracy platform beyond `Predictions`, `MR_ProviderRuns`, and the derived evaluation sheets  
+Provider leaderboards / dashboards as autonomous services  
+Persistent raw candle tables written to sheets  
 
 ---
 
