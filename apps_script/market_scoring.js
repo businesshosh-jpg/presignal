@@ -328,25 +328,14 @@ function scoreMarketReactionPast24h_() {
       continue;
     }
 
-    var reaction = _computeUsdJpyMove_(ts, 30, 120, horizonMin, {
+    var scoring = _computeMarketReactionWithFallbacks_(ts, horizonMin, {
       event_id: eventId,
       row_index: r + 2,           // +2 because row 1 = headers, we started at row 2
       source: 'past24h'
-    }, cfg);
-    _appendMarketReactionAuditRow_(auditCtx, eventMeta, reaction);
-    var compareProviders = _getMarketReactionCompareProviders_(cfg, reaction && reaction.provider);
-    var compareReactions = [];
-    for (var cp = 0; cp < compareProviders.length; cp++) {
-      var compareProvider = compareProviders[cp];
-      var compareReaction = _computeUsdJpyMove_(ts, 30, 120, horizonMin, {
-        event_id: eventId,
-        row_index: r + 2,
-        source: 'past24h_compare'
-      }, cfg, compareProvider);
-      compareReactions.push(compareReaction);
-      _appendMarketReactionAuditRow_(auditCtx, eventMeta, compareReaction);
-    }
-    var finalSelection = _selectFinalMarketReaction_(reaction, compareReactions);
+    }, cfg, eventMeta, auditCtx);
+    var reaction = scoring.reaction;
+    var compareReactions = scoring.compareReactions || [];
+    var finalSelection = scoring.finalSelection;
     _applyEvaluationToPredictions_(predCtx, eventMeta, finalSelection.reaction || reaction);
     if (compareReactions.length) {
       _applyComparisonToPredictions_(predCtx, eventMeta, reaction, compareReactions, finalSelection);
@@ -493,25 +482,14 @@ function scoreMarketReactionByConfigWindow_() {
       continue;
     }
 
-    var reaction = _computeUsdJpyMove_(ts, 30, 120, horizonMin, {
+    var scoring = _computeMarketReactionWithFallbacks_(ts, horizonMin, {
       event_id: eventId,
       row_index: r + 2,           // again: +2 for header row + 1-based index
       source: 'config_window'
-    }, cfg);
-    _appendMarketReactionAuditRow_(auditCtx, eventMeta, reaction);
-    var compareProviders = _getMarketReactionCompareProviders_(cfg, reaction && reaction.provider);
-    var compareReactions = [];
-    for (var cp = 0; cp < compareProviders.length; cp++) {
-      var compareProvider = compareProviders[cp];
-      var compareReaction = _computeUsdJpyMove_(ts, 30, 120, horizonMin, {
-        event_id: eventId,
-        row_index: r + 2,
-        source: 'config_window_compare'
-      }, cfg, compareProvider);
-      compareReactions.push(compareReaction);
-      _appendMarketReactionAuditRow_(auditCtx, eventMeta, compareReaction);
-    }
-    var finalSelection = _selectFinalMarketReaction_(reaction, compareReactions);
+    }, cfg, eventMeta, auditCtx);
+    var reaction = scoring.reaction;
+    var compareReactions = scoring.compareReactions || [];
+    var finalSelection = scoring.finalSelection;
     _applyEvaluationToPredictions_(predCtx, eventMeta, finalSelection.reaction || reaction);
     if (compareReactions.length) {
       _applyComparisonToPredictions_(predCtx, eventMeta, reaction, compareReactions, finalSelection);
@@ -894,6 +872,14 @@ function _buildEventEvalMeta_(row, idx, ts) {
   };
 }
 
+function _getMarketReactionPrimaryProvider_(cfg) {
+  var raw = cfg && cfg['MR_PRIMARY_PROVIDER'];
+  var wanted = (typeof _normalizeFxProviderName_ === 'function')
+    ? _normalizeFxProviderName_(raw)
+    : String(raw || '').trim().toLowerCase();
+  return wanted || 'tiingo';
+}
+
 function _getMarketReactionCompareProvider_(cfg, primaryProvider) {
   var list = _getMarketReactionCompareProviders_(cfg, primaryProvider);
   return list.length ? list[0] : '';
@@ -905,7 +891,8 @@ function _getMarketReactionCompareProviders_(cfg, primaryProvider) {
   var primary = String(primaryProvider || '').trim().toLowerCase();
   var rawValues = [
     cfg && cfg['MR_COMPARE_PROVIDER'],
-    cfg && cfg['MR_COMPARE_PROVIDER_2']
+    cfg && cfg['MR_COMPARE_PROVIDER_2'],
+    cfg && cfg['MR_COMPARE_PROVIDER_3']
   ];
 
   for (var i = 0; i < rawValues.length; i++) {
@@ -918,6 +905,73 @@ function _getMarketReactionCompareProviders_(cfg, primaryProvider) {
     out.push(wanted);
   }
   return out;
+}
+
+function _isHighConfidenceReactionAgreement_(cmp) {
+  if (!cmp || cmp.status !== 'compared') return false;
+  if (String(cmp.dir_agree || '').toLowerCase() !== 'true') return false;
+  var anchorDelta = Number(cmp.anchor_delta_min);
+  var pipsDelta = Number(cmp.pips_delta);
+  if (!isFinite(anchorDelta) || !isFinite(pipsDelta)) return false;
+  return anchorDelta <= 1 && pipsDelta <= 3;
+}
+
+function _shouldEscalateMarketReactionFallbacks_(primaryReaction, firstCompareReaction) {
+  if (!_isComparableReaction_(primaryReaction) || !_isComparableReaction_(firstCompareReaction)) return true;
+  var cmp = _compareMarketReactionResults_(primaryReaction, firstCompareReaction);
+  return !_isHighConfidenceReactionAgreement_(cmp);
+}
+
+function _computeMarketReactionWithFallbacks_(releaseTsUtc, horizonMin, meta, cfg, eventMeta, auditCtx) {
+  var primaryProvider = _getMarketReactionPrimaryProvider_(cfg);
+  var reaction = _computeUsdJpyMove_(releaseTsUtc, 30, 120, horizonMin, meta, cfg, primaryProvider);
+  if (auditCtx && eventMeta) _appendMarketReactionAuditRow_(auditCtx, eventMeta, reaction);
+
+  var compareProviders = _getMarketReactionCompareProviders_(cfg, primaryProvider);
+  var compareReactions = [];
+  var compareSource = String(meta && meta.source || '') + '_compare';
+
+  if (compareProviders.length) {
+    var firstProvider = compareProviders[0];
+    var firstReaction = _computeUsdJpyMove_(releaseTsUtc, 30, 120, horizonMin, {
+      event_id: meta && meta.event_id,
+      row_index: meta && meta.row_index,
+      source: compareSource
+    }, cfg, firstProvider);
+    compareReactions.push(firstReaction);
+    if (auditCtx && eventMeta) _appendMarketReactionAuditRow_(auditCtx, eventMeta, firstReaction);
+
+    if (_shouldEscalateMarketReactionFallbacks_(reaction, firstReaction)) {
+      if (compareProviders.length >= 2) {
+        var thirdProvider = compareProviders[1];
+        var thirdReaction = _computeUsdJpyMove_(releaseTsUtc, 30, 120, horizonMin, {
+          event_id: meta && meta.event_id,
+          row_index: meta && meta.row_index,
+          source: compareSource
+        }, cfg, thirdProvider);
+        compareReactions.push(thirdReaction);
+        if (auditCtx && eventMeta) _appendMarketReactionAuditRow_(auditCtx, eventMeta, thirdReaction);
+
+        if (!_isComparableReaction_(thirdReaction) && compareProviders.length >= 3) {
+          var fourthProvider = compareProviders[2];
+          var fourthReaction = _computeUsdJpyMove_(releaseTsUtc, 30, 120, horizonMin, {
+            event_id: meta && meta.event_id,
+            row_index: meta && meta.row_index,
+            source: compareSource
+          }, cfg, fourthProvider);
+          compareReactions.push(fourthReaction);
+          if (auditCtx && eventMeta) _appendMarketReactionAuditRow_(auditCtx, eventMeta, fourthReaction);
+        }
+      }
+    }
+  }
+
+  var finalSelection = _selectFinalMarketReaction_(reaction, compareReactions);
+  return {
+    reaction: reaction,
+    compareReactions: compareReactions,
+    finalSelection: finalSelection
+  };
 }
 
 function _compareMarketReactionResults_(primary, secondary) {
@@ -1070,6 +1124,62 @@ function _pickRepresentativeReaction_(reactions) {
   return best;
 }
 
+function _findClusteredReactionSubset_(reactions) {
+  var list = Array.isArray(reactions) ? reactions.filter(function(item) { return !!item; }) : [];
+  if (list.length < 2) return [];
+
+  var best = [];
+  var bestScore = Infinity;
+  for (var i = 0; i < list.length; i++) {
+    for (var j = i + 1; j < list.length; j++) {
+      var left = list[i];
+      var right = list[j];
+      if (_dirLabelFromReaction_(left) !== _dirLabelFromReaction_(right)) continue;
+      var pairDist = _computeReactionDistance_(left, right);
+      var anchorDelta = Number(pairDist.anchor_delta_min);
+      var pipsDelta = Number(pairDist.pips_delta);
+      if (!isFinite(anchorDelta) || !isFinite(pipsDelta)) continue;
+      if (anchorDelta > 1 || pipsDelta > 3) continue;
+
+      var cluster = [left, right];
+      for (var k = 0; k < list.length; k++) {
+        if (k === i || k === j) continue;
+        var candidate = list[k];
+        if (_dirLabelFromReaction_(candidate) !== _dirLabelFromReaction_(left)) continue;
+        var fitsAll = true;
+        for (var c = 0; c < cluster.length; c++) {
+          var dist = _computeReactionDistance_(candidate, cluster[c]);
+          var candAnchorDelta = Number(dist.anchor_delta_min);
+          var candPipsDelta = Number(dist.pips_delta);
+          if (!isFinite(candAnchorDelta) || !isFinite(candPipsDelta) || candAnchorDelta > 1 || candPipsDelta > 3) {
+            fitsAll = false;
+            break;
+          }
+        }
+        if (fitsAll) cluster.push(candidate);
+      }
+
+      var clusterScore = 0;
+      for (var a = 0; a < cluster.length; a++) {
+        for (var b = a + 1; b < cluster.length; b++) {
+          var clusterDist = _computeReactionDistance_(cluster[a], cluster[b]);
+          clusterScore += (Number(clusterDist.anchor_delta_min) * 10) + Number(clusterDist.pips_delta);
+        }
+      }
+
+      if (
+        cluster.length > best.length ||
+        (cluster.length === best.length && clusterScore < bestScore)
+      ) {
+        best = cluster;
+        bestScore = clusterScore;
+      }
+    }
+  }
+
+  return best;
+}
+
 function _selectFinalMarketReaction_(primaryReaction, secondaryReactions) {
   var primary = primaryReaction || null;
   var secondaries = Array.isArray(secondaryReactions) ? secondaryReactions.filter(function(item) {
@@ -1093,28 +1203,8 @@ function _selectFinalMarketReaction_(primaryReaction, secondaryReactions) {
     };
   }
 
-  var secondaryDir = _dirLabelFromReaction_(secondaries[0]);
-  var secondaryDirAgree = true;
-  var secondaryMaxAnchorDelta = '';
-  var secondaryMaxPipsDelta = '';
-  for (var i = 0; i < secondaries.length; i++) {
-    if (_dirLabelFromReaction_(secondaries[i]) !== secondaryDir) secondaryDirAgree = false;
-    for (var j = i + 1; j < secondaries.length; j++) {
-      var pairDist = _computeReactionDistance_(secondaries[i], secondaries[j]);
-      if (isFinite(Number(pairDist.anchor_delta_min))) {
-        secondaryMaxAnchorDelta = (secondaryMaxAnchorDelta === '') ? Number(pairDist.anchor_delta_min) : Math.max(secondaryMaxAnchorDelta, Number(pairDist.anchor_delta_min));
-      }
-      if (isFinite(Number(pairDist.pips_delta))) {
-        secondaryMaxPipsDelta = (secondaryMaxPipsDelta === '') ? Number(pairDist.pips_delta) : Math.max(secondaryMaxPipsDelta, Number(pairDist.pips_delta));
-      }
-    }
-  }
-
-  var clustered = secondaryDirAgree &&
-    secondaryMaxAnchorDelta !== '' && secondaryMaxAnchorDelta <= 1 &&
-    secondaryMaxPipsDelta !== '' && secondaryMaxPipsDelta <= 3;
-
-  if (!clustered) {
+  var clusteredSecondaries = _findClusteredReactionSubset_(secondaries);
+  if (clusteredSecondaries.length < 2) {
     return {
       reaction: primary,
       source: 'primary_only',
@@ -1122,7 +1212,7 @@ function _selectFinalMarketReaction_(primaryReaction, secondaryReactions) {
     };
   }
 
-  var primaryDistances = secondaries.map(function(item) {
+  var primaryDistances = clusteredSecondaries.map(function(item) {
     return _computeReactionDistance_(primary, item);
   });
   var primaryIsOutlier = primaryDistances.every(function(dist) {
@@ -1139,8 +1229,8 @@ function _selectFinalMarketReaction_(primaryReaction, secondaryReactions) {
     };
   }
 
-  var representative = _pickRepresentativeReaction_(secondaries);
-  var compareNames = secondaries.map(function(item) { return String(item.provider || ''); }).filter(Boolean);
+  var representative = _pickRepresentativeReaction_(clusteredSecondaries);
+  var compareNames = clusteredSecondaries.map(function(item) { return String(item.provider || ''); }).filter(Boolean);
   return {
     reaction: representative || primary,
     source: 'compare_cluster_override',

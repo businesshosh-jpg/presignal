@@ -1,4 +1,4 @@
-/**************  Tiingo + Twelve Data + Massive FX candle provider (USD/JPY)  **************/
+/**************  Tiingo + EODHD + FCSAPI FX candle provider (USD/JPY)  **************/
 
 var __FX_CANDLE_MEMO__ = (typeof __FX_CANDLE_MEMO__ !== 'undefined' && __FX_CANDLE_MEMO__) ? __FX_CANDLE_MEMO__ : {};
 
@@ -33,12 +33,32 @@ function getFxCandlesForWindowByProvider_(provider, pair, releaseTsUtc, preMinut
       return null;
     }
 
-    if (name === 'twelvedata') {
-      var out = fetchTwelveDataFx_(pair, '1min', startMs, endMs);
-      providerChain.push('twelvedata');
+    if (name === 'eodhd') {
+      var eodhdOut = fetchEodhdFx_(pair, '1m', startMs, endMs);
+      providerChain.push('eodhd');
+      var eodhdCandles = filterCandlesByWindow_(eodhdOut.candles, startMs, endMs);
+      if (eodhdCandles.length) {
+        return { provider: 'eodhd', candles: eodhdCandles, meta: eodhdOut.meta || null, cache_hit: !!eodhdOut.cache_hit };
+      }
+      return null;
+    }
+
+    if (name === 'fcsapi') {
+      var out = fetchFcsapiFx_(pair, '1m', startMs, endMs);
+      providerChain.push('fcsapi');
       var c = filterCandlesByWindow_(out.candles, startMs, endMs);
       if (c.length) {
-        return { provider: 'twelvedata', candles: c, meta: out.meta || null, cache_hit: !!out.cache_hit };
+        return { provider: 'fcsapi', candles: c, meta: out.meta || null, cache_hit: !!out.cache_hit };
+      }
+      return null;
+    }
+
+    if (name === 'twelvedata') {
+      var outLegacy = fetchTwelveDataFx_(pair, '1min', startMs, endMs);
+      providerChain.push('twelvedata');
+      var cLegacy = filterCandlesByWindow_(outLegacy.candles, startMs, endMs);
+      if (cLegacy.length) {
+        return { provider: 'twelvedata', candles: cLegacy, meta: outLegacy.meta || null, cache_hit: !!outLegacy.cache_hit };
       }
       return null;
     }
@@ -56,7 +76,7 @@ function getFxCandlesForWindowByProvider_(provider, pair, releaseTsUtc, preMinut
     throw new Error('Unsupported FX provider: ' + String(name));
   }
 
-  var order = wanted ? [wanted] : ['tiingo', 'twelvedata', 'massive'];
+  var order = wanted ? [wanted] : ['tiingo', 'eodhd', 'fcsapi'];
   for (var i = 0; i < order.length; i++) {
     try {
       var result = tryProvider_(order[i]);
@@ -150,6 +170,243 @@ function fetchTiingoFx_(pair, interval, startMs, endMs) {
     interval: normalizedInterval,
     startDate: startIso,
     endDate: endIso,
+    candle_count: candles.length,
+    meta: out.meta
+  });
+  return out;
+}
+
+
+// ---------- EODHD (fallback) ----------
+function fetchEodhdFx_(pair, interval, startMs, endMs) {
+  var key = _getEodhdApiKey_();
+  if (!key) throw new Error('EODHD_API_KEY missing');
+  if (!startMs || !endMs) throw new Error('fetchEodhdFx_: startMs / endMs not provided');
+
+  var symbol = normalizeSymbolForEodhd_(pair);
+  var normalized = normalizeEodhdInterval_(interval || '1m');
+  var cacheKey = _eodhdCacheKey_(symbol, normalized, startMs, endMs);
+
+  var memoHit = _getMemoizedFxCandles_(cacheKey);
+  if (memoHit) {
+    return { candles: memoHit.candles || [], meta: memoHit.meta || null, cache_hit: true };
+  }
+
+  var cached = _getCachedEodhdCandles_(cacheKey);
+  if (cached) {
+    _setMemoizedFxCandles_(cacheKey, cached);
+    return { candles: cached.candles || [], meta: cached.meta || null, cache_hit: true };
+  }
+
+  var fromSec = Math.floor(startMs / 1000);
+  var toSec = Math.floor(endMs / 1000);
+  var url = 'https://eodhd.com/api/intraday/' + encodeURIComponent(symbol)
+    + '?api_token=' + encodeURIComponent(key)
+    + '&fmt=json'
+    + '&interval=' + encodeURIComponent(normalized)
+    + '&from=' + encodeURIComponent(String(fromSec))
+    + '&to=' + encodeURIComponent(String(toSec));
+
+  var res = UrlFetchApp.fetch(url, {
+    muteHttpExceptions: true,
+    followRedirects: true,
+    validateHttpsCertificates: true
+  });
+
+  var code = res.getResponseCode();
+  var body = res.getContentText();
+  if (code !== 200) throw new Error('EODHD HTTP ' + code + ' ' + body.slice(0, 256));
+
+  var json = JSON.parse(body);
+  if (!Array.isArray(json)) {
+    if (json && json.error) throw new Error('EODHD error: ' + json.error);
+    if (json && json.message) throw new Error('EODHD error: ' + json.message);
+    throw new Error('EODHD unexpected payload');
+  }
+
+  var candles = json.map(function(row) {
+    return {
+      ts: _parseEodhdCandleTs_(row.timestamp, row.datetime),
+      open: num_(row.open),
+      high: num_(row.high),
+      low: num_(row.low),
+      close: num_(row.close)
+    };
+  }).filter(validCandle_);
+
+  var out = {
+    candles: candles,
+    meta: {
+      symbol: symbol,
+      interval: normalized,
+      from: fromSec,
+      to: toSec
+    },
+    cache_hit: false
+  };
+
+  _setMemoizedFxCandles_(cacheKey, out);
+  _cacheEodhdCandles_(cacheKey, out);
+  log_ && log_('marketdata', 'eodhd_fetch_ok', {
+    symbol: symbol,
+    interval: normalized,
+    from: fromSec,
+    to: toSec,
+    candle_count: candles.length,
+    meta: out.meta
+  });
+  return out;
+}
+
+
+// ---------- FCSAPI (comparison / fallback) ----------
+function fetchFcsapiFx_(pair, interval, startMs, endMs) {
+  var key = _getFcsapiApiKey_();
+  if (!key) throw new Error('FCSAPI_API_KEY missing');
+  if (!startMs || !endMs) throw new Error('fetchFcsapiFx_: startMs / endMs not provided');
+
+  var symbol = normalizeSymbolForFcsapi_(pair);
+  var normalized = normalizeFcsapiInterval_(interval || '1m');
+  var cacheKey = _fcsapiCacheKey_(symbol, normalized, startMs, endMs);
+
+  var memoHit = _getMemoizedFxCandles_(cacheKey);
+  if (memoHit) {
+    return { candles: memoHit.candles || [], meta: memoHit.meta || null, cache_hit: true };
+  }
+
+  var cached = _getCachedFcsapiCandles_(cacheKey);
+  if (cached) {
+    _setMemoizedFxCandles_(cacheKey, cached);
+    return { candles: cached.candles || [], meta: cached.meta || null, cache_hit: true };
+  }
+
+  var fromSec = Math.floor(startMs / 1000);
+  var toSec = Math.floor(endMs / 1000);
+  var url = 'https://api-v4.fcsapi.com/forex/history'
+    + '?symbol=' + encodeURIComponent(symbol)
+    + '&period=' + encodeURIComponent(normalized)
+    + '&from=' + encodeURIComponent(String(fromSec))
+    + '&to=' + encodeURIComponent(String(toSec))
+    + '&access_key=' + encodeURIComponent(key);
+
+  var res = UrlFetchApp.fetch(url, {
+    muteHttpExceptions: true,
+    followRedirects: true,
+    validateHttpsCertificates: true
+  });
+
+  var code = res.getResponseCode();
+  var body = res.getContentText();
+  var json = null;
+  try { json = JSON.parse(body); } catch (_) {}
+
+  if (code !== 200 || (json && json.status === false)) {
+    var freeModeRetry = _shouldRetryFcsapiWithLength_(code, body, json);
+    if (!freeModeRetry) {
+      if (code !== 200) throw new Error('FCSAPI HTTP ' + code + ' ' + body.slice(0, 256));
+      throw new Error('FCSAPI error: ' + (json && (json.msg || json.message) || body.slice(0, 256)));
+    }
+
+    var length = _computeFcsapiLengthForWindow_(startMs, endMs, normalized);
+    var retryUrl = 'https://api-v4.fcsapi.com/forex/history'
+      + '?symbol=' + encodeURIComponent(symbol)
+      + '&period=' + encodeURIComponent(normalized)
+      + '&access_key=' + encodeURIComponent(key)
+      + '&length=' + encodeURIComponent(String(length));
+
+    var retryRes = UrlFetchApp.fetch(retryUrl, {
+      muteHttpExceptions: true,
+      followRedirects: true,
+      validateHttpsCertificates: true
+    });
+
+    code = retryRes.getResponseCode();
+    body = retryRes.getContentText();
+    json = null;
+    try { json = JSON.parse(body); } catch (_) {}
+    if (code !== 200) throw new Error('FCSAPI HTTP ' + code + ' ' + body.slice(0, 256));
+    if (json && json.status === false) {
+      throw new Error('FCSAPI error: ' + (json.msg || json.message || body.slice(0, 256)));
+    }
+
+    var retryRows = _extractFcsapiHistoryRows_(json);
+    if (!retryRows.length) {
+      throw new Error('FCSAPI unexpected payload (no history rows)');
+    }
+
+    var retryCandles = retryRows.map(function(row) {
+      return {
+        ts: _parseFcsapiCandleTs_(row.t, row.tm, row.datetime),
+        open: num_(row.o != null ? row.o : row.open),
+        high: num_(row.h != null ? row.h : row.high),
+        low: num_(row.l != null ? row.l : row.low),
+        close: num_(row.c != null ? row.c : row.close)
+      };
+    }).filter(validCandle_).sort(function(a, b) {
+      return a.ts.getTime() - b.ts.getTime();
+    });
+
+    var retryOut = {
+      candles: retryCandles,
+      meta: {
+        symbol: symbol,
+        interval: normalized,
+        from: fromSec,
+        to: toSec,
+        mode: 'length_retry',
+        length: length
+      },
+      cache_hit: false
+    };
+
+    _setMemoizedFxCandles_(cacheKey, retryOut);
+    _cacheFcsapiCandles_(cacheKey, retryOut);
+    log_ && log_('marketdata', 'fcsapi_fetch_ok', {
+      symbol: symbol,
+      interval: normalized,
+      from: fromSec,
+      to: toSec,
+      candle_count: retryCandles.length,
+      meta: retryOut.meta
+    });
+    return retryOut;
+  }
+
+  var rows = _extractFcsapiHistoryRows_(json);
+  if (!rows.length) {
+    throw new Error('FCSAPI unexpected payload (no history rows)');
+  }
+
+  var candles = rows.map(function(row) {
+    return {
+      ts: _parseFcsapiCandleTs_(row.t, row.tm, row.datetime),
+      open: num_(row.o != null ? row.o : row.open),
+      high: num_(row.h != null ? row.h : row.high),
+      low: num_(row.l != null ? row.l : row.low),
+      close: num_(row.c != null ? row.c : row.close)
+    };
+  }).filter(validCandle_).sort(function(a, b) {
+    return a.ts.getTime() - b.ts.getTime();
+  });
+
+  var out = {
+    candles: candles,
+    meta: {
+      symbol: symbol,
+      interval: normalized,
+      from: fromSec,
+      to: toSec
+    },
+    cache_hit: false
+  };
+
+  _setMemoizedFxCandles_(cacheKey, out);
+  _cacheFcsapiCandles_(cacheKey, out);
+  log_ && log_('marketdata', 'fcsapi_fetch_ok', {
+    symbol: symbol,
+    interval: normalized,
+    from: fromSec,
+    to: toSec,
     candle_count: candles.length,
     meta: out.meta
   });
@@ -341,6 +598,20 @@ function _getMassiveApiKey_() {
   return '';
 }
 
+function _getEodhdApiKey_() {
+  if (typeof CFG !== 'undefined' && CFG && CFG.EODHD_API_KEY) return CFG.EODHD_API_KEY;
+  if (typeof getScriptProperty_ === 'function') return getScriptProperty_('EODHD_API_KEY');
+  if (typeof _getScriptProp_ === 'function') return _getScriptProp_('EODHD_API_KEY');
+  return '';
+}
+
+function _getFcsapiApiKey_() {
+  if (typeof CFG !== 'undefined' && CFG && CFG.FCSAPI_API_KEY) return CFG.FCSAPI_API_KEY;
+  if (typeof getScriptProperty_ === 'function') return getScriptProperty_('FCSAPI_API_KEY');
+  if (typeof _getScriptProp_ === 'function') return _getScriptProp_('FCSAPI_API_KEY');
+  return '';
+}
+
 function normalizeSymbolForTiingo_(pair) {
   var p = String(pair || '').trim().toUpperCase().replace('/', '');
   if (p.length === 6) return p;
@@ -367,6 +638,18 @@ function normalizeSymbolForMassive_(pair) {
   return 'C:USDJPY';
 }
 
+function normalizeSymbolForEodhd_(pair) {
+  var p = String(pair || '').trim().toUpperCase().replace('/', '');
+  if (p.length === 6) return p + '.FOREX';
+  return 'USDJPY.FOREX';
+}
+
+function normalizeSymbolForFcsapi_(pair) {
+  var p = String(pair || '').trim().toUpperCase().replace('/', '');
+  if (p.length === 6) return p;
+  return 'USDJPY';
+}
+
 function normalizeMassiveInterval_(interval) {
   var raw = String(interval || '1min').trim().toLowerCase();
   if (raw === '1min') return { interval: '1min', multiplier: 1, timespan: 'minute' };
@@ -377,12 +660,32 @@ function normalizeMassiveInterval_(interval) {
   return { interval: '1min', multiplier: 1, timespan: 'minute' };
 }
 
+function normalizeEodhdInterval_(interval) {
+  var raw = String(interval || '1m').trim().toLowerCase();
+  if (raw === '1m' || raw === '5m' || raw === '1h') return raw;
+  if (raw === '1min') return '1m';
+  if (raw === '5min') return '5m';
+  if (raw === '60min' || raw === '1hour') return '1h';
+  return '1m';
+}
+
+function normalizeFcsapiInterval_(interval) {
+  var raw = String(interval || '1m').trim().toLowerCase();
+  if (raw === '1min') return '1m';
+  if (raw === '5min') return '5m';
+  if (raw === '60min' || raw === '1hour') return '1h';
+  if (['1m', '5m', '15m', '30m', '1h', '2h', '4h', '5h', '1d', '1w', '1m'].indexOf(raw) >= 0) return raw;
+  return '1m';
+}
+
 function _normalizeFxProviderName_(provider) {
   var raw = String(provider || '').trim().toLowerCase();
   if (!raw) return '';
   if (raw === 'twelve' || raw === '12data') return 'twelvedata';
   if (raw === 'polygon') return 'massive';
   if (raw === 'tiingo') return 'tiingo';
+  if (raw === 'eod' || raw === 'eodhd') return 'eodhd';
+  if (raw === 'fcs' || raw === 'fcsapi') return 'fcsapi';
   if (raw === 'twelvedata') return 'twelvedata';
   if (raw === 'massive') return 'massive';
   return raw;
@@ -442,6 +745,14 @@ function _massiveCacheKey_(ticker, interval, startMs, endMs) {
   return ['massive', ticker, interval || '1min', String(startMs || ''), String(endMs || '')].join(':');
 }
 
+function _eodhdCacheKey_(symbol, interval, startMs, endMs) {
+  return ['eodhd', symbol, interval || '1m', String(startMs || ''), String(endMs || '')].join(':');
+}
+
+function _fcsapiCacheKey_(symbol, interval, startMs, endMs) {
+  return ['fcsapi', symbol, interval || '1m', String(startMs || ''), String(endMs || '')].join(':');
+}
+
 function _getCachedTiingoCandles_(cacheKey) {
   return _getCachedCandlesGeneric_(cacheKey);
 }
@@ -451,6 +762,14 @@ function _getCachedTwelveDataCandles_(cacheKey) {
 }
 
 function _getCachedMassiveCandles_(cacheKey) {
+  return _getCachedCandlesGeneric_(cacheKey);
+}
+
+function _getCachedEodhdCandles_(cacheKey) {
+  return _getCachedCandlesGeneric_(cacheKey);
+}
+
+function _getCachedFcsapiCandles_(cacheKey) {
   return _getCachedCandlesGeneric_(cacheKey);
 }
 
@@ -484,8 +803,79 @@ function _cacheTiingoCandles_(cacheKey, payload) {
   _cacheCandlesGeneric_(cacheKey, payload);
 }
 
+function _cacheEodhdCandles_(cacheKey, payload) {
+  _cacheCandlesGeneric_(cacheKey, payload);
+}
+
+function _cacheFcsapiCandles_(cacheKey, payload) {
+  _cacheCandlesGeneric_(cacheKey, payload);
+}
+
 function _cacheMassiveCandles_(cacheKey, payload) {
   _cacheCandlesGeneric_(cacheKey, payload);
+}
+
+function _parseEodhdCandleTs_(timestamp, datetime) {
+  if (timestamp != null && timestamp !== '') return _parseEpochSecOrMsToDate_(timestamp);
+  return parseUtc_(datetime);
+}
+
+function _parseFcsapiCandleTs_(t, tm, datetime) {
+  if (t != null && t !== '') return _parseEpochSecOrMsToDate_(t);
+  return parseUtc_(tm || datetime);
+}
+
+function _parseEpochSecOrMsToDate_(v) {
+  var n = Number(v);
+  if (!isFinite(n)) return null;
+  if (n < 1000000000000) n = n * 1000;
+  return new Date(n);
+}
+
+function _extractFcsapiHistoryRows_(json) {
+  if (!json) return [];
+
+  var candidates = [];
+  if (Array.isArray(json.response)) candidates = json.response;
+  else if (Array.isArray(json.data)) candidates = json.data;
+  else if (Array.isArray(json.result)) candidates = json.result;
+  else if (json.response && typeof json.response === 'object') {
+    var keys = Object.keys(json.response);
+    candidates = keys.map(function(k) { return json.response[k]; });
+  } else if (json.data && typeof json.data === 'object') {
+    var dkeys = Object.keys(json.data);
+    candidates = dkeys.map(function(k) { return json.data[k]; });
+  }
+
+  return (candidates || []).filter(function(row) {
+    return row && typeof row === 'object';
+  });
+}
+
+function _shouldRetryFcsapiWithLength_(code, body, json) {
+  var msg = '';
+  if (json && (json.msg || json.message)) msg = String(json.msg || json.message);
+  else msg = String(body || '');
+  msg = msg.toLowerCase();
+  if (code === 400 && msg.indexOf('free users can only request up to length=300 candles without from/to') >= 0) {
+    return true;
+  }
+  return false;
+}
+
+function _computeFcsapiLengthForWindow_(startMs, endMs, interval) {
+  var stepMin = 1;
+  var raw = String(interval || '1m').toLowerCase();
+  if (raw === '5m') stepMin = 5;
+  else if (raw === '15m') stepMin = 15;
+  else if (raw === '30m') stepMin = 30;
+  else if (raw === '1h') stepMin = 60;
+
+  var spanMin = Math.max(1, Math.ceil((endMs - startMs) / 60000));
+  var needed = Math.ceil(spanMin / stepMin) + 30; // small safety buffer
+  if (needed < 50) needed = 50;
+  if (needed > 300) needed = 300;
+  return needed;
 }
 
 function _midFromBidAsk_(bid, ask) {
