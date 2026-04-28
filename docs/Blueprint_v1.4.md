@@ -1574,19 +1574,33 @@ What it does not do in code:
 - It does not write back to Event rows
 - It does not support arbitrary FX pairs (USD/JPY only in this module)
 
-### 9.2 Critical dependencies (must exist elsewhere for scoring to work)
+### 9.2 Critical dependencies
 
-market_scoring.gs calls two global symbols that are not defined in any of the uploaded .gs files:
+Market Reaction scoring depends on:
 
-- getFxCandlesForWindow_(pair, releaseTsUtc, preMin, postMin)
-- log_ (used as log_ && log_(...))
+- `fx_candle_provider.js` for `getFxCandlesForWindow_()` / `getFxCandlesForWindowByProvider_()`
+- the shared logger hook `log_`
 
-Because these identifiers are referenced directly, if they are not provided by another file in your Apps Script project, this module will throw a ReferenceError when it reaches those lines.
+In the current repo, the candle-fetch layer is present and maintained. The supported USD/JPY provider roles are:
 
-Therefore:
+- `tiingo` — primary scorer
+- `eodhd` — first verification provider
+- `massive` — provider 3 fallback / arbitration provider
+- `twelvedata` — provider 4 backup when provider 3 is unavailable
 
-- The Market Reaction module is not self-contained in the uploaded code set.
-- It is effectively a scaffolding layer that requires an external candle-fetch provider and a logger function to be present in the project.
+The scorer is no longer modeled as an unconditional “query all compare providers” workflow. It now uses staged arbitration:
+
+1. fetch `tiingo`
+2. fetch `eodhd`
+3. stop if they agree closely enough
+4. otherwise fetch provider 3
+5. fetch provider 4 only if provider 3 is unavailable
+
+Agreement tolerance is code-authoritatively:
+
+- same direction
+- anchor delta `<= 1` minute
+- pip delta `<= 3`
 
 ### 9.3 Core computation: _computeUsdJpyMove_()
 
@@ -1684,9 +1698,11 @@ Eligibility rules (strict):
 - It only scores events with:
   - since <= ts <= now, where since = now - 24 hours
 
-For each eligible row it calls:
+For each eligible row it now delegates to staged provider arbitration through:
 
-- _computeUsdJpyMove_(ts, 30, 120, _getMarketReactionHorizonMin_(cfg), { event_id, row_index, source:'past24h' })
+- `_computeMarketReactionWithFallbacks_(...)`
+
+which internally uses `_computeUsdJpyMove_(...)` for each consulted provider.
 
 It also attempts to apply evaluation results to matching Predictions rows via `_applyEvaluationToPredictions_()`.
 
@@ -1737,7 +1753,14 @@ Window filter:
 
 Scoring call:
 
-- _computeUsdJpyMove_(ts, 30, 120, _getMarketReactionHorizonMin_(cfg), { event_id, row_index, source:'config_window' })
+- `_computeMarketReactionWithFallbacks_(...)`
+
+Internally this:
+
+- scores with `MR_PRIMARY_PROVIDER` (default `tiingo`)
+- verifies with `MR_COMPARE_PROVIDER` (intended `eodhd`)
+- escalates to `MR_COMPARE_PROVIDER_2` only when the first pair disagree materially
+- uses `MR_COMPARE_PROVIDER_3` only when provider 3 is unavailable
 
 Anchor-detection behavior inside `_computeUsdJpyMove_()`:
 
@@ -2147,9 +2170,9 @@ This is the global, baseline config for sheet names, FMP, and SeriesMap triage.
 prediction_runner.gs uses var CFG = (typeof CFG !== 'undefined') ? CFG : { ...defaults... } and then _ensureCfgDefaults_() to fill missing keys.  
 This means Code.gs CFG is primary, and prediction-runner defaults fill any missing keys.
 
-#### Spreadsheet tab: Config (key/value overrides) — Prediction Runner only
-prediction_runner.gs reads Config!A:B and overrides selected keys (providers, window override, etc.).  
-Other modules in this codebase do not use this Config sheet override path.
+#### Spreadsheet tab: Config (key/value overrides)
+Both `prediction_runner.gs` and `market_scoring.gs` read Config!A:B overrides.  
+Prediction Runner uses it for provider and window controls; Market Reaction uses it for provider arbitration and reaction-window controls.
 
 Supported prediction-specific keys include:
 
@@ -2161,6 +2184,23 @@ Supported prediction-specific keys include:
 - PREDICTION_SEED = integer seed for provider requests
 - PRED_WINDOW_ENABLED / PRED_WINDOW_FROM_LOCAL / PRED_WINDOW_TO_LOCAL / PRED_WINDOW_TZ for prediction-only windowing
 - Legacy shared `WINDOW_*` values are used only as fallback by the prediction runner
+
+Supported market-reaction keys include:
+
+- `MR_PRIMARY_PROVIDER`
+- `MR_COMPARE_PROVIDER`
+- `MR_COMPARE_PROVIDER_2`
+- `MR_COMPARE_PROVIDER_3`
+- `MR_WINDOW_ENABLED`
+- `MR_WINDOW_FROM_LOCAL`
+- `MR_WINDOW_TO_LOCAL`
+- `MR_WINDOW_TZ`
+- `MR_HORIZON_MIN`
+- `MR_ANCHOR_MIN_ABS_MOVE_PIPS`
+- `MR_ANCHOR_LOOKBACK_MIN`
+- `MR_ANCHOR_LOOKAHEAD_MIN`
+- `MR_FLAT_MAX_ABS_PIPS`
+- `MR_SKIP_ALREADY_SCORED`
 
 #### Apps Script Properties (API keys) — multiple modules
 FMP: Script Properties FMP_API_KEY (fallback if CFG.FMP_API_KEY is empty)  

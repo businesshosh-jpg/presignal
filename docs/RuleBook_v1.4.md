@@ -1880,13 +1880,28 @@ The scorer calls the project-level candle provider through:
 
 - `getFxCandlesForWindow_('USD/JPY', releaseTsUtc, preMin, postMin)`
 
-The default candle-fetch layer currently attempts the supported USD/JPY providers in this order:
+The maintained USD/JPY provider roles in ver.1.4 are:
 
-- `tiingo`
-- `twelvedata`
-- `massive`
+- `tiingo` — primary market-reaction provider
+- `eodhd` — first verification provider
+- `massive` — provider 3 fallback / arbitration provider
+- `twelvedata` — provider 4 backup, only when provider 3 is unavailable
 
-The primary scorer consumes whichever provider the external candle-fetch layer returns. Comparison scoring may call provider-specific fetches through `getFxCandlesForWindowByProvider_()` when `MR_COMPARE_PROVIDER` and/or `MR_COMPARE_PROVIDER_2` are configured.
+Market reaction scoring uses staged arbitration rather than unconditional multi-provider fan-out:
+
+1. score with `tiingo`
+2. verify with `eodhd`
+3. if `tiingo` and `eodhd` agree closely enough, stop there
+4. if they disagree materially, call `MR_COMPARE_PROVIDER_2`
+5. call `MR_COMPARE_PROVIDER_3` only when provider 3 is unavailable (`no_candles`, fetch error, etc.)
+
+“Agree closely enough” is code-authoritatively defined as:
+
+- same realized direction
+- anchor delta `<= 1` minute
+- pip delta `<= 3`
+
+If fallback providers are consulted, the final scorer may still retain the primary result unless the fallback cluster shows the primary is an outlier.
 
 For one evaluated event, the scorer requests one candle window, not one request per minute:
 
@@ -1936,6 +1951,7 @@ Config-window scoring uses a dedicated Market Reaction window:
 - `MR_WINDOW_TZ`
 - `MR_COMPARE_PROVIDER`
 - `MR_COMPARE_PROVIDER_2`
+- `MR_COMPARE_PROVIDER_3`
 - `MR_ANCHOR_MIN_ABS_MOVE_PIPS`
 - `MR_ANCHOR_LOOKBACK_MIN`
 - `MR_ANCHOR_LOOKAHEAD_MIN`
