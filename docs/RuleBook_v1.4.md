@@ -206,11 +206,13 @@ mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min,
 mr_real_dir, mr_real_strength, mr_real_sustain_min,  
 mr_dir_ok, mr_strength_ok, mr_sustain_ok, overall_ok,  
 realized_pips, mr_real_max_up_pips, mr_real_max_down_pips,  
-mr_final_provider, mr_compare_status, mr_compare_note, eval_ts, trace_prediction_key
+mr_final_provider, eval_note, mr_compare_status, mr_compare_note, eval_ts, trace_prediction_key
 
 `Evaluation_Summary` stores grouped rollups built from `Evaluation_Rows`, grouped by `release_date`, `ai_name`, and scope (`all`, `single`, `member`, `batch`), including:
 
 rows_scored, dir_ok_count / rate, strength_ok_count / rate, sustain_ok_count / rate, overall_ok_count / rate, avg_realized_abs_pips, avg_pred_abs_pips
+
+Summary rows count only genuinely scored outcomes. Rows that remain unscored because of unavailable market reaction data, including `market_closed`, are retained in `Evaluation_Rows` for traceability but excluded from `Evaluation_Summary` rate math.
 
 Implementation note.  
 These tabs are fully rewritten on each build; they do not append history and they do not modify `Event`, `Predictions`, or `MR_ProviderRuns`.
@@ -1978,6 +1980,14 @@ If no meaningful anchor is detected:
 - `realized_sustain_min = 0`
 - `eval_note` is suffixed with `no_reaction_detected`
 
+If the event falls in the normal FX weekend closure window and no usable candles are available, the scorer classifies the outcome as:
+
+- `status = market_closed`
+- `eval_note = market_closed`
+- `mr_compare_status = market_closed`
+
+In these cases, the row remains traceable in `Predictions` and `Evaluation_Rows`, but no realized direction/pips grading is written and `mr_final_provider` remains blank.
+
 `realized_sustain_min` uses the dominant initial reaction direction inside the reaction horizon, then checks 1-minute candle closes forward up to 60 minutes. Sustain remains valid while price stays at least 1 pip on the correct side of the start price, with tolerance for 2 consecutive violating closes before sustain ends.
 
 ---
@@ -2023,6 +2033,7 @@ provider metadata
 status:  
 ok  
 no_candles  
+market_closed  
 provider_error  
 
 Logs remain append-only best-effort telemetry, but they are no longer the only durable artifact because evaluation fields are also written back into Predictions.

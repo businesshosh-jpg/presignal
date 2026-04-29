@@ -103,13 +103,13 @@ When `Build Evaluation Sheets` runs, the system rewrites two derived reporting t
 
 `Evaluation_Rows` includes trace and scored fields such as:
 
-generated_ts, release_date, release_ts, event_id, batch_id, prediction_id, run_id, type, indicator_name, country, genre, importance, fx_pair, ai_name, ai_model, schema_version, status, qualitative_result, consensus_value, prev_revision, ai_forecast_value, released_value, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min, mr_real_dir, mr_real_strength, mr_real_sustain_min, mr_dir_ok, mr_strength_ok, mr_sustain_ok, overall_ok, realized_pips, mr_real_max_up_pips, mr_real_max_down_pips, mr_final_provider, mr_compare_status, mr_compare_note, eval_ts, trace_prediction_key
+generated_ts, release_date, release_ts, event_id, batch_id, prediction_id, run_id, type, indicator_name, country, genre, importance, fx_pair, ai_name, ai_model, schema_version, status, qualitative_result, consensus_value, prev_revision, ai_forecast_value, released_value, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min, mr_real_dir, mr_real_strength, mr_real_sustain_min, mr_dir_ok, mr_strength_ok, mr_sustain_ok, overall_ok, realized_pips, mr_real_max_up_pips, mr_real_max_down_pips, mr_final_provider, eval_note, mr_compare_status, mr_compare_note, eval_ts, trace_prediction_key
 
 `Evaluation_Summary` includes grouped aggregates such as:
 
 generated_ts, release_date, ai_name, scope, rows_scored, dir_ok_count, dir_ok_rate, strength_ok_count, strength_ok_rate, sustain_ok_count, sustain_ok_rate, overall_ok_count, overall_ok_rate, avg_realized_abs_pips, avg_pred_abs_pips
 
-These sheets are rebuilt from scratch on each run and are derived reporting layers only.
+These sheets are rebuilt from scratch on each run and are derived reporting layers only. `Evaluation_Summary` excludes rows that were not truly scored, including `market_closed` and other unavailable-data cases, while `Evaluation_Rows` retains those rows for traceability.
 
 #### log sheet headers (best-effort, non-reordering)
 
@@ -1609,15 +1609,19 @@ Fetch candles:
 
 If out.candles is missing/empty:
 
-- logs no_candles via log_ (if present)
-- returns { status: 'no_candles' }
+- logs `no_candles` or `market_closed` via `log_` (if present)
+- returns `{ status: 'market_closed' }` when the timestamp falls in the normal FX weekend closure window
+- otherwise returns `{ status: 'no_candles' }`
 
 Find base candle (t0):
 
 - t0 = releaseTsUtc.getTime()
 - base = _nearestAtOrBefore_(out.candles, t0)
 
-If missing: returns { status: 'no_base' }
+If missing:
+
+- returns `{ status: 'market_closed' }` when the timestamp falls in the normal FX weekend closure window
+- otherwise returns `{ status: 'no_base' }`
 
 Find horizon candle (t0 + horizon):
 
