@@ -32,6 +32,12 @@ var CFG = (typeof CFG !== 'undefined') ? CFG : {
   DEFAULT_FX: 'USDJPY',
   WINDOW_MIN_BEFORE_MIN: 24*60,  // fallback minutes window (used if local override disabled/invalid)
   WINDOW_MAX_AFTER_MIN: 36*60,
+  PRED_MAX_WORK_UNITS_PER_RUN: 12,
+  PRED_RESUME_ENABLED: true,
+  PRED_AUTO_CONTINUE_ENABLED: true,
+  PRED_AUTO_CONTINUE_DELAY_MIN: 1,
+  ANTHROPIC_PROMPT_CACHE_ENABLED: true,
+  ANTHROPIC_PROMPT_CACHE_TTL: '5m',
   DRY_RUN_PREDICT: false,
   PIPS_BY_IMPORTANCE: { low:[3,10], medium:[8,25], high:[15,45], critical:[25,80] },
   SCHEMA_VERSION: '1.4',
@@ -51,6 +57,12 @@ function _ensureCfgDefaults_() {
     DEFAULT_FX: 'USDJPY',
     WINDOW_MIN_BEFORE_MIN: 24*60,
     WINDOW_MAX_AFTER_MIN: 36*60,
+    PRED_MAX_WORK_UNITS_PER_RUN: 12,
+    PRED_RESUME_ENABLED: true,
+    PRED_AUTO_CONTINUE_ENABLED: true,
+    PRED_AUTO_CONTINUE_DELAY_MIN: 1,
+    ANTHROPIC_PROMPT_CACHE_ENABLED: true,
+    ANTHROPIC_PROMPT_CACHE_TTL: '5m',
     DRY_RUN_PREDICT: false,
     PIPS_BY_IMPORTANCE: { low:[3,10], medium:[8,25], high:[15,45], critical:[25,80] },
     SCHEMA_VERSION: '1.4',
@@ -115,6 +127,24 @@ function _applyConfigOverridesFromSheet_() {
   }
   if (map.PREDICTION_SEED != null) {
     CFG.PREDICTION_SEED = _cfgInteger_(map.PREDICTION_SEED, CFG.PREDICTION_SEED);
+  }
+  if (map.PRED_MAX_WORK_UNITS_PER_RUN != null) {
+    CFG.PRED_MAX_WORK_UNITS_PER_RUN = _cfgInteger_(map.PRED_MAX_WORK_UNITS_PER_RUN, CFG.PRED_MAX_WORK_UNITS_PER_RUN);
+  }
+  if (map.PRED_RESUME_ENABLED != null) {
+    CFG.PRED_RESUME_ENABLED = _cfgBoolean_(map.PRED_RESUME_ENABLED, CFG.PRED_RESUME_ENABLED);
+  }
+  if (map.PRED_AUTO_CONTINUE_ENABLED != null) {
+    CFG.PRED_AUTO_CONTINUE_ENABLED = _cfgBoolean_(map.PRED_AUTO_CONTINUE_ENABLED, CFG.PRED_AUTO_CONTINUE_ENABLED);
+  }
+  if (map.PRED_AUTO_CONTINUE_DELAY_MIN != null) {
+    CFG.PRED_AUTO_CONTINUE_DELAY_MIN = _cfgInteger_(map.PRED_AUTO_CONTINUE_DELAY_MIN, CFG.PRED_AUTO_CONTINUE_DELAY_MIN);
+  }
+  if (map.ANTHROPIC_PROMPT_CACHE_ENABLED != null) {
+    CFG.ANTHROPIC_PROMPT_CACHE_ENABLED = _cfgBoolean_(map.ANTHROPIC_PROMPT_CACHE_ENABLED, CFG.ANTHROPIC_PROMPT_CACHE_ENABLED);
+  }
+  if (map.ANTHROPIC_PROMPT_CACHE_TTL != null) {
+    CFG.ANTHROPIC_PROMPT_CACHE_TTL = String(map.ANTHROPIC_PROMPT_CACHE_TTL).trim() || CFG.ANTHROPIC_PROMPT_CACHE_TTL;
   }
   if (map.DEFAULT_FX != null) CFG.DEFAULT_FX = String(map.DEFAULT_FX).trim();
   if (map.DRY_RUN_PREDICT != null) CFG.DRY_RUN_PREDICT = _cfgBoolean_(map.DRY_RUN_PREDICT, CFG.DRY_RUN_PREDICT);
@@ -228,6 +258,8 @@ function runPredictionsCore_(opts) {
   _applyConfigOverridesFromSheet_(); // read Config sheet overrides
   _ensureCfgDefaults_();
   CFG.PREDICTION_MODE = _normalizePredictionMode_(CFG.PREDICTION_MODE);
+  var runStartedMs = Date.now();
+  _clearPredictionContinuationTriggers_();
   
   var runId = _uuidFromString_('predict:'+new Date().toISOString());
   var context = {
@@ -259,6 +291,8 @@ function runPredictionsCore_(opts) {
   appendLog('info','Event selection summary', Object.assign({}, context, selStats));
 
   if (events.length === 0) {
+    _clearPredictionCheckpoint_();
+    _clearPredictionContinuationTriggers_();
     appendLog('info','No events found in window', Object.assign({}, context, windowBounds, { status:'no_events' }));
     _flushPredictionLogs_();
     return { status:'no_events', inspected:0, created:0, updated:0, duplicates:0, errors:0 };
@@ -304,106 +338,75 @@ function runPredictionsCore_(opts) {
     enabled: enabledProviders.map(function (p) { return p.name + '(' + p.model + ')'; })
   });
 
-  var batchGroups = _groupBatchEvents_(events);
+  var workUnits = _buildPredictionWorkUnits_(events);
+  var checkpointSig = _predictionCheckpointSignature_(windowBounds, enabledProviders, context.prediction_mode);
+  var checkpoint = _getPredictionCheckpoint_();
+  var resumeInfo = _resolvePredictionResumeState_(workUnits, checkpoint, checkpointSig);
+  var maxUnits = _getPredictionMaxWorkUnitsPerRun_();
+  var maxRuntimeMs = _getPredictionMaxRuntimeMs_();
+  var endIndex = Math.min(workUnits.length, resumeInfo.startIndex + maxUnits);
+  var resumeRequest = _buildPredictionResumeRequest_(opts, enabledProviders);
+
+  appendLog('info','Prediction execution plan', Object.assign({}, context, {
+    total_selected_events: events.length,
+    total_work_units: workUnits.length,
+    resume_enabled: !!CFG.PRED_RESUME_ENABLED,
+    resume_active: !!resumeInfo.resumed,
+    start_unit_index: resumeInfo.startIndex,
+    end_unit_exclusive: endIndex,
+    max_work_units_per_run: maxUnits,
+    max_runtime_ms: maxRuntimeMs
+  }));
 
   var results = { inspected:0, created:0, updated:0, duplicates:0, errors:0 };
-  var seenKey = {};
+  var processedUnits = 0;
+  var partial = false;
 
-  events.forEach(function(ev){
-    results.inspected++;
+  for (var u = resumeInfo.startIndex; u < endIndex; u++) {
+    var unit = workUnits[u];
+    if (!unit) continue;
 
-    var qualOnly = _isQualitativeOnly_(ev);
-    var fxPair   = ev.fx_pair || CFG.DEFAULT_FX;
-    var prompt   = _buildPredictionJsonPrompt_(ev, { qualOnly: qualOnly, fxPair: fxPair });
+    if ((Date.now() - runStartedMs) >= maxRuntimeMs) {
+      partial = true;
+      break;
+    }
 
-    enabledProviders.forEach(function(p){
-      try {
-        var t0 = Date.now();
-        var r = p.fn(p, prompt);                 // call THIS provider only
-        r.latency_ms = r.latency_ms || (Date.now() - t0);
-
-        var norm = _normalizePrediction_(ev, r, { qualOnly: qualOnly, fxPair: fxPair });
-        var row  = _buildPredictionRow_(ev, norm, runId);
-
-        var up   = _upsertPredictions_(predSheet, row, predIdx);
-        results[ up === 'updated' ? 'updated'
-              : up === 'duplicate' ? 'duplicates'
-              : 'created' ]++;
-
-        appendLog('info','Prediction ok', Object.assign({}, context, {
-          provider: norm.ai_name,
-          model_name: norm.ai_version,
-          event_id: ev.event_id,
-          status: 'ok',
-          duration_ms: r.latency_ms || null
-        }));
-
-      } catch (err) {
-        results.errors++;
-        try {
-          var errRow = _buildErrorPredictionRow_(ev, runId, err);
-          errRow.ai_name = p.name;
-          errRow.model_version = p.model;
-          _upsertPredictions_(predSheet, errRow, predIdx);
-        } catch(inner) {}
-        appendLog('error','Prediction error', Object.assign({}, context, {
-          provider: p.name,
-          model: p.model,
-          event_id: ev.event_id,
-          status: _statusFromErr_(err),
-          message: String(err)
-        }));
-      }
+    _runPredictionWorkUnit_(unit, enabledProviders, predSheet, predIdx, runId, context, results);
+    processedUnits++;
+    _setPredictionCheckpoint_({
+      signature: checkpointSig,
+      last_completed_unit_key: unit.key,
+      resume_request: resumeRequest,
+      updated_at: new Date().toISOString()
     });
-  });
+  }
 
-  Object.keys(batchGroups).forEach(function(batchId){
-    var batchRef = _buildBatchReferenceEvent_(batchGroups[batchId]);
-    enabledProviders.forEach(function(p){
-      try {
-        var batchPrompt = _buildBatchPredictionJsonPrompt_(batchRef, { fxPair: batchRef.fx_pair || CFG.DEFAULT_FX });
-        var t0 = Date.now();
-        var r = p.fn(p, batchPrompt);
-        r.latency_ms = r.latency_ms || (Date.now() - t0);
-
-        var norm = _normalizePrediction_(batchRef, r, { qualOnly: true, fxPair: batchRef.fx_pair || CFG.DEFAULT_FX, isBatch: true });
-        var row = _buildPredictionRow_(batchRef, norm, runId);
-        var up = _upsertPredictions_(predSheet, row, predIdx);
-        results[ up === 'updated' ? 'updated'
-              : up === 'duplicate' ? 'duplicates'
-              : 'created' ]++;
-
-        appendLog('info','Batch prediction ok', Object.assign({}, context, {
-          provider: norm.ai_name,
-          model_name: norm.ai_version,
-          batch_id: batchRef.event_id,
-          member_count: batchRef.member_count,
-          status: 'ok',
-          duration_ms: r.latency_ms || null
-        }));
-      } catch (err) {
-        results.errors++;
-        try {
-          var errRow = _buildErrorPredictionRow_(batchRef, runId, err);
-          errRow.ai_name = p.name;
-          errRow.model_version = p.model;
-          _upsertPredictions_(predSheet, errRow, predIdx);
-        } catch(inner) {}
-        appendLog('error','Batch prediction error', Object.assign({}, context, {
-          provider: p.name,
-          model: p.model,
-          batch_id: batchRef.event_id,
-          status: _statusFromErr_(err),
-          message: String(err)
-        }));
-      }
-    });
-  });
+  if (!partial && endIndex < workUnits.length) {
+    partial = true;
+  }
 
   SpreadsheetApp.flush();
   _sortPredictionsSheet_(predSheet);
-  var summary = Object.assign({ status:'ok' }, results, windowBounds, { providers: enabledProviders.map(function(p){return p.name;}) });
-  appendLog('info','Prediction run summary', Object.assign({}, context, summary));
+
+  if (!partial) {
+    _clearPredictionCheckpoint_();
+    _clearPredictionContinuationTriggers_();
+  } else if (_predictionAutoContinueEnabled_()) {
+    _ensurePredictionContinuationTrigger_();
+  }
+
+  var summary = Object.assign({
+    status: partial ? 'partial' : 'ok'
+  }, results, windowBounds, {
+    providers: enabledProviders.map(function(p){return p.name;}),
+    total_selected_events: events.length,
+    total_work_units: workUnits.length,
+    processed_work_units: processedUnits,
+    next_work_unit_index: partial ? (resumeInfo.startIndex + processedUnits) : '',
+    resume_enabled: !!CFG.PRED_RESUME_ENABLED,
+    resume_active: !!resumeInfo.resumed
+  });
+  appendLog('info', partial ? 'Prediction run partial summary' : 'Prediction run summary', Object.assign({}, context, summary));
   _flushPredictionLogs_();
   return summary;
 }
@@ -412,6 +415,304 @@ function _flushPredictionLogs_() {
   if (typeof flushLogs_ === 'function') {
     flushLogs_();
   }
+}
+
+function runPredictionsResume_() {
+  _applyConfigOverridesFromSheet_();
+  _ensureCfgDefaults_();
+  _clearPredictionContinuationTriggers_();
+
+  var checkpoint = _getPredictionCheckpoint_();
+  if (!checkpoint || !checkpoint.resume_request) {
+    appendLog('info', 'Prediction resume skipped', {
+      module: 'prediction_runner',
+      reason: 'no_checkpoint'
+    });
+    _flushPredictionLogs_();
+    return { status: 'no_checkpoint' };
+  }
+
+  return runPredictionsCore_(checkpoint.resume_request);
+}
+
+function _getPredictionMaxWorkUnitsPerRun_() {
+  var n = Number(CFG && CFG.PRED_MAX_WORK_UNITS_PER_RUN);
+  if (!isFinite(n)) n = 12;
+  n = Math.floor(n);
+  if (n < 1) n = 1;
+  if (n > 200) n = 200;
+  return n;
+}
+
+function _getPredictionMaxRuntimeMs_() {
+  // Exit early enough to avoid Apps Script's execution ceiling.
+  return 270000;
+}
+
+function _predictionAutoContinueEnabled_() {
+  return !!CFG.PRED_AUTO_CONTINUE_ENABLED;
+}
+
+function _getPredictionAutoContinueDelayMin_() {
+  var n = Number(CFG && CFG.PRED_AUTO_CONTINUE_DELAY_MIN);
+  if (!isFinite(n)) n = 1;
+  n = Math.floor(n);
+  if (n < 1) n = 1;
+  if (n > 30) n = 30;
+  return n;
+}
+
+function _predictionCheckpointPropKey_() {
+  return 'PREDICTION_RESUME_CHECKPOINT_V1';
+}
+
+function _predictionContinuationHandlerName_() {
+  return 'runPredictionsResume_';
+}
+
+function _clearPredictionContinuationTriggers_() {
+  var fn = _predictionContinuationHandlerName_();
+  var triggers = ScriptApp.getProjectTriggers() || [];
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction && triggers[i].getHandlerFunction() === fn) {
+      ScriptApp.deleteTrigger(triggers[i]);
+    }
+  }
+}
+
+function _ensurePredictionContinuationTrigger_() {
+  var fn = _predictionContinuationHandlerName_();
+  var triggers = ScriptApp.getProjectTriggers() || [];
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction && triggers[i].getHandlerFunction() === fn) {
+      return;
+    }
+  }
+  var delayMin = _getPredictionAutoContinueDelayMin_();
+  ScriptApp.newTrigger(fn)
+    .timeBased()
+    .after(delayMin * 60 * 1000)
+    .create();
+}
+
+function _getPredictionCheckpoint_() {
+  try {
+    var raw = PropertiesService.getScriptProperties().getProperty(_predictionCheckpointPropKey_());
+    if (!raw) return null;
+    var parsed = JSON.parse(raw);
+    return (parsed && typeof parsed === 'object') ? parsed : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function _setPredictionCheckpoint_(checkpoint) {
+  if (!checkpoint || typeof checkpoint !== 'object') return;
+  PropertiesService.getScriptProperties().setProperty(
+    _predictionCheckpointPropKey_(),
+    JSON.stringify(checkpoint)
+  );
+}
+
+function _clearPredictionCheckpoint_() {
+  PropertiesService.getScriptProperties().deleteProperty(_predictionCheckpointPropKey_());
+}
+
+function _predictionCheckpointSignature_(windowBounds, enabledProviders, predictionMode) {
+  var providers = (enabledProviders || []).map(function(p) {
+    return [p.name || '', p.model || ''].join(':');
+  });
+  return JSON.stringify({
+    checkpoint_format: 'v2',
+    window_start_iso: windowBounds && windowBounds.window_start_iso || '',
+    window_end_iso: windowBounds && windowBounds.window_end_iso || '',
+    prediction_mode: predictionMode || '',
+    providers: providers
+  });
+}
+
+function _buildPredictionResumeRequest_(opts, enabledProviders) {
+  return {
+    windowMinBeforeMin: _cfgInteger_(opts && opts.windowMinBeforeMin, 24 * 60),
+    windowMaxAfterMin: _cfgInteger_(opts && opts.windowMaxAfterMin, 36 * 60),
+    providers: (enabledProviders || []).map(function(p) { return p.name; }),
+    resume_mode: 'checkpoint'
+  };
+}
+
+function _buildPredictionWorkUnits_(events) {
+  var batchGroups = _groupBatchEvents_(events);
+  var units = [];
+
+  (events || []).forEach(function(ev) {
+    var type = String(ev && ev.type || '').toLowerCase();
+    if (type === 'member' && ev.batch_id) {
+      units.push({
+        kind: 'member',
+        key: 'member:' + ev.event_id,
+        event: ev
+      });
+      var members = batchGroups[ev.batch_id] || [ev];
+      var lastMember = members[members.length - 1];
+      if (lastMember && String(lastMember.event_id) === String(ev.event_id)) {
+        units.push({
+          kind: 'batch',
+          key: 'batch:' + ev.batch_id,
+          batch_id: ev.batch_id,
+          members: members,
+          batch_ref: _buildBatchReferenceEvent_(members)
+        });
+      }
+      return;
+    }
+
+    units.push({
+      kind: 'single',
+      key: 'single:' + ev.event_id,
+      event: ev
+    });
+  });
+
+  return units;
+}
+
+function _resolvePredictionResumeState_(workUnits, checkpoint, signature) {
+  if (!CFG.PRED_RESUME_ENABLED) {
+    return { startIndex: 0, resumed: false };
+  }
+  if (!checkpoint || checkpoint.signature !== signature) {
+    return { startIndex: 0, resumed: false };
+  }
+
+  var lastKey = String(checkpoint.last_completed_unit_key || '').trim();
+  if (!lastKey) return { startIndex: 0, resumed: false };
+
+  for (var i = 0; i < workUnits.length; i++) {
+    if (String(workUnits[i] && workUnits[i].key || '') !== lastKey) continue;
+    return { startIndex: i + 1, resumed: true };
+  }
+
+  return { startIndex: 0, resumed: false };
+}
+
+function _runPredictionWorkUnit_(unit, enabledProviders, predSheet, predIdx, runId, context, results) {
+  if (!unit) return;
+
+  if (unit.kind === 'member') {
+    _runPredictionEvent_(unit.event, enabledProviders, predSheet, predIdx, runId, context, results, { isBatchMember: true });
+    return;
+  }
+
+  if (unit.kind === 'batch') {
+    _runPredictionBatch_(unit.batch_ref, enabledProviders, predSheet, predIdx, runId, context, results);
+    return;
+  }
+
+  if (unit.kind === 'single') {
+    _runPredictionEvent_(unit.event, enabledProviders, predSheet, predIdx, runId, context, results, {});
+  }
+}
+
+function _runPredictionEvent_(ev, enabledProviders, predSheet, predIdx, runId, context, results, opt) {
+  opt = opt || {};
+  results.inspected++;
+
+  var qualOnly = _isQualitativeOnly_(ev);
+  var prompt = _buildPredictionJsonPrompt_(ev, {
+    qualOnly: qualOnly,
+    fxPair: ev.fx_pair || CFG.DEFAULT_FX
+  });
+
+  (enabledProviders || []).forEach(function(prov) {
+    var startedMs = Date.now();
+    try {
+      var providerResp = prov.fn(prov, prompt);
+      providerResp.latency_ms = Date.now() - startedMs;
+      var norm = _normalizePrediction_(ev, providerResp, { qualOnly: qualOnly });
+      var rowObj = _buildPredictionRow_(ev, norm, runId);
+      var action = _upsertPredictions_(predSheet, rowObj, predIdx);
+      if (action === 'created') results.created++;
+      else if (action === 'updated') results.updated++;
+      else if (action === 'duplicate') results.duplicates++;
+
+      appendLog('info', 'Prediction ok', Object.assign({}, context, {
+        event_id: ev.event_id,
+        batch_id: ev.batch_id || '',
+        type: ev.type,
+        provider: prov.name,
+        model: prov.model,
+        action: action,
+        qualitative_only: qualOnly,
+        latency_ms: providerResp.latency_ms,
+        cache_creation_input_tokens: providerResp.cache_creation_input_tokens || 0,
+        cache_read_input_tokens: providerResp.cache_read_input_tokens || 0
+      }));
+    } catch (e) {
+      results.errors++;
+      var errRow = _buildErrorPredictionRow_(ev, runId, e, prov);
+      var errAction = _upsertPredictions_(predSheet, errRow, predIdx);
+      if (errAction === 'created') results.created++;
+      else if (errAction === 'updated') results.updated++;
+
+      appendLog('error', 'Prediction error', Object.assign({}, context, {
+        event_id: ev.event_id,
+        batch_id: ev.batch_id || '',
+        type: ev.type,
+        provider: prov.name,
+        model: prov.model,
+        message: String(e),
+        latency_ms: Date.now() - startedMs
+      }));
+    }
+  });
+}
+
+function _runPredictionBatch_(batchEv, enabledProviders, predSheet, predIdx, runId, context, results) {
+  if (!batchEv) return;
+
+  var prompt = _buildBatchPredictionJsonPrompt_(batchEv, {
+    fxPair: batchEv.fx_pair || CFG.DEFAULT_FX
+  });
+
+  (enabledProviders || []).forEach(function(prov) {
+    var startedMs = Date.now();
+    try {
+      var providerResp = prov.fn(prov, prompt);
+      providerResp.latency_ms = Date.now() - startedMs;
+      var norm = _normalizePrediction_(batchEv, providerResp, { qualOnly: true, isBatch: true });
+      var rowObj = _buildPredictionRow_(batchEv, norm, runId);
+      var action = _upsertPredictions_(predSheet, rowObj, predIdx);
+      if (action === 'created') results.created++;
+      else if (action === 'updated') results.updated++;
+      else if (action === 'duplicate') results.duplicates++;
+
+      appendLog('info', 'Batch prediction ok', Object.assign({}, context, {
+        batch_id: batchEv.event_id,
+        member_count: batchEv.member_count || 0,
+        provider: prov.name,
+        model: prov.model,
+        action: action,
+        latency_ms: providerResp.latency_ms,
+        cache_creation_input_tokens: providerResp.cache_creation_input_tokens || 0,
+        cache_read_input_tokens: providerResp.cache_read_input_tokens || 0
+      }));
+    } catch (e) {
+      results.errors++;
+      var errRow = _buildErrorPredictionRow_(batchEv, runId, e, prov);
+      var errAction = _upsertPredictions_(predSheet, errRow, predIdx);
+      if (errAction === 'created') results.created++;
+      else if (errAction === 'updated') results.updated++;
+
+      appendLog('error', 'Batch prediction error', Object.assign({}, context, {
+        batch_id: batchEv.event_id,
+        member_count: batchEv.member_count || 0,
+        provider: prov.name,
+        model: prov.model,
+        message: String(e),
+        latency_ms: Date.now() - startedMs
+      }));
+    }
+  });
 }
 
 /** =========================
@@ -574,7 +875,8 @@ function _buildPredictionJsonPrompt_(ev, opt) {
   return {
     system: "You are a macroeconomic forecasting model. Output must be strict JSON and safe for parsing.",
     user: JSON.stringify(payload),
-    instruction: instruction
+    instruction: instruction,
+    cache_scaffold: _buildAnthropicPromptCacheScaffold_()
   };
 }
 
@@ -641,8 +943,136 @@ function _buildBatchPredictionJsonPrompt_(batchEv, opt) {
   return {
     system: "You are a macroeconomic forecasting model. Output must be strict JSON and safe for parsing.",
     user: JSON.stringify(payload),
-    instruction: instruction
+    instruction: instruction,
+    cache_scaffold: _buildAnthropicPromptCacheScaffold_()
   };
+}
+
+function _buildAnthropicPromptCacheScaffold_() {
+  var sections = [
+    "REFERENCE MANUAL FOR USDJPY EVENT PREDICTION",
+    "Core mission: predict the first meaningful 5-minute USDJPY market reaction to a macro release using only the payload provided. Do not invent subcomponents, private estimates, leaks, or hidden internals. When the payload is incomplete, confidence should fall rather than rise.",
+
+    "DECISION LADDER",
+    "Step 1. Identify whether the release is direct or indirect for USDJPY. Direct releases include inflation, labor, growth, rates, consumer demand, broad business activity, and major sentiment data that can plausibly shift Federal Reserve expectations or broad risk sentiment. Indirect releases include fiscal releases, auctions, balance-sheet items, weekly energy inventory prints, liquidity operations, and niche administrative data. Indirect releases usually deserve flat or weak outcomes unless there is an unusually clear transmission path.",
+    "Step 2. If consensus_value exists, compare the likely realized print against consensus_value. That is the market surprise baseline. prev_revision is context only. A higher consensus than previous does not itself mean the market will move on release day; what matters is realized versus consensus, not consensus versus previous. Since the model is forecasting before release, the correct behavior is to judge how sensitive the market is likely to be, and whether the event typically creates clean directional reactions.",
+    "Step 3. If consensus_value is missing, confidence must drop. Missing consensus does not force flat every time, but it should strongly bias toward conservative behavior. Missing consensus plus low importance usually means flat and weak. Missing consensus plus direct high-importance data can still justify direction only when the rationale clearly explains why the event is structurally important for USDJPY.",
+    "Step 4. Check whether the event usually moves markets through hidden details not present in the payload. Examples include CPI where traders care about core details, supercore interpretation, shelter mix, or breadth; payrolls where revisions and wages matter; GDP where components matter; inventories where the crude number can be offset by gasoline or Cushing details. If the payload does not contain the deciding internals, default to conservative flat or weak rather than pretending certainty.",
+    "Step 5. Translate the event into USDJPY logic. Stronger US inflation or labor data often supports higher US yields and a stronger USD, which usually means USDJPY up. Softer US inflation or labor data often lowers yield expectations and can mean USDJPY down. Risk-off behavior can complicate the path because JPY can strengthen as a haven, so the rationale should mention when risk sentiment may interfere with the simple rates story.",
+    "Step 6. Keep all output fields internally consistent. qualitative_result, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, and rationale must all tell the same story. If the view is flat, pips should stay small. If the rationale says confidence is limited, do not output strong strength or large pips.",
+
+    "INTERPRETING QUALITATIVE RESULT",
+    "stronger means the release is interpreted as more USD-supportive or tighter-policy-supportive than baseline. weaker means the release is interpreted as more USD-negative or looser-policy-supportive than baseline. inline means the release is likely to produce no clear directional edge from the top-line information provided. For indirect events or missing-consensus events, inline is often the safest honest answer.",
+
+    "IMPORTANCE AND PIP DISCIPLINE",
+    "Low importance should usually live near flat to weak and near the low end of the allowed pip band. Medium importance can justify movement, but only when the transmission path is real and not mostly hidden in subcomponents. High and critical importance can justify stronger moves, but only when the signal is direct and the payload actually contains enough information. Importance alone is not a license to issue large pips. If the deciding information is absent, stay conservative even for a famous release.",
+
+    "DIRECT VERSUS INDIRECT USDJPY CHANNELS",
+    "Direct: CPI, PCE, payrolls, unemployment, wages, GDP, retail sales, ISM, PMIs, policy decisions, FOMC guidance, major consumer confidence, major housing if it affects growth sentiment broadly, and important Treasury-sensitive macro releases. Indirect: budget statements, tax receipts, auctions, balance-sheet changes, weekly petroleum status, niche inventories, administrative revisions, and local surveys with no clear Fed path. Indirect categories should usually map to flat or weak unless the rationale can name an immediate channel such as rates, growth surprise, or broad risk sentiment.",
+
+    "HIDDEN DETAIL RULE",
+    "When the top-line value is not enough to know whether traders will perceive the release as hawkish or dovish, be honest. Examples: inflation may depend on core versus headline or breadth; jobs may depend on revisions, wages, or household details; GDP may depend on inventories or consumer demand; inventory reports may depend on product mix. In such cases, default to a smaller reaction. The model is rewarded for disciplined uncertainty, not storytelling.",
+
+    "BATCH RULES",
+    "When type is batch, predict the combined cluster reaction rather than ranking each member independently. Ask whether one member is likely to dominate. If one member is clearly the market focus and the others are secondary, it can dominate the batch. If members point in opposite directions, or if the dominant interpretation depends on missing internal details, prefer flat or weak. Batch rows should act like a cluster-level judgment, not a copy of the loudest single member unless the payload truly supports that dominance.",
+
+    "REFERENCE EXAMPLE 1: LOW-IMPORTANCE INDIRECT EVENT",
+    "Input pattern: low-importance fiscal or administrative release, consensus missing or not economically central, no obvious rates channel. Good reasoning: this release is not a primary driver of Fed expectations, does not directly alter growth or inflation pricing in the next five minutes, and may matter only as background context. Best output shape: qualitative_result inline, mr_pred_dir flat, weak strength, very small pips, rationale centered on weak transmission. Bad behavior to avoid: claiming a strong directional move because one number is above or below a previous value.",
+
+    "REFERENCE EXAMPLE 2: HIGH-IMPORTANCE INFLATION WITH MIXED SIGNALS",
+    "Input pattern: headline inflation year-over-year cools while month-over-month remains warm, and the payload lacks enough core detail to settle the story. Good reasoning: the market could debate whether disinflation is intact or whether sticky monthly pressure matters more. Since the deciding internals are absent, confidence should be reduced. Best output shape: flat or weak rather than a forceful directional claim, especially for a batch cluster where the signals offset. Bad behavior to avoid: choosing a strong up or down move solely because one of the inflation measures moved in isolation.",
+
+    "REFERENCE EXAMPLE 3: DIRECT LABOR DATA WITH CLEAR POLICY CHANNEL",
+    "Input pattern: payrolls or wages with a strong consensus and historically high market sensitivity. Good reasoning: labor data can move front-end yields and policy expectations quickly. If the payload clearly indicates stronger-than-expected labor pressure, USDJPY can move up; softer-than-expected labor pressure can move down. However, if revisions or wage details are absent and usually decisive, reduce confidence. Best output shape: only medium or strong when the payload truly contains the crucial signal. Bad behavior to avoid: always issuing strong because payrolls are famous.",
+
+    "REFERENCE EXAMPLE 4: WEEKLY ENERGY INVENTORY DATA",
+    "Input pattern: crude or petroleum inventory figures, possibly with a surprise, but no full product mix or broader risk context. Good reasoning: this is usually indirect for USDJPY. Energy prices can affect inflation expectations at the margin, but the first-order channel is weak and the deciding details often lie in gasoline, distillates, refinery runs, or risk sentiment not present here. Best output shape: flat or weak with small pips. Bad behavior to avoid: turning an oil inventory print into a confident USDJPY directional macro call.",
+
+    "REFERENCE EXAMPLE 5: BUSINESS SURVEY WITH PARTIAL DETAILS",
+    "Input pattern: PMI or ISM top-line present, but not every subindex or pricing detail. Good reasoning: top-line manufacturing data can matter for growth sentiment and yields, but traders often care about new orders, employment, prices paid, or breadth. If the payload lacks the deciding mix, use moderate confidence at most. If both growth and inflation implications are mixed, prefer smaller pips. Bad behavior to avoid: assuming every PMI surprise has a clean one-direction reaction.",
+
+    "REFERENCE EXAMPLE 6: CONSUMER SENTIMENT OR CONFIDENCE",
+    "Input pattern: sentiment release with consensus present but modest direct policy transmission. Good reasoning: sentiment can matter, but it is often secondary unless the surprise is large and tied to inflation expectations or spending behavior. In the absence of detailed subcomponents, confidence should stay limited. Best output shape: often weak, sometimes flat, rarely strong. Bad behavior to avoid: making sentiment behave like CPI or payrolls.",
+
+    "REFERENCE EXAMPLE 7: GDP TOP-LINE WITHOUT COMPONENTS",
+    "Input pattern: GDP annualized number, but limited or no component detail. Good reasoning: GDP can be important, yet the market often reacts differently depending on whether strength came from consumer demand, inventories, government spending, or trade. If the payload lacks those details, do not overstate confidence. Best output shape: conservative unless the event is paired with clear component information. Bad behavior to avoid: treating all GDP upside as equally USD-positive.",
+
+    "REFERENCE EXAMPLE 8: POLICY OR CENTRAL BANK COMMUNICATION",
+    "Input pattern: speech or statement with no explicit new policy detail in the payload. Good reasoning: speeches can move markets, but only when they contain fresh guidance. Without actual hawkish or dovish language in the payload, prediction confidence should be low. Best output shape: flat or weak unless the payload includes explicit surprising guidance. Bad behavior to avoid: assuming every Fed speech causes a strong move.",
+
+    "REFERENCE EXAMPLE 9: BATCH WITH ONE DOMINANT MEMBER",
+    "Input pattern: a release cluster contains one clearly market-moving member such as CPI MoM while the others are lower-importance supporting releases. Good reasoning: it is acceptable for the batch call to lean toward the dominant member if the payload clearly shows that dominance and the other members do not offset it. Best output shape: directional, but still sized according to confidence and hidden-detail risk. Bad behavior to avoid: averaging all members mechanically when one is clearly the focus.",
+
+    "REFERENCE EXAMPLE 10: BATCH WITH OFFSETTING MEMBERS",
+    "Input pattern: one member suggests hotter inflation while another suggests cooler inflation or weaker growth, and missing consensus affects some members. Good reasoning: this often means the batch reaction should be weak or flat because the narrative is unresolved. Best output shape: flat/weak, especially if the deciding internals are missing. Bad behavior to avoid: forcing a direction because one member alone looks dramatic.",
+
+    "REFERENCE EXAMPLE 11: MISSING CONSENSUS FOR A DIRECT HIGH-IMPORTANCE EVENT",
+    "Input pattern: a direct event matters, but consensus is unavailable. Good reasoning: missing consensus lowers the model's ability to judge surprise. The correct move is not automatic flat every time, but confidence should clearly fall. If the rationale cannot identify a reliable directional edge from the payload alone, use flat or weak. Bad behavior to avoid: using previous value as though it were the market expectation when consensus is absent.",
+
+    "REFERENCE EXAMPLE 12: WHEN TO USE STRONG",
+    "Strong should be rare. Use strong only when the event is direct, important, and the payload contains enough information to support a clear surprise story with an immediate USDJPY channel. If any of those pieces are missing, medium or weak is safer. Strong should not be used simply because the event is famous or because previous values moved a lot.",
+
+    "REFERENCE EXAMPLE 13: WHEN TO USE FLAT",
+    "Flat is appropriate when the release is low-importance, indirect, missing consensus, internally offsetting, or dependent on hidden details not present here. Flat does not mean the event is worthless; it means the payload does not justify directional conviction for the first five minutes in USDJPY.",
+
+    "REFERENCE EXAMPLE 14: HOW TO WRITE RATIONALE",
+    "A good rationale is short but causal. It explains baseline versus surprise, the Fed or yields or risk channel, and why the confidence is high or low. It should say why the event affects USDJPY, not just repeat the event name. If confidence is low because consensus is missing or details are hidden, say that explicitly.",
+
+    "REFERENCE EXAMPLE 15: CONSISTENCY CHECK BEFORE ANSWERING",
+    "Before finalizing, mentally ask: If rationale says low confidence, are pips small? If rationale says signals offset, is direction flat or at least weak? If rationale says one member dominates the batch, did the direction reflect that and not the opposite? If rationale says hidden details matter, did I avoid strong certainty? The best answer is internally coherent, conservative when information is incomplete, and specific about the USDJPY transmission path.",
+
+    "REFERENCE EXAMPLE 16: RETAIL SALES WITH CONTROL GROUP UNCERTAINTY",
+    "Input pattern: retail sales top-line is present, but the payload does not include the control group, ex-auto, ex-gas, or revisions that often shape the true market read. Good reasoning: retail sales can move growth and rate expectations, but traders frequently look past the headline if the internals disagree. If the payload only shows the top-line setup, confidence should be reduced because the deciding details may be missing. Best output shape: medium or weak unless the release structure is unusually clean. Bad behavior to avoid: calling a strong USDJPY move from a headline retail sales number while ignoring missing internals.",
+
+    "REFERENCE EXAMPLE 17: JOBLESS CLAIMS",
+    "Input pattern: weekly claims with consensus available, medium importance, direct but not always dominant transmission. Good reasoning: claims can affect labor sentiment and rates, but the signal is often noisy and mean-reverting. A modest surprise usually deserves weak strength unless it clearly changes labor-market perception. Best output shape: smaller pips than payrolls, often weak, occasionally medium if the surprise is very large and unambiguous. Bad behavior to avoid: treating weekly claims as if they carry the same force as monthly payrolls.",
+
+    "REFERENCE EXAMPLE 18: HOUSING DATA",
+    "Input pattern: housing starts, permits, or home sales with consensus present but mixed macro relevance. Good reasoning: housing data matters for growth, yet the direct USDJPY channel is weaker than inflation, labor, or policy. It can matter more when the housing cycle is a central macro theme, but absent that context, confidence should remain moderate at best. Best output shape: weak to medium depending on importance and clarity. Bad behavior to avoid: projecting a large USDJPY move from a secondary housing release without a strong rates channel.",
+
+    "REFERENCE EXAMPLE 19: TREASURY AUCTIONS",
+    "Input pattern: 2-year, 5-year, 7-year, 10-year, or 30-year auction announcements or results. Good reasoning: auctions can matter for rates and term premium, but the first-order interpretation usually depends on bid-to-cover, tail, indirect bidders, and broader market positioning. If those details are not in the payload, the event is incomplete for confident FX prediction. Best output shape: often flat or weak. Bad behavior to avoid: turning a simple auction schedule or result headline into a forceful USDJPY call without the auction diagnostics.",
+
+    "REFERENCE EXAMPLE 20: CENTRAL BANK RATE DECISION WITHOUT DOTS OR STATEMENT DETAIL",
+    "Input pattern: policy decision known to be important, but the payload lacks statement language, dot plot, or press-conference guidance. Good reasoning: the top-line rate decision may be less important than the communication around it. If the payload only provides the decision shell, the event can be major in reality while still being under-specified here. Best output shape: conservative unless the payload contains the actual surprise dimension. Bad behavior to avoid: strong directional certainty on an under-described central bank event.",
+
+    "REFERENCE EXAMPLE 21: PCE OR CPI WHEN ENERGY MAY DISTORT THE HEADLINE",
+    "Input pattern: inflation series where a top-line surprise could be driven by volatile energy components, but the payload lacks the decomposition. Good reasoning: FX traders care whether the surprise changes the core inflation or policy story, not just whether the headline moved. If the payload does not reveal whether the move is broad-based or energy-driven, reduce conviction. Best output shape: conservative directional sizing, especially for headline-only data. Bad behavior to avoid: assuming every higher headline inflation print deserves strong USDJPY up.",
+
+    "REFERENCE EXAMPLE 22: UNIVERSITY OR PRIVATE SURVEYS",
+    "Input pattern: survey-based data such as regional sentiment or niche private indicators. Good reasoning: these can add color, but often lack the policy weight needed for a strong first-five-minute FX reaction. If consensus is missing or the survey is niche, flat or weak is usually best. Best output shape: inline or small directional view. Bad behavior to avoid: treating survey noise as a major macro catalyst.",
+
+    "REFERENCE EXAMPLE 23: WHEN CONSENSUS AND PREVIOUS POINT THE SAME WAY",
+    "Input pattern: consensus_value is above prev_revision for an inflation or labor print. Good reasoning: this tells you the market already expects some strength. It does not mean the release is automatically USD-positive. The release only becomes strongly USD-positive if the realized print beats consensus or if the event is inherently capable of strong price discovery even before details arrive. Since we are forecasting before the release, the right use of this pattern is to understand how much sensitivity may already be priced. Bad behavior to avoid: converting consensus-above-previous directly into stronger without acknowledging that the market already knows the consensus.",
+
+    "REFERENCE EXAMPLE 24: WHEN CONSENSUS IS MISSING BUT THE EVENT IS STILL FAMOUS",
+    "Input pattern: a famous data release with no consensus field in the payload. Good reasoning: fame does not replace missing baseline information. Even a famous release should receive reduced conviction if the payload is incomplete. If the event is direct and important, direction may still be possible, but pips and strength should be trimmed unless the payload itself provides a very clear structural clue. Bad behavior to avoid: using the event's reputation as a substitute for real information.",
+
+    "REFERENCE EXAMPLE 25: STRONGER DOES NOT ALWAYS MEAN BIGGER PIPS",
+    "Input pattern: the qualitative interpretation is stronger, but the event is only medium importance or partly hidden in detail. Good reasoning: stronger can coexist with weak or medium strength when the transmission path is real but limited. The sign and the size are separate decisions. Best output shape: stronger plus modest pips when confidence is real but not overwhelming. Bad behavior to avoid: mapping stronger automatically to strong strength.",
+
+    "REFERENCE EXAMPLE 26: FLAT WITH AN EXPLANATION",
+    "Input pattern: mixed or incomplete macro information. Good reasoning: a flat forecast still needs a rationale. It should say whether the flat view comes from offsetting members, missing consensus, indirect transmission, hidden details, or a weak rates channel. Best output shape: flat/weak with an explicit explanation of why no directional edge is justified. Bad behavior to avoid: writing a shallow rationale that merely repeats 'mixed signals' without identifying the source of uncertainty.",
+
+    "REFERENCE EXAMPLE 27: BATCH WHERE LOW-IMPORTANCE MEMBERS SHOULD NOT OVERRULE A DIRECT HIGH-IMPORTANCE MEMBER",
+    "Input pattern: one high-importance inflation or labor member is paired with several lower-importance side releases. Good reasoning: the lower-importance members can add nuance but usually should not overpower the direct high-importance macro signal unless they clearly contradict it in a material way. Best output shape: let the dominant high-importance member lead, while trimming pips if side members create uncertainty. Bad behavior to avoid: flattening every batch just because it has several members.",
+
+    "REFERENCE EXAMPLE 28: BATCH WHERE NO MEMBER CLEARLY DOMINATES",
+    "Input pattern: multiple medium or high releases arrive together, each with a plausible but different narrative, and none clearly outranks the others. Good reasoning: when there is no obvious dominant member, the batch row should represent net uncertainty, often resulting in flat or weak. Best output shape: conservative cluster judgment. Bad behavior to avoid: picking a direction simply to avoid saying flat.",
+
+    "REFERENCE EXAMPLE 29: HOW TO TREAT REVISIONS",
+    "Input pattern: prev_revision exists and may be large. Good reasoning: revisions matter as context, but if consensus exists they are not the primary surprise baseline. Mention revisions when they help explain why traders may care, but do not use them as the main comparison target in place of consensus. Best output shape: rationale can mention revisions while keeping the core logic anchored to consensus and transmission. Bad behavior to avoid: treating previous revision as if it were the expected value when consensus is present.",
+
+    "REFERENCE EXAMPLE 30: FINAL SANITY FILTER",
+    "Before answering, ask five questions. One: is the event direct or indirect for USDJPY? Two: is consensus present, and if not, did confidence fall? Three: do hidden subcomponents likely decide the real surprise? Four: is the chosen pip size consistent with importance and confidence? Five: does the batch or member logic match the payload rather than a generic macro story? If any answer is weak, reduce confidence rather than overstate certainty.",
+
+    "OUTPUT STYLE REMINDER",
+    "The model should sound calm, precise, and disciplined. Avoid hype words, certainty without evidence, or dramatic narratives unsupported by the payload. The rationale should explain why the move is likely small when it is small, and why confidence is limited when confidence is limited. The best answer is not the most exciting answer. It is the most internally consistent answer that respects the information actually provided.",
+
+    "FINAL REMINDER",
+    "Be disciplined, not imaginative. The job is not to predict the actual future release. The job is to output a plausible, internally consistent market-reaction forecast from the limited payload in a way that respects consensus, importance, hidden-detail risk, and direct versus indirect USDJPY transmission."
+  ];
+  return sections.join("\n\n");
 }
 
 function _strictParsePredictionJson_(raw) {
@@ -826,12 +1256,24 @@ function _extractFirstJsonObject_(s) {
 // --- Claude (Anthropic) ---
 function _callClaude_(prov, prompt) {
   var url = 'https://api.anthropic.com/v1/messages';
+  var staticPromptText = [
+    prompt.system,
+    prompt.instruction,
+    prompt.cache_scaffold || ''
+  ].filter(function(part){ return !!part; }).join("\n\n");
+  var staticPromptBlock = {
+    type: 'text',
+    text: staticPromptText
+  };
+  if (_anthropicPromptCacheEnabled_()) {
+    staticPromptBlock.cache_control = _anthropicPromptCacheControl_();
+  }
   var body = {
     model: prov.model,
     max_tokens: 2048,
     temperature: CFG.PREDICTION_TEMPERATURE,
-    system: prompt.system,
-    messages: [ { role:'user', content: prompt.user+"\n\n"+prompt.instruction } ]
+    system: [ staticPromptBlock ],
+    messages: [ { role:'user', content: [ { type:'text', text: prompt.user } ] } ]
   };
   return _withRetries_(function(){
     var resp = UrlFetchApp.fetch(url, {
@@ -860,9 +1302,23 @@ function _callClaude_(prov, prompt) {
       parsed: parsed,
       raw_output: c,
       prompt_tokens: usage.input_tokens || null,
-      completion_tokens: usage.output_tokens || null
+      completion_tokens: usage.output_tokens || null,
+      cache_creation_input_tokens: usage.cache_creation_input_tokens || null,
+      cache_read_input_tokens: usage.cache_read_input_tokens || null
     };
   }, { provider:'Anthropic' });
+}
+
+function _anthropicPromptCacheEnabled_() {
+  return !!CFG.ANTHROPIC_PROMPT_CACHE_ENABLED;
+}
+
+function _anthropicPromptCacheControl_() {
+  var ttl = String(CFG.ANTHROPIC_PROMPT_CACHE_TTL || '').trim();
+  if (ttl === '1h') {
+    return { type: 'ephemeral', ttl: '1h' };
+  }
+  return { type: 'ephemeral' };
 }
 
 /** =========================
@@ -1365,19 +1821,22 @@ function _buildPredictionRow_(ev, norm, runId) {
   };
 }
 
-function _buildErrorPredictionRow_(ev, runId, err) {
+function _buildErrorPredictionRow_(ev, runId, err, providerMeta) {
   var createdTs = new Date().toISOString();
-  var predictionId = _uuidFromString_(((ev && ev.event_id) || 'unknown') + '|runner_error');
+  var aiName = providerMeta && providerMeta.name ? providerMeta.name : 'runner';
+  var aiVersion = providerMeta && providerMeta.model ? providerMeta.model : '';
+  var predictionId = _uuidFromString_(((ev && ev.event_id) || 'unknown') + '|' + aiName);
   return {
     object:'ai_prediction', run_id:runId, prediction_id:predictionId, schema_version:CFG.SCHEMA_VERSION, created_ts:createdTs,
     event_id: ev && ev.event_id || '', batch_id: ev && ev.batch_id || '', type: ev && ev.type || '',
-    ai_name:'runner', ai_version:'', ai_model:'', model_version:'',
+    ai_name:aiName, ai_version:aiVersion, ai_model:aiVersion, model_version:aiVersion,
     indicator_name: ev && ev.indicator_name || '',
     country: ev && ev.country || '',
     release_ts: ev && ev.release_ts || '',
     consensus_value: ev && typeof ev.consensus_value==='number' ? ev.consensus_value : '',
     prev_revision:   ev && typeof ev.prev_revision==='number'   ? ev.prev_revision   : '',
     source_cal: ev && ev.source_cal || '', genre: ev && (ev.genre || _inferGenreFromName_(ev.indicator_name||'')) || '',
+    importance: ev && ev.importance || '',
     fx_pair: ev && (ev.fx_pair || CFG.DEFAULT_FX) || CFG.DEFAULT_FX,
     ai_forecast_value:'', qualitative_result:'', expected_move_dir:'',
     expected_move_pips_min:'', expected_move_pips_max:'', expected_holding_minutes:'',
