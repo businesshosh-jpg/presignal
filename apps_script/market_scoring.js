@@ -58,6 +58,38 @@ function _roundUsdJpyPips_(diff) {
   return Math.round((diff * 100) * 100) / 100;
 }
 
+function _isLikelyFxMarketClosedAt_(releaseTsUtc) {
+  if (!_validDate_(releaseTsUtc)) return false;
+  var tz = 'America/New_York';
+  var day = Utilities.formatDate(releaseTsUtc, tz, 'EEE');
+  var hh = Number(Utilities.formatDate(releaseTsUtc, tz, 'HH'));
+  var mm = Number(Utilities.formatDate(releaseTsUtc, tz, 'mm'));
+  var mins = (hh * 60) + mm;
+
+  if (day === 'Sat') return true;
+  if (day === 'Fri' && mins >= (17 * 60)) return true;
+  if (day === 'Sun' && mins < (17 * 60)) return true;
+  return false;
+}
+
+function _buildMarketReactionUnavailable_(status, out, releaseTsUtc, meta) {
+  var unavailableStatus = status || 'no_candles';
+  var ctx = {
+    provider_chain: out && out.provider,
+    t0: releaseTsUtc && releaseTsUtc.toISOString(),
+    event_id: meta && meta.event_id,
+    row_index: meta && meta.row_index,
+    source: meta && meta.source
+  };
+  log_ && log_('scoring', unavailableStatus, ctx);
+  return {
+    status: unavailableStatus,
+    provider: out && out.provider ? out.provider : '',
+    provider_meta_json: (out && out.meta) ? JSON.stringify(out.meta) : '',
+    candle_count: (out && out.candles) ? out.candles.length : 0
+  };
+}
+
 function _detectMarketReactionAnchor_(candles, releaseTsUtc, baselinePrice, cfg) {
   if (!candles || !candles.length || !_validDate_(releaseTsUtc) || !isFinite(baselinePrice)) {
     return { detected: false };
@@ -142,25 +174,25 @@ function _computeUsdJpyMove_(releaseTsUtc, preMin, postMin, horizonMin, meta, cf
     ? getFxCandlesForWindowByProvider_(providerOverride || '', 'USD/JPY', releaseTsUtc, preMin||30, postMin||120)
     : getFxCandlesForWindow_('USD/JPY', releaseTsUtc, preMin||30, postMin||120);
   if (!out || !out.candles || !out.candles.length) {
-    log_ && log_('scoring', 'no_candles', {
-      provider_chain: out && out.provider,
-      t0: releaseTsUtc && releaseTsUtc.toISOString(),
-      event_id: meta && meta.event_id,
-      row_index: meta && meta.row_index,
-      source: meta && meta.source
-    });
-    return {
-      status: 'no_candles',
-      provider: out && out.provider ? out.provider : '',
-      provider_meta_json: (out && out.meta) ? JSON.stringify(out.meta) : '',
-      candle_count: 0
-    };
+    return _buildMarketReactionUnavailable_(
+      _isLikelyFxMarketClosedAt_(releaseTsUtc) ? 'market_closed' : 'no_candles',
+      out,
+      releaseTsUtc,
+      meta
+    );
   }
 
   // t0 price = closest candle at/just before release time
   var releaseMs = releaseTsUtc.getTime();
   var base = _nearestAtOrBefore_(out.candles, releaseMs);
-  if (!base) return { status: 'no_base' };
+  if (!base) {
+    return _buildMarketReactionUnavailable_(
+      _isLikelyFxMarketClosedAt_(releaseTsUtc) ? 'market_closed' : 'no_base',
+      out,
+      releaseTsUtc,
+      meta
+    );
+  }
 
   var baselinePrice = base.close;
   if (!isFinite(baselinePrice)) return { status: 'bad_prices' };
@@ -988,6 +1020,16 @@ function _compareMarketReactionResults_(primary, secondary) {
 
   var primaryOk = primary.status === 'ok' || primary.status === 'flat';
   var secondaryOk = secondary.status === 'ok' || secondary.status === 'flat';
+  if ((primary && primary.status === 'market_closed') || (secondary && secondary.status === 'market_closed')) {
+    return {
+      status: 'market_closed',
+      dir_agree: '',
+      anchor_delta_min: '',
+      pips_delta: '',
+      confidence: 'low',
+      note: 'comparison unavailable because FX market was closed'
+    };
+  }
   if (!primaryOk || !secondaryOk) {
     return {
       status: 'provider_error',
@@ -1038,9 +1080,22 @@ function _compareMarketReactionResultsMulti_(primary, secondaryReactions) {
   var comparisons = list.map(function(item) {
     return _compareMarketReactionResults_(primary, item);
   });
+  var marketClosed = comparisons.filter(function(item) {
+    return item && item.status === 'market_closed';
+  });
   var valid = comparisons.filter(function(item) {
     return item && item.status === 'compared';
   });
+  if (!valid.length && marketClosed.length) {
+    return {
+      status: 'market_closed',
+      dir_agree: '',
+      anchor_delta_min: '',
+      pips_delta: '',
+      confidence: 'low',
+      note: 'comparison unavailable because FX market was closed'
+    };
+  }
   if (!valid.length) {
     return {
       status: 'provider_error',
@@ -1244,7 +1299,8 @@ function _writePredictionComparisonFields_(row, idx, finalReaction, cmp) {
     if (col == null) return;
     row[col] = value;
   }
-  set('mr_final_provider', finalReaction && finalReaction.provider ? String(finalReaction.provider) : '');
+  var comparable = finalReaction && (finalReaction.status === 'ok' || finalReaction.status === 'flat');
+  set('mr_final_provider', comparable && finalReaction.provider ? String(finalReaction.provider) : '');
   set('mr_compare_status', cmp && cmp.status ? cmp.status : 'single_provider');
   set('mr_compare_dir_agree', cmp && cmp.dir_agree !== undefined ? cmp.dir_agree : '');
   set('mr_compare_anchor_delta_min', cmp && cmp.anchor_delta_min !== undefined ? cmp.anchor_delta_min : '');

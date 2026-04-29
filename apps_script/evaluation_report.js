@@ -124,6 +124,7 @@ function _evaluationRowHeaders_() {
     'mr_real_max_up_pips',
     'mr_real_max_down_pips',
     'mr_final_provider',
+    'eval_note',
     'mr_compare_status',
     'mr_compare_note',
     'eval_ts',
@@ -238,6 +239,7 @@ function _buildEvaluationRow_(src, idx, generatedTs) {
     _predValue_(src, idx, 'mr_real_max_up_pips'),
     _predValue_(src, idx, 'mr_real_max_down_pips'),
     _predValue_(src, idx, 'mr_final_provider'),
+    _predValue_(src, idx, 'eval_note'),
     _predValue_(src, idx, 'mr_compare_status'),
     _predValue_(src, idx, 'mr_compare_note'),
     _predValue_(src, idx, 'eval_ts'),
@@ -281,6 +283,7 @@ function _buildEvaluationSummaryRows_(rows, generatedTs) {
 
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
+    if (!_evaluationRowIsScored_(row)) continue;
     var releaseDate = row[1];
     var aiName = row[13];
     var type = String(row[7] || '').toLowerCase();
@@ -475,6 +478,18 @@ function _evaluationWinnerReason_(winnerScore, loserScore) {
   if (winnerScore.pred_gap !== loserScore.pred_gap) return 'closer_pip_fit';
   if (winnerScore.pred_abs !== loserScore.pred_abs) return 'smaller_pred_abs';
   return 'same_score';
+}
+
+function _evaluationRowIsScored_(row) {
+  if (!row || !row.length) return false;
+  var realDir = String(row[26] || '').trim().toLowerCase();
+  if (realDir === 'up' || realDir === 'down' || realDir === 'flat') return true;
+  var realizedPips = row[33];
+  if (realizedPips !== '' && realizedPips !== null && realizedPips !== undefined) {
+    var n = Number(realizedPips);
+    if (isFinite(n)) return true;
+  }
+  return false;
 }
 
 function _predValue_(row, idx, key) {
