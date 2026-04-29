@@ -445,7 +445,9 @@ Key architectural properties:
 - Calls one or more AI providers (Gemini / OpenAI / Anthropic) depending on config and available API keys.
 - Enforces strict JSON parsing.
 - Writes error rows to Predictions if a provider call fails.
-- Builds and attaches a deterministic feature_pack before calling any provider.
+- Converts selected Events into resumable work units before provider execution.
+- Can checkpoint partial progress and resume across multiple Apps Script executions.
+- Can auto-schedule a one-off continuation trigger when a run ends partial.
 - Never mutates Event rows.
 
 ### 5.2 UI Entrypoints (Menu Functions)
@@ -488,13 +490,58 @@ Defaults:
 Optional Config override:
 
 If:
-- WINDOW_ENABLED truthy
-- WINDOW_FROM_LOCAL and WINDOW_TO_LOCAL valid
-- WINDOW_TZ set or defaults to script timezone
+- PRED_WINDOW_ENABLED truthy
+- PRED_WINDOW_FROM_LOCAL and PRED_WINDOW_TO_LOCAL valid
+- PRED_WINDOW_TZ set or defaults to script timezone
 
 Then window is replaced with derived UTC ISO range.
 
-If parsing fails → fallback to computed window (no failure).
+Legacy fallback:
+
+- Shared `WINDOW_ENABLED`, `WINDOW_FROM_LOCAL`, `WINDOW_TO_LOCAL`, `WINDOW_TZ` are only used if the dedicated `PRED_WINDOW_*` keys are absent.
+
+If parsing fails or required local-window fields are missing:
+
+- the runner throws an operator-visible validation error instead of silently reverting to the rolling window.
+
+### 5.3A Resumable execution model
+
+The prediction runner no longer assumes one execution can finish a large window.
+
+Work-unit model:
+
+- `single` Event rows become one work unit each
+- `member` Event rows become one work unit each
+- each provider batch aggregate row is emitted by a separate `batch` work unit after the final member of that batch
+
+Runtime controls:
+
+- `PRED_MAX_WORK_UNITS_PER_RUN` caps work units per execution
+- the runner also enforces an internal max runtime budget and exits early before the Apps Script execution ceiling
+
+Checkpointing:
+
+- resume state is stored in Apps Script Script Properties
+- property key: `PREDICTION_RESUME_CHECKPOINT_V1`
+- stored fields include:
+  - effective UTC prediction window
+  - prediction mode
+  - enabled providers and models
+  - last completed work-unit key
+  - resume request payload
+
+Resume semantics:
+
+- if the current run matches the saved checkpoint signature, `resume_active = true` and execution starts at the next unfinished work unit
+- if the window, provider set, or prediction mode changes, the checkpoint is ignored and execution starts from the beginning
+
+Auto-continuation:
+
+- partial runs may schedule a one-off time trigger for `runPredictionsResume_()`
+- trigger creation is controlled by `PRED_AUTO_CONTINUE_ENABLED`
+- delay is controlled by `PRED_AUTO_CONTINUE_DELAY_MIN`
+- old continuation triggers are cleared at the start of a run to avoid duplicate chains
+- full completion clears both checkpoint and continuation triggers
 
 ### 5.4 Event Selection Rules (from Event sheet)
 
@@ -564,101 +611,47 @@ If qualitative-only:
 
 - ai_forecast_value MUST be null.
 
-### 5.6 Feature Builder (Deterministic Context Layer) — NEW
+### 5.6 Provider Prompt Construction
 
-Before any provider call, the runner computes a structured feature_pack.
+The current uploaded prediction runner does not compute or persist a separate deterministic `feature_pack`.
 
-#### Purpose
+Instead, prompt construction is provider-agnostic at the payload level and provider-specific at the transport level:
 
-Prevent common-sense guessing and anchor predictions to current market conditions.
+- the runner builds a strict JSON payload from Event-row metadata
+- the payload is paired with a compact instruction contract describing:
+  - consensus vs previous-value discipline
+  - direct vs indirect USDJPY transmission logic
+  - hidden-detail conservatism
+  - output-key requirements
 
-#### Inputs
+For concrete event predictions, the payload includes:
 
-- country
-- indicator_name
-- release_ts
-- consensus_value
-- prev_revision
-- event_id
+- `schema_version`
+- `object = "econ_event"`
+- `country`
+- `indicator_name`
+- `genre`
+- `importance`
+- `release_ts`
+- `consensus_value`
+- `prev_revision`
+- `fx_pair`
+- policy and required-output blocks
 
-#### Data Sources
+For batch predictions, the payload includes:
 
-- FRED
-- FMP
-- internal surprise history
-- optional price history
+- `object = "econ_event_batch"`
+- `batch_id`
+- `country`
+- `release_ts`
+- `member_count`
+- `members[]` with compact member metadata
+- batch-level policy and required-output blocks
 
-#### Rules
+Provider-specific extension:
 
-- Deterministic only (no AI computation allowed)
-- No raw time-series tables
-- Only aggregated statistics permitted
-- Optional “as-of” mode: data must be ≤ release_ts
-- Must be cached per (event_id)
-- Must not modify Event sheet
-- Must log feature_build_ms and feature_keys
-
-#### Allowed Feature Types (governed)
-
-- last_n_values (n ≤ 6)
-- trend_3m / trend_6m
-- surprise_std_12m
-- avg_surprise_12m
-- regime markers (≤ 5)
-- related indicator deltas (≤ 5)
-
-Forbidden:
-
-- raw long histories
-- look-ahead leakage
-- LLM-derived features
-
-The feature_pack is attached to the provider prompt.
-
-#### Feature Pack v1 (Minimal Specification)
-
-Purpose
-
-Provide deterministic, compact, market-condition-oriented context to LLM before prediction.
-
-Constraints
-
-- Deterministic only (no AI computation)
-- Computed from APIs or internal data
-- No raw time-series tables
-- Max 6 historical values
-- Max 5 regime markers
-- Max 5 related drivers
-- Total serialized size target < 1,500 tokens
-- No forward-looking data beyond release_ts
-
-Required Blocks (v1 Minimal)
-
-{
-  "indicator_history": {
-    "last_values": [],
-    "trend_3m": 0,
-    "trend_6m": 0,
-    "surprise_std_12m": 0
-  },
-  "regime_context": {
-    "policy_rate_level": 0,
-    "policy_rate_direction_3m": "up|down|flat",
-    "usd_trend_1m_pct": 0
-  },
-  "related_drivers": {
-    "driver_1": 0,
-    "driver_2": 0
-  }
-}
-
-Versioning
-
-Add:
-
-- feature_pack_version in log context
-
-If structure changes → increment version
+- Anthropic attaches an additional large static reusable scaffold to the cached system block.
+- That scaffold is not a canonical stored entity and does not create a separate feature warehouse.
 
 ### 5.7 Provider Resolution and API Keys
 
@@ -697,7 +690,7 @@ Wrapped in _withRetries_():
 OpenAI
 
 - response_format: { type: "json_object" }
-- system + user (payload + feature_pack + contract)
+- system + user (payload + contract)
 
 Gemini
 
@@ -732,7 +725,7 @@ Rules:
 
 Additional requirement:
 
-- rationale_short must reference or align with signals present in feature_pack.
+- rationale_short must reference or align with signals actually present in the payload and instruction contract.
 
 Failure → error row written.
 
@@ -2182,6 +2175,12 @@ Supported prediction-specific keys include:
 - In BACKTEST mode, those rows remain eligible for selection
 - PREDICTION_TEMPERATURE = numeric sampling control
 - PREDICTION_SEED = integer seed for provider requests
+- PRED_MAX_WORK_UNITS_PER_RUN = work-unit cap per execution
+- PRED_RESUME_ENABLED = enables checkpoint-based resume
+- PRED_AUTO_CONTINUE_ENABLED = enables one-off continuation trigger after partial runs
+- PRED_AUTO_CONTINUE_DELAY_MIN = minutes before continuation trigger fires
+- ANTHROPIC_PROMPT_CACHE_ENABLED = enables Anthropic prompt caching
+- ANTHROPIC_PROMPT_CACHE_TTL = Anthropic cache TTL hint (`5m` default, `1h` optional)
 - PRED_WINDOW_ENABLED / PRED_WINDOW_FROM_LOCAL / PRED_WINDOW_TO_LOCAL / PRED_WINDOW_TZ for prediction-only windowing
 - Legacy shared `WINDOW_*` values are used only as fallback by the prediction runner
 
@@ -2249,9 +2248,9 @@ The Prediction Runner defines additional keys (or default fills) used only by pr
 
 #### Provider + model defaults
 CFG.PROVIDERS = ['Gemini','OpenAI','Anthropic']  
-CFG.GEMINI_MODEL = 'gemini-2.0-flash'  
+CFG.GEMINI_MODEL = 'gemini-2.5-flash-lite'  
 CFG.OPENAI_MODEL = 'gpt-4o-mini'  
-CFG.CLAUDE_MODEL = 'claude-3-5-sonnet-latest'  
+CFG.CLAUDE_MODEL = 'claude-haiku-4-5'  
 
 #### Window defaults
 CFG.WINDOW_MIN_BEFORE_MIN = 24*60  
@@ -2259,6 +2258,12 @@ CFG.WINDOW_MAX_AFTER_MIN = 36*60
 
 #### Other prediction defaults
 CFG.DEFAULT_FX = 'USDJPY'  
+CFG.PRED_MAX_WORK_UNITS_PER_RUN = 12
+CFG.PRED_RESUME_ENABLED = true
+CFG.PRED_AUTO_CONTINUE_ENABLED = true
+CFG.PRED_AUTO_CONTINUE_DELAY_MIN = 1
+CFG.ANTHROPIC_PROMPT_CACHE_ENABLED = true
+CFG.ANTHROPIC_PROMPT_CACHE_TTL = '5m'
 CFG.DRY_RUN_PREDICT = false  
 CFG.PIPS_BY_IMPORTANCE = { low:[3,10], medium:[8,25], high:[15,45], critical:[25,80] }  
 CFG.SCHEMA_VERSION = '1.4'  
@@ -2295,12 +2300,19 @@ PIPS_HIGH_MIN, PIPS_HIGH_MAX
 PIPS_CRITICAL_MIN, PIPS_CRITICAL_MAX  
 
 #### Local window override (preferred when enabled)
-WINDOW_ENABLED (true/false)  
-WINDOW_FROM_LOCAL (e.g., YYYY-MM-DD HH:mm or a Date cell)  
-WINDOW_TO_LOCAL  
-WINDOW_TZ (IANA, e.g., Asia/Tokyo)  
+PRED_WINDOW_ENABLED (true/false)  
+PRED_WINDOW_FROM_LOCAL (e.g., YYYY-MM-DD HH:mm or a Date cell)  
+PRED_WINDOW_TO_LOCAL  
+PRED_WINDOW_TZ (IANA, e.g., Asia/Tokyo)  
 
-If the local window override is enabled but parsing fails, it falls back to the normal rolling window.
+Legacy fallback keys:
+
+WINDOW_ENABLED  
+WINDOW_FROM_LOCAL  
+WINDOW_TO_LOCAL  
+WINDOW_TZ  
+
+If the local window override is enabled but parsing fails, the runner now throws an operator-visible validation error rather than silently falling back.
 
 ---
 
@@ -3028,13 +3040,21 @@ Body (core fields):
 
 model: <CFG.CLAUDE_MODEL>  
 max_tokens: 2048  
-system: <prompt.system>  
-messages: [{ role:"user", content: ... }]  
+system: [{ type:"text", text: <static reusable scaffold>, cache_control?: { type:"ephemeral", ttl? } }]  
+messages: [{ role:"user", content:[{ type:"text", text: <event-specific JSON payload> }] }]  
+
+Implementation note:
+
+- Anthropic is the only provider path currently using provider-side prompt caching.
+- The cached block contains the static system/instruction/scaffold text only.
+- The event-specific JSON payload remains outside the cached block so reuse can occur across many events.
 
 Usage capture:
 
 usage.input_tokens  
 usage.output_tokens  
+usage.cache_creation_input_tokens  
+usage.cache_read_input_tokens  
 
 ---
 

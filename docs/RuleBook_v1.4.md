@@ -535,15 +535,16 @@ In ver.1.4 (revised), the runner operates under the following mandatory constrai
 
 - Operates only over Event rows within a configured time window.
 - Requires Event identity to already exist (event_id and type must be non-empty).
-- Builds a deterministic feature_pack for each selected event before any provider call.
 - Enables providers only when their API keys are available at runtime.
 - Enforces strict JSON output parsing.
 - Writes structured error rows on failures.
 - Generates provider batch rows in Predictions for batched events (see Section 3.6).
+- Can split large runs into resumable work-unit chunks and continue them across executions.
+- Can schedule a one-off automatic continuation trigger after a partial run.
 - Never mutates Event rows.
 
 Code-authoritative rule:  
-No provider call may occur before feature_pack computation completes successfully.
+Provider calls occur only after event selection, provider resolution, and work-unit planning complete successfully.
 
 ---
 
@@ -608,12 +609,67 @@ Prediction mode can also be set from Config:
 - BACKTRACK is accepted as an alias for BACKTEST
 - PREDICTION_TEMPERATURE = numeric sampling control (use `0` for most stable behavior)
 - PREDICTION_SEED = integer seed used for provider requests
+- PRED_MAX_WORK_UNITS_PER_RUN = maximum work units processed in one execution
+- PRED_RESUME_ENABLED = whether checkpoint resume is active
+- PRED_AUTO_CONTINUE_ENABLED = whether partial runs schedule a one-off continuation trigger
+- PRED_AUTO_CONTINUE_DELAY_MIN = delay in minutes before that continuation trigger fires
 - Prediction window keys should use `PRED_WINDOW_ENABLED`, `PRED_WINDOW_FROM_LOCAL`, `PRED_WINDOW_TO_LOCAL`, `PRED_WINDOW_TZ`
 - Legacy shared `WINDOW_*` keys remain as fallback for prediction runs if `PRED_WINDOW_*` is not present
 - Market-reaction horizon used by the prediction prompt is read from `MR_HORIZON_MIN` and clamped to 1..15 minutes
+- Anthropic-only prompt caching keys:
+  - `ANTHROPIC_PROMPT_CACHE_ENABLED`
+  - `ANTHROPIC_PROMPT_CACHE_TTL`
 
-If parsing fails:  
-The runner falls back to the rolling window without failing.
+If parsing fails or required local-window fields are missing:  
+The runner raises an operator-visible error instead of silently falling back.
+
+### 5.3A Chunking, resume, and auto-continuation
+
+Large prediction windows may exceed one Apps Script execution. The runner therefore supports resumable chunking.
+
+Operational model:
+
+- Selected Events are converted into work units.
+- A single Event row (`type = "single"`) becomes one work unit.
+- A batch member row (`type = "member"`) becomes one work unit.
+- A batch aggregate provider row (`type = "batch"` in `Predictions`) is emitted from its own separate work unit after the final member of that batch.
+- Each execution processes at most `PRED_MAX_WORK_UNITS_PER_RUN` work units and also exits early when a runtime budget is reached.
+
+Checkpointing:
+
+- Resume state is persisted in Apps Script Script Properties, not in the `log` sheet.
+- Property key: `PREDICTION_RESUME_CHECKPOINT_V1`
+- Checkpoint identity includes:
+  - effective UTC prediction window
+  - prediction mode
+  - enabled provider set with model names
+  - last completed work-unit key
+
+Resume behavior:
+
+- If `PRED_RESUME_ENABLED` is true and the checkpoint signature matches the current run, the runner resumes from the next unfinished work unit.
+- If the effective window, provider set, or prediction mode changes, the checkpoint is ignored and the run starts from the beginning.
+
+Auto-continuation:
+
+- If a run ends partial and `PRED_AUTO_CONTINUE_ENABLED` is true, the runner creates a one-off time trigger for `runPredictionsResume_()`.
+- Trigger delay is controlled by `PRED_AUTO_CONTINUE_DELAY_MIN`.
+- The runner clears any old continuation triggers at the start of a run to avoid duplicate chains.
+- On full completion or `no_events`, the runner clears both the checkpoint and continuation triggers.
+
+Logging:
+
+- `Prediction execution plan` logs:
+  - `total_selected_events`
+  - `total_work_units`
+  - `resume_enabled`
+  - `resume_active`
+  - `start_unit_index`
+  - `end_unit_exclusive`
+  - `max_work_units_per_run`
+  - `max_runtime_ms`
+- `Prediction run partial summary` means more work remains.
+- `Prediction run summary` means the selected window/providers/mode chain completed.
 
 ---
 
@@ -657,121 +713,46 @@ Selection statistics are logged (best-effort):
 
 Below is the rewritten Rule Book section aligned with:
 
-Feature Pack v1_nomap (SeriesMap-independent)  
-Deterministic-only governance  
-Versioned design  
-No external mapping dependency  
-Strict architectural enforcement  
+### 5.5 Provider Prompt Payload
 
-This replaces the entire section provided.
+The current prediction runner does not build or persist a separate deterministic `feature_pack` object.
 
----
+Instead, each provider call receives:
 
-### 5.5 Feature Pack (Deterministic Context Layer — Mandatory)
+- a static system instruction
+- a strict JSON payload built from Event-row metadata
+- a compact instruction contract describing output requirements and prediction discipline
 
-Before calling any provider, the runner MUST compute a structured feature_pack.
+For concrete event predictions, the payload includes fields such as:
 
-This is a hard architectural rule in ver.1.4.
+- `schema_version`
+- `object = "econ_event"`
+- `country`
+- `indicator_name`
+- `genre`
+- `importance`
+- `release_ts`
+- `consensus_value`
+- `prev_revision`
+- `fx_pair`
+- policy / prediction-discipline guidance
+- required output contract
 
-In ver.1.4 initial deployment, the system implements:
+For batch predictions, the payload includes:
 
-feature_pack_version = "v1_nomap"
+- `object = "econ_event_batch"`
+- `batch_id`
+- `country`
+- `release_ts`
+- `member_count`
+- `members[]` with compact member metadata
+- batch-level policy / prediction-discipline guidance
+- required output contract
 
-This version MUST NOT depend on SeriesMap or external indicator-to-series mapping.
+Provider-specific note:
 
----
-
-#### 5.5.1 Deterministic Computation Rule (Hard Rule)
-
-feature_pack MUST be computed using deterministic system logic only.
-
-LLMs MUST NOT compute trends, statistics, surprises, or derived metrics.
-
-feature_pack MUST NOT be modified by any provider.
-
-No provider call may occur before feature_pack is built.
-
-feature_pack v1_nomap MUST be computed exclusively from:
-
-- Event sheet historical rows
-- Event row metadata
-- Deterministically available internal data
-
-Violation of this rule constitutes architectural breach.
-
----
-
-#### 5.5.2 Allowed Feature Types (v1_nomap)
-
-feature_pack v1_nomap may include only:
-
-- last_actual_values (n ≤ 6)
-- last_surprises (n ≤ 12)
-- surprise_std_12
-- simple_trend_last_6 (latest − oldest)
-- consensus_prev_delta
-- event importance classification
-- optional deterministic pre-event volatility (if safely available)
-
-**Forbidden:**
-
-- Raw long historical tables
-- Unbounded history
-- Look-ahead leakage
-- External fuzzy series mapping
-- Implicit SeriesMap inference
-- LLM-derived features
-
-If insufficient data exists, fields MUST degrade to null or empty arrays.
-
----
-
-#### 5.5.3 SeriesMap Independence Rule (v1_nomap)
-
-feature_pack v1_nomap MUST NOT:
-
-- Query FRED via SeriesMap
-- Infer series identifiers dynamically
-- Depend on FMP series mapping
-- Use AI to resolve indicator-to-series mapping
-
-Future versions (e.g., v2_fred) may introduce SeriesMap-dependent logic, but v1_nomap MUST remain fully independent.
-
----
-
-#### 5.5.4 As-Of Integrity Rule
-
-If FEATURE_PACK_ASOF_LOCK is enabled:
-
-- No feature may use data later than release_ts.
-- Backtesting MUST respect timestamp integrity.
-- No forward contamination permitted.
-
-If as-of filtering cannot be guaranteed, the affected field MUST be null.
-
----
-
-#### 5.5.5 Caching Rule
-
-feature_pack is computed once per event_id.
-
-Multiple providers reuse the same feature_pack.
-
-Recompute only when explicitly forced.
-
-Cache key MUST be derived from event_id.
-
----
-
-#### 5.5.6 Versioning Rule
-
-feature_pack_version MUST be logged for every prediction run.
-
-Any structural change requires version increment.
-
-Historical backtests MUST log which version generated predictions.
-
-Version naming MUST reflect dependency tier (e.g., v1_nomap, v2_fred).
+- Anthropic additionally receives a larger static reusable scaffold in the cached system block for prompt-caching efficiency.
+- That scaffold is provider-side instruction text only; it is not a separately stored system entity and is not shared with OpenAI or Gemini.
 
 ---
 
@@ -884,9 +865,8 @@ Top-level object MUST include:
 
 **Additional governance rule:**
 
-- rationale_short MUST align with signals present in feature_pack.
-- Model MUST NOT contradict feature_pack statistics.
-- Model MUST NOT invent drivers outside feature_pack context.
+- rationale_short MUST align with the Event payload and policy guidance actually provided to the model.
+- Model MUST NOT invent drivers, internals, or hidden subcomponents that are absent from the payload.
 
 Failure to meet strict requirements → treated as error → error row written.
 
@@ -1793,11 +1773,12 @@ Window membership checks are inclusive at both ends (>= lo and <= hi) in the pre
 The prediction runner can replace its default rolling window with a Config sheet window when enabled.
 Config parsing behavior
 If Config exists and windowing is enabled, it reads:
-WINDOW_FROM_LOCAL
-WINDOW_TO_LOCAL
-WINDOW_TZ (IANA timezone string)
+PRED_WINDOW_FROM_LOCAL
+PRED_WINDOW_TO_LOCAL
+PRED_WINDOW_TZ (IANA timezone string)
 Converts the local datetime range into UTC milliseconds.
-If parsing fails or required fields are missing → silently falls back to the rolling window.
+Legacy shared `WINDOW_*` keys are used only if the dedicated `PRED_WINDOW_*` keys are absent.
+If parsing fails or required fields are missing → the runner raises an operator-visible error rather than silently falling back.
 Scope
 This override is implemented for the prediction runner path only (it is not a global system-level timestamp override).
 Code-authoritative note. The presence of a Config sheet does not change ingestion, batching, or actuals behavior unless those modules explicitly read Config (they do not in v1.4 uploads).
