@@ -152,11 +152,18 @@ indicator_name, country, release_ts,
 mr_window_min, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min,  
 mr_real_dir, mr_strength_ok, mr_real_sustain_min, mr_sustain_error_min, mr_sustain_grade, mr_sustain_ok,  
 mr_dir_ok, mr_real_max_up_pips, mr_real_max_down_pips,  
-mr_final_provider, mr_compare_status, mr_compare_dir_agree, mr_compare_anchor_delta_min, mr_compare_pips_delta, mr_compare_confidence, mr_compare_note  
+mr_final_provider, mr_compare_status, mr_compare_dir_agree, mr_compare_anchor_delta_min, mr_compare_pips_delta, mr_compare_confidence, mr_compare_note,  
+batch_anchor_mode, batch_anchor_confidence, batch_anchor_event_id, batch_anchor_indicator_name, batch_anchor_score, batch_anchor_margin, batch_anchor_runner_up_event_id, batch_anchor_runner_up_indicator_name, batch_anchor_reason,  
+cache_creation_input_tokens, cache_read_input_tokens,  
+pre_signal_mode, pre_risk_level, pre_volatility_level, watch_member_event_ids, watch_member_indicator_names, scenario_up_case, scenario_down_case, scenario_flat_case, scenario_confidence, scenario_plan_json  
 
 **Upsert identity**
 
 (event_id, ai_name) uniquely identifies a prediction row and is overwritten on re-run.
+
+The `pre_*` / `scenario_*` fields are advisory pre-release planning metadata. They do not replace the legacy directional fields and do not change the core directional/pips math in `Evaluation_Summary`; scenario-watchlist coverage is reported separately in `Evaluation_Scenario`.
+
+For recurring low-signal families, the planner uses these same fields to make the conservative posture visible without adding new sheet columns. Current code-level low-signal families include `cftc_positions`, `treasury_auctions`, `fed_speeches`, and `statement_report_text`. These families bias toward scenario mode, low risk/volatility/confidence, and representative watchlists rather than forceful single-driver precision. This family handling applies at row level as well as batch level, so member/single rows such as speeches, minutes, or report-text events do not need a batch-family wrapper to switch into conservative scenario framing.
 
 ---
 
@@ -189,10 +196,12 @@ compare_status, compare_confidence, error_note
 
 ### 2.6B Evaluation_Rows / Evaluation_Summary derived tabs
 
-When `Build Evaluation Sheets` runs, the system rewrites two derived reporting tabs:
+When `Build Evaluation Sheets` runs, the system rewrites four derived reporting tabs:
 
 - `Evaluation_Rows`
 - `Evaluation_Summary`
+- `Evaluation_BatchCompare`
+- `Evaluation_Scenario`
 
 These sheets are not canonical sources of truth. They are rebuilt projections derived from `Predictions`, preserving traceability back to prediction rows and market-reaction audit fields.
 
@@ -206,11 +215,19 @@ mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min,
 mr_real_dir, mr_real_strength, mr_real_sustain_min,  
 mr_dir_ok, mr_strength_ok, mr_sustain_ok, overall_ok,  
 realized_pips, mr_real_max_up_pips, mr_real_max_down_pips,  
-mr_final_provider, eval_note, mr_compare_status, mr_compare_note, eval_ts, trace_prediction_key
+mr_final_provider, eval_note, mr_compare_status, mr_compare_note, eval_ts, trace_prediction_key,  
+batch_anchor_mode, batch_anchor_confidence, batch_anchor_event_id, batch_anchor_indicator_name, batch_anchor_score, batch_anchor_margin, batch_anchor_runner_up_event_id, batch_anchor_runner_up_indicator_name, batch_anchor_reason,  
+pre_signal_mode, pre_risk_level, pre_volatility_level, watch_member_event_ids, watch_member_indicator_names, scenario_confidence
 
 `Evaluation_Summary` stores grouped rollups built from `Evaluation_Rows`, grouped by `release_date`, `ai_name`, and scope (`all`, `single`, `member`, `batch`), including:
 
 rows_scored, dir_ok_count / rate, strength_ok_count / rate, sustain_ok_count / rate, overall_ok_count / rate, avg_realized_abs_pips, avg_pred_abs_pips
+
+`Evaluation_BatchCompare` stores batch-vs-member comparison rows built from `Evaluation_Rows`, including the best-scoring member, the batch winner, and any persisted batch-anchor selection metadata for traceable review. For known same-minute mixed clusters, best-member selection first applies release-family relevance filters; for example, a monthly labor batch compares against labor members and excludes unrelated CFTC/commodity positioning side rows.
+
+`Evaluation_Scenario` stores scenario-watchlist coverage rows for scored scenario-mode batch predictions. Directional-mode batches are excluded even if they carry anchor/context watch members. The sheet compares the pre-release scenario watchlist against the same family-filtered best-scoring member used by `Evaluation_BatchCompare` and writes `watchlist_hit`, `best_member_rank_in_watchlist`, and `scenario_eval_result`. This does not change legacy directional/pips scoring.
+
+Local automation may call API-safe Apps Script wrappers through the Apps Script Execution API instead of menu clicks. Current wrappers include `apiRunPipelineWindow_`, `apiRunPredictionsWindow_`, `apiFetchActualsWindow_`, `apiScoreMarketReactionWindow_`, and `apiBuildEvaluationSheets_`. These wrappers accept only plain parameter objects and are intended for persistent-token automation loops rather than UI-driven operation.
 
 Summary rows count only genuinely scored outcomes. Rows that remain unscored because of unavailable market reaction data, including `market_closed`, are retained in `Evaluation_Rows` for traceability but excluded from `Evaluation_Summary` rate math.
 
@@ -666,11 +683,14 @@ Logging:
   - `total_work_units`
   - `resume_enabled`
   - `resume_active`
+  - `resumed_from_checkpoint`
   - `start_unit_index`
   - `end_unit_exclusive`
   - `max_work_units_per_run`
   - `max_runtime_ms`
-- `Prediction run partial summary` means more work remains.
+- `Prediction run checkpoint summary` means the current pass intentionally stopped at a checkpoint and auto-resume was scheduled.
+- `Prediction run pending resume summary` means more work remains and manual resume is required.
+- `Prediction run partial summary` means the pass ended incomplete without a clean checkpoint handoff.
 - `Prediction run summary` means the selected window/providers/mode chain completed.
 
 ---
@@ -748,13 +768,21 @@ For batch predictions, the payload includes:
 - `release_ts`
 - `member_count`
 - `members[]` with compact member metadata
+- `anchor_selection` with mode/confidence/score/margin/reason trace
+- `anchor_member` only when the selector finds a clear usable anchor
+- `supporting_members` for the remaining batch members
 - batch-level policy / prediction-discipline guidance
 - required output contract
+
+If `anchor_selection.mode` is `weak_anchor` or `no_clear_anchor`, provider prompts and guardrails must treat the batch as scenario/watchlist planning instead of forcing a dominant member. Weak anchors remain stored as trace metadata, but they are not passed as the default `anchor_member`; only `clear_anchor` may become the model's default market focus. Same-family release clusters with multiple plausible drivers, such as monthly labor or ISM PMI/subcomponent groups, should prefer conservative scenario behavior unless one member has a clear scoring margin.
+
+Known release-family profiles may override the generic score order for scenario watchlists. For `ism_services` / ISM Non-Manufacturing clusters, the pre-release watchlist prioritizes `Prices`, `New Orders`, `Business Activity`, and `Employment`; headline PMI is context rather than a default watchlist winner when those subcomponents are present. For `monthly_labor`, the pre-release watchlist prioritizes headline NFP, unemployment rate, wages, manufacturing payrolls, and private payrolls so labor detail rows can be tracked when the anchor margin is weak. For `jobless_claims`, the pre-release watchlist prioritizes initial claims, continuing claims, and the 4-week average as a single claims family rather than mixing them with trade or productivity rows that happen to share the same timestamp. For `factory_orders`, the pre-release watchlist prioritizes `Factory Orders ex Transportation`, then headline `Factory Orders`, then `ex Defense`, so the batch logic does not overread the broad headline when the cleaner core orders row is the more decision-relevant member. For `macro_inflation_retail`, the pre-release watchlist prioritizes core CPI, headline CPI, retail sales MoM, retail sales ex-autos / ex-gas-autos, retail sales YoY, and CPI s.a. so same-minute inflation-and-demand pileups are represented as one macro watch object instead of dropping one side of the release mix. For `cftc_positions`, the pre-release watchlist is intentionally conservative and representative rather than exhaustive: it prioritizes S&P 500, Nasdaq 100, gold, silver, and crude oil positioning while lowering risk, volatility, and confidence because these batches are indirect and noisy for USDJPY. For large `eia_petroleum` clusters, the pre-release watchlist prioritizes distillate production, refinery activity, crude stocks, gasoline stocks, gasoline production, and distillate stocks ahead of imports or Cushing-only rows, because the wider product/refining mix often matters more than the most familiar oil headline when the batch has no clear anchor. For `mba_mortgage`, the pre-release watchlist prioritizes purchase index, market index, refinance index, and the 30-year mortgage rate so the system does not overfocus on rates while missing the underlying demand signal.
 
 Provider-specific note:
 
 - Anthropic additionally receives a larger static reusable scaffold in the cached system block for prompt-caching efficiency.
 - That scaffold is provider-side instruction text only; it is not a separately stored system entity and is not shared with OpenAI or Gemini.
+- Provider cache counters are stored in `cache_creation_input_tokens` and `cache_read_input_tokens` when exposed by the provider response. For Anthropic, non-zero `cache_read_input_tokens` means the static block was read from provider-side prompt cache.
 
 ---
 
@@ -1008,15 +1036,15 @@ Menu → ③ Actuals → Start Hourly Actuals Fetch → menuActualsStartHourly_(
 Menu → ③ Actuals → Stop Hourly Actuals Fetch → menuActualsStopHourly_()
 
 Important code-authoritative behavior (trigger target):  
-The installed hourly trigger runs menuActualsManualFetch_() (not runFetchActualsHourly_()), and is de-duplicated by deleting prior triggers with the same handler.
+The installed hourly trigger runs menuActualsConfigWindowFetch_() (not runFetchActualsHourly_()). The legacy menuActualsManualFetch_() wrapper remains for compatibility.
 
-**Manual runs**
+**Config-window manual run**
 
-Menu → ③ Actuals → Fetch Actuals (Manual) → menuActualsManualFetch_()
+Menu → ③ Actuals → Fetch Actuals (Config Window) → menuActualsConfigWindowFetch_()
 
 Default fallback behavior: look back ~24h, no lookahead, cap ~2000
 
-If resolveWindow_('actuals_manual') exists and returns an enabled window, it converts that window to a (minutes back / minutes forward) relative window and calls the window runner.
+If resolveWindow_('actuals_manual') exists and returns an enabled window, it calls runFetchActualsWindowBounds_() with the exact Config-derived UTC start/end bounds. Historical Config windows must not be widened to "from Config start through now."
 
 Additional explicit tools:
 
@@ -1051,30 +1079,31 @@ Computes a time window:
 lo = now - lookbackMinutes  
 hi = now + lookaheadMinutes  
 
+runFetchActualsWindowBounds_(windowStartIso, windowEndIso, rowCap) uses the exact supplied UTC bounds instead of deriving bounds from now.
+
 Per row it reads:
 
 - indicator_name
 - release_status (preferred), else status (fallback)
 - release_ts parsed as Date (invalid dates are skipped)
 
-**Gate A — skip qualitative events upfront**  
+**Gate A — skip explicit text/non-fetchable events upfront**  
 If _shouldSkipActuals_(indicator_name) returns true, the row is skipped and an info log is written:
 
-Actuals: skipped qualitative (includes event_id, indicator_name, country)
+Actuals: skipped_by_rule (includes event_id, indicator_name, country, skip_reason)
 
-This is keyword/pattern based (e.g., speeches/minutes/testimony-like) and is independent of SeriesMap.
+This is keyword/pattern based for clearly text-like releases (for example speeches, minutes, testimony, statements, press conferences, and WASDE-style report text) and is independent of SeriesMap. Auction rows and `CB Employment Trends Index` are no longer auto-skipped by name alone.
 
 **Gate B — time window + status rules**  
 A row becomes a candidate when:
 
 If status is scheduled:
 
-- release_ts ∈ [lo, hi], OR
-- release_ts ∈ [lo, now] (“scheduled-but-past” catch-up)
+- release_ts in [lo, hi]
 
 If status is released or revised:
 
-- release_ts >= lo (revision catch-up)
+- release_ts in [lo, hi]
 
 **Row cap**
 
@@ -1282,15 +1311,15 @@ Menu → ③ Actuals → Start Hourly Actuals Fetch → menuActualsStartHourly_(
 Menu → ③ Actuals → Stop Hourly Actuals Fetch → menuActualsStopHourly_()
 
 Important code-authoritative behavior (trigger target):  
-The installed hourly trigger runs menuActualsManualFetch_() (not runFetchActualsHourly_()), and is de-duplicated by deleting prior triggers with the same handler.
+The installed hourly trigger runs menuActualsConfigWindowFetch_() (not runFetchActualsHourly_()). The legacy menuActualsManualFetch_() wrapper remains for compatibility.
 
-**Manual runs**
+**Config-window manual run**
 
-Menu → ③ Actuals → Fetch Actuals (Manual) → menuActualsManualFetch_()
+Menu → ③ Actuals → Fetch Actuals (Config Window) → menuActualsConfigWindowFetch_()
 
 Default fallback behavior: look back ~24h, no lookahead, cap ~2000
 
-If resolveWindow_('actuals_manual') exists and returns an enabled window, it converts that window to a (minutes back / minutes forward) relative window and calls the window runner.
+If resolveWindow_('actuals_manual') exists and returns an enabled window, it calls runFetchActualsWindowBounds_() with the exact Config-derived UTC start/end bounds. Historical Config windows must not be widened to "from Config start through now."
 
 Additional explicit tools:
 
@@ -1325,6 +1354,8 @@ Computes a time window:
 lo = now - lookbackMinutes  
 hi = now + lookaheadMinutes  
 
+runFetchActualsWindowBounds_(windowStartIso, windowEndIso, rowCap) uses the exact supplied UTC bounds instead of deriving bounds from now.
+
 Per row it reads:
 
 - indicator_name
@@ -1343,12 +1374,11 @@ A row becomes a candidate when:
 
 If status is scheduled:
 
-- release_ts ∈ [lo, hi], OR
-- release_ts ∈ [lo, now] (“scheduled-but-past” catch-up)
+- release_ts in [lo, hi]
 
 If status is released or revised:
 
-- release_ts >= lo (revision catch-up)
+- release_ts in [lo, hi]
 
 **Row cap**
 
@@ -1823,7 +1853,7 @@ A separate scoring warehouse beyond `Predictions`, `MR_ProviderRuns`, and the de
 Automated provider/model leaderboard services beyond the rebuilt summary sheet  
 Automatic recalibration of bands or models  
 
-Code-authoritative note. Any scoring metrics mentioned in legacy rule1.3 are informational only unless explicitly written to a sheet in code. In v1.4, scored metrics persist on `Predictions`, provider-level audit may persist on `MR_ProviderRuns`, and derived reporting may persist on `Evaluation_Rows` / `Evaluation_Summary`.
+Code-authoritative note. Any scoring metrics mentioned in legacy rule1.3 are informational only unless explicitly written to a sheet in code. In v1.4, scored metrics persist on `Predictions`, provider-level audit may persist on `MR_ProviderRuns`, and derived reporting may persist on `Evaluation_Rows` / `Evaluation_Summary` / `Evaluation_BatchCompare` / `Evaluation_Scenario`.
 
 ---
 
@@ -2038,7 +2068,7 @@ provider_error
 
 Logs remain append-only best-effort telemetry, but they are no longer the only durable artifact because evaluation fields are also written back into Predictions.
 
-Code-authoritative note. Downstream analytics should use `Predictions` as the canonical scored prediction store, `MR_ProviderRuns` for provider-level audit details, and `Evaluation_Rows` / `Evaluation_Summary` as derived reporting layers. Logs remain useful for runtime diagnostics and failure investigation.
+Code-authoritative note. Downstream analytics should use `Predictions` as the canonical scored prediction store, `MR_ProviderRuns` for provider-level audit details, and `Evaluation_Rows` / `Evaluation_Summary` / `Evaluation_BatchCompare` / `Evaluation_Scenario` as derived reporting layers. Logs remain useful for runtime diagnostics and failure investigation.
 
 
 ## 10) Logging, Status Codes, and Error Semantics (rule1.4)

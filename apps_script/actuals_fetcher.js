@@ -27,6 +27,38 @@ var ACTUALS_CFG = {
  *  - manual menu actions: pass custom lookback/lookahead/rowCap windows
  */
 function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
+  var now = new Date();
+  var lo = new Date(now.getTime() - (Number(lookbackMinutes) || 0) * 60 * 1000);
+  var hi = new Date(now.getTime() + (Number(lookaheadMinutes) || 0) * 60 * 1000);
+  return _runFetchActualsWindowBoundsCore_(lo, hi, rowCap, {
+    mode: 'relative',
+    lookbackMinutes: lookbackMinutes,
+    lookaheadMinutes: lookaheadMinutes
+  });
+}
+
+function runFetchActualsWindowBounds_(windowStartIso, windowEndIso, rowCap) {
+  var lo = _parseActualsWindowBound_(windowStartIso, 'windowStartIso');
+  var hi = _parseActualsWindowBound_(windowEndIso, 'windowEndIso');
+  if (lo.getTime() > hi.getTime()) {
+    throw new Error('Actuals Config Window requires start <= end. Got start=' + lo.toISOString() + ' end=' + hi.toISOString());
+  }
+  return _runFetchActualsWindowBoundsCore_(lo, hi, rowCap, {
+    mode: 'absolute',
+    windowStartIso: lo.toISOString(),
+    windowEndIso: hi.toISOString()
+  });
+}
+
+function _parseActualsWindowBound_(value, label) {
+  var d = (value instanceof Date) ? value : new Date(String(value || ''));
+  if (!(d instanceof Date) || !isFinite(d.getTime())) {
+    throw new Error('Invalid actuals window bound: ' + label + '=' + value);
+  }
+  return d;
+}
+
+function _runFetchActualsWindowBoundsCore_(lo, hi, rowCap, windowMeta) {
   var ss = SpreadsheetApp.getActive();
   var EVENT = (typeof CFG !== 'undefined' && CFG.SHEET_EVENT) ? CFG.SHEET_EVENT : 'Event';
   var LOG   = (typeof CFG !== 'undefined' && CFG.SHEET_LOG)   ? CFG.SHEET_LOG   : 'log';
@@ -38,8 +70,11 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
 
   var started = new Date();
   _log_(shLog, 'info', 'Actuals: scan start (window)', {
-    lookbackMinutes: lookbackMinutes,
-    lookaheadMinutes: lookaheadMinutes,
+    window_mode: windowMeta && windowMeta.mode || '',
+    lookbackMinutes: windowMeta && windowMeta.lookbackMinutes,
+    lookaheadMinutes: windowMeta && windowMeta.lookaheadMinutes,
+    window_from: lo.toISOString(),
+    window_to: hi.toISOString(),
     rowCap: rowCap
   });
   
@@ -53,16 +88,14 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
   }
   var data = shEvent.getRange(2, 1, lastRow - 1, lastCol).getValues();
 
-  // Time window
-  var now = new Date();
-  var lo  = new Date(now.getTime() - (Number(lookbackMinutes) || 0) * 60 * 1000);
-  var hi  = new Date(now.getTime() + (Number(lookaheadMinutes) || 0) * 60 * 1000);
-
   // Load SeriesMap (ok if missing; we just skip those rows and log a warn)
   var seriesMap = (typeof _loadSeriesMap_ === 'function') ? _loadSeriesMap_() : [];
 
-  // Select candidates (skip qualitative / non-numeric upfront)
+  // Select candidates (skip non-fetchable text events upfront)
   var candIdx = [];
+  var skippedByRule = 0;
+  var alreadyHasActuals = 0;
+  var unresolvedNoMatch = 0;
   for (var i = 0; i < data.length; i++) {
     var row = data[i];
 
@@ -78,13 +111,16 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
     var relDate = (rel instanceof Date) ? rel : new Date(String(rel || ''));
     if (String(relDate) === 'Invalid Date') continue;
 
-    // 2) Skip qualitative items (log INFO so it’s visible but not noisy)
-    if (_shouldSkipActuals_(indicator_name)) {
+    // 2) Skip explicitly non-fetchable text events (log INFO for traceability)
+    var skipReason = _actualsSkipReason_(indicator_name);
+    if (skipReason) {
+      skippedByRule++;
       try {
-        _log_(shLog, 'info', 'Actuals: skipped qualitative', {
+        _log_(shLog, 'info', 'Actuals: skipped_by_rule', {
           event_id: (H('event_id') >= 0 ? String(row[H('event_id')] || '') : ''),
           indicator_name: indicator_name,
-          country: (H('country') >= 0 ? String(row[H('country')] || '') : '')
+          country: (H('country') >= 0 ? String(row[H('country')] || '') : ''),
+          skip_reason: skipReason
         });
       } catch (e) {}
       continue;
@@ -92,13 +128,11 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
 
     // 3) Window selection:
     // - scheduled in [lo, hi]
-    // - OR scheduled but already past release time (common: upstream never flips status)
-    // - released/revised within lookback (to catch revisions)
+    // - released/revised in [lo, hi] to catch revisions without leaking beyond Config Window
     if (status === 'scheduled') {
     if (relDate >= lo && relDate <= hi) candIdx.push(i);
-    else if (relDate >= lo && relDate <= now) candIdx.push(i); // scheduled-but-past
     } else if (status === 'released' || status === 'revised') {
-    if (relDate >= lo) candIdx.push(i);
+    if (relDate >= lo && relDate <= hi) candIdx.push(i);
     }
   }
 
@@ -140,6 +174,31 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
 
       var alreadyReleased = H('released_value') >= 0 &&
         !(r[H('released_value')] === '' || r[H('released_value')] === null || r[H('released_value')] === undefined);
+      var unresolvedCtx = {
+        event_id: event_id,
+        indicator_name: indicator_name,
+        country: country,
+        release_ts: relDate.toISOString(),
+        resolution_method: res && res.resolution_method ? res.resolution_method : '',
+        reason: res && res.reason ? res.reason : 'NO_MATCH'
+      };
+      if (alreadyReleased) {
+        alreadyHasActuals++;
+        try {
+          _log_(shLog, 'info', 'Actuals: already_has_actuals', Object.assign({}, unresolvedCtx, {
+            released_value: H('released_value') >= 0 ? r[H('released_value')] : '',
+            released_ts: H('released_ts') >= 0 && r[H('released_ts')] instanceof Date
+              ? r[H('released_ts')].toISOString()
+              : (H('released_ts') >= 0 ? String(r[H('released_ts')] || '') : ''),
+            release_status: H('release_status') >= 0 ? String(r[H('release_status')] || '') : ''
+          }));
+        } catch (e) {}
+      } else {
+        unresolvedNoMatch++;
+        try {
+          _log_(shLog, 'info', 'Actuals: unresolved_no_match', unresolvedCtx);
+        } catch (e) {}
+      }
       if (!alreadyReleased) {
         pending[idx] = {
           released_value: r[H('released_value')],
@@ -238,6 +297,9 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
 
   _log_(shLog, 'info', 'Actuals: scan done (window)', {
     inspected: candIdx.length, updated: updated, released: released, revised: revised,
+    skipped_by_rule: skippedByRule,
+    already_has_actuals: alreadyHasActuals,
+    unresolved_no_match: unresolvedNoMatch,
     window_from: lo.toISOString(), window_to: hi.toISOString(), duration_ms: (new Date()) - started
   });
   return {
@@ -245,6 +307,10 @@ function runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap) {
   updated:   updated,
   released:  released,
   revised:   revised,
+  skipped_by_rule: skippedByRule,
+  already_has_actuals: alreadyHasActuals,
+  unresolved_no_match: unresolvedNoMatch,
+  window_mode: windowMeta && windowMeta.mode || '',
   window_from: lo.toISOString(),
   window_to:   hi.toISOString()
   };
@@ -800,25 +866,31 @@ function _normSeasonal_(s) {
   return v.toUpperCase(); // pass through any other explicit small flags
 }
 
-// Qualitative / non-numeric things we should skip in actuals
-function _shouldSkipActuals_(name) {
+// Explicit text-like events we should skip in actuals.
+function _actualsSkipReason_(name) {
   var s = _normalizeIndicatorKey_(name);
-  var patterns = [
-    /speech/,                      // Fed Chair Powell Speech, Fed Bowman Speech
-    /auction/,                     // 4-Week Bill Auction, 30-Year Bond Auction
-    /wasde/,                       // WASDE Report
-    ///gdpnow/,                      // Atlanta Fed GDPNow
-    ///balance\s*sheet/,             // Fed Balance Sheet
-    /employment\s*trends\s*index/  // CB Employment Trends Index (composite; skip unless mapped)
+  if (!s) return '';
+  var rules = [
+    { reason: 'speech', rx: /\bspeech\b/ },
+    { reason: 'press_conference', rx: /\bpress conference\b/ },
+    { reason: 'testimony', rx: /\btestimony\b/ },
+    { reason: 'statement', rx: /\bstatement\b/ },
+    { reason: 'minutes', rx: /\bminutes\b/ },
+    { reason: 'report_text', rx: /\bwasde\b/ }
   ];
-  return patterns.some(function(rx){ return rx.test(s); });
+  for (var i = 0; i < rules.length; i++) {
+    if (rules[i].rx.test(s)) return rules[i].reason;
+  }
+  return '';
+}
+
+function _shouldSkipActuals_(name) {
+  return !!_actualsSkipReason_(name);
 }
 
 /** ===== Refactor the hourly entrypoint to call a shared worker ===== **/
 function runFetchActualsHourly_() {
   return runFetchActualsWindow_(ACTUALS_CFG.LOOKBACK_MINUTES, ACTUALS_CFG.LOOKAHEAD_MINUTES, ACTUALS_CFG.MAX_ROWS_PER_RUN);
 }
-
-
 
 

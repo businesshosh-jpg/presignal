@@ -46,10 +46,13 @@ function onOpen() {
     ui.createMenu('② Predictions')
       .addItem('Run Predictions (All Providers)', 'menuRunPredictionsAll_')
       .addItem('Run Predictions (Config Window)', 'menuRunPredictionsWindow_')
+      .addItem('Resume Predictions', 'runPredictionsResume_')
       .addSeparator()
       .addItem('Gemini (manual)', 'menuRunPredictionsGemini_')
       .addItem('OpenAI (manual)', 'menuRunPredictionsOpenAI_')
       .addItem('Claude (manual)', 'menuRunPredictionsClaude_')
+      .addSeparator()
+      .addItem('Clear Prediction Checkpoint', 'menuClearPredictionCheckpoint_')
   );
 
   // ③ Actuals
@@ -57,7 +60,7 @@ function onOpen() {
     ui.createMenu('③ Actuals')
       .addItem('Start Hourly Actuals Fetch', 'menuActualsStartHourly_')
       .addItem('Stop Hourly Actuals Fetch', 'menuActualsStopHourly_')
-      .addItem('Fetch Actuals (Manual)', 'menuActualsManualFetch_')
+      .addItem('Fetch Actuals (Config Window)', 'menuActualsConfigWindowFetch_')
   );
 
   // ④ Market Reaction
@@ -296,32 +299,32 @@ function menuPredDispatch_(mode){
 }
 
 function menuActualsManualFetch_(){
+  return menuActualsConfigWindowFetch_();
+}
+
+function menuActualsConfigWindowFetch_(){
   var ss = SpreadsheetApp.getActive();
   var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
   var started = new Date();
   try {
-    // Resolve window → convert to minutes for the windowed fetcher
-    var minsBack = 24*60, minsFwd = 0, cap = 2000;
+    var cap = 2000;
     var used = { mode: 'fallback:lookback24h' };
+    var res;
 
     var win = (typeof resolveWindow_ === 'function') ? resolveWindow_('actuals_manual') : null;
     if (win && win.windowEnabled && win.fromUtcIso && win.toUtcIso) {
-      // Convert explicit from/to → minutes relative to now (floor/ceil to safe side)
-      var now = new Date();
-      var fromMs = (new Date(win.fromUtcIso)).getTime();
-      var toMs   = (new Date(win.toUtcIso)).getTime();
-      minsBack = Math.max(0, Math.ceil((now.getTime() - fromMs)/60000));
-      minsFwd  = Math.max(0, Math.ceil((toMs - now.getTime())/60000));
-      used = { mode: 'window', fromUtcIso: win.fromUtcIso, toUtcIso: win.toUtcIso, note: win.note||'' };
+      used = { mode: 'config_window', fromUtcIso: win.fromUtcIso, toUtcIso: win.toUtcIso, note: win.note||'' };
+      res = (typeof runFetchActualsWindowBounds_ === 'function')
+        ? runFetchActualsWindowBounds_(win.fromUtcIso, win.toUtcIso, cap)
+        : (function(){ throw new Error('runFetchActualsWindowBounds_ not found in actuals_fetcher.gs'); })();
+    } else {
+      res = (typeof runFetchActualsWindow_ === 'function')
+        ? runFetchActualsWindow_(24*60, 0, cap)
+        : (function(){ throw new Error('runFetchActualsWindow_ not found in actuals_fetcher.gs'); })();
     }
 
-    // Delegates to your existing windowed fetcher in actuals_fetcher.gs
-    var res = (typeof runFetchActualsWindow_ === 'function')
-      ? runFetchActualsWindow_(minsBack, minsFwd, cap)
-      : (function(){ throw new Error('runFetchActualsWindow_ not found in actuals_fetcher.gs'); })();
-
     if (typeof _log_ === 'function' && shLog) {
-      _log_(shLog, 'info', 'Actuals → Manual fetch', {
+      _log_(shLog, 'info', 'Actuals → Config Window fetch', {
         window_used: used,
         result: res,
         started_ts: started.toISOString(),
@@ -329,7 +332,7 @@ function menuActualsManualFetch_(){
       });
     }
     SpreadsheetApp.getActive().toast(
-    'Actuals manual: inspected=' + (res.inspected||0) +
+    'Actuals config window: inspected=' + (res.inspected||0) +
     ', updated=' + (res.updated||0) +
     ', released=' + (res.released||0) +
     ', revised=' + (res.revised||0),
@@ -338,19 +341,21 @@ function menuActualsManualFetch_(){
     );
   } catch (e) {
     if (typeof showErrorPopup_ === 'function') {
-      showErrorPopup_('Actuals Manual — Error', (e && e.message) ? e.message : String(e));
+      showErrorPopup_('Actuals Config Window — Error', (e && e.message) ? e.message : String(e));
     }
     throw e;
   }
 }
 
 function menuActualsStartHourly_(){
-  // Creates an hourly installable trigger to call menuActualsManualFetch_()
-  var fn = 'menuActualsManualFetch_';
+  // Creates an hourly installable trigger to call the Config Window actuals fetch.
+  var fn = 'menuActualsConfigWindowFetch_';
+  var legacyFn = 'menuActualsManualFetch_';
   // De-dupe existing triggers
   var triggers = ScriptApp.getProjectTriggers() || [];
   for (var i=0;i<triggers.length;i++){
-    if (triggers[i].getHandlerFunction && triggers[i].getHandlerFunction() === fn) {
+    var handler = triggers[i].getHandlerFunction && triggers[i].getHandlerFunction();
+    if (handler === fn || handler === legacyFn) {
       ScriptApp.deleteTrigger(triggers[i]);
     }
   }
@@ -359,11 +364,13 @@ function menuActualsStartHourly_(){
 }
 
 function menuActualsStopHourly_(){
-  var fn = 'menuActualsManualFetch_';
+  var fn = 'menuActualsConfigWindowFetch_';
+  var legacyFn = 'menuActualsManualFetch_';
   var triggers = ScriptApp.getProjectTriggers() || [];
   var removed = 0;
   for (var i=0;i<triggers.length;i++){
-    if (triggers[i].getHandlerFunction && triggers[i].getHandlerFunction() === fn) {
+    var handler = triggers[i].getHandlerFunction && triggers[i].getHandlerFunction();
+    if (handler === fn || handler === legacyFn) {
       ScriptApp.deleteTrigger(triggers[i]);
       removed++;
     }
@@ -925,6 +932,7 @@ function menuMaintenanceHealthCheck_() {
     'menuPredAll_',
     'runPredictionsWindow',
     'menuActualsStartHourly_',
+    'menuActualsConfigWindowFetch_',
     'menuActualsManualFetch_',
     'scoreMarketReactionPast24h_',
     'scoreMarketReactionByConfigWindow_'

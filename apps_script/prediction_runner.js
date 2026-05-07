@@ -36,6 +36,7 @@ var CFG = (typeof CFG !== 'undefined') ? CFG : {
   PRED_RESUME_ENABLED: true,
   PRED_AUTO_CONTINUE_ENABLED: true,
   PRED_AUTO_CONTINUE_DELAY_MIN: 1,
+  PRED_AUTO_CONTINUE_DELAY_SEC: 15,
   ANTHROPIC_PROMPT_CACHE_ENABLED: true,
   ANTHROPIC_PROMPT_CACHE_TTL: '5m',
   DRY_RUN_PREDICT: false,
@@ -61,6 +62,7 @@ function _ensureCfgDefaults_() {
     PRED_RESUME_ENABLED: true,
     PRED_AUTO_CONTINUE_ENABLED: true,
     PRED_AUTO_CONTINUE_DELAY_MIN: 1,
+    PRED_AUTO_CONTINUE_DELAY_SEC: 15,
     ANTHROPIC_PROMPT_CACHE_ENABLED: true,
     ANTHROPIC_PROMPT_CACHE_TTL: '5m',
     DRY_RUN_PREDICT: false,
@@ -139,6 +141,9 @@ function _applyConfigOverridesFromSheet_() {
   }
   if (map.PRED_AUTO_CONTINUE_DELAY_MIN != null) {
     CFG.PRED_AUTO_CONTINUE_DELAY_MIN = _cfgInteger_(map.PRED_AUTO_CONTINUE_DELAY_MIN, CFG.PRED_AUTO_CONTINUE_DELAY_MIN);
+  }
+  if (map.PRED_AUTO_CONTINUE_DELAY_SEC != null) {
+    CFG.PRED_AUTO_CONTINUE_DELAY_SEC = _cfgInteger_(map.PRED_AUTO_CONTINUE_DELAY_SEC, CFG.PRED_AUTO_CONTINUE_DELAY_SEC);
   }
   if (map.ANTHROPIC_PROMPT_CACHE_ENABLED != null) {
     CFG.ANTHROPIC_PROMPT_CACHE_ENABLED = _cfgBoolean_(map.ANTHROPIC_PROMPT_CACHE_ENABLED, CFG.ANTHROPIC_PROMPT_CACHE_ENABLED);
@@ -250,6 +255,16 @@ function runPredictionsUsingWindow_() {
 function menuRunPredictionsGemini_()  { return runPredictionsCore_({ windowMinBeforeMin: 24*60, windowMaxAfterMin: 36*60, providers: ['Gemini'] }); }
 function menuRunPredictionsOpenAI_()  { return runPredictionsCore_({ windowMinBeforeMin: 24*60, windowMaxAfterMin: 36*60, providers: ['OpenAI'] }); }
 function menuRunPredictionsClaude_()  { return runPredictionsCore_({ windowMinBeforeMin: 24*60, windowMaxAfterMin: 36*60, providers: ['Anthropic'] }); }
+function menuClearPredictionCheckpoint_() {
+  _clearPredictionCheckpoint_();
+  _clearPredictionContinuationTriggers_();
+  appendLog('info', 'Prediction checkpoint cleared', {
+    module: 'prediction_runner',
+    cleared_at: new Date().toISOString()
+  });
+  _flushPredictionLogs_();
+  return { status: 'checkpoint_cleared' };
+}
 
 /** =========================
  *  Core runner
@@ -257,6 +272,9 @@ function menuRunPredictionsClaude_()  { return runPredictionsCore_({ windowMinBe
 function runPredictionsCore_(opts) {
   _applyConfigOverridesFromSheet_(); // read Config sheet overrides
   _ensureCfgDefaults_();
+  if (opts && opts.autoContinueEnabledOverride != null) {
+    CFG.PRED_AUTO_CONTINUE_ENABLED = !!opts.autoContinueEnabledOverride;
+  }
   CFG.PREDICTION_MODE = _normalizePredictionMode_(CFG.PREDICTION_MODE);
   var runStartedMs = Date.now();
   _clearPredictionContinuationTriggers_();
@@ -351,7 +369,8 @@ function runPredictionsCore_(opts) {
     total_selected_events: events.length,
     total_work_units: workUnits.length,
     resume_enabled: !!CFG.PRED_RESUME_ENABLED,
-    resume_active: !!resumeInfo.resumed,
+    resume_active: !!CFG.PRED_RESUME_ENABLED && endIndex < workUnits.length,
+    resumed_from_checkpoint: !!resumeInfo.resumed,
     start_unit_index: resumeInfo.startIndex,
     end_unit_exclusive: endIndex,
     max_work_units_per_run: maxUnits,
@@ -361,6 +380,7 @@ function runPredictionsCore_(opts) {
   var results = { inspected:0, created:0, updated:0, duplicates:0, errors:0 };
   var processedUnits = 0;
   var partial = false;
+  var resumeScheduled = false;
 
   for (var u = resumeInfo.startIndex; u < endIndex; u++) {
     var unit = workUnits[u];
@@ -393,6 +413,24 @@ function runPredictionsCore_(opts) {
     _clearPredictionContinuationTriggers_();
   } else if (_predictionAutoContinueEnabled_()) {
     _ensurePredictionContinuationTrigger_();
+    resumeScheduled = true;
+  }
+
+  var nextWorkUnitIndex = resumeInfo.startIndex + processedUnits;
+  var remainingWorkUnits = Math.max(0, workUnits.length - nextWorkUnitIndex);
+  var completionState = 'complete';
+  var summaryMessage = 'Prediction run summary';
+  if (partial) {
+    if (resumeScheduled) {
+      completionState = 'checkpointed_for_resume';
+      summaryMessage = 'Prediction run checkpoint summary';
+    } else if (CFG.PRED_RESUME_ENABLED && remainingWorkUnits > 0) {
+      completionState = 'checkpoint_pending_manual_resume';
+      summaryMessage = 'Prediction run pending resume summary';
+    } else {
+      completionState = 'incomplete';
+      summaryMessage = 'Prediction run partial summary';
+    }
   }
 
   var summary = Object.assign({
@@ -402,11 +440,15 @@ function runPredictionsCore_(opts) {
     total_selected_events: events.length,
     total_work_units: workUnits.length,
     processed_work_units: processedUnits,
-    next_work_unit_index: partial ? (resumeInfo.startIndex + processedUnits) : '',
+    remaining_work_units: remainingWorkUnits,
+    next_work_unit_index: remainingWorkUnits > 0 ? nextWorkUnitIndex : '',
     resume_enabled: !!CFG.PRED_RESUME_ENABLED,
-    resume_active: !!resumeInfo.resumed
+    resume_active: !!CFG.PRED_RESUME_ENABLED && remainingWorkUnits > 0,
+    resumed_from_checkpoint: !!resumeInfo.resumed,
+    resume_scheduled: resumeScheduled,
+    completion_state: completionState
   });
-  appendLog('info', partial ? 'Prediction run partial summary' : 'Prediction run summary', Object.assign({}, context, summary));
+  appendLog('info', summaryMessage, Object.assign({}, context, summary));
   _flushPredictionLogs_();
   return summary;
 }
@@ -453,13 +495,21 @@ function _predictionAutoContinueEnabled_() {
   return !!CFG.PRED_AUTO_CONTINUE_ENABLED;
 }
 
-function _getPredictionAutoContinueDelayMin_() {
-  var n = Number(CFG && CFG.PRED_AUTO_CONTINUE_DELAY_MIN);
-  if (!isFinite(n)) n = 1;
-  n = Math.floor(n);
-  if (n < 1) n = 1;
-  if (n > 30) n = 30;
-  return n;
+function _getPredictionAutoContinueDelayMs_() {
+  var sec = Number(CFG && CFG.PRED_AUTO_CONTINUE_DELAY_SEC);
+  if (isFinite(sec)) {
+    sec = Math.floor(sec);
+    if (sec < 5) sec = 5;
+    if (sec > 1800) sec = 1800;
+    return sec * 1000;
+  }
+
+  var min = Number(CFG && CFG.PRED_AUTO_CONTINUE_DELAY_MIN);
+  if (!isFinite(min)) min = 1;
+  min = Math.floor(min);
+  if (min < 1) min = 1;
+  if (min > 30) min = 30;
+  return min * 60 * 1000;
 }
 
 function _predictionCheckpointPropKey_() {
@@ -488,10 +538,10 @@ function _ensurePredictionContinuationTrigger_() {
       return;
     }
   }
-  var delayMin = _getPredictionAutoContinueDelayMin_();
+  var delayMs = _getPredictionAutoContinueDelayMs_();
   ScriptApp.newTrigger(fn)
     .timeBased()
-    .after(delayMin * 60 * 1000)
+    .after(delayMs)
     .create();
 }
 
@@ -689,6 +739,13 @@ function _runPredictionBatch_(batchEv, enabledProviders, predSheet, predIdx, run
       appendLog('info', 'Batch prediction ok', Object.assign({}, context, {
         batch_id: batchEv.event_id,
         member_count: batchEv.member_count || 0,
+        anchor_mode: batchEv.batch_anchor_mode || '',
+        anchor_confidence: batchEv.batch_anchor_confidence || '',
+        anchor_event_id: batchEv.batch_anchor ? batchEv.batch_anchor.event_id : '',
+        anchor_indicator_name: batchEv.batch_anchor ? batchEv.batch_anchor.indicator_name : '',
+        anchor_score: batchEv.anchor_score || 0,
+        anchor_margin: batchEv.anchor_margin || 0,
+        anchor_reason: batchEv.anchor_reason || '',
         provider: prov.name,
         model: prov.model,
         action: action,
@@ -706,6 +763,13 @@ function _runPredictionBatch_(batchEv, enabledProviders, predSheet, predIdx, run
       appendLog('error', 'Batch prediction error', Object.assign({}, context, {
         batch_id: batchEv.event_id,
         member_count: batchEv.member_count || 0,
+        anchor_mode: batchEv.batch_anchor_mode || '',
+        anchor_confidence: batchEv.batch_anchor_confidence || '',
+        anchor_event_id: batchEv.batch_anchor ? batchEv.batch_anchor.event_id : '',
+        anchor_indicator_name: batchEv.batch_anchor ? batchEv.batch_anchor.indicator_name : '',
+        anchor_score: batchEv.anchor_score || 0,
+        anchor_margin: batchEv.anchor_margin || 0,
+        anchor_reason: batchEv.anchor_reason || '',
         provider: prov.name,
         model: prov.model,
         message: String(e),
@@ -816,6 +880,8 @@ function _eventHasActuals_(releasedValue, releasedTs, releaseStatus) {
 function _buildPredictionJsonPrompt_(ev, opt) {
   var qualOnly = !!opt.qualOnly;
   var mrWindowMin = _getPredictionMrWindowMin_();
+  var preSignalPlan = ev.pre_signal_plan || _buildPreSignalPlan_(ev);
+  ev.pre_signal_plan = preSignalPlan;
   var payload = {
     schema_version: CFG.SCHEMA_VERSION,
     object: 'econ_event',
@@ -827,6 +893,7 @@ function _buildPredictionJsonPrompt_(ev, opt) {
     consensus_value: (typeof ev.consensus_value === 'number') ? ev.consensus_value : null,
     prev_revision: (typeof ev.prev_revision === 'number') ? ev.prev_revision : null,
     fx_pair: opt.fxPair || CFG.DEFAULT_FX,
+    pre_release_signal: _preSignalPromptView_(preSignalPlan),
     policy: {
       qualitative_only: qualOnly,
       defaults: { pips_band_by_importance: CFG.PIPS_BY_IMPORTANCE },
@@ -869,6 +936,7 @@ function _buildPredictionJsonPrompt_(ev, opt) {
     "ai_forecast_value must be a PLAIN number with no units or symbols (no %, k, m, bn). " +
     "Use consensus_value as the primary market-surprise baseline when present; prev_revision is context. " +
     "When consensus_value is null, be conservative: low-importance or indirect events should normally be flat/weak with small pips. " +
+    "Treat pre_release_signal as operator planning guidance. If pre_release_signal.mode is scenario, keep blind directional claims conservative and let the rationale explain what would imply up, down, or flat. " +
     "Fiscal statements, budget releases, auctions, balance-sheet/liquidity updates, and oil/gas inventory data are usually indirect USDJPY drivers and should stay small unless the transmission path is unusually direct. " +
     "If the true market surprise usually lives in hidden subcomponents or post-release internals not present here, do not invent confidence; default to flat or weak. " +
     "Before assigning up/down pips, explain the USDJPY transmission path in rationale.";
@@ -882,6 +950,8 @@ function _buildPredictionJsonPrompt_(ev, opt) {
 
 function _buildBatchPredictionJsonPrompt_(batchEv, opt) {
   var mrWindowMin = _getPredictionMrWindowMin_();
+  var preSignalPlan = batchEv.pre_signal_plan || _buildPreSignalPlan_(batchEv);
+  batchEv.pre_signal_plan = preSignalPlan;
   var members = (batchEv.batch_members || []).map(function(m){
     return {
       event_id: m.event_id,
@@ -892,6 +962,21 @@ function _buildBatchPredictionJsonPrompt_(batchEv, opt) {
       prev_revision: (typeof m.prev_revision === 'number') ? m.prev_revision : null
     };
   });
+  var anchorMember = String(batchEv.batch_anchor_mode || '') === 'clear_anchor'
+    ? (batchEv.batch_anchor || null)
+    : null;
+  var supportingMembers = members.filter(function(m){
+    return !anchorMember || String(m.event_id || '') !== String(anchorMember.event_id || '');
+  });
+  var anchorSelection = {
+    mode: batchEv.batch_anchor_mode || '',
+    confidence: batchEv.batch_anchor_confidence || '',
+    score: batchEv.anchor_score || 0,
+    margin: batchEv.anchor_margin || 0,
+    runner_up_event_id: batchEv.anchor_runner_up_event_id || '',
+    runner_up_indicator_name: batchEv.anchor_runner_up_indicator_name || '',
+    reason: batchEv.anchor_reason || ''
+  };
   var payload = {
     schema_version: CFG.SCHEMA_VERSION,
     object: 'econ_event_batch',
@@ -901,11 +986,27 @@ function _buildBatchPredictionJsonPrompt_(batchEv, opt) {
     fx_pair: opt.fxPair || CFG.DEFAULT_FX,
     member_count: batchEv.member_count || members.length,
     members: members,
+    pre_release_signal: _preSignalPromptView_(preSignalPlan),
+    anchor_selection: anchorSelection,
+    anchor_member: anchorMember ? {
+      event_id: anchorMember.event_id,
+      indicator_name: anchorMember.indicator_name,
+      genre: anchorMember.genre || _inferGenreFromName_(anchorMember.indicator_name || ''),
+      importance: anchorMember.importance || 'medium',
+      consensus_value: (typeof anchorMember.consensus_value === 'number') ? anchorMember.consensus_value : null,
+      prev_revision: (typeof anchorMember.prev_revision === 'number') ? anchorMember.prev_revision : null,
+      anchor_score: batchEv.anchor_score,
+      anchor_reason: batchEv.anchor_reason || ''
+    } : null,
+    supporting_members: supportingMembers,
     policy: {
       qualitative_only: true,
       defaults: { pips_band_by_importance: CFG.PIPS_BY_IMPORTANCE },
       prediction_discipline: {
         primary_goal: 'Predict the combined 5-minute USDJPY market reaction of the full release cluster, not each member separately.',
+        no_clear_anchor_rule: 'If anchor_selection.mode is no_clear_anchor, do not force a single dominant member. Treat the cluster as ambiguous and prefer conservative flat or weak behavior unless the members still point clearly the same way.',
+        weak_anchor_rule: 'If anchor_selection.mode is weak_anchor, treat the anchor as a watchlist clue, not the answer. Do not use it as the default market focus unless the rest of the release cluster confirms it.',
+        anchor_rule: 'Only start with anchor_member as the default market focus when anchor_selection.mode is clear_anchor and anchor_member is present. Let supporting members confirm, soften, or offset the anchor view rather than replacing it automatically.',
         dominance_rule: 'Acknowledge when one member is likely to dominate the cluster reaction, but do not invent hidden details not present in the payload.',
         offset_rule: 'If member effects offset or no direct member clearly dominates, prefer flat or weak.',
         hidden_detail_rule: 'If the true surprise usually depends on subcomponents or post-release internals not present here, default to conservative flat/weak behavior.',
@@ -937,6 +1038,10 @@ function _buildBatchPredictionJsonPrompt_(batchEv, opt) {
     "object,event_id,type,ai_forecast_value,qualitative_result,mr_window_min," +
     "mr_pred_dir,mr_pred_net_pips,mr_pred_strength,mr_pred_sustain_min,rationale_short,rationale. " +
     "event_id must equal the batch_id and type must equal batch. " +
+    "If anchor_selection.mode is no_clear_anchor, do not force a dominant member. " +
+    "If anchor_selection.mode is weak_anchor, treat the anchor as a watchlist clue, not the answer. " +
+    "Treat pre_release_signal as operator planning guidance. If pre_release_signal.mode is scenario, keep blind directional claims conservative and let the rationale explain what would imply up, down, or flat. " +
+    "Use anchor_member as the default market focus only when anchor_selection.mode is clear_anchor and anchor_member is present; otherwise compare the watched members as a cluster. " +
     "Assess the combined release cluster, not each member separately. " +
     "If the members offset each other or no direct member clearly dominates, default to flat or weak. " +
     "If the true surprise depends on hidden details not present here, do not invent confidence.";
@@ -1075,6 +1180,337 @@ function _buildAnthropicPromptCacheScaffold_() {
   return sections.join("\n\n");
 }
 
+function _buildPreSignalPlan_(ev) {
+  ev = ev || {};
+  var mode = _preSignalMode_(ev);
+  var riskLevel = _preSignalRiskLevel_(ev, mode);
+  var volatilityLevel = _preSignalVolatilityLevel_(ev, mode);
+  var confidence = _preSignalScenarioConfidence_(ev, mode);
+  var watchMembers = _preSignalWatchMembers_(ev, mode);
+  var plan = {
+    mode: mode,
+    risk_level: riskLevel,
+    volatility_level: volatilityLevel,
+    confidence: confidence,
+    watch_members: watchMembers,
+    up_case: '',
+    down_case: '',
+    flat_case: '',
+    trigger_reason: _preSignalTriggerReason_(ev, mode),
+    qualitative_only: ev.type === 'batch' ? true : _isQualitativeOnly_(ev),
+    hidden_detail_risk: _preSignalHiddenDetailRisk_(ev),
+    direct_fx: _isDirectFxIndicator_(ev),
+    anchor_mode: ev.type === 'batch' ? String(ev.batch_anchor_mode || '') : '',
+    anchor_confidence: ev.type === 'batch' ? String(ev.batch_anchor_confidence || '') : ''
+  };
+  plan.watch_member_event_ids = watchMembers.map(function(m){ return m.event_id || ''; }).filter(Boolean).join('|');
+  plan.watch_member_indicator_names = watchMembers.map(function(m){ return m.indicator_name || ''; }).filter(Boolean).join(' | ');
+  plan.up_case = _preSignalCaseText_(ev, plan, 'up');
+  plan.down_case = _preSignalCaseText_(ev, plan, 'down');
+  plan.flat_case = _preSignalCaseText_(ev, plan, 'flat');
+  plan.plan_json = _preSignalPlanJsonString_(plan);
+  return plan;
+}
+
+function _preSignalPromptView_(plan) {
+  plan = plan || {};
+  return {
+    mode: plan.mode || 'directional',
+    risk_level: plan.risk_level || '',
+    volatility_level: plan.volatility_level || '',
+    confidence: plan.confidence || '',
+    watch_members: (plan.watch_members || []).map(function(m){
+      return {
+        event_id: m.event_id || '',
+        indicator_name: m.indicator_name || '',
+        priority: m.priority || ''
+      };
+    }),
+    up_case: plan.up_case || '',
+    down_case: plan.down_case || '',
+    flat_case: plan.flat_case || '',
+    trigger_reason: plan.trigger_reason || ''
+  };
+}
+
+function _preSignalMode_(ev) {
+  var familyKey = _preSignalDominantFamilyKey_(ev);
+  var importanceRank = _batchAnchorImportanceRank_(ev && ev.importance || 'medium');
+  if (_isLowSignalScenarioFamilyKey_(familyKey)) return 'scenario';
+  if (String(ev && ev.type || '') === 'batch') {
+    if (_batchAnchorModeIsUncertain_(ev.batch_anchor_mode)) return 'scenario';
+    return 'directional';
+  }
+  if (_isQualitativeOnly_(ev) && importanceRank >= 3) return 'scenario';
+  if (_preSignalHiddenDetailRisk_(ev) && importanceRank >= 3) return 'scenario';
+  return 'directional';
+}
+
+function _preSignalDominantFamilyKey_(ev) {
+  ev = ev || {};
+  if (String(ev.type || '') !== 'batch') return _batchAnchorFamilyKey_(String(ev.indicator_name || '').toLowerCase());
+  var ranked = [];
+  (ev.batch_members || []).forEach(function(member, i){
+    ranked.push({
+      member: member,
+      meta: _scoreBatchAnchorCandidate_(member, i)
+    });
+  });
+  return _preSignalScenarioFamilyKey_(ranked);
+}
+
+function _preSignalRiskLevel_(ev, mode) {
+  var familyKey = _preSignalDominantFamilyKey_(ev);
+  if (_isLowSignalScenarioFamilyKey_(familyKey)) return 'low';
+  var importanceRank = _batchAnchorImportanceRank_(ev && ev.importance || 'medium');
+  var directFx = _isDirectFxIndicator_(ev);
+  var qualOnly = String(ev && ev.type || '') === 'batch' ? true : _isQualitativeOnly_(ev);
+  var hiddenRisk = _preSignalHiddenDetailRisk_(ev);
+  var score = Math.max(0, importanceRank - 1);
+  if (directFx) score += 2;
+  if (hiddenRisk) score += 1;
+  if (mode === 'scenario') score += 1;
+  if (qualOnly && importanceRank >= 3) score += 1;
+  if (String(ev && ev.type || '') === 'batch' && _batchAnchorModeIsUncertain_(ev.batch_anchor_mode) && !directFx && importanceRank <= 2) score -= 1;
+  if (score >= 5) return 'high';
+  if (score >= 2) return 'medium';
+  return 'low';
+}
+
+function _preSignalVolatilityLevel_(ev, mode) {
+  var familyKey = _preSignalDominantFamilyKey_(ev);
+  if (_isLowSignalScenarioFamilyKey_(familyKey)) return 'low';
+  var importanceRank = _batchAnchorImportanceRank_(ev && ev.importance || 'medium');
+  var directFx = _isDirectFxIndicator_(ev);
+  var qualOnly = String(ev && ev.type || '') === 'batch' ? true : _isQualitativeOnly_(ev);
+  var hiddenRisk = _preSignalHiddenDetailRisk_(ev);
+  var score = Math.max(0, importanceRank - 1);
+  if (directFx) score += 2;
+  if (hiddenRisk && importanceRank >= 3) score += 1;
+  if (qualOnly && importanceRank >= 3) score += 1;
+  if (String(ev && ev.type || '') === 'batch' && _batchAnchorModeIsUncertain_(ev.batch_anchor_mode) && directFx && importanceRank >= 2) score += 1;
+  if (!directFx && importanceRank <= 1) score -= 1;
+  if (mode === 'scenario' && String(ev && ev.type || '') !== 'batch' && hiddenRisk && importanceRank >= 3) score += 1;
+  if (score >= 5) return 'high';
+  if (score >= 2) return 'medium';
+  return 'low';
+}
+
+function _preSignalScenarioConfidence_(ev, mode) {
+  var familyKey = _preSignalDominantFamilyKey_(ev);
+  if (_isLowSignalScenarioFamilyKey_(familyKey)) return 'low';
+  var importanceRank = _batchAnchorImportanceRank_(ev && ev.importance || 'medium');
+  var directFx = _isDirectFxIndicator_(ev);
+  var hasConsensus = String(ev && ev.type || '') === 'batch' ? !!ev.batch_has_consensus : _hasNumericValue_(ev && ev.consensus_value);
+  var hiddenRisk = _preSignalHiddenDetailRisk_(ev);
+  if (mode === 'directional') {
+    if (directFx && hasConsensus && !hiddenRisk) return 'high';
+    return 'medium';
+  }
+  if (String(ev && ev.type || '') === 'batch' && _batchAnchorModeIsUncertain_(ev.batch_anchor_mode)) return 'medium';
+  if (_isQualitativeOnly_(ev) && importanceRank >= 3) return 'medium';
+  if (hiddenRisk && importanceRank >= 3) return 'medium';
+  return 'low';
+}
+
+function _preSignalTriggerReason_(ev, mode) {
+  var familyKey = _preSignalDominantFamilyKey_(ev);
+  var importanceRank = _batchAnchorImportanceRank_(ev && ev.importance || 'medium');
+  if (mode === 'directional') return 'directional_allowed';
+  if (familyKey === 'cftc_positions') return 'low_signal_positions_cluster';
+  if (familyKey === 'treasury_auctions') return 'low_signal_auction_cluster';
+  if (familyKey === 'fed_speeches') return 'text_event_speech_cluster';
+  if (familyKey === 'statement_report_text') return 'text_event_report_cluster';
+  if (String(ev && ev.type || '') === 'batch' && String(ev.batch_anchor_mode || '') === 'weak_anchor') return 'weak_anchor_batch';
+  if (String(ev && ev.type || '') === 'batch' && String(ev.batch_anchor_mode || '') === 'no_clear_anchor') return 'no_clear_anchor_batch';
+  if (_isQualitativeOnly_(ev) && importanceRank >= 3) return 'high_importance_qualitative_event';
+  if (_preSignalHiddenDetailRisk_(ev) && importanceRank >= 3) return 'high_importance_hidden_detail_risk';
+  return 'scenario_needed';
+}
+
+function _isLowSignalScenarioFamilyKey_(familyKey) {
+  return [
+    'cftc_positions',
+    'treasury_auctions',
+    'fed_speeches',
+    'statement_report_text'
+  ].indexOf(String(familyKey || '')) >= 0;
+}
+
+function _preSignalHiddenDetailRisk_(ev) {
+  ev = ev || {};
+  if (String(ev.type || '') === 'batch' && _batchAnchorModeIsUncertain_(ev.batch_anchor_mode)) return true;
+  var names = [];
+  if (ev.indicator_name) names.push(String(ev.indicator_name));
+  (ev.batch_members || []).forEach(function(m){
+    if (m && m.indicator_name) names.push(String(m.indicator_name));
+  });
+  var hay = names.join(' | ').toLowerCase();
+  return /\bcpi\b|\bpce\b|\bnon[\s-]?farm payrolls?\b|\bnfp\b|\baverage hourly earnings\b|\bgdp\b|\bretail sales\b|\bism\b|\bpmi\b|\bfomc\b|\brate decision\b|\bpress conference\b|\bstatement\b|\bminutes\b/.test(hay);
+}
+
+function _preSignalWatchMembers_(ev, mode) {
+  ev = ev || {};
+  if (String(ev.type || '') === 'batch') return _preSignalWatchBatchMembers_(ev, mode);
+  return [{
+    event_id: ev.event_id || '',
+    indicator_name: ev.indicator_name || '',
+    priority: 1,
+    reason: 'primary_event'
+  }];
+}
+
+function _preSignalWatchBatchMembers_(ev, mode) {
+  var ranked = [];
+  (ev.batch_members || []).forEach(function(member, i){
+    ranked.push({
+      member: member,
+      meta: _scoreBatchAnchorCandidate_(member, i)
+    });
+  });
+  ranked.sort(function(a, b){
+    return _isBetterBatchAnchorScore_(a.meta, b.meta) ? -1 : (_isBetterBatchAnchorScore_(b.meta, a.meta) ? 1 : 0);
+  });
+  var chosen = ranked;
+  var preferredFamily = _preSignalScenarioFamilyKey_(ranked);
+  var limit = _preSignalWatchLimit_(mode, preferredFamily);
+  if (preferredFamily) {
+    chosen = ranked.filter(function(item){
+      return String(item.meta && item.meta.family_key || '') === preferredFamily;
+    });
+  }
+  if (mode === 'scenario') {
+    chosen = _preSignalProfileWatchItems_(ranked, chosen, preferredFamily, limit);
+  }
+  return _preSignalWatchRowsFromItems_(chosen.slice(0, limit));
+}
+
+function _preSignalWatchRowsFromItems_(items) {
+  return (items || []).map(function(item, idx){
+    return {
+      event_id: item.member && item.member.event_id || '',
+      indicator_name: item.member && item.member.indicator_name || '',
+      priority: idx + 1,
+      score: item.meta && item.meta.score || 0,
+      importance: item.member && item.member.importance || '',
+      genre: item.member && item.member.genre || '',
+      role: _batchAnchorFamilyRole_(item.meta && item.meta.name || '', item.meta && item.meta.family_key || '')
+    };
+  });
+}
+
+function _preSignalWatchLimit_(mode, preferredFamily) {
+  if (mode !== 'scenario') return 2;
+  var profile = _batchAnchorFamilyProfile_(preferredFamily);
+  if (profile && profile.watch_limit) return profile.watch_limit;
+  return 3;
+}
+
+function _batchAnchorModeIsUncertain_(mode) {
+  mode = String(mode || '');
+  return mode === 'weak_anchor' || mode === 'no_clear_anchor';
+}
+
+function _preSignalProfileWatchItems_(ranked, fallbackChosen, familyKey, limit) {
+  var profile = _batchAnchorFamilyProfile_(familyKey);
+  if (!profile || !profile.watch_roles || !profile.watch_roles.length) return fallbackChosen;
+
+  var familyItems = (ranked || []).filter(function(item){
+    return String(item && item.meta && item.meta.family_key || '') === String(familyKey || '');
+  });
+  var byRole = {};
+  familyItems.forEach(function(item){
+    var role = _batchAnchorFamilyRole_(item.meta && item.meta.name || '', familyKey);
+    if (profile.watch_roles.indexOf(role) < 0) return;
+    if (!byRole[role] || _isBetterBatchAnchorScore_(item.meta, byRole[role].meta)) {
+      byRole[role] = item;
+    }
+  });
+
+  var chosen = [];
+  var seen = {};
+  profile.watch_roles.forEach(function(role){
+    var item = byRole[role];
+    if (!item || chosen.length >= limit) return;
+    var id = String(item.member && item.member.event_id || item.meta && item.meta.name || role);
+    if (seen[id]) return;
+    seen[id] = true;
+    chosen.push(item);
+  });
+
+  (fallbackChosen || []).forEach(function(item){
+    if (!item || chosen.length >= limit) return;
+    var id = String(item.member && item.member.event_id || item.meta && item.meta.name || '');
+    if (!id || seen[id]) return;
+    seen[id] = true;
+    chosen.push(item);
+  });
+
+  return chosen.length ? chosen : fallbackChosen;
+}
+
+function _preSignalScenarioFamilyKey_(ranked) {
+  ranked = ranked || [];
+  var buckets = {};
+  ranked.forEach(function(item){
+    var key = String(item && item.meta && item.meta.family_key || '');
+    if (!key || !_batchAnchorFamilyNeedsCaution_(key)) return;
+    if (!buckets[key]) buckets[key] = [];
+    buckets[key].push(item);
+  });
+  var bestKey = '';
+  var bestScore = Number.NEGATIVE_INFINITY;
+  Object.keys(buckets).forEach(function(key){
+    var items = buckets[key];
+    if (!items || items.length < 2) return;
+    var score = Number(items[0].meta.score || 0) + Number(items[1].meta.score || 0);
+    if (score > bestScore) {
+      bestScore = score;
+      bestKey = key;
+    }
+  });
+  return bestKey;
+}
+
+function _preSignalCaseText_(ev, plan, kind) {
+  var watchNames = plan.watch_member_indicator_names || (ev && ev.indicator_name) || 'the event';
+  var prefix = (plan.mode === 'scenario') ? ('Watch ' + watchNames + '. ') : '';
+  var qualOnly = !!plan.qualitative_only;
+  var hiddenRisk = !!plan.hidden_detail_risk;
+  if (kind === 'up') {
+    if (String(ev && ev.type || '') === 'batch') return prefix + 'If the watched members align in a USD-supportive direction versus expectations, USDJPY likely up.';
+    if (qualOnly) return prefix + 'If the communication lands more hawkish or more USD-supportive than expected, USDJPY likely up.';
+    if (hiddenRisk) return prefix + 'If the release and its key internals land in a USD-supportive direction versus expectations, USDJPY likely up.';
+    return prefix + 'If the release is stronger than expected in a USD-supportive way, USDJPY likely up.';
+  }
+  if (kind === 'down') {
+    if (String(ev && ev.type || '') === 'batch') return prefix + 'If the watched members align in a USD-negative or softer direction versus expectations, USDJPY likely down.';
+    if (qualOnly) return prefix + 'If the communication lands more dovish or more USD-negative than expected, USDJPY likely down.';
+    if (hiddenRisk) return prefix + 'If the release and its key internals land in a USD-negative or softer direction versus expectations, USDJPY likely down.';
+    return prefix + 'If the release is weaker than expected in a USD-negative way, USDJPY likely down.';
+  }
+  return prefix + 'If the signals are mixed, close to expectations, or the deciding detail sits outside the payload, reaction likely flat or weak.';
+}
+
+function _preSignalPlanJsonString_(plan) {
+  return JSON.stringify({
+    mode: plan.mode || 'directional',
+    risk_level: plan.risk_level || '',
+    volatility_level: plan.volatility_level || '',
+    confidence: plan.confidence || '',
+    trigger_reason: plan.trigger_reason || '',
+    qualitative_only: !!plan.qualitative_only,
+    hidden_detail_risk: !!plan.hidden_detail_risk,
+    direct_fx: !!plan.direct_fx,
+    anchor_mode: plan.anchor_mode || '',
+    anchor_confidence: plan.anchor_confidence || '',
+    watch_members: plan.watch_members || [],
+    up_case: plan.up_case || '',
+    down_case: plan.down_case || '',
+    flat_case: plan.flat_case || ''
+  });
+}
+
 function _strictParsePredictionJson_(raw) {
   // First parse attempt
   var obj = JSON.parse(raw);
@@ -1180,7 +1616,9 @@ function _callOpenAI_(prov, prompt) {
       parsed: parsed,
       raw_output: c,
       prompt_tokens: usage.prompt_tokens || null,
-      completion_tokens: usage.completion_tokens || null
+      completion_tokens: usage.completion_tokens || null,
+      cache_creation_input_tokens: null,
+      cache_read_input_tokens: usage.prompt_tokens_details && usage.prompt_tokens_details.cached_tokens || null
     };
   }, { provider:'OpenAI' });
 }
@@ -1222,7 +1660,9 @@ function _callGemini_(prov, prompt) {
       parsed: parsed,
       raw_output: c,
       prompt_tokens: usage.promptTokenCount || null,
-      completion_tokens: usage.candidatesTokenCount || null
+      completion_tokens: usage.candidatesTokenCount || null,
+      cache_creation_input_tokens: null,
+      cache_read_input_tokens: usage.cachedContentTokenCount || null
     };
   }, { provider:'Gemini' });
 }
@@ -1334,6 +1774,8 @@ function _normalizePrediction_(ev, providerResp, opt) {
   var mrPredNetPips = _numOrNull_(parsed.mr_pred_net_pips);
   var mrPredStrength = _oneOf_((parsed.mr_pred_strength || '').toLowerCase(), ['weak','medium','strong']);
   var mrPredSustainMin = _numOrNull_(parsed.mr_pred_sustain_min);
+  var preSignalPlan = ev.pre_signal_plan || _buildPreSignalPlan_(ev);
+  ev.pre_signal_plan = preSignalPlan;
   var out = {
     ai_name: providerResp.ai_name,
     ai_version: providerResp.ai_version,
@@ -1341,6 +1783,8 @@ function _normalizePrediction_(ev, providerResp, opt) {
     raw_output: _formatPredictionRawOutputCsv_(parsed, providerResp.raw_output),
     prompt_tokens: providerResp.prompt_tokens || null,
     completion_tokens: providerResp.completion_tokens || null,
+    cache_creation_input_tokens: providerResp.cache_creation_input_tokens || null,
+    cache_read_input_tokens: providerResp.cache_read_input_tokens || null,
     latency_ms: providerResp.latency_ms || null,
 
     object: 'ai_prediction',
@@ -1359,7 +1803,17 @@ function _normalizePrediction_(ev, providerResp, opt) {
     mr_pred_strength: mrPredStrength,
     mr_pred_sustain_min: mrPredSustainMin,
     rationale_short: parsed.rationale_short || '',
-    rationale: parsed.rationale || ''
+    rationale: parsed.rationale || '',
+    pre_signal_mode: preSignalPlan.mode || 'directional',
+    pre_risk_level: preSignalPlan.risk_level || '',
+    pre_volatility_level: preSignalPlan.volatility_level || '',
+    watch_member_event_ids: preSignalPlan.watch_member_event_ids || '',
+    watch_member_indicator_names: preSignalPlan.watch_member_indicator_names || '',
+    scenario_up_case: preSignalPlan.up_case || '',
+    scenario_down_case: preSignalPlan.down_case || '',
+    scenario_flat_case: preSignalPlan.flat_case || '',
+    scenario_confidence: preSignalPlan.confidence || '',
+    scenario_plan_json: preSignalPlan.plan_json || ''
   };
 
   var imp = (ev.importance || 'medium').toLowerCase();
@@ -1439,6 +1893,15 @@ function _applyPredictionQualityGuardrails_(ev, out, band, opt) {
 
   if (opt.isBatch) {
     var batchHorizon = (typeof out.mr_window_min === 'number' && out.mr_window_min > 0) ? out.mr_window_min : 5;
+    if (String(ev.batch_anchor_mode || '') === 'no_clear_anchor') {
+      out.mr_pred_strength = 'weak';
+      out.mr_pred_net_pips = Math.min(out.mr_pred_net_pips, 5);
+      if (!hasConsensus || !directFx) {
+        out.mr_pred_dir = 'flat';
+        out.qualitative_result = 'inline';
+        out.mr_pred_net_pips = Math.min(out.mr_pred_net_pips, 2);
+      }
+    }
     if (!(out.mr_pred_sustain_min > 0)) out.mr_pred_sustain_min = batchHorizon;
     out.mr_pred_sustain_min = Math.min(_roundPips_(out.mr_pred_sustain_min), batchHorizon);
     out.expected_holding_minutes = out.mr_pred_sustain_min;
@@ -1507,6 +1970,7 @@ function _buildBatchReferenceEvent_(members) {
   var first = members[0];
   var memberIds = members.map(function(m){ return m.event_id; });
   var memberNames = members.map(function(m){ return m.indicator_name; });
+  var anchor = _selectBatchAnchorMember_(members);
   return {
     object: 'econ_event_batch',
     event_id: first.batch_id,
@@ -1526,9 +1990,539 @@ function _buildBatchReferenceEvent_(members) {
     member_event_ids: memberIds.join('|'),
     member_indicator_names: memberNames.join(' | '),
     batch_members: members,
+    batch_anchor: anchor && anchor.member || null,
+    batch_anchor_mode: anchor && anchor.mode || '',
+    batch_anchor_confidence: anchor && anchor.confidence || '',
+    anchor_score: anchor && anchor.score || 0,
+    anchor_margin: anchor && anchor.margin || 0,
+    anchor_runner_up_event_id: anchor && anchor.runner_up_member ? anchor.runner_up_member.event_id : '',
+    anchor_runner_up_indicator_name: anchor && anchor.runner_up_member ? anchor.runner_up_member.indicator_name : '',
+    anchor_reason: anchor && anchor.reason || '',
     batch_has_consensus: members.some(function(m){ return _hasNumericValue_(m.consensus_value); }),
     batch_direct_fx: members.some(function(m){ return _isDirectFxIndicator_(m); })
   };
+}
+
+function _selectBatchAnchorMember_(members) {
+  members = members || [];
+  if (!members.length) return null;
+  var ranked = [];
+  for (var i = 0; i < members.length; i++) {
+    ranked.push({
+      member: members[i],
+      meta: _scoreBatchAnchorCandidate_(members[i], i)
+    });
+  }
+  ranked.sort(function(a, b){
+    return _isBetterBatchAnchorScore_(a.meta, b.meta) ? -1 : (_isBetterBatchAnchorScore_(b.meta, a.meta) ? 1 : 0);
+  });
+
+  var top = ranked[0];
+  var second = ranked.length > 1 ? ranked[1] : null;
+  var margin = top && second ? (top.meta.score - second.meta.score) : (top ? top.meta.score : 0);
+  var sameFamily = !!(top && second && top.meta.family_key && top.meta.family_key === second.meta.family_key);
+  var familyCaution = !!(sameFamily && _batchAnchorFamilyNeedsCaution_(top.meta.family_key));
+  var confidence = _batchAnchorConfidence_(top && top.meta, second && second.meta, familyCaution);
+  var mode = _batchAnchorMode_(top && top.meta, second && second.meta, confidence, familyCaution);
+  var topName = top && top.member ? top.member.indicator_name : '';
+  var secondName = second && second.member ? second.member.indicator_name : '';
+  var reasonParts = [];
+  if (topName) reasonParts.push('top=' + topName);
+  if (secondName) reasonParts.push('runner_up=' + secondName);
+  reasonParts.push('margin=' + margin);
+  if (sameFamily && top && top.meta.family_key) reasonParts.push('same_family=' + top.meta.family_key);
+  if (familyCaution && top && top.meta.family_key) reasonParts.push('family_caution');
+  if (top && top.meta && top.meta.reason) reasonParts.push(top.meta.reason);
+  var reason = reasonParts.join(', ');
+
+  return {
+    member: mode === 'no_clear_anchor' ? null : (top && top.member || null),
+    runner_up_member: second && second.member || null,
+    mode: mode,
+    confidence: confidence,
+    score: top && top.meta ? top.meta.score : 0,
+    margin: margin,
+    reason: reason
+  };
+}
+
+function _scoreBatchAnchorCandidate_(ev, orderIndex) {
+  var name = String(ev && ev.indicator_name || '');
+  var nameLc = name.toLowerCase();
+  var genre = String((ev && ev.genre) || _inferGenreFromName_(name) || '').toLowerCase();
+  var importance = String(ev && ev.importance || 'medium').toLowerCase();
+  var directFx = _isDirectFxIndicator_(ev);
+  var familyKey = _batchAnchorFamilyKey_(nameLc);
+  var score = 0;
+  var reasons = [];
+
+  score += _batchAnchorImportanceScore_(importance);
+  if (_batchAnchorImportanceScore_(importance) > 0) reasons.push('importance=' + importance);
+
+  var genreBonus = _batchAnchorGenreScore_(genre);
+  score += genreBonus;
+  if (genreBonus !== 0) reasons.push('genre=' + genre);
+
+  var nameBonus = _batchAnchorHeadlineScore_(nameLc);
+  score += nameBonus;
+  if (nameBonus !== 0) reasons.push('headline=' + nameBonus);
+
+  var supportPenalty = _batchAnchorSupportingPenalty_(nameLc, genre);
+  score += supportPenalty;
+  if (supportPenalty !== 0) reasons.push('supporting=' + supportPenalty);
+
+  var familyAdjustment = _batchAnchorFamilyAdjustment_(nameLc, familyKey);
+  score += familyAdjustment;
+  if (familyAdjustment !== 0) reasons.push('family_adjustment=' + familyAdjustment);
+
+  if (directFx) {
+    score += 4;
+    reasons.push('direct_fx');
+  }
+  if (_hasNumericValue_(ev && ev.consensus_value)) {
+    score += 3;
+    reasons.push('has_consensus');
+  }
+  if (_hasNumericValue_(ev && ev.prev_revision)) {
+    score += 1;
+    reasons.push('has_prev');
+  }
+  if (_isQualitativeOnly_(ev)) {
+    score -= 4;
+    reasons.push('qual_only=-4');
+  }
+
+  return {
+    score: score,
+    order_index: orderIndex,
+    importance_rank: _batchAnchorImportanceRank_(importance),
+    direct_fx: directFx ? 1 : 0,
+    family_key: familyKey,
+    name: nameLc,
+    reason: reasons.join(', ')
+  };
+}
+
+function _isBetterBatchAnchorScore_(a, b) {
+  if (a.score !== b.score) return a.score > b.score;
+  if (a.importance_rank !== b.importance_rank) return a.importance_rank > b.importance_rank;
+  if (a.direct_fx !== b.direct_fx) return a.direct_fx > b.direct_fx;
+  if (a.order_index !== b.order_index) return a.order_index < b.order_index;
+  return a.name < b.name;
+}
+
+function _batchAnchorImportanceRank_(importance) {
+  var rank = { low: 1, medium: 2, high: 3, critical: 4 };
+  return rank[String(importance || '').toLowerCase()] || 2;
+}
+
+function _batchAnchorImportanceScore_(importance) {
+  var rank = _batchAnchorImportanceRank_(importance);
+  return rank * 10;
+}
+
+function _batchAnchorConfidence_(topMeta, secondMeta, familyCaution) {
+  var topScore = topMeta ? Number(topMeta.score) : 0;
+  var margin = secondMeta ? (topScore - Number(secondMeta.score || 0)) : topScore;
+  if (familyCaution) {
+    if (topScore >= 58 && margin >= 30) return 'high';
+    if (topScore >= 44 && margin >= 18) return 'medium';
+    if (topScore >= 34 && margin >= 8) return 'low';
+    return 'none';
+  }
+  if (topScore >= 50 && margin >= 8) return 'high';
+  if (topScore >= 38 && margin >= 5) return 'medium';
+  if (topScore >= 30 && margin >= 3) return 'low';
+  return 'none';
+}
+
+function _batchAnchorMode_(topMeta, secondMeta, confidence, familyCaution) {
+  var topScore = topMeta ? Number(topMeta.score) : 0;
+  var margin = secondMeta ? (topScore - Number(secondMeta.score || 0)) : topScore;
+  if (familyCaution) {
+    if (confidence === 'high' && topScore >= 58 && margin >= 30) return 'clear_anchor';
+    if ((confidence === 'medium' || confidence === 'low') && topScore >= 34 && margin >= 8) return 'weak_anchor';
+    return 'no_clear_anchor';
+  }
+  if (confidence === 'high' || confidence === 'medium') return 'clear_anchor';
+  if (confidence === 'low' && topScore >= 32 && margin >= 3) return 'weak_anchor';
+  return 'no_clear_anchor';
+}
+
+function _batchAnchorFamilyNeedsCaution_(familyKey) {
+  return [
+    'monthly_labor',
+    'ism_services',
+    'ism_manufacturing',
+    'sp_global_pmi',
+    'macro_inflation_retail',
+    'cftc_positions',
+    'treasury_auctions',
+    'fed_speeches',
+    'statement_report_text',
+    'factory_orders',
+    'jobless_claims',
+    'eia_petroleum',
+    'mba_mortgage',
+    'mortgage_rates',
+    'vehicle_sales'
+  ].indexOf(String(familyKey || '')) >= 0;
+}
+
+function _batchAnchorFamilyKey_(nameLc) {
+  if (!nameLc) return '';
+  if (/non[\s-]?farm payrolls|unemployment rate|average hourly earnings|average weekly hours|participation rate|private.*payroll|payroll.*private|manufacturing payroll|government payroll|u-6 unemployment/.test(nameLc)) return 'monthly_labor';
+  if (/initial jobless claims|continuing jobless claims|jobless claims 4-week average|jobless claims four-week average/.test(nameLc)) return 'jobless_claims';
+  if (/ism services|ism non-manufacturing/.test(nameLc)) return 'ism_services';
+  if (/ism manufacturing/.test(nameLc)) return 'ism_manufacturing';
+  if (/s&p global services|s&p global composite/.test(nameLc)) return 'sp_global_pmi';
+  if (/\b(cpi\b|cpi s\.a\b|inflation rate|core inflation rate|retail sales|empire state manufacturing index)\b/.test(nameLc)) return 'macro_inflation_retail';
+  if (/\bcftc\b.*\bspeculative net positions?\b/.test(nameLc)) return 'cftc_positions';
+  if (/\b(?:\d{1,2}-week bill auction|\d{1,2}-month bill auction|\d+-year note auction|\d+-year bond auction|bill auction|note auction|bond auction)\b/.test(nameLc)) return 'treasury_auctions';
+  if (/\b(?:fed .*speech|speech|testimony|press conference)\b/.test(nameLc)) return 'fed_speeches';
+  if (/\b(?:fomc minutes|minutes|beige book|wasde report|monthly budget statement|treasury refunding announcement|statement)\b/.test(nameLc)) return 'statement_report_text';
+  if (/factory orders/.test(nameLc)) return 'factory_orders';
+  if (/\beia\b/.test(nameLc) && /\b(crude|gasoline|distillate|heating oil|refinery|cushing)\b/.test(nameLc)) return 'eia_petroleum';
+  if (/\bcrude oil imports\b/.test(nameLc) || /\beia weekly refinery utilization rates\b/.test(nameLc)) return 'eia_petroleum';
+  if (/30-year mortgage rate|15-year mortgage rate/.test(nameLc)) return 'mortgage_rates';
+  if (/all car sales|all truck sales/.test(nameLc)) return 'vehicle_sales';
+  if (/mba mortgage|\bmba purchase index\b|\bmba mortgage market index\b|\bmba mortgage refinance index\b|\bmba refinance index\b|\bmba mortgage applications\b|\bmba 30-year mortgage rate\b/.test(nameLc)) return 'mba_mortgage';
+  return '';
+}
+
+function _batchAnchorFamilyProfile_(familyKey) {
+  familyKey = String(familyKey || '');
+  if (familyKey === 'monthly_labor') {
+    return {
+      watch_limit: 5,
+      watch_roles: ['headline_nfp', 'unemployment', 'wages', 'manufacturing_payrolls', 'private_payrolls'],
+      role_adjustments: {
+        headline_nfp: 12,
+        unemployment: 14,
+        wages: 12,
+        manufacturing_payrolls: 10,
+        private_payrolls: 8,
+        government_payrolls: 4,
+        participation: 4,
+        weekly_hours: 2,
+        u6: 2
+      }
+    };
+  }
+  if (familyKey === 'jobless_claims') {
+    return {
+      watch_limit: 3,
+      watch_roles: ['initial_claims', 'continuing_claims', 'four_week_average'],
+      role_adjustments: {
+        initial_claims: 12,
+        continuing_claims: 10,
+        four_week_average: 6
+      }
+    };
+  }
+  if (familyKey === 'factory_orders') {
+    return {
+      watch_limit: 3,
+      watch_roles: ['ex_transportation', 'headline_orders', 'ex_defense'],
+      role_adjustments: {
+        ex_transportation: 14,
+        headline_orders: 10,
+        ex_defense: 6,
+        shipments: 2,
+        inventories: 2,
+        unfilled_orders: 2
+      }
+    };
+  }
+  if (familyKey === 'ism_services') {
+    return {
+      watch_limit: 4,
+      watch_roles: ['prices', 'new_orders', 'business_activity', 'employment'],
+      role_adjustments: {
+        headline_pmi: -20,
+        prices: 14,
+        new_orders: 16,
+        business_activity: 16,
+        employment: 14,
+        supplier_deliveries: -4,
+        inventories: -4
+      }
+    };
+  }
+  if (familyKey === 'macro_inflation_retail') {
+    return {
+      watch_limit: 6,
+      watch_roles: ['core_cpi', 'headline_cpi', 'retail_mom', 'retail_core_mom', 'retail_yoy', 'headline_cpi_sa'],
+      role_adjustments: {
+        core_cpi: 18,
+        headline_cpi: 16,
+        headline_cpi_sa: 12,
+        retail_mom: 16,
+        retail_core_mom: 14,
+        retail_yoy: 10,
+        empire_state: -6
+      }
+    };
+  }
+  if (familyKey === 'cftc_positions') {
+    return {
+      watch_limit: 5,
+      watch_roles: ['sp500', 'nasdaq', 'gold', 'silver', 'crude_oil'],
+      role_adjustments: {
+        sp500: 10,
+        nasdaq: 10,
+        gold: 8,
+        silver: 6,
+        crude_oil: 6,
+        copper: 2,
+        natural_gas: 0,
+        corn: -2,
+        wheat: -2,
+        soybeans: -2,
+        aluminium: -2
+      }
+    };
+  }
+  if (familyKey === 'treasury_auctions') {
+    return {
+      watch_limit: 3,
+      watch_roles: ['short_bill', 'benchmark_note', 'long_bond'],
+      role_adjustments: {
+        short_bill: 4,
+        benchmark_note: 6,
+        long_bond: 6,
+        other_auction: 2
+      }
+    };
+  }
+  if (familyKey === 'fed_speeches') {
+    return {
+      watch_limit: 3,
+      watch_roles: ['press_conference', 'chair_or_core_board', 'regional_fed'],
+      role_adjustments: {
+        press_conference: 8,
+        chair_or_core_board: 6,
+        regional_fed: 4,
+        other_speech: 2
+      }
+    };
+  }
+  if (familyKey === 'statement_report_text') {
+    return {
+      watch_limit: 3,
+      watch_roles: ['fomc_minutes', 'beige_book', 'budget_or_refunding'],
+      role_adjustments: {
+        fomc_minutes: 8,
+        beige_book: 6,
+        budget_or_refunding: 4,
+        report_text: 2
+      }
+    };
+  }
+  if (familyKey === 'eia_petroleum') {
+    return {
+      watch_limit: 6,
+      watch_roles: ['distillate_production', 'refinery_activity', 'crude_stocks', 'gasoline_stocks', 'gasoline_production', 'distillate_stocks'],
+      role_adjustments: {
+        distillate_production: 18,
+        refinery_activity: 14,
+        crude_stocks: 10,
+        gasoline_stocks: 10,
+        gasoline_production: 9,
+        distillate_stocks: 10,
+        crude_imports: -4,
+        cushing_stocks: -6,
+        heating_oil_stocks: -4
+      }
+    };
+  }
+  if (familyKey === 'mba_mortgage') {
+    return {
+      watch_limit: 4,
+      watch_roles: ['purchase_index', 'market_index', 'refinance_index', 'thirty_year_rate'],
+      role_adjustments: {
+        purchase_index: 14,
+        market_index: 12,
+        refinance_index: 10,
+        applications: 8,
+        thirty_year_rate: 8
+      }
+    };
+  }
+  return null;
+}
+
+function _batchAnchorFamilyRole_(nameLc, familyKey) {
+  nameLc = String(nameLc || '');
+  familyKey = String(familyKey || '');
+  if (familyKey === 'monthly_labor') {
+    if (/\bmanufacturing payroll/.test(nameLc)) return 'manufacturing_payrolls';
+    if (/\bprivate\b/.test(nameLc) && /\bpayrolls?\b/.test(nameLc)) return 'private_payrolls';
+    if (/\bgovernment payroll/.test(nameLc)) return 'government_payrolls';
+    if (/\bnon[\s-]?farm payrolls?\b|\bnfp\b/.test(nameLc)) return 'headline_nfp';
+    if (/\bunemployment rate\b/.test(nameLc)) return 'unemployment';
+    if (/\baverage hourly earnings\b|\bwages?\b/.test(nameLc)) return 'wages';
+    if (/\bparticipation rate\b|\blabor force participation\b/.test(nameLc)) return 'participation';
+    if (/\baverage weekly hours\b/.test(nameLc)) return 'weekly_hours';
+    if (/\bu[\s-]?6 unemployment\b/.test(nameLc)) return 'u6';
+  }
+  if (familyKey === 'jobless_claims') {
+    if (/\b(initial jobless claims|jobless claims)\b/.test(nameLc) && !/\b(4-week|4 week|four-week average|continuing)\b/.test(nameLc)) return 'initial_claims';
+    if (/\bcontinuing jobless claims\b/.test(nameLc)) return 'continuing_claims';
+    if (/\b(4-week|4 week|four-week average)\b/.test(nameLc)) return 'four_week_average';
+  }
+  if (familyKey === 'factory_orders') {
+    if (/\bex transportation\b|\bexcluding transportation\b/.test(nameLc)) return 'ex_transportation';
+    if (/\bex defense\b|\bexcluding defense\b/.test(nameLc)) return 'ex_defense';
+    if (/\bshipments\b/.test(nameLc)) return 'shipments';
+    if (/\binventories\b/.test(nameLc)) return 'inventories';
+    if (/\bunfilled orders\b/.test(nameLc)) return 'unfilled_orders';
+    if (/\bfactory orders\b/.test(nameLc)) return 'headline_orders';
+  }
+  if (familyKey === 'ism_services') {
+    if (/\bprices\b/.test(nameLc)) return 'prices';
+    if (/\bnew orders\b/.test(nameLc)) return 'new_orders';
+    if (/\bbusiness activity\b/.test(nameLc)) return 'business_activity';
+    if (/\bemployment\b/.test(nameLc)) return 'employment';
+    if (/\bsupplier deliveries\b/.test(nameLc)) return 'supplier_deliveries';
+    if (/\binventories\b/.test(nameLc)) return 'inventories';
+    if (/\bism\b.*\bpmi\b/.test(nameLc)) return 'headline_pmi';
+  }
+  if (familyKey === 'macro_inflation_retail') {
+    if (/\bcore inflation rate\b|\bcore cpi\b/.test(nameLc)) return 'core_cpi';
+    if (/\bcpi s\.a\b/.test(nameLc)) return 'headline_cpi_sa';
+    if ((/\binflation rate\b/.test(nameLc) || /\bcpi\b/.test(nameLc)) && !/\bcore\b/.test(nameLc) && !/\bs\.a\b/.test(nameLc)) return 'headline_cpi';
+    if (/\bretail sales ex gas\/autos\b|\bretail sales ex autos\b/.test(nameLc)) return 'retail_core_mom';
+    if (/\bretail sales\b/.test(nameLc) && /\bmom\b/.test(nameLc)) return 'retail_mom';
+    if (/\bretail sales\b/.test(nameLc) && /\byoy\b/.test(nameLc)) return 'retail_yoy';
+    if (/\bempire state manufacturing index\b/.test(nameLc)) return 'empire_state';
+  }
+  if (familyKey === 'cftc_positions') {
+    if (/\bs&p 500\b/.test(nameLc)) return 'sp500';
+    if (/\bnasdaq 100\b/.test(nameLc)) return 'nasdaq';
+    if (/\bgold\b/.test(nameLc)) return 'gold';
+    if (/\bsilver\b/.test(nameLc)) return 'silver';
+    if (/\bcrude oil\b/.test(nameLc)) return 'crude_oil';
+    if (/\bcopper\b/.test(nameLc)) return 'copper';
+    if (/\bnatural gas\b/.test(nameLc)) return 'natural_gas';
+    if (/\bcorn\b/.test(nameLc)) return 'corn';
+    if (/\bwheat\b/.test(nameLc)) return 'wheat';
+    if (/\bsoybeans\b/.test(nameLc)) return 'soybeans';
+    if (/\baluminium\b/.test(nameLc)) return 'aluminium';
+  }
+  if (familyKey === 'treasury_auctions') {
+    if (/\b(?:4-week|8-week|17-week|26-week|42-day|43-day|52-week|3-month|6-month)\b/.test(nameLc)) return 'short_bill';
+    if (/\b(?:2-year|3-year|5-year|7-year|10-year)\b/.test(nameLc)) return 'benchmark_note';
+    if (/\b(?:20-year|30-year)\b/.test(nameLc)) return 'long_bond';
+    if (/\bauction\b/.test(nameLc)) return 'other_auction';
+  }
+  if (familyKey === 'fed_speeches') {
+    if (/\bpress conference\b/.test(nameLc)) return 'press_conference';
+    if (/\b(?:powell|waller|jefferson|barr|cook|bowman)\b/.test(nameLc)) return 'chair_or_core_board';
+    if (/\bfed\b/.test(nameLc)) return 'regional_fed';
+    if (/\b(?:speech|testimony)\b/.test(nameLc)) return 'other_speech';
+  }
+  if (familyKey === 'statement_report_text') {
+    if (/\bfomc minutes\b|\bminutes\b/.test(nameLc)) return 'fomc_minutes';
+    if (/\bbeige book\b/.test(nameLc)) return 'beige_book';
+    if (/\bmonthly budget statement\b|\btreasury refunding announcement\b/.test(nameLc)) return 'budget_or_refunding';
+    if (/\b(?:statement|wasde report)\b/.test(nameLc)) return 'report_text';
+  }
+  if (familyKey === 'eia_petroleum') {
+    if (/\bdistillate fuel production\b/.test(nameLc)) return 'distillate_production';
+    if (/\bweekly refinery utilization rates\b|\brefinery crude runs\b/.test(nameLc)) return 'refinery_activity';
+    if (/\bcrude oil stocks\b/.test(nameLc) && !/\bcushing\b/.test(nameLc)) return 'crude_stocks';
+    if (/\bgasoline stocks\b/.test(nameLc)) return 'gasoline_stocks';
+    if (/\bdistillate stocks\b/.test(nameLc)) return 'distillate_stocks';
+    if (/\bgasoline production\b/.test(nameLc)) return 'gasoline_production';
+    if (/\bcrude oil imports\b/.test(nameLc)) return 'crude_imports';
+    if (/\bcushing crude oil stocks\b/.test(nameLc)) return 'cushing_stocks';
+    if (/\bheating oil stocks\b/.test(nameLc)) return 'heating_oil_stocks';
+  }
+  if (familyKey === 'mba_mortgage') {
+    if (/\bpurchase index\b/.test(nameLc)) return 'purchase_index';
+    if (/\bmortgage market index\b/.test(nameLc)) return 'market_index';
+    if (/\brefinance index\b/.test(nameLc)) return 'refinance_index';
+    if (/\bmortgage applications\b/.test(nameLc)) return 'applications';
+    if (/\b30-year mortgage rate\b/.test(nameLc)) return 'thirty_year_rate';
+  }
+  return '';
+}
+
+function _batchAnchorFamilyAdjustment_(nameLc, familyKey) {
+  if (!nameLc) return 0;
+  familyKey = String(familyKey || '');
+  var profile = _batchAnchorFamilyProfile_(familyKey);
+  if (profile && profile.role_adjustments) {
+    var role = _batchAnchorFamilyRole_(nameLc, familyKey);
+    if (profile.role_adjustments.hasOwnProperty(role)) return profile.role_adjustments[role];
+  }
+  var score = 0;
+  if (familyKey === 'ism_manufacturing' || familyKey === 'ism_services') {
+    var isToplinePmi = /\bism\b.*\bpmi\b/.test(nameLc) &&
+      !(/\bemployment\b|\bprices\b|\bnew orders\b|\bbusiness activity\b|\bsupplier deliveries\b|\binventories\b/.test(nameLc));
+    if (isToplinePmi) score -= 12;
+    if (/\bemployment\b/.test(nameLc)) score += 14;
+    if (/\bprices\b/.test(nameLc)) score += 12;
+    if (/\bnew orders\b/.test(nameLc)) score += 10;
+    if (/\bbusiness activity\b/.test(nameLc)) score += 8;
+    if (/\bsupplier deliveries\b|\binventories\b/.test(nameLc)) score -= 4;
+  }
+  return score;
+}
+
+function _batchAnchorGenreScore_(genre) {
+  var bonuses = {
+    inflation: 16,
+    labor: 16,
+    gdp: 14,
+    manufacturing: 10,
+    sentiment: 6,
+    housing: 4,
+    consumption: 6,
+    trade: 2,
+    energy: -6,
+    'fiscal/markets': -8,
+    fedbalance: -10,
+    batch: -4,
+    general: 0,
+    other: 0
+  };
+  return bonuses.hasOwnProperty(genre) ? bonuses[genre] : 0;
+}
+
+function _batchAnchorHeadlineScore_(nameLc) {
+  if (!nameLc) return 0;
+  var score = 0;
+  if (/\bnon[\s-]?farm payrolls?\b|\bnfp\b/.test(nameLc)) score += 22;
+  if (/\bcpi\b|\bpce\b/.test(nameLc)) score += 20;
+  if (/\bunemployment rate\b/.test(nameLc)) score += 18;
+  if (/\baverage hourly earnings\b|\bwages?\b/.test(nameLc)) score += 16;
+  if (/\bfomc\b|\bfed rate\b|interest rate decision|rate decision/.test(nameLc)) score += 18;
+  if (/\bgdp\b/.test(nameLc)) score += 16;
+  if (/\bretail sales\b/.test(nameLc)) score += 14;
+  if (/\bism\b.*\bpmi\b|\bpmi\b/.test(nameLc)) score += 12;
+  if (/\bjobless claims\b|\binitial jobless claims\b/.test(nameLc)) score += 10;
+  if (/\bconsumer confidence\b|\bsentiment\b|\bumich\b/.test(nameLc)) score += 8;
+  if (/\bhome sales\b|\bhousing starts\b|\bbuilding permits\b/.test(nameLc)) score += 8;
+  if (/\bcrude oil stocks\b|\beia natural gas stocks\b/.test(nameLc)) score += 4;
+  return score;
+}
+
+function _batchAnchorSupportingPenalty_(nameLc, genre) {
+  if (!nameLc) return 0;
+  var score = 0;
+  if (/\b4-week\b|\b4 week\b|four-week average/.test(nameLc)) score -= 14;
+  if (/\baverage weekly hours\b/.test(nameLc)) score -= 8;
+  if (/\bimports?\b|\bexports?\b/.test(nameLc)) score -= 8;
+  if (/\brefinery\b|\bcushing\b|\bdistillate\b|\bgasoline\b|\bheating oil\b/.test(nameLc)) score -= 10;
+  if (/\bauction\b|\bbill auction\b|\bnote auction\b|\bbond auction\b/.test(nameLc)) score -= 14;
+  if (/\bspeech\b|\bstatement\b|\bminutes\b|\bhearing\b|\btestimony\b/.test(nameLc)) score -= 12;
+  if (/\bprices\b|\bnew orders\b|\bbusiness activity\b/.test(nameLc) && /manufactur|ism|pmi/.test(nameLc)) score -= 6;
+  if (/\bemployment\b/.test(nameLc) && /ism|pmi/.test(nameLc)) score -= 5;
+  if (/\bprivate\b/.test(nameLc) && /\bpayroll/.test(nameLc)) score -= 3;
+  if (String(genre || '').toLowerCase() === 'batch') score -= 4;
+  return score;
 }
 
 function _maxImportance_(vals) {
@@ -1709,7 +2703,14 @@ function _ensurePredHeaders_(sheet) {
     'eval_ts','eval_interval','start_ts','end_ts','start_price','end_price',
     'realized_pips','dir_ok','band_ok','overall_ok','eval_note',
     'rationale_short','rationale','raw_output',
-    'prompt_tokens','completion_tokens','latency_ms'
+    'prompt_tokens','completion_tokens','latency_ms',
+    'batch_anchor_mode','batch_anchor_confidence','batch_anchor_event_id','batch_anchor_indicator_name',
+    'batch_anchor_score','batch_anchor_margin','batch_anchor_runner_up_event_id',
+    'batch_anchor_runner_up_indicator_name','batch_anchor_reason',
+    'cache_creation_input_tokens','cache_read_input_tokens',
+    'pre_signal_mode','pre_risk_level','pre_volatility_level','watch_member_event_ids',
+    'watch_member_indicator_names','scenario_up_case','scenario_down_case',
+    'scenario_flat_case','scenario_confidence','scenario_plan_json'
   ];
   var headers = getHeaderNames(sheet);
   var lower = headers.map(function(h){return String(h).toLowerCase();});
@@ -1812,8 +2813,29 @@ function _buildPredictionRow_(ev, norm, runId) {
 
     prompt_tokens: (norm.prompt_tokens!=null)? norm.prompt_tokens : '',
     completion_tokens: (norm.completion_tokens!=null)? norm.completion_tokens : '',
+    cache_creation_input_tokens: (norm.cache_creation_input_tokens!=null)? norm.cache_creation_input_tokens : '',
+    cache_read_input_tokens: (norm.cache_read_input_tokens!=null)? norm.cache_read_input_tokens : '',
     latency_ms: (norm.latency_ms!=null)? norm.latency_ms : '',
     raw_output: norm.raw_output || '',
+    batch_anchor_mode: ev && ev.type === 'batch' ? (ev.batch_anchor_mode || '') : '',
+    batch_anchor_confidence: ev && ev.type === 'batch' ? (ev.batch_anchor_confidence || '') : '',
+    batch_anchor_event_id: ev && ev.type === 'batch' && ev.batch_anchor ? (ev.batch_anchor.event_id || '') : '',
+    batch_anchor_indicator_name: ev && ev.type === 'batch' && ev.batch_anchor ? (ev.batch_anchor.indicator_name || '') : '',
+    batch_anchor_score: ev && ev.type === 'batch' ? (ev.anchor_score || 0) : '',
+    batch_anchor_margin: ev && ev.type === 'batch' ? (ev.anchor_margin || 0) : '',
+    batch_anchor_runner_up_event_id: ev && ev.type === 'batch' ? (ev.anchor_runner_up_event_id || '') : '',
+    batch_anchor_runner_up_indicator_name: ev && ev.type === 'batch' ? (ev.anchor_runner_up_indicator_name || '') : '',
+    batch_anchor_reason: ev && ev.type === 'batch' ? (ev.anchor_reason || '') : '',
+    pre_signal_mode: norm.pre_signal_mode || '',
+    pre_risk_level: norm.pre_risk_level || '',
+    pre_volatility_level: norm.pre_volatility_level || '',
+    watch_member_event_ids: norm.watch_member_event_ids || '',
+    watch_member_indicator_names: norm.watch_member_indicator_names || '',
+    scenario_up_case: norm.scenario_up_case || '',
+    scenario_down_case: norm.scenario_down_case || '',
+    scenario_flat_case: norm.scenario_flat_case || '',
+    scenario_confidence: norm.scenario_confidence || '',
+    scenario_plan_json: norm.scenario_plan_json || '',
     status: 'ok',
     error_message: '',
 
@@ -1826,6 +2848,7 @@ function _buildErrorPredictionRow_(ev, runId, err, providerMeta) {
   var aiName = providerMeta && providerMeta.name ? providerMeta.name : 'runner';
   var aiVersion = providerMeta && providerMeta.model ? providerMeta.model : '';
   var predictionId = _uuidFromString_(((ev && ev.event_id) || 'unknown') + '|' + aiName);
+  var preSignalPlan = ev && ev.pre_signal_plan ? ev.pre_signal_plan : _buildPreSignalPlan_(ev || {});
   return {
     object:'ai_prediction', run_id:runId, prediction_id:predictionId, schema_version:CFG.SCHEMA_VERSION, created_ts:createdTs,
     event_id: ev && ev.event_id || '', batch_id: ev && ev.batch_id || '', type: ev && ev.type || '',
@@ -1846,7 +2869,26 @@ function _buildErrorPredictionRow_(ev, runId, err, providerMeta) {
     mr_pred_strength: '',
     mr_pred_sustain_min: '',
     rationale_short:'', rationale:'',
-    prompt_tokens:'', completion_tokens:'', latency_ms:'', raw_output:'',
+    prompt_tokens:'', completion_tokens:'', cache_creation_input_tokens:'', cache_read_input_tokens:'', latency_ms:'', raw_output:'',
+    batch_anchor_mode: ev && ev.type === 'batch' ? (ev.batch_anchor_mode || '') : '',
+    batch_anchor_confidence: ev && ev.type === 'batch' ? (ev.batch_anchor_confidence || '') : '',
+    batch_anchor_event_id: ev && ev.type === 'batch' && ev.batch_anchor ? (ev.batch_anchor.event_id || '') : '',
+    batch_anchor_indicator_name: ev && ev.type === 'batch' && ev.batch_anchor ? (ev.batch_anchor.indicator_name || '') : '',
+    batch_anchor_score: ev && ev.type === 'batch' ? (ev.anchor_score || 0) : '',
+    batch_anchor_margin: ev && ev.type === 'batch' ? (ev.anchor_margin || 0) : '',
+    batch_anchor_runner_up_event_id: ev && ev.type === 'batch' ? (ev.anchor_runner_up_event_id || '') : '',
+    batch_anchor_runner_up_indicator_name: ev && ev.type === 'batch' ? (ev.anchor_runner_up_indicator_name || '') : '',
+    batch_anchor_reason: ev && ev.type === 'batch' ? (ev.anchor_reason || '') : '',
+    pre_signal_mode: preSignalPlan.mode || '',
+    pre_risk_level: preSignalPlan.risk_level || '',
+    pre_volatility_level: preSignalPlan.volatility_level || '',
+    watch_member_event_ids: preSignalPlan.watch_member_event_ids || '',
+    watch_member_indicator_names: preSignalPlan.watch_member_indicator_names || '',
+    scenario_up_case: preSignalPlan.up_case || '',
+    scenario_down_case: preSignalPlan.down_case || '',
+    scenario_flat_case: preSignalPlan.flat_case || '',
+    scenario_confidence: preSignalPlan.confidence || '',
+    scenario_plan_json: preSignalPlan.plan_json || '',
     status: _statusFromErr_(err), error_message: String(err),
     qualitative_only:''
   };

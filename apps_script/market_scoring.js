@@ -449,7 +449,7 @@ function scoreMarketReactionByConfigWindow_() {
   var cfg = _readConfigMap_('Config');
   if (!cfg || String(cfg['MR_WINDOW_ENABLED']).toUpperCase() !== 'TRUE') {
     appendLog(getSheet(CFG.SHEET_LOG), 'INFO', 'ScoreMarketReaction(config)', { status: 'skipped', reason: 'MR_WINDOW_ENABLED != TRUE' });
-    return;
+    return { status: 'skipped', reason: 'MR_WINDOW_ENABLED != TRUE' };
   }
 
   var tz  = String(cfg['MR_WINDOW_TZ'] || '').trim();
@@ -533,7 +533,8 @@ function scoreMarketReactionByConfigWindow_() {
 
   _flushPredictionEvalContext_(predCtx);
   _flushMarketReactionAuditContext_(auditCtx);
-  appendLog(getSheet(CFG.SHEET_LOG), 'INFO', 'ScoreMarketReaction(config)', {
+  var summary = {
+    status: 'ok',
     window_from_utc: fromUtc.toISOString(),
     window_to_utc: toUtc.toISOString(),
     horizon_min: horizonMin,
@@ -547,8 +548,10 @@ function scoreMarketReactionByConfigWindow_() {
     checked_events: checked,
     skip_already_scored: skipAlreadyScored,
     skipped_already_scored: skippedAlreadyScored
-  });
+  };
+  appendLog(getSheet(CFG.SHEET_LOG), 'INFO', 'ScoreMarketReaction(config)', summary);
   if (typeof flushLogs_ === 'function') flushLogs_();
+  return summary;
 }
 
 

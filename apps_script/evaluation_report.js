@@ -19,7 +19,9 @@ function menuBuildEvaluationSheets_() {
       });
     }
     ss.toast(
-      'Evaluation rows=' + (res.rows_written || 0) + ' | summary=' + (res.summary_written || 0),
+      'Evaluation rows=' + (res.rows_written || 0) +
+      ' | summary=' + (res.summary_written || 0) +
+      ' | scenario=' + (res.scenario_written || 0),
       'Evaluation',
       8
     );
@@ -43,10 +45,12 @@ function buildEvaluationSheets_() {
   var rowSheet = _getOrCreateSheet_('Evaluation_Rows');
   var summarySheet = _getOrCreateSheet_('Evaluation_Summary');
   var batchCompareSheet = _getOrCreateSheet_('Evaluation_BatchCompare');
+  var scenarioSheet = _getOrCreateSheet_('Evaluation_Scenario');
 
   var rowHeaders = _evaluationRowHeaders_();
   var summaryHeaders = _evaluationSummaryHeaders_();
   var batchCompareHeaders = _evaluationBatchCompareHeaders_();
+  var scenarioHeaders = _evaluationScenarioHeaders_();
 
   var predHeaders = (typeof _ensurePredHeaders_ === 'function') ? _ensurePredHeaders_(predSheet) : getHeaderNames(predSheet);
   var predIdx = {};
@@ -70,18 +74,27 @@ function buildEvaluationSheets_() {
 
   var summaryOut = _buildEvaluationSummaryRows_(rowsOut, generatedTs);
   var batchCompareOut = _buildEvaluationBatchCompareRows_(rowsOut, generatedTs);
+  var scenarioOut = _buildEvaluationScenarioRows_(rowsOut, generatedTs);
+
+  _sortEvaluationRows_(rowHeaders, rowsOut);
+  _sortEvaluationSummaryRows_(summaryHeaders, summaryOut);
+  _sortEvaluationBatchCompareRows_(batchCompareHeaders, batchCompareOut);
+  _sortEvaluationScenarioRows_(scenarioHeaders, scenarioOut);
 
   _rewriteSheet_(rowSheet, rowHeaders, rowsOut);
   _rewriteSheet_(summarySheet, summaryHeaders, summaryOut);
   _rewriteSheet_(batchCompareSheet, batchCompareHeaders, batchCompareOut);
+  _rewriteSheet_(scenarioSheet, scenarioHeaders, scenarioOut);
 
   return {
     row_sheet: rowSheet.getName(),
     summary_sheet: summarySheet.getName(),
     batch_compare_sheet: batchCompareSheet.getName(),
+    scenario_sheet: scenarioSheet.getName(),
     rows_written: rowsOut.length,
     summary_written: summaryOut.length,
-    batch_compare_written: batchCompareOut.length
+    batch_compare_written: batchCompareOut.length,
+    scenario_written: scenarioOut.length
   };
 }
 
@@ -128,7 +141,22 @@ function _evaluationRowHeaders_() {
     'mr_compare_status',
     'mr_compare_note',
     'eval_ts',
-    'trace_prediction_key'
+    'trace_prediction_key',
+    'batch_anchor_mode',
+    'batch_anchor_confidence',
+    'batch_anchor_event_id',
+    'batch_anchor_indicator_name',
+    'batch_anchor_score',
+    'batch_anchor_margin',
+    'batch_anchor_runner_up_event_id',
+    'batch_anchor_runner_up_indicator_name',
+    'batch_anchor_reason',
+    'pre_signal_mode',
+    'pre_risk_level',
+    'pre_volatility_level',
+    'watch_member_event_ids',
+    'watch_member_indicator_names',
+    'scenario_confidence'
   ];
 }
 
@@ -189,7 +217,58 @@ function _evaluationBatchCompareHeaders_() {
     'winner_reason',
     'mr_real_dir',
     'mr_real_strength',
-    'realized_pips'
+    'realized_pips',
+    'selected_anchor_mode',
+    'selected_anchor_confidence',
+    'selected_anchor_event_id',
+    'selected_anchor_indicator_name',
+    'selected_anchor_score',
+    'selected_anchor_margin',
+    'selected_anchor_runner_up_event_id',
+    'selected_anchor_runner_up_indicator_name',
+    'selected_anchor_reason',
+    'selected_anchor_dir_ok',
+    'selected_anchor_strength_ok',
+    'selected_anchor_sustain_ok',
+    'selected_anchor_overall_ok',
+    'selected_anchor_matches_best_member'
+  ];
+}
+
+function _evaluationScenarioHeaders_() {
+  return [
+    'generated_ts',
+    'release_date',
+    'release_ts',
+    'batch_id',
+    'ai_name',
+    'pre_signal_mode',
+    'pre_risk_level',
+    'pre_volatility_level',
+    'scenario_confidence',
+    'watch_member_count',
+    'watch_member_event_ids',
+    'watch_member_indicator_names',
+    'best_member_event_id',
+    'best_member_indicator_name',
+    'best_member_genre',
+    'best_member_importance',
+    'best_member_rank_in_watchlist',
+    'watchlist_hit',
+    'scenario_eval_result',
+    'batch_anchor_mode',
+    'batch_pred_dir',
+    'batch_pred_net_pips',
+    'batch_pred_strength',
+    'batch_overall_ok',
+    'best_member_pred_dir',
+    'best_member_pred_net_pips',
+    'best_member_pred_strength',
+    'best_member_overall_ok',
+    'mr_real_dir',
+    'mr_real_strength',
+    'realized_pips',
+    'scenario_eval_note'
   ];
 }
 
@@ -243,8 +322,147 @@ function _buildEvaluationRow_(src, idx, generatedTs) {
     _predValue_(src, idx, 'mr_compare_status'),
     _predValue_(src, idx, 'mr_compare_note'),
     _predValue_(src, idx, 'eval_ts'),
-    eventId + '|' + aiName + '|' + predictionId
+    eventId + '|' + aiName + '|' + predictionId,
+    _predValue_(src, idx, 'batch_anchor_mode'),
+    _predValue_(src, idx, 'batch_anchor_confidence'),
+    _predValue_(src, idx, 'batch_anchor_event_id'),
+    _predValue_(src, idx, 'batch_anchor_indicator_name'),
+    _predValue_(src, idx, 'batch_anchor_score'),
+    _predValue_(src, idx, 'batch_anchor_margin'),
+    _predValue_(src, idx, 'batch_anchor_runner_up_event_id'),
+    _predValue_(src, idx, 'batch_anchor_runner_up_indicator_name'),
+    _predValue_(src, idx, 'batch_anchor_reason'),
+    _predValue_(src, idx, 'pre_signal_mode'),
+    _predValue_(src, idx, 'pre_risk_level'),
+    _predValue_(src, idx, 'pre_volatility_level'),
+    _predValue_(src, idx, 'watch_member_event_ids'),
+    _predValue_(src, idx, 'watch_member_indicator_names'),
+    _predValue_(src, idx, 'scenario_confidence')
   ];
+}
+
+function _evaluationRowHeaderIndex_() {
+  var headers = _evaluationRowHeaders_();
+  var idx = {};
+  for (var i = 0; i < headers.length; i++) idx[headers[i]] = i;
+  return idx;
+}
+
+function _evaluationFindMemberByEventId_(members, eventId, ridx) {
+  var target = String(eventId || '').trim();
+  if (!target) return null;
+  for (var i = 0; i < (members || []).length; i++) {
+    if (String(members[i][ridx.event_id] || '').trim() === target) return members[i];
+  }
+  return null;
+}
+
+function _evaluationRelevantMembers_(batchRow, members, ridx) {
+  var familyKey = _evaluationBatchFamilyKey_(batchRow, members, ridx);
+  if (!familyKey) return members || [];
+
+  var filtered = [];
+  for (var i = 0; i < (members || []).length; i++) {
+    if (_evaluationMemberRelevantForFamily_(members[i], familyKey, ridx)) filtered.push(members[i]);
+  }
+  return filtered.length ? filtered : (members || []);
+}
+
+function _evaluationBatchFamilyKey_(batchRow, members, ridx) {
+  var authoritativeText = [
+    batchRow ? batchRow[ridx.indicator_name] : '',
+    batchRow ? batchRow[ridx.batch_anchor_indicator_name] : '',
+    batchRow ? batchRow[ridx.batch_anchor_runner_up_indicator_name] : '',
+    batchRow ? batchRow[ridx.watch_member_indicator_names] : ''
+  ].join(' | ');
+  var authoritativeKeys = _evaluationFamilyKeysFromText_(authoritativeText);
+  if (authoritativeKeys.length === 1) return authoritativeKeys[0];
+  if (authoritativeKeys.length > 1) return '';
+
+  var seen = {};
+  for (var i = 0; i < (members || []).length; i++) {
+    var memberKeys = _evaluationFamilyKeysFromText_(members[i][ridx.indicator_name]);
+    for (var k = 0; k < memberKeys.length; k++) seen[memberKeys[k]] = true;
+  }
+  var keys = Object.keys(seen);
+  return keys.length === 1 ? keys[0] : '';
+}
+
+function _evaluationFamilyKeysFromText_(value) {
+  var text = _normalizeEvaluationName_(value);
+  var out = [];
+
+  if (/\b(non farm payrolls?|nfp|unemployment rate|u 6 unemployment|average hourly earnings|average weekly hours|participation rate|labor force participation|private payrolls?|manufacturing payrolls?|government payrolls?)\b/.test(text)) {
+    out.push('monthly_labor');
+  }
+  if (/\b(initial jobless claims|continuing jobless claims|jobless claims 4 week|jobless claims four week)\b/.test(text)) {
+    out.push('jobless_claims');
+  }
+  if (/\b(ism services|ism non manufacturing|non manufacturing pmi|non manufacturing new orders|non manufacturing prices|non manufacturing business activity|non manufacturing employment)\b/.test(text)) {
+    out.push('ism_services');
+  }
+  if (/\bism manufacturing\b/.test(text)) {
+    out.push('ism_manufacturing');
+  }
+  if (/\bs p global\b/.test(text) && /\b(pmi|services|composite|manufacturing)\b/.test(text)) {
+    out.push('sp_global_pmi');
+  }
+  if (/\bfactory orders\b/.test(text)) {
+    out.push('factory_orders');
+  }
+  if (/\b(30 year mortgage rate|15 year mortgage rate)\b/.test(text)) {
+    out.push('mortgage_rates');
+  }
+  if (/\b(all car sales|all truck sales|vehicle sales)\b/.test(text)) {
+    out.push('vehicle_sales');
+  }
+  if (/\bmba mortgage\b/.test(text)) {
+    out.push('mba_mortgage');
+  }
+  return out;
+}
+
+function _evaluationMemberRelevantForFamily_(member, familyKey, ridx) {
+  var name = _normalizeEvaluationName_(member ? member[ridx.indicator_name] : '');
+  var genre = _normalizeEvaluationName_(member ? member[ridx.genre] : '');
+
+  if (_evaluationIsSidePositioningMember_(name, genre)) return false;
+
+  if (familyKey === 'monthly_labor') {
+    return genre === 'labor' ||
+      /\b(non farm payrolls?|nfp|unemployment rate|u 6 unemployment|average hourly earnings|average weekly hours|participation rate|labor force participation|private payrolls?|manufacturing payrolls?|government payrolls?)\b/.test(name);
+  }
+  if (familyKey === 'jobless_claims') {
+    return /\b(initial jobless claims|continuing jobless claims|jobless claims 4 week|jobless claims four week)\b/.test(name);
+  }
+  if (familyKey === 'ism_services') {
+    return (/\bism\b/.test(name) && /\b(services|non manufacturing)\b/.test(name)) ||
+      /\bnon manufacturing\b/.test(name);
+  }
+  if (familyKey === 'ism_manufacturing') {
+    return /\bism manufacturing\b/.test(name) && !/\bnon manufacturing\b/.test(name);
+  }
+  if (familyKey === 'sp_global_pmi') {
+    return /\bs p global\b/.test(name) && /\b(pmi|services|composite|manufacturing)\b/.test(name);
+  }
+  if (familyKey === 'factory_orders') {
+    return /\bfactory orders\b/.test(name);
+  }
+  if (familyKey === 'mortgage_rates') {
+    return /\b(30 year mortgage rate|15 year mortgage rate)\b/.test(name);
+  }
+  if (familyKey === 'vehicle_sales') {
+    return /\b(all car sales|all truck sales|vehicle sales)\b/.test(name);
+  }
+  if (familyKey === 'mba_mortgage') {
+    return /\bmba mortgage\b/.test(name);
+  }
+  return true;
+}
+
+function _evaluationIsSidePositioningMember_(name, genre) {
+  return genre === 'energy' ||
+    /\b(cftc|speculative net positions?|crude oil|natural gas|gold|silver|copper|wheat|corn|soybeans?|s p 500|nasdaq)\b/.test(name);
 }
 
 function _buildEvaluationSummaryRows_(rows, generatedTs) {
@@ -357,12 +575,13 @@ function _buildEvaluationSummaryRows_(rows, generatedTs) {
 function _buildEvaluationBatchCompareRows_(rows, generatedTs) {
   var groups = {};
   var out = [];
+  var ridx = _evaluationRowHeaderIndex_();
 
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
-    var type = String(row[7] || '').toLowerCase();
-    var batchId = String(row[4] || '').trim();
-    var aiName = String(row[13] || '').trim();
+    var type = String(row[ridx.type] || '').toLowerCase();
+    var batchId = String(row[ridx.batch_id] || '').trim();
+    var aiName = String(row[ridx.ai_name] || '').trim();
     if (!batchId || !aiName) continue;
     if (type !== 'batch' && type !== 'member') continue;
 
@@ -382,10 +601,11 @@ function _buildEvaluationBatchCompareRows_(rows, generatedTs) {
     var g = groups[keys[k]];
     if (!g.batch || !g.members.length) continue;
 
-    var best = g.members[0];
+    var comparisonMembers = _evaluationRelevantMembers_(g.batch, g.members, ridx);
+    var best = comparisonMembers[0];
     var bestScore = _evaluationCompareScore_(best);
-    for (var m = 1; m < g.members.length; m++) {
-      var candidate = g.members[m];
+    for (var m = 1; m < comparisonMembers.length; m++) {
+      var candidate = comparisonMembers[m];
       var candidateScore = _evaluationCompareScore_(candidate);
       if (_isBetterEvaluationScore_(candidateScore, bestScore)) {
         best = candidate;
@@ -404,43 +624,193 @@ function _buildEvaluationBatchCompareRows_(rows, generatedTs) {
       winnerReason = _evaluationWinnerReason_(bestScore, batchScore);
     }
 
+    var selectedAnchorMode = String(g.batch[ridx.batch_anchor_mode] || '').trim();
+    var selectedAnchorConfidence = String(g.batch[ridx.batch_anchor_confidence] || '').trim();
+    var selectedAnchorEventId = String(g.batch[ridx.batch_anchor_event_id] || '').trim();
+    var selectedAnchor = _evaluationFindMemberByEventId_(g.members, selectedAnchorEventId, ridx);
+    var selectedAnchorMatchBest = '';
+    if (selectedAnchorEventId) {
+      selectedAnchorMatchBest = String(
+        String(best[ridx.event_id] || '').trim() === selectedAnchorEventId ? 'TRUE' : 'FALSE'
+      );
+    } else if (selectedAnchorMode === 'no_clear_anchor') {
+      selectedAnchorMatchBest = 'NO_ANCHOR';
+    }
+
     out.push([
       generatedTs,
-      g.batch[1],
-      g.batch[2],
-      g.batch[4],
-      g.batch[13],
+      g.batch[ridx.release_date],
+      g.batch[ridx.release_ts],
+      g.batch[ridx.batch_id],
+      g.batch[ridx.ai_name],
       g.members.length,
-      g.batch[8],
-      g.batch[22],
-      g.batch[23],
-      g.batch[24],
-      g.batch[25],
-      g.batch[29],
-      g.batch[30],
-      g.batch[31],
-      g.batch[32],
-      best[3],
-      best[8],
-      best[10],
-      best[11],
-      best[22],
-      best[23],
-      best[24],
-      best[25],
-      best[29],
-      best[30],
-      best[31],
-      best[32],
+      g.batch[ridx.indicator_name],
+      g.batch[ridx.mr_pred_dir],
+      g.batch[ridx.mr_pred_net_pips],
+      g.batch[ridx.mr_pred_strength],
+      g.batch[ridx.mr_pred_sustain_min],
+      g.batch[ridx.mr_dir_ok],
+      g.batch[ridx.mr_strength_ok],
+      g.batch[ridx.mr_sustain_ok],
+      g.batch[ridx.overall_ok],
+      best[ridx.event_id],
+      best[ridx.indicator_name],
+      best[ridx.genre],
+      best[ridx.importance],
+      best[ridx.mr_pred_dir],
+      best[ridx.mr_pred_net_pips],
+      best[ridx.mr_pred_strength],
+      best[ridx.mr_pred_sustain_min],
+      best[ridx.mr_dir_ok],
+      best[ridx.mr_strength_ok],
+      best[ridx.mr_sustain_ok],
+      best[ridx.overall_ok],
       winner,
       winnerReason,
-      g.batch[26],
-      g.batch[27],
-      g.batch[33]
+      g.batch[ridx.mr_real_dir],
+      g.batch[ridx.mr_real_strength],
+      g.batch[ridx.realized_pips],
+      selectedAnchorMode,
+      selectedAnchorConfidence,
+      selectedAnchorEventId,
+      g.batch[ridx.batch_anchor_indicator_name],
+      g.batch[ridx.batch_anchor_score],
+      g.batch[ridx.batch_anchor_margin],
+      g.batch[ridx.batch_anchor_runner_up_event_id],
+      g.batch[ridx.batch_anchor_runner_up_indicator_name],
+      g.batch[ridx.batch_anchor_reason],
+      selectedAnchor ? selectedAnchor[ridx.mr_dir_ok] : '',
+      selectedAnchor ? selectedAnchor[ridx.mr_strength_ok] : '',
+      selectedAnchor ? selectedAnchor[ridx.mr_sustain_ok] : '',
+      selectedAnchor ? selectedAnchor[ridx.overall_ok] : '',
+      selectedAnchorMatchBest
     ]);
   }
 
   return out;
+}
+
+function _buildEvaluationScenarioRows_(rows, generatedTs) {
+  var groups = {};
+  var out = [];
+  var ridx = _evaluationRowHeaderIndex_();
+
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var type = String(row[ridx.type] || '').toLowerCase();
+    var batchId = String(row[ridx.batch_id] || '').trim();
+    var aiName = String(row[ridx.ai_name] || '').trim();
+    if (!batchId || !aiName) continue;
+    if (type !== 'batch' && type !== 'member') continue;
+
+    var key = batchId + '|' + aiName;
+    if (!groups[key]) groups[key] = { batch: null, members: [] };
+    if (type === 'batch') groups[key].batch = row;
+    if (type === 'member') groups[key].members.push(row);
+  }
+
+  var keys = Object.keys(groups).sort();
+  for (var k = 0; k < keys.length; k++) {
+    var g = groups[keys[k]];
+    if (!g.batch || !g.members.length) continue;
+    if (!_evaluationRowIsScored_(g.batch)) continue;
+
+    var mode = String(g.batch[ridx.pre_signal_mode] || '').trim().toLowerCase();
+    if (mode !== 'scenario') continue;
+    var watchIds = _splitEvaluationPipeList_(g.batch[ridx.watch_member_event_ids]);
+    var watchNames = _splitEvaluationPipeList_(g.batch[ridx.watch_member_indicator_names]);
+
+    var scenarioMembers = _evaluationRelevantMembers_(g.batch, g.members, ridx);
+    var best = scenarioMembers[0];
+    var bestScore = _evaluationCompareScore_(best);
+    for (var m = 1; m < scenarioMembers.length; m++) {
+      var candidate = scenarioMembers[m];
+      var candidateScore = _evaluationCompareScore_(candidate);
+      if (_isBetterEvaluationScore_(candidateScore, bestScore)) {
+        best = candidate;
+        bestScore = candidateScore;
+      }
+    }
+
+    var bestRank = _evaluationWatchlistRank_(best, watchIds, watchNames, ridx);
+    var watchHit = bestRank > 0;
+    var result = _evaluationScenarioResult_(mode, watchIds, watchNames, best, watchHit);
+
+    out.push([
+      generatedTs,
+      g.batch[ridx.release_date],
+      g.batch[ridx.release_ts],
+      g.batch[ridx.batch_id],
+      g.batch[ridx.ai_name],
+      g.batch[ridx.pre_signal_mode],
+      g.batch[ridx.pre_risk_level],
+      g.batch[ridx.pre_volatility_level],
+      g.batch[ridx.scenario_confidence],
+      Math.max(watchIds.length, watchNames.length),
+      g.batch[ridx.watch_member_event_ids],
+      g.batch[ridx.watch_member_indicator_names],
+      best[ridx.event_id],
+      best[ridx.indicator_name],
+      best[ridx.genre],
+      best[ridx.importance],
+      bestRank || '',
+      watchHit ? 'TRUE' : 'FALSE',
+      result,
+      g.batch[ridx.batch_anchor_mode],
+      g.batch[ridx.mr_pred_dir],
+      g.batch[ridx.mr_pred_net_pips],
+      g.batch[ridx.mr_pred_strength],
+      g.batch[ridx.overall_ok],
+      best[ridx.mr_pred_dir],
+      best[ridx.mr_pred_net_pips],
+      best[ridx.mr_pred_strength],
+      best[ridx.overall_ok],
+      g.batch[ridx.mr_real_dir],
+      g.batch[ridx.mr_real_strength],
+      g.batch[ridx.realized_pips],
+      _evaluationScenarioNote_(result, best, ridx)
+    ]);
+  }
+
+  return out;
+}
+
+function _splitEvaluationPipeList_(value) {
+  return String(value || '')
+    .split('|')
+    .map(function(v){ return String(v || '').trim(); })
+    .filter(function(v){ return !!v; });
+}
+
+function _evaluationWatchlistRank_(best, watchIds, watchNames, ridx) {
+  if (!best) return 0;
+  var bestId = String(best[ridx.event_id] || '').trim();
+  for (var i = 0; i < watchIds.length; i++) {
+    if (bestId && String(watchIds[i] || '').trim() === bestId) return i + 1;
+  }
+
+  var bestName = _normalizeEvaluationName_(best[ridx.indicator_name]);
+  for (var n = 0; n < watchNames.length; n++) {
+    if (bestName && _normalizeEvaluationName_(watchNames[n]) === bestName) return n + 1;
+  }
+  return 0;
+}
+
+function _evaluationScenarioResult_(mode, watchIds, watchNames, best, watchHit) {
+  if (!best) return 'no_best_member';
+  if (!watchIds.length && !watchNames.length) return 'no_watchlist';
+  return watchHit ? 'hit' : 'miss';
+}
+
+function _evaluationScenarioNote_(result, best, ridx) {
+  var bestName = best ? String(best[ridx.indicator_name] || '') : '';
+  if (result === 'hit') return 'watchlist_included_best_member=' + bestName;
+  if (result === 'miss') return 'watchlist_missed_best_member=' + bestName;
+  return result;
+}
+
+function _normalizeEvaluationName_(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
 function _evaluationCompareScore_(row) {
@@ -509,6 +879,87 @@ function _rewriteSheet_(sheet, headers, rows) {
     sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
   }
   sheet.setFrozenRows(1);
+}
+
+function _headerIndexMap_(headers) {
+  var out = {};
+  for (var i = 0; i < headers.length; i++) out[String(headers[i] || '')] = i;
+  return out;
+}
+
+function _cmpText_(a, b) {
+  a = String(a == null ? '' : a);
+  b = String(b == null ? '' : b);
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
+
+function _cmpByColumns_(a, b, cols) {
+  for (var i = 0; i < cols.length; i++) {
+    var c = cols[i];
+    var av = a[c];
+    var bv = b[c];
+    var cmp = _cmpText_(av, bv);
+    if (cmp !== 0) return cmp;
+  }
+  return 0;
+}
+
+function _sortEvaluationRows_(headers, rows) {
+  if (!rows || rows.length < 2) return;
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx.release_ts,
+      idx.ai_name,
+      idx.type,
+      idx.batch_id,
+      idx.event_id,
+      idx.prediction_id
+    ]);
+  });
+}
+
+function _sortEvaluationSummaryRows_(headers, rows) {
+  if (!rows || rows.length < 2) return;
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx.release_date,
+      idx.ai_name,
+      idx.scope,
+      idx.genre,
+      idx.importance,
+      idx.event_type
+    ]);
+  });
+}
+
+function _sortEvaluationBatchCompareRows_(headers, rows) {
+  if (!rows || rows.length < 2) return;
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx.release_ts,
+      idx.ai_name,
+      idx.batch_id,
+      idx.best_member_indicator_name
+    ]);
+  });
+}
+
+function _sortEvaluationScenarioRows_(headers, rows) {
+  if (!rows || rows.length < 2) return;
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx.release_ts,
+      idx.ai_name,
+      idx.batch_id,
+      idx.best_member_indicator_name
+    ]);
+  });
 }
 
 function _isTrueCell_(v) {

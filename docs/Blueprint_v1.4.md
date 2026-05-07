@@ -86,7 +86,11 @@ The codebase contains an earlier “sanity check” concept for core Event heade
 #### Predictions sheet headers (enforced by prediction runner when it runs)
 
 Before writing predictions, the runner enforces the following Predictions headers by appending any missing headers to the end of row 1:
-object, run_id, prediction_id, schema_version, created_ts, event_id, batch_id, type, ai_name, ai_version, ai_model, model_version, consensus_value, prev_revision, source_cal, genre, importance, fx_pair, ai_forecast_value, qualitative_result, expected_move_dir, expected_move_pips_min, expected_move_pips_max, expected_holding_minutes, rationale_short, rationale, prompt_tokens, completion_tokens, latency_ms, raw_output, status, error_message, qualitative_only, released_value, forecast_error_abs, forecast_error_pct, forecast_dir_ok, eval_ts, eval_interval, start_ts, end_ts, start_price, end_price, realized_pips, dir_ok, band_ok, overall_ok, eval_note, indicator_name, country, release_ts, mr_window_min, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min, mr_real_dir, mr_strength_ok, mr_real_sustain_min, mr_sustain_error_min, mr_sustain_grade, mr_sustain_ok, mr_dir_ok, mr_real_max_up_pips, mr_real_max_down_pips, mr_final_provider, mr_compare_status, mr_compare_dir_agree, mr_compare_anchor_delta_min, mr_compare_pips_delta, mr_compare_confidence, mr_compare_note
+object, run_id, prediction_id, schema_version, created_ts, event_id, batch_id, type, ai_name, ai_version, ai_model, model_version, consensus_value, prev_revision, source_cal, genre, importance, fx_pair, ai_forecast_value, qualitative_result, expected_move_dir, expected_move_pips_min, expected_move_pips_max, expected_holding_minutes, rationale_short, rationale, prompt_tokens, completion_tokens, latency_ms, raw_output, status, error_message, qualitative_only, released_value, forecast_error_abs, forecast_error_pct, forecast_dir_ok, eval_ts, eval_interval, start_ts, end_ts, start_price, end_price, realized_pips, dir_ok, band_ok, overall_ok, eval_note, indicator_name, country, release_ts, mr_window_min, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min, mr_real_dir, mr_strength_ok, mr_real_sustain_min, mr_sustain_error_min, mr_sustain_grade, mr_sustain_ok, mr_dir_ok, mr_real_max_up_pips, mr_real_max_down_pips, mr_final_provider, mr_compare_status, mr_compare_dir_agree, mr_compare_anchor_delta_min, mr_compare_pips_delta, mr_compare_confidence, mr_compare_note, batch_anchor_mode, batch_anchor_confidence, batch_anchor_event_id, batch_anchor_indicator_name, batch_anchor_score, batch_anchor_margin, batch_anchor_runner_up_event_id, batch_anchor_runner_up_indicator_name, batch_anchor_reason, cache_creation_input_tokens, cache_read_input_tokens, pre_signal_mode, pre_risk_level, pre_volatility_level, watch_member_event_ids, watch_member_indicator_names, scenario_up_case, scenario_down_case, scenario_flat_case, scenario_confidence, scenario_plan_json
+
+The `pre_*` / `scenario_*` columns are advisory pre-release planning fields. They sit alongside the existing directional prediction fields and do not change the legacy directional/pips summary math; scenario-watchlist coverage is reported separately in `Evaluation_Scenario`.
+
+The planner also uses the same `pre_*` fields to surface recurring low-signal family handling without introducing new schema. Current code-level low-signal families include `cftc_positions`, `treasury_auctions`, `fed_speeches`, and `statement_report_text`; these families default toward conservative scenario framing and representative watchlists instead of high-confidence directional precision. The family detection is applied at row level as well as batch level so single/member speech and report-text rows inherit the same conservative handling.
 
 #### MR_ProviderRuns audit headers
 
@@ -96,18 +100,28 @@ score_run_ts, score_source, event_id, indicator_name, country, release_ts, provi
 
 #### Evaluation_Rows / Evaluation_Summary derived headers
 
-When `Build Evaluation Sheets` runs, the system rewrites two derived reporting tabs from scored `Predictions` rows:
+When `Build Evaluation Sheets` runs, the system rewrites four derived reporting tabs from scored `Predictions` rows:
 
 - `Evaluation_Rows`
 - `Evaluation_Summary`
+- `Evaluation_BatchCompare`
+- `Evaluation_Scenario`
 
 `Evaluation_Rows` includes trace and scored fields such as:
 
-generated_ts, release_date, release_ts, event_id, batch_id, prediction_id, run_id, type, indicator_name, country, genre, importance, fx_pair, ai_name, ai_model, schema_version, status, qualitative_result, consensus_value, prev_revision, ai_forecast_value, released_value, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min, mr_real_dir, mr_real_strength, mr_real_sustain_min, mr_dir_ok, mr_strength_ok, mr_sustain_ok, overall_ok, realized_pips, mr_real_max_up_pips, mr_real_max_down_pips, mr_final_provider, eval_note, mr_compare_status, mr_compare_note, eval_ts, trace_prediction_key
+generated_ts, release_date, release_ts, event_id, batch_id, prediction_id, run_id, type, indicator_name, country, genre, importance, fx_pair, ai_name, ai_model, schema_version, status, qualitative_result, consensus_value, prev_revision, ai_forecast_value, released_value, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min, mr_real_dir, mr_real_strength, mr_real_sustain_min, mr_dir_ok, mr_strength_ok, mr_sustain_ok, overall_ok, realized_pips, mr_real_max_up_pips, mr_real_max_down_pips, mr_final_provider, eval_note, mr_compare_status, mr_compare_note, eval_ts, trace_prediction_key, batch_anchor_mode, batch_anchor_confidence, batch_anchor_event_id, batch_anchor_indicator_name, batch_anchor_score, batch_anchor_margin, batch_anchor_runner_up_event_id, batch_anchor_runner_up_indicator_name, batch_anchor_reason, pre_signal_mode, pre_risk_level, pre_volatility_level, watch_member_event_ids, watch_member_indicator_names, scenario_confidence
 
 `Evaluation_Summary` includes grouped aggregates such as:
 
 generated_ts, release_date, ai_name, scope, rows_scored, dir_ok_count, dir_ok_rate, strength_ok_count, strength_ok_rate, sustain_ok_count, sustain_ok_rate, overall_ok_count, overall_ok_rate, avg_realized_abs_pips, avg_pred_abs_pips
+
+`Evaluation_BatchCompare` includes batch-vs-best-member comparison fields plus persisted batch-anchor selection trace fields, so operators can review whether the chosen anchor matched the strongest member-level outcome. For known same-minute mixed clusters, the best-member candidate pool is filtered to the release family first, preventing unrelated side rows such as CFTC/commodity positioning from winning a labor, ISM, or claims-family comparison.
+
+`Evaluation_Scenario` includes scenario-watchlist coverage fields such as watch_member_event_ids, watch_member_indicator_names, best_member_event_id, best_member_rank_in_watchlist, watchlist_hit, and scenario_eval_result. It includes only scenario-mode batch predictions, excluding directional batches that merely carry anchor/context watch members. It grades whether the scenario map covered the same family-filtered best-scoring member without changing legacy directional/pips scoring.
+
+For local automation, the project also exposes API-safe execution wrappers callable through the Apps Script Execution API: `apiRunPipelineWindow_`, `apiRunPredictionsWindow_`, `apiFetchActualsWindow_`, `apiScoreMarketReactionWindow_`, and `apiBuildEvaluationSheets_`. These wrappers accept plain parameter objects, avoid menu/UI flows, and support persistent-token external runners.
+
+Weak-anchor families may also define structural watch profiles rather than forcing a default winner. In the current design, this includes monthly labor, ISM services, and jobless-claims clusters, where the system preserves a ranked watchlist of the most decision-relevant members instead of overcommitting to one ambiguous release row.
 
 These sheets are rebuilt from scratch on each run and are derived reporting layers only. `Evaluation_Summary` excludes rows that were not truly scored, including `market_closed` and other unavailable-data cases, while `Evaluation_Rows` retains those rows for traceability.
 
@@ -532,7 +546,7 @@ Checkpointing:
 
 Resume semantics:
 
-- if the current run matches the saved checkpoint signature, `resume_active = true` and execution starts at the next unfinished work unit
+- if the current run matches the saved checkpoint signature, `resumed_from_checkpoint = true` and execution starts at the next unfinished work unit
 - if the window, provider set, or prediction mode changes, the checkpoint is ignored and execution starts from the beginning
 
 Auto-continuation:
@@ -542,6 +556,12 @@ Auto-continuation:
 - delay is controlled by `PRED_AUTO_CONTINUE_DELAY_MIN`
 - old continuation triggers are cleared at the start of a run to avoid duplicate chains
 - full completion clears both checkpoint and continuation triggers
+
+Run-summary semantics:
+
+- `resume_active = true` means work still remains after the current pass
+- `resumed_from_checkpoint = true` means this pass started from a previously saved checkpoint
+- `Prediction run checkpoint summary` means the current pass intentionally handed off remaining work to auto-resume
 
 ### 5.4 Event Selection Rules (from Event sheet)
 
@@ -646,7 +666,14 @@ For batch predictions, the payload includes:
 - `release_ts`
 - `member_count`
 - `members[]` with compact member metadata
+- `anchor_selection` with mode/confidence/score/margin/reason trace
+- `anchor_member` only when the selector finds a clear usable anchor
+- `supporting_members` for the remaining batch members
 - batch-level policy and required-output blocks
+
+If `anchor_selection.mode` is `weak_anchor` or `no_clear_anchor`, provider prompts and guardrails treat the batch as scenario/watchlist planning rather than forcing a dominant member. Weak anchors remain stored as trace metadata, but they are not passed as the default `anchor_member`; only `clear_anchor` may become the model's default market focus. Same-family release clusters with multiple plausible drivers, such as monthly labor or ISM PMI/subcomponent groups, remain scenario-oriented unless one member has a clear scoring margin.
+
+Scenario watchlists can use release-family profiles instead of raw generic score order. The first implemented profile is `ism_services`: it treats `Prices`, `New Orders`, `Business Activity`, and `Employment` as the structural watch members, with headline PMI kept as context when those subcomponents exist. `monthly_labor` now also has a structural watch profile: headline NFP, unemployment rate, wages, manufacturing payrolls, and private payrolls are watched together when the anchor margin is weak. `jobless_claims` similarly watches initial claims, continuing claims, and the 4-week average as one family. `factory_orders` watches `Factory Orders ex Transportation`, headline `Factory Orders`, and `ex Defense` in that order so the core orders read is not lost inside the broader headline. `macro_inflation_retail` now watches core CPI, headline CPI, retail sales MoM, retail sales ex-autos / ex-gas-autos, retail sales YoY, and CPI s.a. so same-minute inflation-plus-retail pileups are represented as one macro watch object. `cftc_positions` now acts as a low-signal positions profile: it uses a small representative watchlist led by S&P 500, Nasdaq 100, gold, silver, and crude oil positioning, while forcing low risk / low volatility / low confidence because the cluster is indirect and noisy for USDJPY. `eia_petroleum` now treats distillate production, refinery activity, crude stocks, gasoline stocks, gasoline production, and distillate stocks as the structural watch members so large weekly petroleum batches do not overfocus on imports or Cushing-only rows when there is no clear anchor. `mba_mortgage` now watches purchase index, market index, refinance index, and the 30-year mortgage rate so mortgage-demand detail is not lost inside the broader weekly rate package.
 
 Provider-specific extension:
 
@@ -812,12 +839,12 @@ The hourly handler:
   - LOOKAHEAD_MINUTES = 60 minutes
   - MAX_ROWS_PER_RUN = 400
 
-#### Manual runs
+#### Config-window actuals run
 
-- Menu → Actuals → Manual fetch → menuActualsManualFetch_()
+- Menu → Actuals → Fetch Actuals (Config Window) → menuActualsConfigWindowFetch_()
   - Default fallback: look back 24h, no lookahead, cap 2000
-  - If resolveWindow_('actuals_manual') exists and returns an enabled window, it converts the window to “minutes back / minutes forward” relative to now and runs with those computed minutes.
-  - Delegates to runFetchActualsWindow_(minsBack, minsFwd, cap)
+  - If resolveWindow_('actuals_manual') exists and returns an enabled window, it delegates to runFetchActualsWindowBounds_(fromUtcIso, toUtcIso, cap) with exact Config-derived UTC bounds.
+  - If no Config window is enabled, it delegates to runFetchActualsWindow_(24*60, 0, cap)
 
 Additional explicit manual tools:
 
@@ -846,6 +873,11 @@ runFetchActualsWindow_(lookbackMinutes, lookaheadMinutes, rowCap):
   - lo = now - lookbackMinutes
   - hi = now + lookaheadMinutes
 
+runFetchActualsWindowBounds_(windowStartIso, windowEndIso, rowCap):
+
+- Uses the exact supplied UTC bounds.
+- Does not widen historical Config windows to now.
+
 For each row, it determines:
 
 - indicator_name
@@ -854,13 +886,13 @@ For each row, it determines:
 
 It applies two major gates:
 
-#### Gate A — skip qualitative events upfront
+#### Gate A — skip explicit text/non-fetchable events upfront
 
 If _shouldSkipActuals_(indicator_name) returns true, the row is skipped and an info log is written:
 
-- Actuals: skipped qualitative (includes event_id, indicator_name, country)
+- Actuals: skipped_by_rule (includes event_id, indicator_name, country, skip_reason)
 
-This gate is keyword/pattern based (speeches, minutes, testimony, etc.) and is independent of SeriesMap.
+This gate is keyword/pattern based for clearly text-like releases such as speeches, minutes, testimony, statements, press conferences, and WASDE-style report text. Auction rows and `CB Employment Trends Index` are no longer auto-skipped by name alone.
 
 #### Gate B — time window + status rules
 
@@ -868,12 +900,11 @@ A row is selected as a candidate when:
 
 If status is scheduled:
 
-- release_ts ∈ [lo, hi] OR
-- release_ts ∈ [lo, now] (“scheduled-but-past” catch-up)
+- release_ts in [lo, hi]
 
 If status is released or revised:
 
-- release_ts >= lo (revision catch-up)
+- release_ts in [lo, hi]
 
 Finally, candidates are capped:
 
@@ -2049,7 +2080,7 @@ This submenu contains both event ingestion and SeriesMap workflow actions:
 
 - Start Hourly Actuals Fetch → menuActualsStartHourly_()  
 - Stop Hourly Actuals Fetch → menuActualsStopHourly_()  
-- Fetch Actuals (Manual) → menuActualsManualFetch_()  
+- Fetch Actuals (Config Window) → menuActualsConfigWindowFetch_()  
 
 ---
 
@@ -2084,13 +2115,13 @@ This submenu contains both event ingestion and SeriesMap workflow actions:
 
 menuActualsStartHourly_() creates an installable time-based trigger:
 
-- Handler function: menuActualsManualFetch_()  
+- Handler function: menuActualsConfigWindowFetch_()  
 - Frequency: every 1 hour  
-- De-duplication: before creating, it deletes any existing triggers whose handler is the same menuActualsManualFetch_()
+- De-duplication: before creating, it deletes any existing triggers whose handler is the same menuActualsConfigWindowFetch_(), and also removes legacy menuActualsManualFetch_() triggers
 
 menuActualsStopHourly_() removes triggers:
 
-- Deletes all triggers whose handler is menuActualsManualFetch_()  
+- Deletes all triggers whose handler is menuActualsConfigWindowFetch_() or legacy menuActualsManualFetch_()  
 - Toasts how many were removed  
 
 Important implication (code-authoritative):
@@ -2099,7 +2130,7 @@ The automation does not schedule runFetchActualsHourly_() (even though that func
 
 The scheduled automation path is:
 
-trigger → menuActualsManualFetch_() → runFetchActualsWindow_(...).
+trigger → menuActualsConfigWindowFetch_() → runFetchActualsWindowBounds_(...) when Config is enabled, otherwise runFetchActualsWindow_(...).
 
 ---
 
@@ -2525,11 +2556,11 @@ There are two distinct actuals mechanisms:
 
 #### A) Rolling-window actuals harvester (recommended operational path)
 
-Trigger (manual): Menu → ③ Actuals → Fetch Actuals (Manual)  
+Trigger (config window): Menu → ③ Actuals → Fetch Actuals (Config Window)  
 Trigger (automation): Menu → ③ Actuals → Start Hourly Actuals Fetch  
-(creates trigger that calls menuActualsManualFetch_() hourly)
+(creates trigger that calls menuActualsConfigWindowFetch_() hourly)
 
-Worker: runFetchActualsWindow_(...) in actuals_fetcher.gs
+Worker: runFetchActualsWindowBounds_(...) for enabled Config windows, otherwise runFetchActualsWindow_(...) in actuals_fetcher.gs
 
 What it does:
 
@@ -2592,7 +2623,7 @@ Run:
 Events upsert (next 72h)  
 (optional) SeriesMap suggestions + promote mappings  
 Predictions (All Providers)  
-Actuals manual fetch (or start hourly)  
+Actuals Config Window fetch (or start hourly)  
 Market reaction scoring (only if candle fetcher exists)
 
 
@@ -3060,6 +3091,8 @@ usage.output_tokens
 usage.cache_creation_input_tokens  
 usage.cache_read_input_tokens  
 
+Prediction rows store provider cache counters in `cache_creation_input_tokens` and `cache_read_input_tokens` when the provider response exposes them. For Anthropic, non-zero `cache_read_input_tokens` indicates the reusable static block was read from provider-side prompt cache.
+
 ---
 
 ### 15.7 Rate limiting, retries, and burst control
@@ -3171,7 +3204,7 @@ Actuals harvester windowing (actuals_fetcher.gs)
 Uses relative minutes:  
 lookbackMinutes, lookaheadMinutes  
 
-Manual fetch may attempt to use resolveWindow_('actuals_manual') if present, but still executes as a lookback/lookahead relative to “now.”
+Config-window actuals uses resolveWindow_('actuals_manual') when enabled and executes with exact absolute bounds. Historical windows do not widen to "from Config start through now."
 
 Market reaction (Config Window) (market_scoring.gs)
 
@@ -3486,7 +3519,7 @@ Menu → ② Predictions → Run Predictions (All Providers)
 Use “Run Predictions (Config Window)” when you intentionally want the prediction-only Config window path.  
 
 Fetch actuals  
-Menu → ③ Actuals → Fetch Actuals (Manual)  
+Menu → ③ Actuals → Fetch Actuals (Config Window)  
 
 (Optional) Market reaction  
 If candle fetcher exists:  
@@ -3507,7 +3540,7 @@ Menu → ③ Actuals → Start Hourly Actuals Fetch
 
 What this actually installs (code-authoritative):
 
-A time-based trigger that runs menuActualsManualFetch_() hourly.
+A time-based trigger that runs menuActualsConfigWindowFetch_() hourly.
 
 To disable:
 
@@ -3670,6 +3703,7 @@ menuRunActualsPast24h_
 menuRunActualsPast7d_  
 menuStartActualsAutomation_  
 menuStopActualsAutomation_  
+menuActualsConfigWindowFetch_  
 menuActualsManualFetch_  
 menuActualsStartHourly_  
 menuActualsStopHourly_  

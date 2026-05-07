@@ -20,6 +20,7 @@ function _readConfigSheetMap_() {
   if (!sh) return null;
 
   var values = sh.getDataRange().getValues();
+  var displayValues = sh.getDataRange().getDisplayValues();
   if (!values || values.length < 2) return null;
 
   var map = {};
@@ -28,15 +29,41 @@ function _readConfigSheetMap_() {
     if (!k) continue;
     var v = values[r][1];
     if (v instanceof Date && isFinite(v.getTime())) {
-      // Normalize Dates immediately to a stable local string (fallback TZ until we know WINDOW_TZ)
-      var tzGuess = 'Asia/Tokyo';
-      v = Utilities.formatDate(v, tzGuess, 'yyyy-MM-dd HH:mm');
+      v = _normalizeConfigDateCell_(v, displayValues && displayValues[r] && displayValues[r][1]);
     } else if (typeof v === 'string') {
-      v = v.trim();
+      v = _normalizeConfigDateDisplay_(v.trim()) || v.trim();
     }
-map[k.toLowerCase()] = v;
+    map[k.toLowerCase()] = v;
   }
   return map;
+}
+
+function _normalizeConfigDateCell_(dateValue, displayValue) {
+  var normalizedDisplay = _normalizeConfigDateDisplay_(displayValue);
+  if (normalizedDisplay) return normalizedDisplay;
+  return Utilities.formatDate(dateValue, 'UTC', 'yyyy-MM-dd HH:mm');
+}
+
+function _normalizeConfigDateDisplay_(value) {
+  var s = String(value || '').trim();
+  if (!s) return '';
+  var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2})(?::\d{2})?)?$/);
+  if (iso) {
+    return _configDatePartsToLocalString_(iso[1], iso[2], iso[3], iso[4], iso[5]);
+  }
+  var slash = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ T](\d{1,2}):(\d{2})(?::\d{2})?)?$/);
+  if (slash) {
+    return _configDatePartsToLocalString_(slash[3], slash[1], slash[2], slash[4], slash[5]);
+  }
+  return '';
+}
+
+function _configDatePartsToLocalString_(year, month, day, hour, minute) {
+  return [
+    String(year).padStart(4, '0'),
+    String(month).padStart(2, '0'),
+    String(day).padStart(2, '0')
+  ].join('-') + ' ' + String(hour || '0').padStart(2, '0') + ':' + String(minute || '0').padStart(2, '0');
 }
 
 /** Read Script Properties as a map. Lower-cases keys. */
