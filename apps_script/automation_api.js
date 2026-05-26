@@ -73,6 +73,75 @@ function apiBuildEvaluationSheets() {
   return apiBuildEvaluationSheets_();
 }
 
+function apiBuildOutcomeLedgerSheet_() {
+  return {
+    status: 'ok',
+    outcome_ledger: buildOutcomeLedger_()
+  };
+}
+
+function apiBuildOutcomeLedgerSheet() {
+  return apiBuildOutcomeLedgerSheet_();
+}
+
+function apiBuildOutcomeLedger_() {
+  return apiBuildOutcomeLedgerSheet_();
+}
+
+function apiBuildOutcomeSummaries_() {
+  return {
+    status: 'ok',
+    outcome_summaries: buildOutcomeSummaries_()
+  };
+}
+
+function apiBuildOutcomeDiagnostics_() {
+  return {
+    status: 'ok',
+    outcome_diagnostics: buildOutcomeDiagnostics_()
+  };
+}
+
+function apiUpsertEventWindow_(params) {
+  params = params || {};
+
+  var fromUtcIso = String(
+    params.from_utc_iso ||
+    params.window_from_utc ||
+    params.from_utc ||
+    params.fromUtcIso ||
+    ''
+  ).trim();
+  var toUtcIso = String(
+    params.to_utc_iso ||
+    params.window_to_utc ||
+    params.to_utc ||
+    params.toUtcIso ||
+    ''
+  ).trim();
+
+  if (!fromUtcIso || !toUtcIso) {
+    throw new Error('apiUpsertEventWindow requires from_utc_iso and to_utc_iso.');
+  }
+
+  var upsert = runFmpRangeToEvent_(fromUtcIso, toUtcIso);
+  var batching = (typeof applyBatchingForKeys_ === 'function')
+    ? applyBatchingForKeys_()
+    : null;
+
+  return {
+    status: 'ok',
+    window_from_utc: fromUtcIso,
+    window_to_utc: toUtcIso,
+    upsert: upsert,
+    batching: batching
+  };
+}
+
+function apiUpsertEventWindow(params) {
+  return apiUpsertEventWindow_(params);
+}
+
 function apiRunPipelineWindow_(params) {
   params = params || {};
   var applied = _apiApplyWindowConfig_(params);

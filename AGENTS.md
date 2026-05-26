@@ -17,8 +17,12 @@ If there is any conflict:
 - Do not rename global Apps Script functions.
 - Do not change sheet header order without explicit instruction.
 - Do not remove logging mechanisms.
+- Use append-only header enforcement; never reorder existing sheet columns.
+- Preserve event_id / batch_id / type identity semantics.
 - Maintain strict JSON validation contract.
 - Maintain event_id + ai_name uniqueness rule.
+- Position outputs as decision support, not trading advice.
+- Avoid guaranteed-profit language and direct buy/sell instructions.
 - Preserve backward compatibility unless explicitly approved.
 
 If a requested change would violate any of the above, ask for clarification before proceeding.

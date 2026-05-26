@@ -77,6 +77,9 @@ function onOpen() {
     ui.createMenu('⑤ Maintenance')
       .addItem('Backfill Missing Actuals', 'menuMaintenanceBackfillActuals_')
       .addItem('Backfill Market Reaction', 'menuMaintenanceBackfillMarketReaction_')
+      .addItem('Build Outcome Ledger', 'menuBuildOutcomeLedgerSheet_')
+      .addItem('Build Outcome Summaries', 'menuBuildOutcomeSummaries_')
+      .addItem('Build Outcome Diagnostics', 'menuBuildOutcomeDiagnostics_')
       .addItem('Rebuild Logs / Diagnostics', 'menuMaintenanceDiagnostics_')
       .addItem('System Health Check', 'menuMaintenanceHealthCheck_')
   );
