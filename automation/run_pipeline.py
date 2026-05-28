@@ -1,5 +1,7 @@
 import argparse
 import json
+import os
+import signal
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -11,11 +13,173 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 OUTPUT_DIR = ROOT / "automation_runs"
+LIVE_LOG_DIR = OUTPUT_DIR / "live_logs"
+LOCK_DIR = ROOT / "automation_locks"
 DEFAULT_SPREADSHEET_ID = "1_gZGnd6h3VzdiBvGBHRSxn78KW8tsOi2UEc6Y_Sc23Q"
 
 
 def _iso_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _lock_key(mode: str, params: Dict[str, Any]) -> str:
+    return "|".join([
+        str(mode or ""),
+        str(params.get("window_from_local") or ""),
+        str(params.get("window_to_local") or ""),
+        str(params.get("window_tz") or ""),
+        ",".join(str(p) for p in (params.get("providers") or [])),
+    ])
+
+
+def _lock_path(mode: str, params: Dict[str, Any]) -> Path:
+    safe = _lock_key(mode, params)
+    safe = safe.replace("/", "_").replace(":", "_").replace(" ", "_").replace("|", "__").replace(",", "_")
+    return LOCK_DIR / f"{safe}.lock"
+
+
+def _pid_is_alive(pid: Any) -> bool:
+    try:
+        pid_int = int(pid)
+    except Exception:
+        return False
+    if pid_int <= 0:
+        return False
+    try:
+        os.kill(pid_int, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    except Exception:
+        return False
+
+
+def _write_lock_details(lock_path: Path, details: Dict[str, Any]) -> None:
+    if not lock_path:
+        return
+    lock_path.write_text(json.dumps(details, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _append_run_log(log_path: Path, message: str, **fields) -> None:
+    if not log_path:
+        return
+    payload = {"ts": _iso_now(), "message": message}
+    payload.update(fields or {})
+    try:
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with log_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
+
+
+def _update_run_lock(lock_path: Path, **fields) -> None:
+    if not lock_path or not lock_path.exists():
+        return
+    try:
+        details = json.loads(lock_path.read_text(encoding="utf-8"))
+    except Exception:
+        details = {}
+    details.update(fields)
+    details["updated_at"] = _iso_now()
+    _write_lock_details(lock_path, details)
+
+
+def _runner_call_timeout_sec() -> int:
+    try:
+        return max(0, int(os.getenv("PRESIGNAL_RUNNER_CALL_TIMEOUT_SEC", "900")))
+    except Exception:
+        return 900
+
+
+def _prediction_phase_timeout_sec() -> int:
+    try:
+        return max(0, int(os.getenv("PRESIGNAL_PREDICTION_PHASE_TIMEOUT_SEC", "2700")))
+    except Exception:
+        return 2700
+
+
+def _prediction_max_degrades() -> int:
+    try:
+        return max(0, int(os.getenv("PRESIGNAL_PREDICTION_MAX_DEGRADES", "6")))
+    except Exception:
+        return 6
+
+
+class _RunnerCallTimeout:
+    def __init__(self, seconds: int, label: str):
+        self.seconds = max(0, int(seconds or 0))
+        self.label = label
+        self._previous_handler = None
+
+    def _handle_timeout(self, signum, frame):
+        raise TimeoutError(f"runner call timeout after {self.seconds}s during {self.label}")
+
+    def __enter__(self):
+        if self.seconds <= 0 or not hasattr(signal, "SIGALRM"):
+            return self
+        self._previous_handler = signal.getsignal(signal.SIGALRM)
+        signal.signal(signal.SIGALRM, self._handle_timeout)
+        signal.setitimer(signal.ITIMER_REAL, float(self.seconds))
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        if self.seconds > 0 and hasattr(signal, "SIGALRM"):
+            signal.setitimer(signal.ITIMER_REAL, 0.0)
+            if self._previous_handler is not None:
+                signal.signal(signal.SIGALRM, self._previous_handler)
+        return False
+
+
+def _acquire_run_lock(mode: str, params: Dict[str, Any]) -> Path:
+    LOCK_DIR.mkdir(parents=True, exist_ok=True)
+    lock_path = _lock_path(mode, params)
+    try:
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError as exc:
+        try:
+            details = json.loads(lock_path.read_text(encoding="utf-8"))
+        except Exception:
+            details = {"path": str(lock_path)}
+        stale_pid = details.get("pid")
+        if stale_pid and not _pid_is_alive(stale_pid):
+            try:
+                lock_path.unlink(missing_ok=True)
+            except Exception:
+                pass
+            fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        else:
+            raise RuntimeError(
+                "Another local runner is already active for this same window. "
+                f"Lock file: {lock_path} Details: {details}"
+            ) from exc
+
+    with os.fdopen(fd, "w", encoding="utf-8") as handle:
+        json.dump(
+            {
+                "pid": os.getpid(),
+                "started_at": _iso_now(),
+                "updated_at": _iso_now(),
+                "mode": mode,
+                "phase": "starting",
+                "params": params,
+            },
+            handle,
+            ensure_ascii=False,
+            indent=2,
+        )
+    return lock_path
+
+
+def _release_run_lock(lock_path: Path) -> None:
+    if not lock_path:
+        return
+    try:
+        lock_path.unlink(missing_ok=True)
+    except Exception:
+        pass
 
 
 def _parse_iso(value: str):
@@ -25,6 +189,82 @@ def _parse_iso(value: str):
         return datetime.fromisoformat(value.replace("Z", "+00:00"))
     except Exception:
         return None
+
+
+def _runner_error_metadata(exc: Exception) -> Dict[str, Any]:
+    text = str(exc or "")
+    lower = text.lower()
+
+    if "runner call timeout after" in lower:
+        return {
+            "runner_error_kind": "runner_call_timeout",
+            "runner_error_stage": "network_runtime",
+            "runner_error_action": (
+                "A runner API call exceeded the wall-clock timeout. "
+                "Retry later or lower workload/provider pressure."
+            ),
+        }
+
+    if "prediction phase timeout after" in lower:
+        return {
+            "runner_error_kind": "prediction_phase_timeout",
+            "runner_error_stage": "prediction_runtime",
+            "runner_error_action": (
+                "Prediction recovery took too long across many small passes. "
+                "Retry later or reduce provider/work-unit pressure."
+            ),
+        }
+
+    if "prediction degraded too many times" in lower:
+        return {
+            "runner_error_kind": "prediction_degrade_limit",
+            "runner_error_stage": "prediction_runtime",
+            "runner_error_action": (
+                "Prediction recovery required too many degraded retries. "
+                "Retry later or reduce provider/work-unit pressure."
+            ),
+        }
+
+    if any(token in lower for token in [
+        "unable to find the server",
+        "failed to resolve",
+        "name resolution",
+        "nodename nor servname provided",
+        "gaierror",
+    ]):
+        return {
+            "runner_error_kind": "google_dns_resolution_failure",
+            "runner_error_stage": "network_preflight",
+            "runner_error_action": (
+                "Google host resolution failed before prediction logic started. "
+                "Retry only after DNS/network stabilizes."
+            ),
+        }
+
+    if "read operation timed out" in lower or "socket.timeout" in lower:
+        return {
+            "runner_error_kind": "google_api_timeout",
+            "runner_error_stage": "network_runtime",
+            "runner_error_action": (
+                "Google API transport timed out mid-run. "
+                "Retry later or reduce workload/provider pressure."
+            ),
+        }
+
+    if "eof occurred in violation of protocol" in lower or "_ssl.c:1129" in lower:
+        return {
+            "runner_error_kind": "google_tls_eof",
+            "runner_error_stage": "network_runtime",
+            "runner_error_action": (
+                "Google API transport dropped the TLS connection mid-run. "
+                "Retry later; if predictions already completed, this may be a post-prediction readback failure."
+            ),
+        }
+
+    return {
+        "runner_error_kind": "runner_exception",
+        "runner_error_stage": "unknown",
+    }
 
 
 def _parse_local_day(day_value: str) -> datetime:
@@ -207,6 +447,19 @@ def _window_bounds_from_params(params: Dict[str, Any]):
         return None, None
 
 
+def _format_local_minute(dt_utc: datetime, tz_name: str) -> str:
+    tzinfo = ZoneInfo(tz_name or "UTC")
+    return dt_utc.astimezone(tzinfo).strftime("%Y-%m-%d %H:%M")
+
+
+def _cluster_window_params(base_params: Dict[str, Any], release_dt_utc: datetime) -> Dict[str, Any]:
+    params = dict(base_params)
+    tz_name = str(base_params.get("window_tz") or "UTC")
+    params["window_from_local"] = _format_local_minute(release_dt_utc, tz_name)
+    params["window_to_local"] = _format_local_minute(release_dt_utc + timedelta(minutes=1), tz_name)
+    return params
+
+
 def _filter_dict_rows_by_release_window(rows: List[Dict[str, Any]], lo, hi) -> List[Dict[str, Any]]:
     if not lo or not hi:
         return rows
@@ -216,6 +469,127 @@ def _filter_dict_rows_by_release_window(rows: List[Dict[str, Any]], lo, hi) -> L
         if dt and lo <= dt < hi:
             out.append(row)
     return out
+
+
+def _dict_rows_from_sheet_values(values: List[List[Any]]) -> List[Dict[str, Any]]:
+    if not values:
+        return []
+    header = [str(name or "").strip() for name in values[0]]
+    rows: List[Dict[str, Any]] = []
+    for raw in values[1:]:
+        rows.append({name: (raw[i] if i < len(raw) else "") for i, name in enumerate(header) if name})
+    return rows
+
+
+def _read_event_rows_for_window(
+    sheets_service,
+    spreadsheet_id: str,
+    params: Dict[str, Any],
+) -> List[Dict[str, Any]]:
+    from automation.google_clients import get_sheet_values
+
+    values = get_sheet_values(sheets_service, spreadsheet_id, "Event!A:AZ")
+    rows = _dict_rows_from_sheet_values(values)
+    lo, hi = _window_bounds_from_params(params)
+    return _filter_dict_rows_by_release_window(rows, lo, hi)
+
+
+def _event_cluster_preflight(
+    event_rows: List[Dict[str, Any]],
+    provider_count: int,
+) -> Dict[str, Any]:
+    clusters: Dict[str, Dict[str, Any]] = {}
+    for row in event_rows or []:
+        release_ts = str(row.get("release_ts") or "").strip()
+        release_dt = _parse_iso(release_ts)
+        if not release_dt:
+            continue
+        key = release_dt.isoformat().replace("+00:00", "Z")
+        cluster = clusters.setdefault(
+            key,
+            {
+                "release_ts": key,
+                "release_dt": release_dt,
+                "event_count": 0,
+                "member_count": 0,
+                "genres": set(),
+                "families": set(),
+                "batch_ids": set(),
+            },
+        )
+        cluster["event_count"] += 1
+        if str(row.get("type") or "").lower() == "member":
+            cluster["member_count"] += 1
+        genre = str(row.get("genre") or "").strip()
+        if genre:
+            cluster["genres"].add(genre)
+        family = _infer_testing_family_key(str(row.get("indicator_name") or ""))
+        if family:
+            cluster["families"].add(family)
+        batch_id = str(row.get("batch_id") or "").strip()
+        if batch_id:
+            cluster["batch_ids"].add(batch_id)
+
+    cluster_list = sorted(clusters.values(), key=lambda item: item["release_dt"])
+    max_cluster_events = max([int(c["event_count"]) for c in cluster_list] or [0])
+    max_cluster_members = max([int(c["member_count"]) for c in cluster_list] or [0])
+    max_cluster_genres = max([len(c["genres"]) for c in cluster_list] or [0])
+    max_cluster_families = max([len(c["families"]) for c in cluster_list] or [0])
+    estimated_provider_rows = sum(int(c["event_count"]) for c in cluster_list) * max(1, int(provider_count or 0))
+
+    reasons: List[str] = []
+    if max_cluster_members >= 10 or max_cluster_events >= 12:
+        reasons.append("large_same_time_cluster")
+    if max_cluster_genres >= 3 or max_cluster_families >= 3:
+        reasons.append("mixed_family_cluster")
+    if estimated_provider_rows >= 60:
+        reasons.append("high_estimated_provider_rows")
+
+    serializable_clusters = []
+    for c in cluster_list:
+        serializable_clusters.append({
+            "release_ts": c["release_ts"],
+            "event_count": c["event_count"],
+            "member_count": c["member_count"],
+            "genres": sorted(c["genres"]),
+            "families": sorted(c["families"]),
+            "batch_ids": sorted(c["batch_ids"]),
+        })
+
+    return {
+        "event_count": len(event_rows or []),
+        "cluster_count": len(cluster_list),
+        "max_cluster_events": max_cluster_events,
+        "max_cluster_members": max_cluster_members,
+        "max_cluster_genres": max_cluster_genres,
+        "max_cluster_families": max_cluster_families,
+        "estimated_provider_rows": estimated_provider_rows,
+        "heavy": bool(reasons),
+        "reasons": reasons,
+        "clusters": serializable_clusters,
+        "_cluster_dates": [c["release_dt"] for c in cluster_list],
+    }
+
+
+def _preflight_cluster_by_release(preflight: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    return {
+        str(cluster.get("release_ts") or ""): cluster
+        for cluster in (preflight.get("clusters") or [])
+        if str(cluster.get("release_ts") or "")
+    }
+
+
+def _cluster_work_unit_cap(cluster: Dict[str, Any], default_cap: int) -> int:
+    event_count = _safe_int(cluster.get("event_count"))
+    member_count = _safe_int(cluster.get("member_count"))
+    genres = cluster.get("genres") if isinstance(cluster.get("genres"), list) else []
+    families = cluster.get("families") if isinstance(cluster.get("families"), list) else []
+    cap = max(1, min(int(default_cap or 1), 4))
+    if event_count >= 8 or member_count >= 6 or len(genres) >= 3 or len(families) >= 3:
+        return 1
+    if event_count >= 4 or member_count >= 3:
+        return min(cap, 2)
+    return cap
 
 
 def _safe_int(value: Any) -> int:
@@ -237,12 +611,20 @@ def _infer_testing_family_key(indicator_name: str) -> str:
         return "ism"
     if name.startswith("mba "):
         return "mba_mortgage"
+    if "richmond fed" in name:
+        return "regional_fed_survey"
     if "jobless claims" in name:
         return "jobless_claims"
+    if "case-shiller home price" in name or "house price index" in name:
+        return "home_prices"
     if "payroll" in name or "unemployment rate" in name or "average hourly earnings" in name:
         return "monthly_labor"
     if "cpi" in name or "inflation rate" in name or "retail sales" in name:
         return "macro_inflation_retail"
+    if "pce price index" in name or "core pce price index" in name or "personal income" in name or "personal spending" in name:
+        return "pce_income_spending"
+    if "michigan" in name or "consumer sentiment" in name:
+        return "michigan_sentiment"
     if "speech" in name or "press conference" in name or "testimony" in name:
         return "fed_speeches"
     if "minutes" in name or "beige book" in name or "statement" in name or "report" in name:
@@ -257,7 +639,8 @@ def _parse_log_context(row: Dict[str, Any]) -> Dict[str, Any]:
     if isinstance(raw, dict):
         return raw
     try:
-        return json.loads(raw or "{}")
+        parsed = json.loads(raw or "{}")
+        return parsed if isinstance(parsed, dict) else {}
     except Exception:
         return {}
 
@@ -425,6 +808,28 @@ def _build_testing_framework_(artifact: Dict[str, Any], scenario_rows: List[Dict
                 "Watch this provider on similar days; if it keeps happening, adjust retry policy or provider usage.",
             )
 
+    pred_step = ((artifact.get("pipeline_result") or {}).get("steps") or {}).get("predictions") or {}
+    degraded_groups = [
+        group for group in (pred_step.get("groups", []) or [])
+        if str(group.get("status") or "").lower() == "provider_degraded_timeout"
+    ]
+    if degraded_groups:
+        add_finding(
+            "provider_policy",
+            "medium",
+            "A provider was dropped after repeated timeout failures",
+            {
+                "degraded_providers": [
+                    {
+                        "provider": group.get("degraded_provider") or ",".join(group.get("providers", [])),
+                        "error": group.get("error", ""),
+                    }
+                    for group in degraded_groups
+                ],
+            },
+            "Keep the run moving with the remaining providers, and review whether this provider should stay disabled or be retried only on lighter days.",
+        )
+
     if predictions and not scenario_rows and not batch_rows:
         add_finding(
             "evaluation_coverage",
@@ -435,9 +840,8 @@ def _build_testing_framework_(artifact: Dict[str, Any], scenario_rows: List[Dict
         )
 
     runtime_markers = []
-    pred_step = ((artifact.get("pipeline_result") or {}).get("steps") or {}).get("predictions") or {}
     for group in pred_step.get("groups", []) or []:
-        if group.get("status") in ("timeout_fallback_to_provider_split", "partial"):
+        if group.get("status") in ("provider_split_first", "timeout_fallback_to_provider_split", "partial", "provider_degraded_timeout"):
             runtime_markers.append(group.get("status"))
         for p in group.get("passes", []) or []:
             if p.get("recovery"):
@@ -609,6 +1013,9 @@ def _is_transport_timeout_error(exc: Exception) -> bool:
             "ssleoferror",
             "eof occurred in violation of protocol",
             "eof occurred",
+            "internal error encountered",
+            "httperror 500",
+            "status code 500",
         ]
     )
 
@@ -638,12 +1045,19 @@ def _run_prediction_group_(
     providers: List[str],
     per_call_passes: int,
     cap_sequence: List[int],
+    allow_degraded_single_provider: bool = False,
+    lock_path: Path = None,
+    log_path: Path = None,
 ) -> Dict[str, Any]:
     from automation.google_clients import run_script_function
 
     passes = []
     clear_checkpoint = True
     final = None
+    phase_started_at = datetime.now(timezone.utc)
+    phase_timeout_sec = _prediction_phase_timeout_sec()
+    max_degrades = _prediction_max_degrades()
+    degrade_count = 0
     max_rounds = max(
         1,
         int(base_params.get("prediction_round_limit", int(base_params.get("max_passes", 12)) * 6))
@@ -651,6 +1065,12 @@ def _run_prediction_group_(
     cap_index = 0
 
     for _ in range(max_rounds):
+        phase_elapsed_sec = int((datetime.now(timezone.utc) - phase_started_at).total_seconds())
+        if phase_timeout_sec and phase_elapsed_sec >= phase_timeout_sec:
+            raise RuntimeError(
+                "prediction phase timeout after "
+                f"{phase_elapsed_sec}s for providers={providers or ['ALL']}"
+            )
         current_cap = cap_sequence[min(cap_index, len(cap_sequence) - 1)]
         _apply_prediction_runtime_config(
             sheets_service,
@@ -660,21 +1080,53 @@ def _run_prediction_group_(
         )
         call_started_iso = _iso_now()
         try:
-            resp = run_script_function(
-                script_service,
-                script_id,
-                "apiRunPredictionsWindow",
-                [{
-                    "window_from_local": base_params["window_from_local"],
-                    "window_to_local": base_params["window_to_local"],
-                    "window_tz": base_params["window_tz"],
-                    "providers": providers,
-                    "clear_checkpoint": clear_checkpoint,
-                    "continue_until_done": False,
-                    "max_passes": 1,
-                }],
+            _append_run_log(
+                log_path,
+                "prediction_group_call_start",
+                providers=providers,
+                pred_max_work_units_per_run=current_cap,
+                clear_checkpoint=clear_checkpoint,
+                prediction_phase_elapsed_sec=phase_elapsed_sec,
+                prediction_degrade_count=degrade_count,
             )
+            _update_run_lock(
+                lock_path,
+                phase="predictions",
+                providers=providers,
+                pred_max_work_units_per_run=current_cap,
+                clear_checkpoint=clear_checkpoint,
+                prediction_phase_elapsed_sec=phase_elapsed_sec,
+                prediction_phase_timeout_sec=phase_timeout_sec,
+                prediction_degrade_count=degrade_count,
+                prediction_max_degrades=max_degrades,
+            )
+            with _RunnerCallTimeout(
+                _runner_call_timeout_sec(),
+                f"apiRunPredictionsWindow providers={','.join(providers or ['ALL'])}",
+            ):
+                resp = run_script_function(
+                    script_service,
+                    script_id,
+                    "apiRunPredictionsWindow",
+                    [{
+                        "window_from_local": base_params["window_from_local"],
+                        "window_to_local": base_params["window_to_local"],
+                        "window_tz": base_params["window_tz"],
+                        "providers": providers,
+                        "clear_checkpoint": clear_checkpoint,
+                        "continue_until_done": False,
+                        "max_passes": 1,
+                    }],
+                )
             clear_checkpoint = False
+            _append_run_log(
+                log_path,
+                "prediction_group_call_ok",
+                providers=providers,
+                pred_max_work_units_per_run=current_cap,
+                status=str((resp or {}).get("prediction_final", {}).get("status") or "ok").lower(),
+                remaining_work_units=int((resp or {}).get("prediction_final", {}).get("remaining_work_units") or 0),
+            )
             passes.append({
                 "providers": providers,
                 "pred_max_work_units_per_run": current_cap,
@@ -697,14 +1149,31 @@ def _run_prediction_group_(
                     call_started_iso,
                 )
             if recovered_summary:
+                degrade_count += 1
+                _append_run_log(
+                    log_path,
+                    "prediction_group_recovered_from_logs",
+                    providers=providers,
+                    pred_max_work_units_per_run=current_cap,
+                    error=str(exc),
+                    prediction_phase_elapsed_sec=phase_elapsed_sec,
+                    prediction_degrade_count=degrade_count,
+                )
                 clear_checkpoint = False
                 passes.append({
                     "providers": providers,
                     "pred_max_work_units_per_run": current_cap,
                     "transport_error": str(exc),
                     "recovery": "log_summary_resume",
+                    "prediction_phase_elapsed_sec": phase_elapsed_sec,
+                    "prediction_degrade_count": degrade_count,
                     "summary": recovered_summary,
                 })
+                if max_degrades and degrade_count > max_degrades:
+                    raise RuntimeError(
+                        "prediction degraded too many times after "
+                        f"{phase_elapsed_sec}s for providers={providers or ['ALL']}"
+                    )
                 final = recovered_summary
                 if str(final.get("status", "")).lower() != "partial":
                     break
@@ -712,26 +1181,85 @@ def _run_prediction_group_(
                     break
                 continue
             if _is_transport_timeout_error(exc) and cap_index < len(cap_sequence) - 1:
+                degrade_count += 1
+                _append_run_log(
+                    log_path,
+                    "prediction_group_shrink_work_unit_cap",
+                    providers=providers,
+                    pred_max_work_units_per_run=current_cap,
+                    error=str(exc),
+                    next_cap=cap_sequence[min(cap_index + 1, len(cap_sequence) - 1)],
+                    prediction_phase_elapsed_sec=phase_elapsed_sec,
+                    prediction_degrade_count=degrade_count,
+                )
                 passes.append({
                     "providers": providers,
                     "pred_max_work_units_per_run": current_cap,
                     "transport_error": str(exc),
                     "recovery": "shrink_work_unit_cap",
+                    "prediction_phase_elapsed_sec": phase_elapsed_sec,
+                    "prediction_degrade_count": degrade_count,
                 })
+                if max_degrades and degrade_count > max_degrades:
+                    raise RuntimeError(
+                        "prediction degraded too many times after "
+                        f"{phase_elapsed_sec}s for providers={providers or ['ALL']}"
+                    )
                 clear_checkpoint = False
                 cap_index += 1
                 continue
+            if allow_degraded_single_provider and _is_transport_timeout_error(exc) and len(providers) == 1:
+                degrade_count += 1
+                _append_run_log(
+                    log_path,
+                    "prediction_group_drop_provider_timeout",
+                    providers=providers,
+                    pred_max_work_units_per_run=current_cap,
+                    error=str(exc),
+                    prediction_phase_elapsed_sec=phase_elapsed_sec,
+                    prediction_degrade_count=degrade_count,
+                )
+                passes.append({
+                    "providers": providers,
+                    "pred_max_work_units_per_run": current_cap,
+                    "transport_error": str(exc),
+                    "recovery": "drop_provider_timeout",
+                    "prediction_phase_elapsed_sec": phase_elapsed_sec,
+                    "prediction_degrade_count": degrade_count,
+                })
+                return {
+                    "providers": providers,
+                    "passes": passes,
+                    "final": {},
+                    "status": "provider_degraded_timeout",
+                    "degraded_provider": providers[0],
+                    "error": str(exc),
+                    "pred_max_work_units_per_run": cap_sequence[min(cap_index, len(cap_sequence) - 1)],
+                    "prediction_phase_elapsed_sec": phase_elapsed_sec,
+                    "prediction_degrade_count": degrade_count,
+                }
             raise RuntimeError(
                 f"Prediction group failed for providers={providers or ['ALL']} "
                 f"at work_units={current_cap}: {exc}"
             ) from exc
 
+    _append_run_log(
+        log_path,
+        "prediction_group_complete",
+        providers=providers,
+        status=str((final or {}).get("status") or "ok").lower(),
+        remaining_work_units=int((final or {}).get("remaining_work_units") or 0),
+        prediction_phase_elapsed_sec=int((datetime.now(timezone.utc) - phase_started_at).total_seconds()),
+        prediction_degrade_count=degrade_count,
+    )
     return {
         "providers": providers,
         "passes": passes,
         "final": final or {},
         "status": str((final or {}).get("status") or "ok").lower(),
         "pred_max_work_units_per_run": cap_sequence[min(cap_index, len(cap_sequence) - 1)],
+        "prediction_phase_elapsed_sec": int((datetime.now(timezone.utc) - phase_started_at).total_seconds()),
+        "prediction_degrade_count": degrade_count,
     }
 
 
@@ -743,34 +1271,32 @@ def _run_prediction_sequence(
     base_params: Dict[str, Any],
     per_call_passes: int,
     pred_max_work_units_per_run: int,
+    lock_path: Path = None,
+    log_path: Path = None,
+    provider_split_first: bool = False,
+    provider_split_cap: int = None,
 ) -> Dict[str, Any]:
     provider_list = list(base_params.get("providers") or [])
+    allow_provider_split = str(base_params.get("runner_mode") or "").lower() == "day-run"
     cap_sequence = _prediction_cap_sequence(pred_max_work_units_per_run)
     group_runs = []
+    degraded_providers: List[Dict[str, Any]] = []
 
-    try:
-        primary = _run_prediction_group_(
-            script_service,
-            script_id,
-            sheets_service,
-            spreadsheet_id,
-            base_params,
-            provider_list,
-            per_call_passes,
-            cap_sequence,
-        )
-        group_runs.append(primary)
-    except Exception as exc:
-        if not provider_list or len(provider_list) <= 1 or not _is_transport_timeout_error(exc):
-            raise
+    def run_provider_split(status: str, error: str = "") -> None:
         group_runs.append({
             "providers": provider_list,
-            "status": "timeout_fallback_to_provider_split",
-            "error": str(exc),
+            "status": status,
+            "error": error,
         })
-        single_cap_sequence = _prediction_cap_sequence(min(pred_max_work_units_per_run, 2))
+        _append_run_log(
+            log_path,
+            "prediction_sequence_provider_split_first" if status == "provider_split_first" else "prediction_sequence_provider_split_fallback",
+            providers=provider_list,
+            error=error,
+        )
+        single_cap_sequence = _prediction_cap_sequence(min(int(provider_split_cap or pred_max_work_units_per_run), 2))
         for provider in provider_list:
-            group_runs.append(_run_prediction_group_(
+            group = _run_prediction_group_(
                 script_service,
                 script_id,
                 sheets_service,
@@ -779,7 +1305,50 @@ def _run_prediction_sequence(
                 [provider],
                 per_call_passes,
                 single_cap_sequence,
-            ))
+                allow_degraded_single_provider=True,
+                lock_path=lock_path,
+                log_path=log_path,
+            )
+            group_runs.append(group)
+            if str(group.get("status") or "").lower() == "provider_degraded_timeout":
+                degraded_providers.append({
+                    "provider": provider,
+                    "error": group.get("error", ""),
+                })
+
+        if degraded_providers and not any(group.get("final") for group in group_runs):
+            degraded_names = [d.get("provider", "") for d in degraded_providers if d.get("provider")]
+            raise RuntimeError(
+                "All providers degraded after repeated timeout failures: "
+                + ", ".join(degraded_names or ["unknown"])
+            )
+
+    if provider_split_first and allow_provider_split and provider_list and len(provider_list) > 1:
+        run_provider_split("provider_split_first")
+    else:
+        try:
+            primary = _run_prediction_group_(
+                script_service,
+                script_id,
+                sheets_service,
+                spreadsheet_id,
+                base_params,
+                provider_list,
+                per_call_passes,
+                cap_sequence,
+                lock_path=lock_path,
+                log_path=log_path,
+            )
+            group_runs.append(primary)
+        except Exception as exc:
+            if (
+                not allow_provider_split
+                or not provider_list
+                or len(provider_list) <= 1
+                or not _is_transport_timeout_error(exc)
+            ):
+                raise
+            run_provider_split("timeout_fallback_to_provider_split", str(exc))
 
     _apply_prediction_runtime_config(
         sheets_service,
@@ -809,6 +1378,127 @@ def _run_prediction_sequence(
         "final": finals[-1]["prediction_final"] if finals else {},
         "finals_by_group": finals,
         "status": final_status,
+        "degraded_providers": degraded_providers,
+    }
+
+
+def _run_heavy_prediction_sequence(
+    script_service,
+    script_id: str,
+    sheets_service,
+    spreadsheet_id: str,
+    base_params: Dict[str, Any],
+    per_call_passes: int,
+    pred_max_work_units_per_run: int,
+    preflight: Dict[str, Any],
+    lock_path: Path = None,
+    log_path: Path = None,
+) -> Dict[str, Any]:
+    cluster_dates = list(preflight.get("_cluster_dates") or [])
+    if not cluster_dates:
+        raise RuntimeError("Heavy-day prediction mode requested but no release clusters were found.")
+
+    window_runs = []
+    degraded_providers: List[Dict[str, Any]] = []
+    flat_passes = []
+    final_status = "ok"
+    cluster_by_release = _preflight_cluster_by_release(preflight)
+
+    _append_run_log(
+        log_path,
+        "heavy_prediction_sequence_start",
+        cluster_count=len(cluster_dates),
+        reasons=preflight.get("reasons", []),
+    )
+
+    for release_dt in cluster_dates:
+        cluster_params = _cluster_window_params(base_params, release_dt)
+        release_key = release_dt.isoformat().replace("+00:00", "Z")
+        cluster = cluster_by_release.get(release_key, {})
+        provider_split_first = len(base_params.get("providers") or []) > 1
+        window_cap = _cluster_work_unit_cap(cluster, pred_max_work_units_per_run)
+        provider_split_cap = 2 if provider_split_first else None
+        _append_run_log(
+            log_path,
+            "heavy_prediction_window_start",
+            window_from_local=cluster_params["window_from_local"],
+            window_to_local=cluster_params["window_to_local"],
+            window_tz=cluster_params["window_tz"],
+            cluster_event_count=_safe_int(cluster.get("event_count")),
+            cluster_member_count=_safe_int(cluster.get("member_count")),
+            provider_split_first=provider_split_first,
+            window_pred_max_work_units_per_run=window_cap,
+            provider_split_cap=provider_split_cap,
+        )
+        _update_run_lock(
+            lock_path,
+            phase="predictions_heavy_window",
+            window_from_local=cluster_params["window_from_local"],
+            window_to_local=cluster_params["window_to_local"],
+            window_tz=cluster_params["window_tz"],
+            provider_split_first=provider_split_first,
+        )
+        result = _run_prediction_sequence(
+            script_service,
+            script_id,
+            sheets_service,
+            spreadsheet_id,
+            cluster_params,
+            per_call_passes,
+            window_cap,
+            lock_path=lock_path,
+            log_path=log_path,
+            provider_split_first=provider_split_first,
+            provider_split_cap=provider_split_cap,
+        )
+        window_runs.append({
+            "window_from_local": cluster_params["window_from_local"],
+            "window_to_local": cluster_params["window_to_local"],
+            "window_tz": cluster_params["window_tz"],
+            "cluster": cluster,
+            "provider_split_first": provider_split_first,
+            "window_pred_max_work_units_per_run": window_cap,
+            "provider_split_cap": provider_split_cap,
+            "result": result,
+        })
+        flat_passes.extend(result.get("passes") or [])
+        degraded_providers.extend(result.get("degraded_providers") or [])
+        if str(result.get("status") or "").lower() == "partial":
+            final_status = "partial"
+        _append_run_log(
+            log_path,
+            "heavy_prediction_window_complete",
+            window_from_local=cluster_params["window_from_local"],
+            window_to_local=cluster_params["window_to_local"],
+            status=result.get("status", "ok"),
+            degraded_providers=result.get("degraded_providers", []),
+        )
+
+    _apply_prediction_runtime_config(
+        sheets_service,
+        spreadsheet_id,
+        base_params,
+        pred_max_work_units_per_run,
+    )
+    _append_run_log(
+        log_path,
+        "heavy_prediction_sequence_complete",
+        cluster_count=len(cluster_dates),
+        status=final_status,
+    )
+
+    return {
+        "passes": flat_passes,
+        "groups": [],
+        "windows": window_runs,
+        "final": {},
+        "finals_by_group": [],
+        "status": final_status,
+        "degraded_providers": degraded_providers,
+        "heavy_day_mode": True,
+        "heavy_day_preflight": {
+            key: value for key, value in preflight.items() if key != "_cluster_dates"
+        },
     }
 
 
@@ -820,58 +1510,163 @@ def _run_pipeline_sequence(
     params: Dict[str, Any],
     prediction_passes_per_call: int,
     pred_max_work_units_per_run: int,
+    lock_path: Path = None,
+    log_path: Path = None,
 ) -> Dict[str, Any]:
     from automation.google_clients import run_script_function
 
     out: Dict[str, Any] = {"status": "ok", "steps": {}}
 
     if params.get("run_predictions", True):
-        pred = _run_prediction_sequence(
-            script_service,
-            script_id,
-            sheets_service,
-            spreadsheet_id,
-            params,
-            prediction_passes_per_call,
-            pred_max_work_units_per_run,
+        heavy_day_mode = str(params.get("heavy_day_mode") or "off").lower()
+        preflight = None
+        if str(params.get("runner_mode") or "").lower() == "day-run" and heavy_day_mode in ("auto", "force"):
+            try:
+                event_rows = _read_event_rows_for_window(sheets_service, spreadsheet_id, params)
+                preflight = _event_cluster_preflight(event_rows, len(params.get("providers") or []))
+                out["steps"]["heavy_day_preflight"] = {
+                    key: value for key, value in preflight.items() if key != "_cluster_dates"
+                }
+                _append_run_log(
+                    log_path,
+                    "heavy_day_preflight",
+                    heavy=preflight.get("heavy"),
+                    reasons=preflight.get("reasons", []),
+                    event_count=preflight.get("event_count", 0),
+                    cluster_count=preflight.get("cluster_count", 0),
+                    max_cluster_members=preflight.get("max_cluster_members", 0),
+                    max_cluster_genres=preflight.get("max_cluster_genres", 0),
+                    estimated_provider_rows=preflight.get("estimated_provider_rows", 0),
+                )
+            except Exception as exc:
+                out["steps"]["heavy_day_preflight_error"] = str(exc)
+                _append_run_log(log_path, "heavy_day_preflight_error", error=str(exc))
+
+        use_heavy = bool(
+            preflight
+            and (
+                heavy_day_mode == "force"
+                or (heavy_day_mode == "auto" and preflight.get("heavy"))
+            )
         )
+        if use_heavy:
+            pred = _run_heavy_prediction_sequence(
+                script_service,
+                script_id,
+                sheets_service,
+                spreadsheet_id,
+                params,
+                prediction_passes_per_call,
+                pred_max_work_units_per_run,
+                preflight,
+                lock_path=lock_path,
+                log_path=log_path,
+            )
+        else:
+            try:
+                pred = _run_prediction_sequence(
+                    script_service,
+                    script_id,
+                    sheets_service,
+                    spreadsheet_id,
+                    params,
+                    prediction_passes_per_call,
+                    pred_max_work_units_per_run,
+                    lock_path=lock_path,
+                    log_path=log_path,
+                )
+            except Exception as exc:
+                if (
+                    str(params.get("runner_mode") or "").lower() == "day-run"
+                    and heavy_day_mode in ("auto", "recovery")
+                    and _is_transport_timeout_error(exc)
+                ):
+                    if not preflight:
+                        event_rows = _read_event_rows_for_window(sheets_service, spreadsheet_id, params)
+                        preflight = _event_cluster_preflight(event_rows, len(params.get("providers") or []))
+                        out["steps"]["heavy_day_preflight"] = {
+                            key: value for key, value in preflight.items() if key != "_cluster_dates"
+                        }
+                    _append_run_log(
+                        log_path,
+                        "heavy_prediction_recovery_start",
+                        error=str(exc),
+                        reasons=preflight.get("reasons", []),
+                    )
+                    pred = _run_heavy_prediction_sequence(
+                        script_service,
+                        script_id,
+                        sheets_service,
+                        spreadsheet_id,
+                        params,
+                        prediction_passes_per_call,
+                        pred_max_work_units_per_run,
+                        preflight,
+                        lock_path=lock_path,
+                        log_path=log_path,
+                    )
+                    pred["recovered_from_full_day_error"] = str(exc)
+                else:
+                    raise
         out["steps"]["predictions"] = pred
         if pred.get("status") == "partial":
             out["status"] = "partial"
 
     if params.get("run_actuals"):
-        out["steps"]["actuals"] = run_script_function(
-            script_service,
-            script_id,
-            "apiFetchActualsWindow",
-            [{
-                "window_from_local": params["window_from_local"],
-                "window_to_local": params["window_to_local"],
-                "window_tz": params["window_tz"],
-            }],
-        )
+        _append_run_log(log_path, "pipeline_phase_start", phase="actuals")
+        _update_run_lock(lock_path, phase="actuals")
+        with _RunnerCallTimeout(_runner_call_timeout_sec(), "apiFetchActualsWindow"):
+            out["steps"]["actuals"] = run_script_function(
+                script_service,
+                script_id,
+                "apiFetchActualsWindow",
+                [{
+                    "window_from_local": params["window_from_local"],
+                    "window_to_local": params["window_to_local"],
+                    "window_tz": params["window_tz"],
+                }],
+            )
 
     if params.get("run_market_reaction"):
-        out["steps"]["market_reaction"] = run_script_function(
-            script_service,
-            script_id,
-            "apiScoreMarketReactionWindow",
-            [{
-                "window_from_local": params["window_from_local"],
-                "window_to_local": params["window_to_local"],
-                "window_tz": params["window_tz"],
-            }],
-        )
+        _append_run_log(log_path, "pipeline_phase_start", phase="market_reaction")
+        _update_run_lock(lock_path, phase="market_reaction")
+        with _RunnerCallTimeout(_runner_call_timeout_sec(), "apiScoreMarketReactionWindow"):
+            out["steps"]["market_reaction"] = run_script_function(
+                script_service,
+                script_id,
+                "apiScoreMarketReactionWindow",
+                [{
+                    "window_from_local": params["window_from_local"],
+                    "window_to_local": params["window_to_local"],
+                    "window_tz": params["window_tz"],
+                }],
+            )
 
     if params.get("build_evaluation", True):
-        out["steps"]["evaluation"] = run_script_function(
-            script_service,
-            script_id,
-            "apiBuildEvaluationSheets",
-            [],
-        )
+        _append_run_log(log_path, "pipeline_phase_start", phase="evaluation")
+        _update_run_lock(lock_path, phase="evaluation")
+        with _RunnerCallTimeout(_runner_call_timeout_sec(), "apiBuildEvaluationSheets"):
+            out["steps"]["evaluation"] = run_script_function(
+                script_service,
+                script_id,
+                "apiBuildEvaluationSheets",
+                [],
+            )
 
     return out
+
+
+def _safe_sheet_read(
+    sheets_service,
+    spreadsheet_id: str,
+    cell_range: str,
+) -> Dict[str, Any]:
+    from automation.google_clients import get_sheet_values
+
+    try:
+        return {"ok": True, "values": get_sheet_values(sheets_service, spreadsheet_id, cell_range)}
+    except Exception as exc:
+        return {"ok": False, "values": [], "error": str(exc), "range": cell_range}
 
 
 def main() -> None:
@@ -884,12 +1679,19 @@ def main() -> None:
     parser.add_argument("--spreadsheet-id", default=DEFAULT_SPREADSHEET_ID)
     parser.add_argument("--script-id", default="")
     parser.add_argument("--providers", default="", help="Comma-separated provider list")
+    parser.add_argument("--skip-predictions", action="store_true")
     parser.add_argument("--run-actuals", action="store_true")
     parser.add_argument("--run-market-reaction", action="store_true")
     parser.add_argument("--skip-evaluation", action="store_true")
     parser.add_argument("--max-passes", type=int, default=12)
     parser.add_argument("--prediction-passes-per-call", type=int, default=2)
     parser.add_argument("--pred-max-work-units-per-run", type=int, default=12)
+    parser.add_argument(
+        "--heavy-day-mode",
+        default=os.environ.get("PRESIGNAL_HEAVY_DAY_MODE", "auto"),
+        choices=["off", "auto", "force", "recovery"],
+        help="day-run prediction strategy: off, auto preflight, force release-window chunks, or recovery fallback only",
+    )
     parser.add_argument("--output-dir", default=str(OUTPUT_DIR))
     parser.add_argument("--artifact", help="Existing artifact path for review-summary mode")
     args = parser.parse_args()
@@ -901,6 +1703,48 @@ def main() -> None:
         print(json.dumps(_build_run_summary(artifact, args.mode), ensure_ascii=False, indent=2))
         return
 
+    started_at = _iso_now()
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    LIVE_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    file_prefix = "day_run" if args.mode == "day-run" else "targeted_retest"
+    out_path = output_dir / f"{file_prefix}_{stamp}.json"
+    log_path = LIVE_LOG_DIR / f"{file_prefix}_{stamp}.log"
+    window_args = _resolve_window_args(args)
+
+    params: Dict[str, Any] = {
+        "window_from_local": window_args["window_from_local"],
+        "window_to_local": window_args["window_to_local"],
+        "window_tz": args.tz,
+        "providers": [p.strip() for p in args.providers.split(",") if p.strip()],
+        "run_predictions": not args.skip_predictions,
+        "run_actuals": args.run_actuals or args.mode == "day-run",
+        "run_market_reaction": args.run_market_reaction or args.mode == "day-run",
+        "build_evaluation": not args.skip_evaluation,
+        "continue_until_done": True,
+        "clear_checkpoint": True,
+        "max_passes": args.max_passes,
+        "prediction_round_limit": max(24, args.max_passes * 6),
+        "runner_mode": args.mode,
+        "heavy_day_mode": args.heavy_day_mode if args.mode == "day-run" else "off",
+    }
+    artifact: Dict[str, Any] = {
+        "started_at": started_at,
+        "mode": args.mode,
+        "run_log_path": str(log_path),
+        "config_update": {},
+        "pipeline_params": params,
+        "pipeline_result": {},
+        "predictions": [],
+        "logs": [],
+        "evaluation_scenario": [],
+        "evaluation_batch_compare": [],
+    }
+    lock_path = None
+    sheets_service = None
+    script_service = None
+
     from automation.google_clients import (
         batch_update_values,
         build_script_service,
@@ -911,80 +1755,117 @@ def main() -> None:
         run_script_function,
     )
 
-    if not args.script_id:
-        args.script_id = default_script_id()
+    try:
+        _append_run_log(
+            log_path,
+            "run_started",
+            mode=args.mode,
+            output_path=str(out_path),
+            window_from_local=params["window_from_local"],
+            window_to_local=params["window_to_local"],
+            window_tz=params["window_tz"],
+            providers=params.get("providers", []),
+        )
+        if not args.script_id:
+            args.script_id = default_script_id()
 
-    creds = load_credentials(interactive=False)
-    sheets_service = build_sheets_service(creds)
-    script_service = build_script_service(creds)
+        creds = load_credentials(interactive=False)
+        sheets_service = build_sheets_service(creds)
+        script_service = build_script_service(creds)
 
-    started_at = _iso_now()
-    window_args = _resolve_window_args(args)
-    config_update = _upsert_config_window(
-        sheets_service,
-        args.spreadsheet_id,
-        window_args["window_from_local"],
-        window_args["window_to_local"],
-        args.tz,
-        args.pred_max_work_units_per_run,
-    )
+        artifact["config_update"] = _upsert_config_window(
+            sheets_service,
+            args.spreadsheet_id,
+            window_args["window_from_local"],
+            window_args["window_to_local"],
+            args.tz,
+            args.pred_max_work_units_per_run,
+        )
+        lock_path = _acquire_run_lock(args.mode, params)
+        _update_run_lock(lock_path, phase="pipeline", run_log_path=str(log_path))
+        pipeline_result = _run_pipeline_sequence(
+            script_service,
+            args.script_id,
+            sheets_service,
+            args.spreadsheet_id,
+            params,
+            max(1, int(args.prediction_passes_per_call)),
+            max(1, int(args.pred_max_work_units_per_run)),
+            lock_path=lock_path,
+            log_path=log_path,
+        )
+        artifact["pipeline_result"] = pipeline_result
 
-    params: Dict[str, Any] = {
-        "window_from_local": window_args["window_from_local"],
-        "window_to_local": window_args["window_to_local"],
-        "window_tz": args.tz,
-        "providers": [p.strip() for p in args.providers.split(",") if p.strip()],
-        "run_predictions": True,
-        "run_actuals": args.run_actuals or args.mode == "day-run",
-        "run_market_reaction": args.run_market_reaction or args.mode == "day-run",
-        "build_evaluation": not args.skip_evaluation,
-        "continue_until_done": True,
-        "clear_checkpoint": True,
-        "max_passes": args.max_passes,
-        "prediction_round_limit": max(24, args.max_passes * 6),
-        "runner_mode": args.mode,
-    }
+        prediction_read = _safe_sheet_read(sheets_service, args.spreadsheet_id, "Predictions!A:DE")
+        log_read = _safe_sheet_read(sheets_service, args.spreadsheet_id, "log!A:D")
+        scenario_read = _safe_sheet_read(sheets_service, args.spreadsheet_id, "Evaluation_Scenario!A:AZ")
+        batch_read = _safe_sheet_read(sheets_service, args.spreadsheet_id, "Evaluation_BatchCompare!A:AZ")
 
-    pipeline_result = _run_pipeline_sequence(
-        script_service,
-        args.script_id,
-        sheets_service,
-        args.spreadsheet_id,
-        params,
-        max(1, int(args.prediction_passes_per_call)),
-        max(1, int(args.pred_max_work_units_per_run)),
-    )
+        readback_errors = [
+            {"sheet": "Predictions", **prediction_read} if not prediction_read["ok"] else None,
+            {"sheet": "log", **log_read} if not log_read["ok"] else None,
+            {"sheet": "Evaluation_Scenario", **scenario_read} if not scenario_read["ok"] else None,
+            {"sheet": "Evaluation_BatchCompare", **batch_read} if not batch_read["ok"] else None,
+        ]
+        readback_errors = [e for e in readback_errors if e]
+        if readback_errors:
+            artifact["readback_errors"] = readback_errors
 
-    prediction_rows = get_sheet_values(sheets_service, args.spreadsheet_id, "Predictions!A:CV")
-    log_rows = get_sheet_values(sheets_service, args.spreadsheet_id, "log!A:D")
-    scenario_rows = get_sheet_values(sheets_service, args.spreadsheet_id, "Evaluation_Scenario!A:AZ")
-    batch_compare_rows = get_sheet_values(sheets_service, args.spreadsheet_id, "Evaluation_BatchCompare!A:AZ")
+        artifact["predictions"] = _filter_predictions_since(prediction_read["values"], started_at) if prediction_read["ok"] else []
+        artifact["logs"] = _filter_logs(log_read["values"], started_at) if log_read["ok"] else []
+        artifact["evaluation_scenario"] = _filter_rows_since(scenario_read["values"], started_at, "generated_ts") if scenario_read["ok"] else []
+        artifact["evaluation_batch_compare"] = _filter_rows_since(batch_read["values"], started_at, "generated_ts") if batch_read["ok"] else []
+        artifact["summary"] = _build_run_summary(artifact, args.mode)
+        out_path.write_text(json.dumps(artifact, ensure_ascii=False, indent=2))
+        _append_run_log(
+            log_path,
+            "run_complete",
+            status=pipeline_result.get("status", "ok"),
+            artifact=str(out_path),
+            prediction_rows_captured=len(artifact["predictions"]),
+            scenario_rows_captured=len(artifact["evaluation_scenario"]),
+            batch_compare_rows_captured=len(artifact["evaluation_batch_compare"]),
+        )
+        _update_run_lock(lock_path, phase="complete", artifact=str(out_path), status=pipeline_result.get("status", "ok"))
 
-    artifact = {
-        "started_at": started_at,
-        "mode": args.mode,
-        "config_update": config_update,
-        "pipeline_params": params,
-        "pipeline_result": pipeline_result,
-        "predictions": _filter_predictions_since(prediction_rows, started_at),
-        "logs": _filter_logs(log_rows, started_at),
-        "evaluation_scenario": _filter_rows_since(scenario_rows, started_at, "generated_ts"),
-        "evaluation_batch_compare": _filter_rows_since(batch_compare_rows, started_at, "generated_ts"),
-    }
-    artifact["summary"] = _build_run_summary(artifact, args.mode)
-
-    output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    file_prefix = "day_run" if args.mode == "day-run" else "targeted_retest"
-    out_path = output_dir / f"{file_prefix}_{stamp}.json"
-    out_path.write_text(json.dumps(artifact, ensure_ascii=False, indent=2))
-
-    print(json.dumps({
-        "artifact": str(out_path),
-        "status": pipeline_result.get("status", "ok"),
-        "summary": artifact["summary"]
-    }, ensure_ascii=False, indent=2))
+        print(json.dumps({
+            "artifact": str(out_path),
+            "status": pipeline_result.get("status", "ok"),
+            "summary": artifact["summary"]
+        }, ensure_ascii=False, indent=2))
+    except Exception as exc:
+        artifact["runner_error"] = str(exc)
+        artifact.update(_runner_error_metadata(exc))
+        try:
+            artifact["summary"] = _build_run_summary(artifact, args.mode)
+        except Exception as summary_exc:
+            artifact["summary_error"] = str(summary_exc)
+        out_path.write_text(json.dumps(artifact, ensure_ascii=False, indent=2))
+        _append_run_log(
+            log_path,
+            "run_error",
+            artifact=str(out_path),
+            error=str(exc),
+            error_kind=artifact.get("runner_error_kind"),
+            error_stage=artifact.get("runner_error_stage"),
+        )
+        _update_run_lock(
+            lock_path,
+            phase="runner_error",
+            artifact=str(out_path),
+            status="runner_error",
+            error=str(exc),
+        )
+        print(json.dumps({
+            "artifact": str(out_path),
+            "status": "runner_error",
+            "error": str(exc),
+            "error_kind": artifact.get("runner_error_kind"),
+            "summary": artifact.get("summary", {}),
+        }, ensure_ascii=False, indent=2))
+        raise
+    finally:
+        _release_run_lock(lock_path)
 
 
 if __name__ == "__main__":

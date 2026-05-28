@@ -18,6 +18,24 @@ After that, the runner should reuse the same token without prompting again.
 
 Use this for untouched daily discovery runs.
 
+`day-run` uses heavy-day auto handling by default:
+
+- It reads the `Event` window before prediction.
+- It marks a day as heavy when same-time clusters are large, mixed across several genres/families, or have high estimated provider-row load.
+- Heavy days run predictions one release timestamp window at a time, then run actuals, market reaction, and evaluation once for the full day.
+- Heavy-day release windows run provider-by-provider first, rather than waiting for all-provider calls to timeout.
+- If a normal day-run hits a transport timeout, auto mode can retry predictions using the same release-window recovery path.
+
+Controls:
+
+```bash
+--heavy-day-mode auto      # default: preflight and switch when heavy
+--heavy-day-mode force     # always run prediction windows one release timestamp at a time
+--heavy-day-mode recovery  # normal first, release-window recovery after timeout
+--heavy-day-mode off       # old full-window prediction behavior
+--skip-predictions         # run post-prediction phases without redoing predictions
+```
+
 Example:
 
 ```bash
@@ -140,6 +158,7 @@ These wrappers avoid menu/UI flows and accept plain parameter objects only.
   - one prediction chunk per remote call
   - local resume from checkpoint between calls
   - optional work-unit shrink and provider fallback on transport issues
+  - automatic provider-first splitting for heavy-day release windows
 - `FOMC Minutes`, speeches, auctions, and other low-signal families can now be tested end-to-end without Codex reading the sheet interactively each time.
 - Suggested Family Rule Testing loop:
   1. `day-run` on the untouched day
