@@ -2219,6 +2219,16 @@ Supported prediction-specific keys include:
 - PRED_WINDOW_ENABLED / PRED_WINDOW_FROM_LOCAL / PRED_WINDOW_TO_LOCAL / PRED_WINDOW_TZ for prediction-only windowing
 - Legacy shared `WINDOW_*` values are used only as fallback by the prediction runner
 
+External automation runner controls:
+
+- `--heavy-day-mode auto`: default; preflight Event clusters and switch heavy days into release-window prediction chunks
+- `--heavy-day-mode force`: always use release-window prediction chunks for day-run predictions
+- `--heavy-day-mode recovery`: try the normal window first, then use release-window recovery after transport timeout
+- `--heavy-day-mode off`: preserve the old full-window prediction orchestration
+- `--skip-predictions`: run post-prediction phases without repeating provider calls
+
+These are local runner controls, not Apps Script sheet configuration keys.
+
 Supported market-reaction keys include:
 
 - `MR_PRIMARY_PROVIDER`
@@ -3551,6 +3561,14 @@ Operational notes:
 Trigger runs in non-UI context, so do not rely on popups.  
 Verify by checking the log sheet for actuals run messages (best effort; may be incomplete).  
 If SeriesMap is not maintained, the trigger can still resolve many rows through the direct FMP path; only fallback-only cases will remain unresolved due to “No SeriesMap match.”  
+
+### 18.3A Local heavy-day day-run automation
+
+The local Python runner supports adaptive day-run orchestration for historically heavy days. Before prediction, it can read the selected `Event` window and group events by release timestamp. A day is treated as heavy when same-time clusters are large, mixed across several genres/families, or have high estimated provider-row load.
+
+When heavy-day mode is active, predictions are executed one release timestamp window at a time. Each release window runs providers one at a time first, using the existing prediction checkpoint/resume mechanism within that window. This is intended to avoid all-provider transport stalls while preserving the same provider prompts, strict JSON contract, `(event_id, ai_name)` upsert identity, batch/member semantics, and decision-support wording.
+
+After prediction windows complete, the runner may run actuals, market reaction, and evaluation for the requested full day/window. If those post-prediction phases need to be retried, use `--skip-predictions` so provider predictions are not repeated.
 
 ---
 

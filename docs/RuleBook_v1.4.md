@@ -693,6 +693,24 @@ Logging:
 - `Prediction run partial summary` means the pass ended incomplete without a clean checkpoint handoff.
 - `Prediction run summary` means the selected window/providers/mode chain completed.
 
+### 5.3B External heavy-day automation mode
+
+The local Python automation runner may preflight a `day-run` by reading `Event` rows in the requested window and grouping them by release timestamp. This external preflight is an orchestration layer only; it must not change `Event`, `Predictions`, prediction identity semantics, strict JSON validation, or provider output interpretation.
+
+Heavy-day detection may switch prediction execution from one full-window provider call sequence into release-timestamp windows when same-time clusters are large, mixed across several genres/families, or estimated provider-row load is high. In heavy-day mode, release windows should run provider-by-provider first to avoid all-provider transport stalls.
+
+Required behavior:
+
+- Preserve append-only sheet/header rules.
+- Preserve `(event_id, ai_name)` prediction upsert behavior.
+- Preserve batch/member/type semantics.
+- Use checkpoint/resume behavior inside each release window.
+- Treat provider/timeouts as orchestration failures or degraded provider runs, not as changes to prediction logic.
+- Run actuals, market reaction, and evaluation after prediction windows when requested.
+- Use `--skip-predictions` for post-prediction cleanup passes so scoring can be retried without repeating AI calls.
+
+Supported local controls are `--heavy-day-mode auto`, `force`, `recovery`, and `off`. The default is `auto`.
+
 ---
 
 ### 5.4 Event selection rules (Event sheet → runner payload)
