@@ -74,6 +74,13 @@ Evaluation_BatchCompare
 Evaluation_Scenario
 Prediction_Aggregates
 Outcome_Ledger
+Outcome_Summary_ProviderFamily
+Outcome_Summary_Convergence
+Outcome_Summary_Bucket
+Outcome_Diagnostics
+Attention_Factor_Summary
+Provider_Character_Diagnostics
+Attention_Evidence_Report
 
 #### Optional / legacy / compatibility
 Config (optional): If present, the runner can read key-value configuration from it (best-effort; absence is allowed).
@@ -180,6 +187,22 @@ This sheet is derived-only and not canonical. Implementation details:
 - `outcome_score` and `outcome_bucket` are deterministic reporting labels
 - missing `Outcome_Ledger` headers are appended, and existing `Outcome_Ledger` headers are not reordered
 - `no_trade_advice_flag` remains `TRUE`
+
+#### Outcome and attention derived reporting headers
+
+The system also supports rebuilt derived reporting tabs for outcome and attention-era review:
+
+- `Outcome_Summary_ProviderFamily`
+- `Outcome_Summary_Convergence`
+- `Outcome_Summary_Bucket`
+- `Outcome_Diagnostics`
+- `Attention_Factor_Summary`
+- `Provider_Character_Diagnostics`
+- `Attention_Evidence_Report`
+
+These sheets are read-only over their source layers and rewrite only their own body rows. Missing headers are appended, existing header order is preserved, and the builders do not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or evaluation sheets.
+
+`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, and `Attention_Evidence_Report` are Phase 2 shadow-mode analysis layers. They expose selected reasoning-factor evidence and provider-character evidence for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
 
 #### log sheet headers (best-effort, non-reordering)
 

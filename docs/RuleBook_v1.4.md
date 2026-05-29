@@ -100,6 +100,13 @@ Evaluation_BatchCompare
 Evaluation_Scenario
 Prediction_Aggregates
 Outcome_Ledger
+Outcome_Summary_ProviderFamily
+Outcome_Summary_Convergence
+Outcome_Summary_Bucket
+Outcome_Diagnostics
+Attention_Factor_Summary
+Provider_Character_Diagnostics
+Attention_Evidence_Report
 
 **Legacy compatibility (read-only fallbacks in limited modules)**
 
@@ -310,6 +317,26 @@ batch_anchor_mode, batch_anchor_confidence, trace_prediction_key, eval_ts, eval_
 The builder is deterministic and read-only over `Predictions`. It deduplicates by canonical prediction identity `(event_id, ai_name)`, uses `prediction_id` as trace metadata only, keeps the newest row by `created_ts` then `eval_ts`, and labels outcomes for analysis without changing scoring or provider outputs. It may create or append missing `Outcome_Ledger` headers, but it must not reorder existing `Outcome_Ledger` headers.
 
 `Outcome_Ledger` is decision-support reporting only and must not present aggregate results as trade advice.
+
+---
+
+### 2.6E Outcome and attention derived reporting tabs
+
+The following reporting tabs are derived-only rebuilds and are not canonical sources of truth:
+
+- `Outcome_Summary_ProviderFamily`
+- `Outcome_Summary_Convergence`
+- `Outcome_Summary_Bucket`
+- `Outcome_Diagnostics`
+- `Attention_Factor_Summary`
+- `Provider_Character_Diagnostics`
+- `Attention_Evidence_Report`
+
+They may be created if missing, may append missing headers, and may clear/rewrite their own body rows. They must not reorder existing headers and must not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or existing evaluation sheets.
+
+`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, and `Attention_Evidence_Report` are Phase 2 shadow-mode analysis layers. They may summarize attention-era rows and provider-character evidence, but they must not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
+
+All rows remain decision-support reporting only and must not present direct action language.
 
 ---
 
