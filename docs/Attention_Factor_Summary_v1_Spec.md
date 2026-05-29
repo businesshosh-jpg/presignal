@@ -6,6 +6,8 @@
 
 It summarizes which shadow-mode attention factors providers selected and how those selections relate to scored outcomes. It is analysis-only and must not control prediction outputs, provider weighting, calibration, or signal generation.
 
+`Attention_Evidence_Report` may read this sheet as a source for compact Phase 2B evidence conclusions.
+
 ## Source Sheet
 
 - `Outcome_Ledger`

@@ -226,6 +226,37 @@ function menuBuildProviderCharacterDiagnostics_() {
   }
 }
 
+function menuBuildAttentionEvidenceReport_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildAttentionEvidenceReport_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Attention evidence report -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Attention evidence report rows=' + (res.rows_written || 0),
+      'Attention Evidence Report',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Attention evidence report -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function buildEvaluationSheets_() {
   var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
   if (!predSheet) throw new Error('Predictions sheet missing');
@@ -365,6 +396,10 @@ function getOrCreateProviderCharacterDiagnosticsSheet_() {
   return _getOrCreateSheet_('Provider_Character_Diagnostics');
 }
 
+function getOrCreateAttentionEvidenceReportSheet_() {
+  return _getOrCreateSheet_('Attention_Evidence_Report');
+}
+
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
@@ -379,6 +414,10 @@ function ensureAttentionFactorSummaryHeaders_(sheet) {
 
 function ensureProviderCharacterDiagnosticsHeaders_(sheet) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _providerCharacterDiagnosticsHeaders_());
+}
+
+function ensureAttentionEvidenceReportHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionEvidenceReportHeaders_());
 }
 
 function buildOutcomeSummaries_() {
@@ -545,6 +584,41 @@ function buildProviderCharacterDiagnostics_() {
   };
 }
 
+function buildAttentionEvidenceReport_() {
+  var summarySheet = getOrCreateAttentionFactorSummarySheet_();
+  var characterSheet = getOrCreateProviderCharacterDiagnosticsSheet_();
+  var reportSheet = getOrCreateAttentionEvidenceReportSheet_();
+
+  var summaryHeaders = getHeaderNames(summarySheet);
+  var characterHeaders = getHeaderNames(characterSheet);
+  if (!summaryHeaders || !summaryHeaders.length) {
+    throw new Error('Attention_Factor_Summary sheet is missing headers.');
+  }
+  if (!characterHeaders || !characterHeaders.length) {
+    throw new Error('Provider_Character_Diagnostics sheet is missing headers.');
+  }
+
+  var summaryRows = _readDataRows_(summarySheet);
+  var characterRows = _readDataRows_(characterSheet);
+  var summaryIdx = _headerIndexMap_(summaryHeaders);
+  var characterIdx = _headerIndexMap_(characterHeaders);
+  var headers = _attentionEvidenceReportHeaders_();
+  var rowsOut = buildAttentionEvidenceReportRows_(summaryRows, summaryIdx, characterRows, characterIdx, new Date().toISOString());
+  _sortAttentionEvidenceReportRows_(headers, rowsOut);
+
+  var actualHeaders = ensureAttentionEvidenceReportHeaders_(reportSheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    reportSheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+
+  return {
+    attention_evidence_report_sheet: reportSheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
 function _outcomeDiagnosticsHeaders_() {
   return [
     'generated_ts',
@@ -595,6 +669,397 @@ function _attentionFactorSummaryHeaders_() {
 
 function _providerCharacterDiagnosticsHeaders_() {
   return _outcomeDiagnosticsHeaders_();
+}
+
+function _attentionEvidenceReportHeaders_() {
+  return [
+    'generated_ts',
+    'evidence_type',
+    'scope',
+    'scope_key',
+    'outcome_family',
+    'ai_name',
+    'attention_factor',
+    'factor_combo',
+    'sample_size',
+    'metric_name',
+    'metric_value',
+    'baseline_value',
+    'lift_vs_baseline',
+    'evidence_level',
+    'evidence_summary',
+    'recommended_next_step',
+    'decision_support_note'
+  ];
+}
+
+function buildAttentionEvidenceReportRows_(summaryRows, summaryIdx, characterRows, characterIdx, generatedTs) {
+  var rowsOut = [];
+  var baseline = _attentionEvidenceBaseline_(summaryRows, summaryIdx);
+  rowsOut = rowsOut.concat(_buildAttentionEvidenceCoverageRows_(summaryRows, summaryIdx, baseline, generatedTs));
+  rowsOut = rowsOut.concat(_buildAttentionEvidenceStrongFactorRows_(summaryRows, summaryIdx, baseline, generatedTs));
+  rowsOut = rowsOut.concat(_buildAttentionEvidenceWeakFactorRows_(summaryRows, summaryIdx, baseline, generatedTs));
+  rowsOut = rowsOut.concat(_buildAttentionEvidenceComboRows_(summaryRows, summaryIdx, baseline, generatedTs));
+  rowsOut = rowsOut.concat(_buildAttentionEvidenceFamilyRows_(summaryRows, summaryIdx, baseline, generatedTs));
+  rowsOut = rowsOut.concat(_buildAttentionEvidenceProviderCharacterRows_(characterRows, characterIdx, generatedTs));
+  rowsOut = rowsOut.concat(_buildAttentionEvidenceReadinessRows_(summaryRows, summaryIdx, characterRows, characterIdx, baseline, generatedTs));
+  return rowsOut;
+}
+
+function _attentionEvidenceBaseline_(summaryRows, summaryIdx) {
+  var baseline = { rows_total: 0, rows_scored: 0, avg_outcome_score: null, overall_hit_rate: null, dir_hit_rate: null };
+  for (var i = 0; i < (summaryRows || []).length; i++) {
+    var row = summaryRows[i];
+    if (String(_predValue_(row, summaryIdx, 'summary_type') || '').trim() !== 'global') continue;
+    baseline.rows_total = _numOrNull_(_predValue_(row, summaryIdx, 'rows_total')) || 0;
+    baseline.rows_scored = _numOrNull_(_predValue_(row, summaryIdx, 'rows_scored')) || 0;
+    baseline.avg_outcome_score = _numOrNull_(_predValue_(row, summaryIdx, 'avg_outcome_score'));
+    baseline.overall_hit_rate = _numOrNull_(_predValue_(row, summaryIdx, 'overall_hit_rate'));
+    baseline.dir_hit_rate = _numOrNull_(_predValue_(row, summaryIdx, 'dir_hit_rate'));
+    break;
+  }
+  return baseline;
+}
+
+function _buildAttentionEvidenceCoverageRows_(summaryRows, summaryIdx, baseline, generatedTs) {
+  var rowsOut = [];
+  var providerRows = _attentionEvidenceRowsByType_(summaryRows, summaryIdx, 'provider', 1);
+  rowsOut.push(_makeAttentionEvidenceReportRow_(generatedTs, {
+    evidence_type: 'attention_coverage',
+    scope: 'global',
+    scope_key: 'all',
+    sample_size: baseline.rows_total,
+    metric_name: 'rows_scored',
+    metric_value: baseline.rows_scored,
+    baseline_value: '',
+    lift_vs_baseline: '',
+    evidence_level: baseline.rows_scored >= 1000 ? 'strong_sample' : (baseline.rows_scored >= 300 ? 'usable_sample' : 'thin_sample'),
+    evidence_summary: 'Attention-era coverage is sufficient for diagnostic evidence, not automatic behavior changes.',
+    recommended_next_step: 'Continue expanding attention-era samples before provider weighting or calibration.'
+  }));
+  for (var i = 0; i < providerRows.length; i++) {
+    var r = providerRows[i];
+    rowsOut.push(_makeAttentionEvidenceReportRow_(generatedTs, {
+      evidence_type: 'provider_baseline',
+      scope: 'provider',
+      scope_key: r.ai_name,
+      ai_name: r.ai_name,
+      sample_size: r.rows_total,
+      metric_name: 'avg_outcome_score',
+      metric_value: r.avg_outcome_score,
+      baseline_value: baseline.avg_outcome_score,
+      lift_vs_baseline: _attentionEvidenceLift_(r.avg_outcome_score, baseline.avg_outcome_score),
+      evidence_level: _attentionEvidenceLevel_(r.rows_total, _attentionEvidenceLift_(r.avg_outcome_score, baseline.avg_outcome_score), 0.20),
+      evidence_summary: 'Provider baseline from attention-era rows.',
+      recommended_next_step: 'Use as diagnostic context only; do not apply automatic provider weighting.'
+    }));
+  }
+  return rowsOut;
+}
+
+function _buildAttentionEvidenceStrongFactorRows_(summaryRows, summaryIdx, baseline, generatedTs) {
+  var rowsOut = [];
+  var candidates = _attentionEvidenceRowsByType_(summaryRows, summaryIdx, 'factor_provider', 20);
+  candidates.sort(function(a, b) {
+    return _attentionEvidenceSortDesc_(a.avg_outcome_score, b.avg_outcome_score, a.rows_total, b.rows_total);
+  });
+  for (var i = 0; i < Math.min(12, candidates.length); i++) {
+    var c = candidates[i];
+    var lift = _attentionEvidenceLift_(c.avg_outcome_score, baseline.avg_outcome_score);
+    rowsOut.push(_makeAttentionEvidenceReportRow_(generatedTs, {
+      evidence_type: 'strong_factor_provider',
+      scope: 'provider_factor',
+      scope_key: c.scope_key,
+      ai_name: c.ai_name,
+      attention_factor: c.attention_factor,
+      sample_size: c.rows_total,
+      metric_name: 'avg_outcome_score',
+      metric_value: c.avg_outcome_score,
+      baseline_value: baseline.avg_outcome_score,
+      lift_vs_baseline: lift,
+      evidence_level: _attentionEvidenceLevel_(c.rows_total, lift, 0.30),
+      evidence_summary: 'This provider-factor slice outperformed the attention-era baseline.',
+      recommended_next_step: 'Keep monitoring as candidate evidence; do not turn it into weighting yet.'
+    }));
+  }
+  return rowsOut;
+}
+
+function _buildAttentionEvidenceWeakFactorRows_(summaryRows, summaryIdx, baseline, generatedTs) {
+  var rowsOut = [];
+  var candidates = _attentionEvidenceRowsByType_(summaryRows, summaryIdx, 'factor_provider', 20);
+  candidates.sort(function(a, b) {
+    return _attentionEvidenceSortAsc_(a.avg_outcome_score, b.avg_outcome_score, a.rows_total, b.rows_total);
+  });
+  for (var i = 0; i < Math.min(10, candidates.length); i++) {
+    var c = candidates[i];
+    var lift = _attentionEvidenceLift_(c.avg_outcome_score, baseline.avg_outcome_score);
+    rowsOut.push(_makeAttentionEvidenceReportRow_(generatedTs, {
+      evidence_type: 'weak_factor_provider',
+      scope: 'provider_factor',
+      scope_key: c.scope_key,
+      ai_name: c.ai_name,
+      attention_factor: c.attention_factor,
+      sample_size: c.rows_total,
+      metric_name: 'avg_outcome_score',
+      metric_value: c.avg_outcome_score,
+      baseline_value: baseline.avg_outcome_score,
+      lift_vs_baseline: lift,
+      evidence_level: _attentionEvidenceLevel_(c.rows_total, lift, 0.30),
+      evidence_summary: 'This provider-factor slice underperformed the attention-era baseline.',
+      recommended_next_step: 'Use as a monitoring warning only; do not suppress this factor automatically.'
+    }));
+  }
+  return rowsOut;
+}
+
+function _buildAttentionEvidenceComboRows_(summaryRows, summaryIdx, baseline, generatedTs) {
+  var rowsOut = [];
+  var candidates = _attentionEvidenceRowsByType_(summaryRows, summaryIdx, 'factor_combo', 10);
+  candidates.sort(function(a, b) {
+    return _attentionEvidenceSortDesc_(a.avg_outcome_score, b.avg_outcome_score, a.rows_total, b.rows_total);
+  });
+  for (var i = 0; i < Math.min(10, candidates.length); i++) {
+    var c = candidates[i];
+    var lift = _attentionEvidenceLift_(c.avg_outcome_score, baseline.avg_outcome_score);
+    rowsOut.push(_makeAttentionEvidenceReportRow_(generatedTs, {
+      evidence_type: 'strong_factor_combo',
+      scope: 'factor_combo',
+      scope_key: c.scope_key,
+      factor_combo: c.factor_combo,
+      sample_size: c.rows_total,
+      metric_name: 'avg_outcome_score',
+      metric_value: c.avg_outcome_score,
+      baseline_value: baseline.avg_outcome_score,
+      lift_vs_baseline: lift,
+      evidence_level: _attentionEvidenceLevel_(c.rows_total, lift, 0.30),
+      evidence_summary: 'This attention-factor combination outperformed the attention-era baseline.',
+      recommended_next_step: 'Track this combination across more attention-era samples before using it for design decisions.'
+    }));
+  }
+  return rowsOut;
+}
+
+function _buildAttentionEvidenceFamilyRows_(summaryRows, summaryIdx, baseline, generatedTs) {
+  var rowsOut = [];
+  var candidates = _attentionEvidenceRowsByType_(summaryRows, summaryIdx, 'factor_family', 20);
+  candidates.sort(function(a, b) {
+    return _attentionEvidenceSortDesc_(a.avg_outcome_score, b.avg_outcome_score, a.rows_total, b.rows_total);
+  });
+  for (var i = 0; i < Math.min(12, candidates.length); i++) {
+    var c = candidates[i];
+    var lift = _attentionEvidenceLift_(c.avg_outcome_score, baseline.avg_outcome_score);
+    rowsOut.push(_makeAttentionEvidenceReportRow_(generatedTs, {
+      evidence_type: 'family_factor_strength',
+      scope: 'family_factor',
+      scope_key: c.scope_key,
+      outcome_family: c.outcome_family,
+      attention_factor: c.attention_factor,
+      sample_size: c.rows_total,
+      metric_name: 'avg_outcome_score',
+      metric_value: c.avg_outcome_score,
+      baseline_value: baseline.avg_outcome_score,
+      lift_vs_baseline: lift,
+      evidence_level: _attentionEvidenceLevel_(c.rows_total, lift, 0.30),
+      evidence_summary: 'This family-factor slice outperformed the attention-era baseline.',
+      recommended_next_step: 'Treat as family-specific evidence for later review, not as a rule.'
+    }));
+  }
+  candidates.sort(function(a, b) {
+    return _attentionEvidenceSortAsc_(a.avg_outcome_score, b.avg_outcome_score, a.rows_total, b.rows_total);
+  });
+  for (var j = 0; j < Math.min(8, candidates.length); j++) {
+    var w = candidates[j];
+    var wLift = _attentionEvidenceLift_(w.avg_outcome_score, baseline.avg_outcome_score);
+    rowsOut.push(_makeAttentionEvidenceReportRow_(generatedTs, {
+      evidence_type: 'family_factor_weakness',
+      scope: 'family_factor',
+      scope_key: w.scope_key,
+      outcome_family: w.outcome_family,
+      attention_factor: w.attention_factor,
+      sample_size: w.rows_total,
+      metric_name: 'avg_outcome_score',
+      metric_value: w.avg_outcome_score,
+      baseline_value: baseline.avg_outcome_score,
+      lift_vs_baseline: wLift,
+      evidence_level: _attentionEvidenceLevel_(w.rows_total, wLift, 0.30),
+      evidence_summary: 'This family-factor slice underperformed the attention-era baseline.',
+      recommended_next_step: 'Monitor for repeated weakness before changing any process.'
+    }));
+  }
+  return rowsOut;
+}
+
+function _buildAttentionEvidenceProviderCharacterRows_(characterRows, characterIdx, generatedTs) {
+  var rowsOut = [];
+  for (var i = 0; i < (characterRows || []).length; i++) {
+    var row = characterRows[i];
+    var type = String(_predValue_(row, characterIdx, 'diagnostic_type') || '').trim();
+    var aiName = String(_predValue_(row, characterIdx, 'ai_name') || '').trim();
+    var metricValue = _predValue_(row, characterIdx, 'metric_value');
+    var detail = String(_predValue_(row, characterIdx, 'metric_detail') || '').trim();
+    if (type === 'provider_attention_style') {
+      rowsOut.push(_makeAttentionEvidenceReportRow_(generatedTs, {
+        evidence_type: 'provider_attention_style',
+        scope: 'provider',
+        scope_key: aiName,
+        ai_name: aiName,
+        attention_factor: metricValue,
+        sample_size: _attentionEvidenceRowsTotalFromDetail_(detail),
+        metric_name: 'top_attention_factor',
+        metric_value: metricValue,
+        evidence_level: 'observed',
+        evidence_summary: 'Provider shows a repeatable attention-factor style.',
+        recommended_next_step: 'Use this to understand provider character, not to assign provider roles.'
+      }));
+    } else if (type === 'unique_win_pattern') {
+      rowsOut.push(_makeAttentionEvidenceReportRow_(generatedTs, {
+        evidence_type: 'provider_unique_win',
+        scope: 'provider',
+        scope_key: aiName,
+        ai_name: aiName,
+        sample_size: _attentionEvidenceDetailNumber_(detail, 'complete_targets'),
+        metric_name: 'unique_win_count',
+        metric_value: metricValue,
+        evidence_level: Number(metricValue || 0) >= 10 ? 'notable' : 'emerging',
+        evidence_summary: 'Provider uniquely outperformed peers on some complete target groups.',
+        recommended_next_step: 'Study disagreement cases separately before considering later weighting.'
+      }));
+    } else if (type === 'tie_pattern' || type === 'convergence_character') {
+      rowsOut.push(_makeAttentionEvidenceReportRow_(generatedTs, {
+        evidence_type: type,
+        scope: 'global',
+        scope_key: 'all',
+        sample_size: _attentionEvidenceDetailNumber_(detail, 'complete_targets'),
+        metric_name: String(_predValue_(row, characterIdx, 'metric_name') || '').trim(),
+        metric_value: metricValue,
+        evidence_level: String(_predValue_(row, characterIdx, 'diagnostic_level') || '').trim(),
+        evidence_summary: String(_predValue_(row, characterIdx, 'diagnostic_summary') || '').trim(),
+        recommended_next_step: String(_predValue_(row, characterIdx, 'recommended_next_step') || '').trim()
+      }));
+    }
+  }
+  return rowsOut;
+}
+
+function _buildAttentionEvidenceReadinessRows_(summaryRows, summaryIdx, characterRows, characterIdx, baseline, generatedTs) {
+  var mixedTargets = 0;
+  var uniqueWins = 0;
+  for (var i = 0; i < (characterRows || []).length; i++) {
+    var row = characterRows[i];
+    var type = String(_predValue_(row, characterIdx, 'diagnostic_type') || '').trim();
+    var detail = String(_predValue_(row, characterIdx, 'metric_detail') || '').trim();
+    if (type === 'tie_pattern') {
+      mixedTargets = _attentionEvidenceDetailNumber_(detail, 'mixed_direction_targets');
+      uniqueWins = _attentionEvidenceDetailNumber_(detail, 'unique_wins_on_mixed_direction');
+    }
+  }
+  var readiness = 'not_ready';
+  if (baseline.rows_scored >= 1000 && mixedTargets >= 100 && uniqueWins >= 50) readiness = 'ready_for_phase3_review';
+  else if (baseline.rows_scored >= 500 && mixedTargets >= 50 && uniqueWins >= 20) readiness = 'partial';
+  var nextStep = readiness === 'ready_for_phase3_review'
+    ? 'Prepare a Phase 3 design review, but keep weighting and calibration disabled until explicitly approved.'
+    : 'Collect more attention-era samples and review disagreement cases before Phase 3 design.';
+  return [
+    _makeAttentionEvidenceReportRow_(generatedTs, {
+      evidence_type: 'phase3_readiness',
+      scope: 'global',
+      scope_key: 'all',
+      sample_size: baseline.rows_scored,
+      metric_name: 'readiness',
+      metric_value: readiness,
+      baseline_value: '',
+      lift_vs_baseline: '',
+      evidence_level: readiness,
+      evidence_summary: 'Attention evidence is useful, but it remains a diagnostic layer and not a control layer.',
+      recommended_next_step: nextStep
+    })
+  ];
+}
+
+function _attentionEvidenceRowsByType_(summaryRows, summaryIdx, summaryType, minRows) {
+  var out = [];
+  for (var i = 0; i < (summaryRows || []).length; i++) {
+    var row = summaryRows[i];
+    if (String(_predValue_(row, summaryIdx, 'summary_type') || '').trim() !== summaryType) continue;
+    var rowsTotal = _numOrNull_(_predValue_(row, summaryIdx, 'rows_total')) || 0;
+    if (rowsTotal < (minRows || 0)) continue;
+    out.push({
+      scope_key: String(_predValue_(row, summaryIdx, 'scope_key') || '').trim(),
+      outcome_family: String(_predValue_(row, summaryIdx, 'outcome_family') || '').trim(),
+      ai_name: String(_predValue_(row, summaryIdx, 'ai_name') || '').trim(),
+      attention_factor: String(_predValue_(row, summaryIdx, 'attention_factor') || '').trim(),
+      factor_combo: String(_predValue_(row, summaryIdx, 'factor_combo') || '').trim(),
+      rows_total: rowsTotal,
+      avg_outcome_score: _numOrNull_(_predValue_(row, summaryIdx, 'avg_outcome_score')),
+      overall_hit_rate: _numOrNull_(_predValue_(row, summaryIdx, 'overall_hit_rate')),
+      dir_hit_rate: _numOrNull_(_predValue_(row, summaryIdx, 'dir_hit_rate'))
+    });
+  }
+  return out;
+}
+
+function _makeAttentionEvidenceReportRow_(generatedTs, attrs) {
+  attrs = attrs || {};
+  return [
+    generatedTs,
+    attrs.evidence_type || '',
+    attrs.scope || '',
+    attrs.scope_key || '',
+    attrs.outcome_family || '',
+    attrs.ai_name || '',
+    attrs.attention_factor || '',
+    attrs.factor_combo || '',
+    attrs.sample_size === undefined ? '' : attrs.sample_size,
+    attrs.metric_name || '',
+    attrs.metric_value === undefined ? '' : attrs.metric_value,
+    attrs.baseline_value === undefined ? '' : attrs.baseline_value,
+    attrs.lift_vs_baseline === undefined ? '' : attrs.lift_vs_baseline,
+    attrs.evidence_level || '',
+    attrs.evidence_summary || '',
+    attrs.recommended_next_step || '',
+    'Evidence report only; not trading advice.'
+  ];
+}
+
+function _attentionEvidenceLift_(value, baseline) {
+  if (value === null || value === undefined || baseline === null || baseline === undefined) return '';
+  return _roundRate_(Number(value) - Number(baseline));
+}
+
+function _attentionEvidenceLevel_(sampleSize, lift, threshold) {
+  var n = Number(sampleSize || 0);
+  var v = Number(lift || 0);
+  if (n < 20) return 'low_sample';
+  if (n >= 100 && v >= threshold) return 'strong_positive';
+  if (n >= 100 && v <= -threshold) return 'strong_negative';
+  if (v >= threshold) return 'emerging_positive';
+  if (v <= -threshold) return 'emerging_negative';
+  return 'neutral';
+}
+
+function _attentionEvidenceSortDesc_(aValue, bValue, aRows, bRows) {
+  var a = aValue === null || aValue === undefined ? -999999 : Number(aValue);
+  var b = bValue === null || bValue === undefined ? -999999 : Number(bValue);
+  if (a !== b) return b - a;
+  return Number(bRows || 0) - Number(aRows || 0);
+}
+
+function _attentionEvidenceSortAsc_(aValue, bValue, aRows, bRows) {
+  var a = aValue === null || aValue === undefined ? 999999 : Number(aValue);
+  var b = bValue === null || bValue === undefined ? 999999 : Number(bValue);
+  if (a !== b) return a - b;
+  return Number(bRows || 0) - Number(aRows || 0);
+}
+
+function _attentionEvidenceDetailNumber_(detail, key) {
+  var re = new RegExp(String(key).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([0-9.]+)');
+  var m = String(detail || '').match(re);
+  return m ? Number(m[1]) : 0;
+}
+
+function _attentionEvidenceRowsTotalFromDetail_(detail) {
+  return _attentionEvidenceDetailNumber_(detail, 'rows_total');
 }
 
 function buildAttentionFactorSummaryRows_(ledgerRows, ledgerIdx, generatedTs) {
@@ -3248,6 +3713,53 @@ function _sortAttentionFactorSummaryRows_(headers, rows) {
 
 function _sortProviderCharacterDiagnosticsRows_(headers, rows) {
   _sortOutcomeDiagnosticsRows_(headers, rows);
+}
+
+function _sortAttentionEvidenceReportRows_(headers, rows) {
+  if (!rows || rows.length < 2) return;
+  var idx = _headerIndexMap_(headers);
+  var typeOrder = {
+    attention_coverage: 1,
+    phase3_readiness: 2,
+    provider_baseline: 3,
+    strong_factor_provider: 4,
+    strong_factor_combo: 5,
+    family_factor_strength: 6,
+    weak_factor_provider: 7,
+    family_factor_weakness: 8,
+    provider_attention_style: 9,
+    provider_unique_win: 10,
+    tie_pattern: 11,
+    convergence_character: 12
+  };
+  rows.sort(function(a, b) {
+    var aType = String(a[idx.evidence_type] || '');
+    var bType = String(b[idx.evidence_type] || '');
+    var aOrder = typeOrder[aType] || 999;
+    var bOrder = typeOrder[bType] || 999;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+
+    if (aType === 'strong_factor_provider' || aType === 'strong_factor_combo' || aType === 'family_factor_strength') {
+      var aStrong = _numOrNull_(a[idx.metric_value]);
+      var bStrong = _numOrNull_(b[idx.metric_value]);
+      if (aStrong !== bStrong) return (bStrong || -999999) - (aStrong || -999999);
+    }
+
+    if (aType === 'weak_factor_provider' || aType === 'family_factor_weakness') {
+      var aWeak = _numOrNull_(a[idx.metric_value]);
+      var bWeak = _numOrNull_(b[idx.metric_value]);
+      if (aWeak !== bWeak) return (aWeak == null ? 999999 : aWeak) - (bWeak == null ? 999999 : bWeak);
+    }
+
+    return _cmpByColumns_(a, b, [
+      idx.scope,
+      idx.outcome_family,
+      idx.ai_name,
+      idx.attention_factor,
+      idx.factor_combo,
+      idx.scope_key
+    ]);
+  });
 }
 
 function _attentionFactorsFromLedgerRow_(row, idx) {

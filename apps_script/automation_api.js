@@ -124,6 +124,17 @@ function apiBuildProviderCharacterDiagnostics() {
   return apiBuildProviderCharacterDiagnostics_();
 }
 
+function apiBuildAttentionEvidenceReport_() {
+  return {
+    status: 'ok',
+    attention_evidence_report: buildAttentionEvidenceReport_()
+  };
+}
+
+function apiBuildAttentionEvidenceReport() {
+  return apiBuildAttentionEvidenceReport_();
+}
+
 function apiUpsertEventWindow_(params) {
   params = params || {};
 

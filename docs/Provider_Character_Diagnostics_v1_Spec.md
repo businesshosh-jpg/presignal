@@ -6,6 +6,8 @@
 
 It is observational only. It must not control prediction outputs, provider weighting, calibration, prompt routing, or signal generation.
 
+`Attention_Evidence_Report` may read this sheet as a source for compact Phase 2B evidence conclusions.
+
 ## Source Sheet
 
 - `Outcome_Ledger`
