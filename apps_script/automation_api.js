@@ -102,6 +102,28 @@ function apiBuildOutcomeDiagnostics_() {
   };
 }
 
+function apiBuildAttentionFactorSummary_() {
+  return {
+    status: 'ok',
+    attention_factor_summary: buildAttentionFactorSummary_()
+  };
+}
+
+function apiBuildAttentionFactorSummary() {
+  return apiBuildAttentionFactorSummary_();
+}
+
+function apiBuildProviderCharacterDiagnostics_() {
+  return {
+    status: 'ok',
+    provider_character_diagnostics: buildProviderCharacterDiagnostics_()
+  };
+}
+
+function apiBuildProviderCharacterDiagnostics() {
+  return apiBuildProviderCharacterDiagnostics_();
+}
+
 function apiUpsertEventWindow_(params) {
   params = params || {};
 

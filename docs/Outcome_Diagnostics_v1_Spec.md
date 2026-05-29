@@ -4,7 +4,7 @@
 
 Step 3 adds a derived diagnostic sheet named `Outcome_Diagnostics`.
 
-`Outcome_Diagnostics` converts the Step 2 summary sheets into high-level audit conclusions about provider performance, provider convergence, family reliability, failure patterns, and readiness for future Attention Factor Selection work.
+`Outcome_Diagnostics` converts the Step 2 summary sheets into high-level audit conclusions about provider performance, provider convergence, family reliability, failure patterns, and Attention Factor Selection monitoring coverage.
 
 This is analysis-only and decision-support only. It is not trading advice.
 
@@ -27,6 +27,8 @@ Prefer these Step 2 summary sheets as the source layer.
 5. `failure_pattern`
 6. `unscored_data_quality`
 7. `attention_factor_readiness`
+
+After Attention Factor Selection v1 is implemented, `attention_factor_readiness` becomes a monitoring-readiness row rather than an implementation gate.
 
 ## Required Headers
 
@@ -125,11 +127,13 @@ Create one overall row:
 - `scope = global`
 - `scope_key = all`
 
-Readiness is based on:
+Readiness / monitoring coverage is based on:
 - `Outcome_Ledger`/Step 2 summaries existing
 - enough scored rows existing
 - convergence having been measured
 - severe unscored data-quality not dominating all families
+
+When Attention Factor Selection v1 is already implemented, this row should recommend monitoring derived attention and provider-character sheets rather than implementing provider-specific roles or automatic weighting.
 
 ## Constraints
 
@@ -152,7 +156,7 @@ Readiness is based on:
 - Do not implement calibration here.
 - Do not create direct trading signals.
 - Preserve decision-support wording.
-- Do not use buy/sell/trade-entry language.
+- Do not use direct action language.
 
 ## Acceptance Checks
 
@@ -167,7 +171,7 @@ Readiness is based on:
 9. Headers are not reordered.
 10. Missing optional fields do not crash the run.
 11. All diagnostic rows include `decision_support_note`.
-12. No buy/sell/trade-entry language is introduced.
+12. No direct action language is introduced.
 13. `attention_factor_readiness` row is produced.
 
 ## Decision Support Wording

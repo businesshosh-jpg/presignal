@@ -1,5 +1,6 @@
 import json
 import os
+import socket
 import time
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
@@ -28,6 +29,7 @@ DEFAULT_SHEETS_HTTP_TIMEOUT_SEC = int(os.environ.get("PRESIGNAL_SHEETS_HTTP_TIME
 DEFAULT_SCRIPT_HTTP_TIMEOUT_SEC = int(os.environ.get("PRESIGNAL_SCRIPT_HTTP_TIMEOUT_SEC", "180"))
 DEFAULT_API_RETRY_COUNT = int(os.environ.get("PRESIGNAL_API_RETRY_COUNT", "4"))
 DEFAULT_API_RETRY_SLEEP_SEC = float(os.environ.get("PRESIGNAL_API_RETRY_SLEEP_SEC", "2"))
+FORCE_GOOGLE_API_IPV4 = os.environ.get("PRESIGNAL_FORCE_GOOGLE_API_IPV4", "1") == "1"
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -35,6 +37,34 @@ SCOPES = [
     "https://www.googleapis.com/auth/script.projects",
     "https://www.googleapis.com/auth/script.scriptapp",
 ]
+
+
+GOOGLE_API_HOST_SUFFIXES = (
+    ".googleapis.com",
+    ".googleusercontent.com",
+)
+
+
+class _GoogleApiIPv4Only:
+    def __enter__(self):
+        if not FORCE_GOOGLE_API_IPV4:
+            self._original_getaddrinfo = None
+            return self
+
+        self._original_getaddrinfo = socket.getaddrinfo
+
+        def _ipv4_first_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
+            host_text = str(host or "")
+            if host_text.endswith(GOOGLE_API_HOST_SUFFIXES) and family in (0, socket.AF_UNSPEC):
+                return self._original_getaddrinfo(host, port, socket.AF_INET, type, proto, flags)
+            return self._original_getaddrinfo(host, port, family, type, proto, flags)
+
+        socket.getaddrinfo = _ipv4_first_getaddrinfo
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        if self._original_getaddrinfo is not None:
+            socket.getaddrinfo = self._original_getaddrinfo
 
 
 def default_script_id() -> str:
@@ -57,7 +87,8 @@ def load_credentials(interactive: bool = False) -> Credentials:
 
     if creds and creds.expired and creds.refresh_token and not _missing_scopes(creds):
         try:
-            creds.refresh(Request())
+            with _GoogleApiIPv4Only():
+                creds.refresh(Request())
             TOKEN_PATH.write_text(creds.to_json())
             return creds
         except RefreshError:
@@ -80,13 +111,15 @@ def bootstrap_credentials() -> Credentials:
 
 
 def build_sheets_service(creds: Credentials):
-    http = AuthorizedHttp(creds, http=httplib2.Http(timeout=DEFAULT_SHEETS_HTTP_TIMEOUT_SEC))
-    return build("sheets", "v4", http=http, cache_discovery=False)
+    with _GoogleApiIPv4Only():
+        http = AuthorizedHttp(creds, http=httplib2.Http(timeout=DEFAULT_SHEETS_HTTP_TIMEOUT_SEC))
+        return build("sheets", "v4", http=http, cache_discovery=False)
 
 
 def build_script_service(creds: Credentials):
-    http = AuthorizedHttp(creds, http=httplib2.Http(timeout=DEFAULT_SCRIPT_HTTP_TIMEOUT_SEC))
-    return build("script", "v1", http=http, cache_discovery=False)
+    with _GoogleApiIPv4Only():
+        http = AuthorizedHttp(creds, http=httplib2.Http(timeout=DEFAULT_SCRIPT_HTTP_TIMEOUT_SEC))
+        return build("script", "v1", http=http, cache_discovery=False)
 
 
 def run_script_function(

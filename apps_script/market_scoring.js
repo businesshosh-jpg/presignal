@@ -1361,6 +1361,8 @@ function _predictionRowMatchesEvalTarget_(ctx, row, eventMeta) {
   var eventCol = ctx.idx['event_id'];
   if (eventCol == null) return false;
   var typeCol = ctx.idx['type'];
+  var indicatorCol = ctx.idx['indicator_name'];
+  var watchIdsCol = ctx.idx['watch_member_event_ids'];
 
   var rowEventId = String(row[eventCol] || '').trim();
   var targetEventId = String(eventMeta.event_id || '').trim();
@@ -1368,7 +1370,26 @@ function _predictionRowMatchesEvalTarget_(ctx, row, eventMeta) {
 
   if (!eventMeta.batch_id) return false;
   var rowType = (typeCol == null) ? '' : String(row[typeCol] || '').trim().toLowerCase();
-  return rowType === 'batch' && rowEventId === String(eventMeta.batch_id || '').trim();
+  var targetBatchId = String(eventMeta.batch_id || '').trim();
+  if (rowType !== 'batch') return false;
+  if (rowEventId === targetBatchId) return true;
+
+  if (rowEventId.indexOf(targetBatchId + '__') !== 0) return false;
+
+  var batchIndicatorName = indicatorCol == null ? '' : String(row[indicatorCol] || '');
+  if (batchIndicatorName && String(eventMeta.indicator_name || '') && batchIndicatorName.indexOf(String(eventMeta.indicator_name)) >= 0) {
+    return true;
+  }
+
+  var watchIds = watchIdsCol == null ? '' : String(row[watchIdsCol] || '');
+  if (watchIds && targetEventId) {
+    var parts = watchIds.split('|');
+    for (var i = 0; i < parts.length; i++) {
+      if (String(parts[i] || '').trim() === targetEventId) return true;
+    }
+  }
+
+  return false;
 }
 
 function _writePredictionEvalFields_(row, idx, eventMeta, reaction) {

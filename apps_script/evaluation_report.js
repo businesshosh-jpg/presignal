@@ -164,6 +164,68 @@ function menuBuildOutcomeDiagnostics_() {
   }
 }
 
+function menuBuildAttentionFactorSummary_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildAttentionFactorSummary_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Attention factor summary -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Attention factor summary rows=' + (res.rows_written || 0),
+      'Attention Factor Summary',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Attention factor summary -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildProviderCharacterDiagnostics_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildProviderCharacterDiagnostics_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Provider character diagnostics -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Provider character diagnostics rows=' + (res.rows_written || 0),
+      'Provider Character Diagnostics',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Provider character diagnostics -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function buildEvaluationSheets_() {
   var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
   if (!predSheet) throw new Error('Predictions sheet missing');
@@ -295,12 +357,28 @@ function getOrCreateOutcomeDiagnosticsSheet_() {
   return _getOrCreateSheet_('Outcome_Diagnostics');
 }
 
+function getOrCreateAttentionFactorSummarySheet_() {
+  return _getOrCreateSheet_('Attention_Factor_Summary');
+}
+
+function getOrCreateProviderCharacterDiagnosticsSheet_() {
+  return _getOrCreateSheet_('Provider_Character_Diagnostics');
+}
+
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
 
 function ensureOutcomeDiagnosticsHeaders_(sheet) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _outcomeDiagnosticsHeaders_());
+}
+
+function ensureAttentionFactorSummaryHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionFactorSummaryHeaders_());
+}
+
+function ensureProviderCharacterDiagnosticsHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _providerCharacterDiagnosticsHeaders_());
 }
 
 function buildOutcomeSummaries_() {
@@ -413,6 +491,60 @@ function buildOutcomeDiagnostics_() {
   };
 }
 
+function buildAttentionFactorSummary_() {
+  var ledgerSheet = getOrCreateOutcomeLedgerSheet_();
+  var ledgerHeaders = getHeaderNames(ledgerSheet);
+  if (!ledgerHeaders || !ledgerHeaders.length) {
+    throw new Error('Outcome_Ledger sheet is missing headers.');
+  }
+
+  var ledgerRows = _readDataRows_(ledgerSheet);
+  var ledgerIdx = _headerIndexMap_(ledgerHeaders);
+  var summarySheet = getOrCreateAttentionFactorSummarySheet_();
+  var headers = _attentionFactorSummaryHeaders_();
+  var rowsOut = buildAttentionFactorSummaryRows_(ledgerRows, ledgerIdx, new Date().toISOString());
+  _sortAttentionFactorSummaryRows_(headers, rowsOut);
+
+  var actualHeaders = ensureAttentionFactorSummaryHeaders_(summarySheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    summarySheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+
+  return {
+    attention_factor_summary_sheet: summarySheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
+function buildProviderCharacterDiagnostics_() {
+  var ledgerSheet = getOrCreateOutcomeLedgerSheet_();
+  var ledgerHeaders = getHeaderNames(ledgerSheet);
+  if (!ledgerHeaders || !ledgerHeaders.length) {
+    throw new Error('Outcome_Ledger sheet is missing headers.');
+  }
+
+  var ledgerRows = _readDataRows_(ledgerSheet);
+  var ledgerIdx = _headerIndexMap_(ledgerHeaders);
+  var diagnosticsSheet = getOrCreateProviderCharacterDiagnosticsSheet_();
+  var headers = _providerCharacterDiagnosticsHeaders_();
+  var rowsOut = buildProviderCharacterDiagnosticsRows_(ledgerRows, ledgerIdx, new Date().toISOString());
+  _sortProviderCharacterDiagnosticsRows_(headers, rowsOut);
+
+  var actualHeaders = ensureProviderCharacterDiagnosticsHeaders_(diagnosticsSheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    diagnosticsSheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+
+  return {
+    provider_character_diagnostics_sheet: diagnosticsSheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
 function _outcomeDiagnosticsHeaders_() {
   return [
     'generated_ts',
@@ -428,6 +560,410 @@ function _outcomeDiagnosticsHeaders_() {
     'diagnostic_summary',
     'recommended_next_step',
     'decision_support_note'
+  ];
+}
+
+function _attentionFactorSummaryHeaders_() {
+  return [
+    'generated_ts',
+    'summary_type',
+    'scope',
+    'scope_key',
+    'outcome_family',
+    'ai_name',
+    'attention_factor',
+    'attention_factor_rank',
+    'factor_combo',
+    'rows_total',
+    'rows_scored',
+    'full_hit_count',
+    'partial_hit_count',
+    'weak_fit_count',
+    'miss_count',
+    'overall_hit_count',
+    'overall_hit_rate',
+    'dir_hit_count',
+    'dir_hit_rate',
+    'avg_outcome_score',
+    'attention_validity_ok_count',
+    'attention_partial_count',
+    'attention_missing_or_invalid_count',
+    'diagnostic_note',
+    'decision_support_note'
+  ];
+}
+
+function _providerCharacterDiagnosticsHeaders_() {
+  return _outcomeDiagnosticsHeaders_();
+}
+
+function buildAttentionFactorSummaryRows_(ledgerRows, ledgerIdx, generatedTs) {
+  var groups = {};
+  for (var i = 0; i < (ledgerRows || []).length; i++) {
+    var row = ledgerRows[i];
+    if (!_isAttentionEraLedgerRow_(row, ledgerIdx)) continue;
+    var family = String(_predValue_(row, ledgerIdx, 'outcome_family') || '').trim() || 'other';
+    var aiName = String(_predValue_(row, ledgerIdx, 'ai_name') || '').trim();
+    var factors = _attentionFactorsFromLedgerRow_(row, ledgerIdx);
+    var uniqueFactors = _uniqueStrings_(factors.map(function(f){ return f.factor; }));
+    var combo = uniqueFactors.slice().sort().join(' + ');
+    var validity = String(_predValue_(row, ledgerIdx, 'attention_validity_flag') || '').trim().toLowerCase();
+
+    _addAttentionFactorSummarySample_(groups, 'global', 'global', 'all', '', '', '', '', '', row, ledgerIdx, validity);
+    _addAttentionFactorSummarySample_(groups, 'provider', 'provider', aiName || 'unknown_provider', '', aiName, '', '', '', row, ledgerIdx, validity);
+    _addAttentionFactorSummarySample_(groups, 'family', 'family', family, family, '', '', '', '', row, ledgerIdx, validity);
+    if (combo) _addAttentionFactorSummarySample_(groups, 'factor_combo', 'combo', combo, '', '', '', '', combo, row, ledgerIdx, validity);
+
+    var countedFactors = {};
+    for (var f = 0; f < factors.length; f++) {
+      var factor = factors[f].factor;
+      var rank = String(factors[f].rank);
+      if (!countedFactors[factor]) {
+        countedFactors[factor] = true;
+        _addAttentionFactorSummarySample_(groups, 'factor_provider', 'provider_factor', aiName + '|' + factor, '', aiName, factor, '', '', row, ledgerIdx, validity);
+        _addAttentionFactorSummarySample_(groups, 'factor_family', 'family_factor', family + '|' + factor, family, '', factor, '', '', row, ledgerIdx, validity);
+        _addAttentionFactorSummarySample_(groups, 'factor_provider_family', 'provider_family_factor', family + '|' + aiName + '|' + factor, family, aiName, factor, '', '', row, ledgerIdx, validity);
+      }
+      _addAttentionFactorSummarySample_(groups, 'factor_rank', 'factor_rank', rank + '|' + factor, '', '', factor, rank, '', row, ledgerIdx, validity);
+    }
+  }
+
+  var rowsOut = [];
+  Object.keys(groups).forEach(function(key) {
+    var g = groups[key];
+    rowsOut.push(_makeAttentionFactorSummaryRow_(generatedTs, g));
+  });
+  return rowsOut;
+}
+
+function _addAttentionFactorSummarySample_(groups, summaryType, scope, scopeKey, family, aiName, factor, factorRank, combo, row, ledgerIdx, validity) {
+  var key = summaryType + '|' + scope + '|' + scopeKey;
+  if (!groups[key]) {
+    groups[key] = {
+      summary_type: summaryType,
+      scope: scope,
+      scope_key: scopeKey,
+      outcome_family: family || '',
+      ai_name: aiName || '',
+      attention_factor: factor || '',
+      attention_factor_rank: factorRank || '',
+      factor_combo: combo || '',
+      rows_total: 0,
+      rows_scored: 0,
+      full_hit_count: 0,
+      partial_hit_count: 0,
+      weak_fit_count: 0,
+      miss_count: 0,
+      overall_hit_count: 0,
+      dir_hit_count: 0,
+      outcome_score_sum: 0,
+      outcome_score_count: 0,
+      attention_validity_ok_count: 0,
+      attention_partial_count: 0,
+      attention_missing_or_invalid_count: 0
+    };
+  }
+  var g = groups[key];
+  var scored = _isTrueCell_(_predValue_(row, ledgerIdx, 'scored_flag'));
+  var bucket = String(_predValue_(row, ledgerIdx, 'outcome_bucket') || '').trim();
+  var score = _numOrNull_(_predValue_(row, ledgerIdx, 'outcome_score'));
+  g.rows_total += 1;
+  if (scored) g.rows_scored += 1;
+  if (bucket === 'full_hit') g.full_hit_count += 1;
+  else if (bucket === 'partial_hit') g.partial_hit_count += 1;
+  else if (bucket === 'weak_fit') g.weak_fit_count += 1;
+  else if (bucket === 'miss') g.miss_count += 1;
+  if (scored && _isTrueCell_(_predValue_(row, ledgerIdx, 'overall_ok'))) g.overall_hit_count += 1;
+  if (scored && _isTrueCell_(_predValue_(row, ledgerIdx, 'mr_dir_ok'))) g.dir_hit_count += 1;
+  if (scored && score != null) {
+    g.outcome_score_sum += score;
+    g.outcome_score_count += 1;
+  }
+  if (validity === 'ok') g.attention_validity_ok_count += 1;
+  else if (validity === 'partial') g.attention_partial_count += 1;
+  else g.attention_missing_or_invalid_count += 1;
+}
+
+function _makeAttentionFactorSummaryRow_(generatedTs, g) {
+  return [
+    generatedTs,
+    g.summary_type,
+    g.scope,
+    g.scope_key,
+    g.outcome_family,
+    g.ai_name,
+    g.attention_factor,
+    g.attention_factor_rank,
+    g.factor_combo,
+    g.rows_total,
+    g.rows_scored,
+    g.full_hit_count,
+    g.partial_hit_count,
+    g.weak_fit_count,
+    g.miss_count,
+    g.overall_hit_count,
+    _rateOrBlank_(g.overall_hit_count, g.rows_scored),
+    g.dir_hit_count,
+    _rateOrBlank_(g.dir_hit_count, g.rows_scored),
+    g.outcome_score_count ? _roundRate_(g.outcome_score_sum / g.outcome_score_count) : '',
+    g.attention_validity_ok_count,
+    g.attention_partial_count,
+    g.attention_missing_or_invalid_count,
+    'Derived attention-factor audit only; does not control prediction outputs.',
+    'Attention-factor analysis only; not trading advice.'
+  ];
+}
+
+function buildProviderCharacterDiagnosticsRows_(ledgerRows, ledgerIdx, generatedTs) {
+  var rowsOut = [];
+  var providerStats = {};
+  var providerFamilyStats = {};
+  var targetGroups = {};
+  for (var i = 0; i < (ledgerRows || []).length; i++) {
+    var row = ledgerRows[i];
+    if (!_isAttentionEraLedgerRow_(row, ledgerIdx)) continue;
+    var aiName = String(_predValue_(row, ledgerIdx, 'ai_name') || '').trim();
+    var family = String(_predValue_(row, ledgerIdx, 'outcome_family') || '').trim() || 'other';
+    if (!aiName) continue;
+    _addProviderCharacterSample_(providerStats, aiName, aiName, '', row, ledgerIdx);
+    _addProviderCharacterSample_(providerFamilyStats, family + '|' + aiName, aiName, family, row, ledgerIdx);
+
+    var targetKey = _providerCharacterTargetKey_(row, ledgerIdx);
+    if (!targetKey) continue;
+    if (!targetGroups[targetKey]) targetGroups[targetKey] = [];
+    targetGroups[targetKey].push(row);
+  }
+
+  Object.keys(providerStats).sort().forEach(function(key) {
+    rowsOut.push(_makeProviderPerformanceDiagnosticRow_(generatedTs, providerStats[key], 'provider_performance_profile', 'provider', key));
+    rowsOut.push(_makeProviderAttentionStyleRow_(generatedTs, providerStats[key], 'provider_attention_style', 'provider', key));
+  });
+
+  Object.keys(providerFamilyStats).sort().forEach(function(key) {
+    rowsOut.push(_makeProviderPerformanceDiagnosticRow_(generatedTs, providerFamilyStats[key], 'provider_family_profile', 'provider_family', key));
+  });
+
+  rowsOut = rowsOut.concat(_buildProviderUniqueWinDiagnostics_(targetGroups, ledgerIdx, generatedTs));
+  rowsOut = rowsOut.concat(_buildProviderConvergenceCharacterRows_(targetGroups, ledgerIdx, generatedTs));
+  return rowsOut;
+}
+
+function _addProviderCharacterSample_(groups, key, aiName, family, row, ledgerIdx) {
+  if (!groups[key]) {
+    groups[key] = {
+      ai_name: aiName,
+      outcome_family: family || '',
+      rows_total: 0,
+      rows_scored: 0,
+      overall_hit_count: 0,
+      dir_hit_count: 0,
+      score_sum: 0,
+      score_count: 0,
+      dirs: {},
+      strengths: {},
+      factors: {}
+    };
+  }
+  var g = groups[key];
+  var scored = _isTrueCell_(_predValue_(row, ledgerIdx, 'scored_flag'));
+  var score = _numOrNull_(_predValue_(row, ledgerIdx, 'outcome_score'));
+  var predDir = String(_predValue_(row, ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase() || 'blank';
+  var predStrength = String(_predValue_(row, ledgerIdx, 'mr_pred_strength') || '').trim().toLowerCase() || 'blank';
+  g.rows_total += 1;
+  if (scored) g.rows_scored += 1;
+  if (scored && _isTrueCell_(_predValue_(row, ledgerIdx, 'overall_ok'))) g.overall_hit_count += 1;
+  if (scored && _isTrueCell_(_predValue_(row, ledgerIdx, 'mr_dir_ok'))) g.dir_hit_count += 1;
+  if (scored && score != null) {
+    g.score_sum += score;
+    g.score_count += 1;
+  }
+  g.dirs[predDir] = (g.dirs[predDir] || 0) + 1;
+  g.strengths[predStrength] = (g.strengths[predStrength] || 0) + 1;
+  var factors = _attentionFactorsFromLedgerRow_(row, ledgerIdx);
+  for (var i = 0; i < factors.length; i++) {
+    var factor = factors[i].factor;
+    g.factors[factor] = (g.factors[factor] || 0) + 1;
+  }
+}
+
+function _makeProviderPerformanceDiagnosticRow_(generatedTs, g, diagnosticType, scope, scopeKey) {
+  var flatRate = _rateRaw_(g.dirs.flat || 0, g.rows_total);
+  var weakRate = _rateRaw_(g.strengths.weak || 0, g.rows_total);
+  var level = 'balanced';
+  if (flatRate >= 0.90 && weakRate >= 0.90) level = 'conservative';
+  else if ((g.dirs.up || 0) + (g.dirs.down || 0) >= g.rows_total * 0.20) level = 'directional';
+  return _makeProviderCharacterDiagnosticRow_(generatedTs, {
+    diagnostic_type: diagnosticType,
+    scope: scope,
+    scope_key: scopeKey,
+    outcome_family: g.outcome_family,
+    ai_name: g.ai_name,
+    metric_name: 'provider_character_profile',
+    metric_value: level,
+    metric_detail: 'rows_total=' + g.rows_total +
+      '; rows_scored=' + g.rows_scored +
+      '; overall_hit_rate=' + _fmtDiagMetric_(_rateRaw_(g.overall_hit_count, g.rows_scored)) +
+      '; dir_hit_rate=' + _fmtDiagMetric_(_rateRaw_(g.dir_hit_count, g.rows_scored)) +
+      '; avg_outcome_score=' + (g.score_count ? _roundRate_(g.score_sum / g.score_count) : '') +
+      '; dirs=' + _countMapToString_(g.dirs) +
+      '; strengths=' + _countMapToString_(g.strengths),
+    diagnostic_level: level,
+    diagnostic_summary: 'Provider character profile based on observed prediction style and scored outcomes.',
+    recommended_next_step: 'Use as audit context only; do not apply automatic provider weighting yet.'
+  });
+}
+
+function _makeProviderAttentionStyleRow_(generatedTs, g, diagnosticType, scope, scopeKey) {
+  var topFactors = _topCountMapItems_(g.factors, 5);
+  return _makeProviderCharacterDiagnosticRow_(generatedTs, {
+    diagnostic_type: diagnosticType,
+    scope: scope,
+    scope_key: scopeKey,
+    outcome_family: '',
+    ai_name: g.ai_name,
+    metric_name: 'top_attention_factors',
+    metric_value: topFactors.length ? topFactors[0].key : '',
+    metric_detail: topFactors.map(function(item){ return item.key + '=' + item.count; }).join('; '),
+    diagnostic_level: topFactors.length ? 'observed' : 'missing',
+    diagnostic_summary: 'Provider shows a repeatable attention-factor style in shadow metadata.',
+    recommended_next_step: 'Compare factor style with outcomes after more attention-era samples.'
+  });
+}
+
+function _buildProviderUniqueWinDiagnostics_(targetGroups, ledgerIdx, generatedTs) {
+  var wins = {};
+  var completeTargets = 0;
+  var allTied = 0;
+  var mixedDirectionTargets = 0;
+  var uniqueWinsOnMixed = 0;
+  Object.keys(targetGroups).forEach(function(key) {
+    var rows = targetGroups[key];
+    var byProvider = {};
+    for (var i = 0; i < rows.length; i++) {
+      var aiName = String(_predValue_(rows[i], ledgerIdx, 'ai_name') || '').trim();
+      if (aiName) byProvider[aiName] = rows[i];
+    }
+    var providers = Object.keys(byProvider).sort();
+    if (providers.length < 3) return;
+    completeTargets += 1;
+    var dirs = {};
+    var bestScore = -1;
+    var bestProviders = [];
+    for (var p = 0; p < providers.length; p++) {
+      var provider = providers[p];
+      var row = byProvider[provider];
+      var score = _numOrNull_(_predValue_(row, ledgerIdx, 'outcome_score'));
+      if (score == null) score = -1;
+      var dir = String(_predValue_(row, ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase();
+      if (dir) dirs[dir] = true;
+      if (score > bestScore) {
+        bestScore = score;
+        bestProviders = [provider];
+      } else if (score === bestScore) {
+        bestProviders.push(provider);
+      }
+    }
+    var mixed = Object.keys(dirs).length > 1;
+    if (mixed) mixedDirectionTargets += 1;
+    if (bestProviders.length === providers.length) allTied += 1;
+    if (bestProviders.length === 1) {
+      var winner = bestProviders[0];
+      if (!wins[winner]) wins[winner] = { total: 0, mixed: 0 };
+      wins[winner].total += 1;
+      if (mixed) {
+        wins[winner].mixed += 1;
+        uniqueWinsOnMixed += 1;
+      }
+    }
+  });
+
+  var rowsOut = [];
+  Object.keys(wins).sort().forEach(function(aiName) {
+    var w = wins[aiName];
+    rowsOut.push(_makeProviderCharacterDiagnosticRow_(generatedTs, {
+      diagnostic_type: 'unique_win_pattern',
+      scope: 'provider',
+      scope_key: aiName,
+      outcome_family: '',
+      ai_name: aiName,
+      metric_name: 'unique_win_count',
+      metric_value: w.total,
+      metric_detail: 'complete_targets=' + completeTargets + '; mixed_direction_unique_wins=' + w.mixed,
+      diagnostic_level: w.total >= 10 ? 'notable' : 'emerging',
+      diagnostic_summary: 'Provider uniquely outperformed peers on some complete target groups.',
+      recommended_next_step: 'Treat as character evidence only until larger samples confirm the pattern.'
+    }));
+  });
+
+  rowsOut.push(_makeProviderCharacterDiagnosticRow_(generatedTs, {
+    diagnostic_type: 'tie_pattern',
+    scope: 'global',
+    scope_key: 'all',
+    outcome_family: '',
+    ai_name: '',
+    metric_name: 'all_provider_tie_rate',
+    metric_value: _rateOrBlank_(allTied, completeTargets),
+    metric_detail: 'complete_targets=' + completeTargets +
+      '; all_provider_ties=' + allTied +
+      '; mixed_direction_targets=' + mixedDirectionTargets +
+      '; unique_wins_on_mixed_direction=' + uniqueWinsOnMixed,
+    diagnostic_level: completeTargets && allTied / completeTargets >= 0.70 ? 'high_convergence' : 'moderate_convergence',
+    diagnostic_summary: 'Many targets still tie across providers, so provider character signals are clearest when predictions diverge.',
+    recommended_next_step: 'Keep collecting attention-era rows and monitor mixed-direction cases separately.'
+  }));
+  return rowsOut;
+}
+
+function _buildProviderConvergenceCharacterRows_(targetGroups, ledgerIdx, generatedTs) {
+  var completeTargets = 0;
+  var sameDirectionTargets = 0;
+  Object.keys(targetGroups).forEach(function(key) {
+    var rows = targetGroups[key];
+    var providers = {};
+    var dirs = {};
+    for (var i = 0; i < rows.length; i++) {
+      var aiName = String(_predValue_(rows[i], ledgerIdx, 'ai_name') || '').trim();
+      if (aiName) providers[aiName] = true;
+      var dir = String(_predValue_(rows[i], ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase();
+      if (dir) dirs[dir] = true;
+    }
+    if (Object.keys(providers).length < 3) return;
+    completeTargets += 1;
+    if (Object.keys(dirs).length === 1) sameDirectionTargets += 1;
+  });
+  return [
+    _makeProviderCharacterDiagnosticRow_(generatedTs, {
+      diagnostic_type: 'convergence_character',
+      scope: 'global',
+      scope_key: 'all',
+      outcome_family: '',
+      ai_name: '',
+      metric_name: 'same_direction_rate',
+      metric_value: _rateOrBlank_(sameDirectionTargets, completeTargets),
+      metric_detail: 'complete_targets=' + completeTargets + '; same_direction_targets=' + sameDirectionTargets,
+      diagnostic_level: completeTargets && sameDirectionTargets / completeTargets >= 0.70 ? 'high' : 'moderate',
+      diagnostic_summary: 'Provider character differences are harder to observe when all providers choose the same direction.',
+      recommended_next_step: 'Use disagreement slices to evaluate whether attention factors reveal provider diversity.'
+    })
+  ];
+}
+
+function _makeProviderCharacterDiagnosticRow_(generatedTs, attrs) {
+  attrs = attrs || {};
+  return [
+    generatedTs,
+    attrs.diagnostic_type || '',
+    attrs.scope || '',
+    attrs.scope_key || '',
+    attrs.outcome_family || '',
+    attrs.ai_name || '',
+    attrs.metric_name || '',
+    attrs.metric_value === undefined ? '' : attrs.metric_value,
+    attrs.metric_detail || '',
+    attrs.diagnostic_level || '',
+    attrs.diagnostic_summary || '',
+    attrs.recommended_next_step || '',
+    'Provider-character diagnostic only; not trading advice.'
   ];
 }
 
@@ -745,9 +1281,9 @@ function buildAttentionFactorReadinessDiagnostic_(providerFamilyRows, providerFa
   if (ledgerExists && summariesExist && enoughScoredRows && convergenceMeasured && !severeDominatesAllFamilies) readinessLevel = 'ready';
   else if (ledgerExists && summariesExist && convergenceMeasured && totalScored >= 150 && severeFamilies < familyNames.length) readinessLevel = 'partial';
 
-  var summary = 'Attention Factor Selection v1 is not ready yet based on current diagnostic coverage.';
-  if (readinessLevel === 'ready') summary = 'Attention Factor Selection v1 is ready for implementation with current diagnostic coverage.';
-  else if (readinessLevel === 'partial') summary = 'Attention Factor Selection v1 is partially supported, but some data-quality or sample-depth gaps remain.';
+  var summary = 'Attention Factor Selection v1 monitoring is not ready yet based on current diagnostic coverage.';
+  if (readinessLevel === 'ready') summary = 'Attention Factor Selection v1 is implemented in shadow mode and ready for ongoing monitoring.';
+  else if (readinessLevel === 'partial') summary = 'Attention Factor Selection v1 is implemented in shadow mode, but monitoring still has sample-depth or data-quality gaps.';
 
   return [
     _makeOutcomeDiagnosticRow_(generatedTs, {
@@ -766,8 +1302,8 @@ function buildAttentionFactorReadinessDiagnostic_(providerFamilyRows, providerFa
       diagnostic_level: readinessLevel,
       diagnostic_summary: summary,
       recommended_next_step: readinessLevel === 'not_ready'
-        ? 'Collect more scored outcomes and improve unscored coverage before changing prediction prompts.'
-        : 'Implement Attention Factor Selection v1 with equal task framing across providers and no provider-specific roles.'
+        ? 'Collect more scored outcomes and improve unscored coverage before expanding attention analysis.'
+        : 'Monitor Attention Factor Summary and Provider Character Diagnostics without provider-specific roles or automatic weighting.'
     })
   ];
 }
@@ -1194,6 +1730,15 @@ function _outcomeLedgerHeaders_() {
     'pre_volatility_level',
     'batch_anchor_mode',
     'batch_anchor_confidence',
+    'attention_schema_version',
+    'attention_factor_1',
+    'attention_factor_1_weight',
+    'attention_factor_2',
+    'attention_factor_2_weight',
+    'attention_factor_3',
+    'attention_factor_3_weight',
+    'attention_summary',
+    'attention_validity_flag',
     'no_trade_advice_flag'
   ];
 }
@@ -1310,6 +1855,15 @@ function _buildOutcomeLedgerRow_(src, idx, ledgerBuiltTs) {
     _predValue_(src, idx, 'pre_volatility_level'),
     _predValue_(src, idx, 'batch_anchor_mode'),
     _predValue_(src, idx, 'batch_anchor_confidence'),
+    _predValue_(src, idx, 'attention_schema_version'),
+    _predValue_(src, idx, 'attention_factor_1'),
+    _predValue_(src, idx, 'attention_factor_1_weight'),
+    _predValue_(src, idx, 'attention_factor_2'),
+    _predValue_(src, idx, 'attention_factor_2_weight'),
+    _predValue_(src, idx, 'attention_factor_3'),
+    _predValue_(src, idx, 'attention_factor_3_weight'),
+    _predValue_(src, idx, 'attention_summary'),
+    _predValue_(src, idx, 'attention_validity_flag'),
     'TRUE'
   ];
 }
@@ -1325,7 +1879,7 @@ function _dedupeOutcomeLedgerPredictionRows_(rows, predIdx) {
     var aiName = String(_predValue_(row, predIdx, 'ai_name') || '').trim();
     if (!eventId || !aiName) continue;
     var predictionId = String(_predValue_(row, predIdx, 'prediction_id') || '').trim();
-    var key = predictionId || (eventId + '|' + aiName);
+    var key = (eventId + '|' + aiName) || predictionId;
     if (!latestByKey.hasOwnProperty(key)) {
       latestByKey[key] = row;
       order.push(key);
@@ -1889,10 +2443,10 @@ function _dedupeEvaluationRowsByPredictionKey_(rows) {
 
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
-    var predictionId = String(row[ridx.prediction_id] || '').trim();
     var eventId = String(row[ridx.event_id] || '').trim();
     var aiName = String(row[ridx.ai_name] || '').trim();
-    var key = predictionId || (eventId + '|' + aiName);
+    var predictionId = String(row[ridx.prediction_id] || '').trim();
+    var key = (eventId + '|' + aiName) || predictionId;
     if (!key) continue;
 
     if (!latestByKey.hasOwnProperty(key)) {
@@ -2675,6 +3229,89 @@ function _sortOutcomeDiagnosticsRows_(headers, rows) {
       idx.scope_key
     ]);
   });
+}
+
+function _sortAttentionFactorSummaryRows_(headers, rows) {
+  if (!rows || rows.length < 2) return;
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx.summary_type,
+      idx.outcome_family,
+      idx.ai_name,
+      idx.attention_factor,
+      idx.attention_factor_rank,
+      idx.scope_key
+    ]);
+  });
+}
+
+function _sortProviderCharacterDiagnosticsRows_(headers, rows) {
+  _sortOutcomeDiagnosticsRows_(headers, rows);
+}
+
+function _attentionFactorsFromLedgerRow_(row, idx) {
+  var out = [];
+  for (var i = 1; i <= 3; i++) {
+    var factor = String(_predValue_(row, idx, 'attention_factor_' + i) || '').trim();
+    if (!factor) continue;
+    out.push({ factor: factor, rank: i });
+  }
+  return out;
+}
+
+function _uniqueStrings_(items) {
+  var seen = {};
+  var out = [];
+  for (var i = 0; i < (items || []).length; i++) {
+    var item = String(items[i] || '').trim();
+    if (!item || seen[item]) continue;
+    seen[item] = true;
+    out.push(item);
+  }
+  return out;
+}
+
+function _rateRaw_(num, den) {
+  var numerator = Number(num || 0);
+  var denominator = Number(den || 0);
+  if (!(denominator > 0)) return 0;
+  return numerator / denominator;
+}
+
+function _countMapToString_(map) {
+  return _topCountMapItems_(map, 20).map(function(item) {
+    return item.key + '=' + item.count;
+  }).join(', ');
+}
+
+function _topCountMapItems_(map, limit) {
+  var items = [];
+  Object.keys(map || {}).forEach(function(key) {
+    items.push({ key: key, count: Number(map[key] || 0) });
+  });
+  items.sort(function(a, b) {
+    if (a.count !== b.count) return b.count - a.count;
+    return String(a.key).localeCompare(String(b.key));
+  });
+  return items.slice(0, limit || items.length);
+}
+
+function _providerCharacterTargetKey_(row, idx) {
+  var eventId = String(_predValue_(row, idx, 'event_id') || '').trim();
+  var batchId = String(_predValue_(row, idx, 'batch_id') || '').trim();
+  var rowType = String(_predValue_(row, idx, 'type') || '').trim().toLowerCase();
+  var releaseTs = String(_predValue_(row, idx, 'release_ts') || '').trim();
+  if (rowType === 'batch' && batchId) return 'batch|' + batchId;
+  if (eventId) return 'event|' + eventId;
+  if (batchId) return 'batch|' + batchId;
+  if (releaseTs) return 'release|' + releaseTs;
+  return '';
+}
+
+function _isAttentionEraLedgerRow_(row, idx) {
+  var version = String(_predValue_(row, idx, 'attention_schema_version') || '').trim();
+  return version === '1.0' || version === '1';
 }
 
 function _isTrueCell_(v) {

@@ -34,10 +34,10 @@ Step 2 summary sheets are derived from `Outcome_Ledger` and do not change `Outco
 
 Create a rebuilt derived sheet named `Outcome_Ledger`.
 
-Rows are deduplicated from `Predictions` by:
+Rows are deduplicated from `Predictions` by canonical prediction identity:
 
-1. `prediction_id`
-2. fallback key: `event_id + ai_name`
+1. `event_id + ai_name`
+2. `prediction_id` remains a trace field and may be used only as a secondary fallback if the canonical pair is unavailable
 
 When duplicates exist, retain the newest row using:
 
@@ -93,6 +93,8 @@ Write one row per deduped provider prediction.
 - `no_trade_advice_flag`
 
 If the sheet already exists, existing header order is preserved and any missing headers are appended only.
+
+If attention-factor shadow metadata is present in `Predictions`, `Outcome_Ledger` may pass through selected attention fields for analysis only. This pass-through must not alter `outcome_score`, `outcome_bucket`, or any scoring logic.
 
 ## Field Mapping
 

@@ -34,6 +34,17 @@ Market reaction for FX pairs other than USD/JPY.
 This Rule Book describes current behavior, not future intent.  
 Some modules are best-effort (e.g., logging), and some features depend on external functions not included in the uploaded files (notably the candle fetcher for market reaction).
 
+### Version labeling note.
+
+Within the repository, the current `ver.1.4` line may be labeled more precisely for comparison purposes:
+
+- `v1.4-baseline`: pre-Attention Factor Selection v1 behavior
+- `v1.4-attn-shadow`: same prediction/scoring behavior, with Attention Factor Selection v1 enabled as shadow-mode metadata only
+
+This sub-labeling is for auditability and historical comparison. It does not imply a new major prediction-policy generation, and it does not by itself change core prediction outputs or scoring semantics.
+
+For sheet-level analysis, `attention_schema_version` is the row-level marker for the attention-shadow era. Blank values indicate pre-attention `v1.4-baseline` rows, while `attention_schema_version = "1.0"` indicates `v1.4-attn-shadow` rows, including provider-error rows where attention parsing could not occur.
+
 ### Code-authoritative note.
 
 This section mirrors the implemented pipeline and explicitly excludes features that are not present or not persisted in code, per Blueprint ver.1.4.
@@ -85,6 +96,10 @@ MR_ProviderRuns
 
 Evaluation_Rows  
 Evaluation_Summary
+Evaluation_BatchCompare
+Evaluation_Scenario
+Prediction_Aggregates
+Outcome_Ledger
 
 **Legacy compatibility (read-only fallbacks in limited modules)**
 
@@ -163,7 +178,11 @@ pre_signal_mode, pre_risk_level, pre_volatility_level, watch_member_event_ids, w
 
 The `pre_*` / `scenario_*` fields are advisory pre-release planning metadata. They do not replace the legacy directional fields and do not change the core directional/pips math in `Evaluation_Summary`; scenario-watchlist coverage is reported separately in `Evaluation_Scenario`.
 
+The runner also attaches a compact deterministic same-indicator feature pack in memory before provider calls. Current live behavior is `HistoricalContext v1a`, normalized as `feature_pack_version = "v1_historical_context"`. This context is not persisted as new sheet columns and does not change the `(event_id, ai_name)` upsert rule.
+
 For recurring low-signal families, the planner uses these same fields to make the conservative posture visible without adding new sheet columns. Current code-level low-signal families include `cftc_positions`, `treasury_auctions`, `fed_speeches`, and `statement_report_text`. These families bias toward scenario mode, low risk/volatility/confidence, and representative watchlists rather than forceful single-driver precision. This family handling applies at row level as well as batch level, so member/single rows such as speeches, minutes, or report-text events do not need a batch-family wrapper to switch into conservative scenario framing.
+
+Current live behavior also includes a deterministic confidence-calibration pass over the same pre-release planning fields. This calibration does not add columns or change the JSON contract. Instead, it lowers `scenario_confidence` when existing trace signals already imply weaker conviction, especially weak or unclear batch anchors, low `batch_anchor_confidence`, missing consensus, hidden-detail risk, and `HistoricalContext v1a` with `history_quality = partial` or `cold_start`. A narrow additional downgrade also applies to standalone `jobless_claims` member rows when same-indicator history is mixed or thin, or when the row is a supporting claims metric such as `continuing claims` or the `4-week average`.
 
 ---
 
@@ -229,10 +248,68 @@ rows_scored, dir_ok_count / rate, strength_ok_count / rate, sustain_ok_count / r
 
 Local automation may call API-safe Apps Script wrappers through the Apps Script Execution API instead of menu clicks. Current wrappers include `apiRunPipelineWindow_`, `apiRunPredictionsWindow_`, `apiFetchActualsWindow_`, `apiScoreMarketReactionWindow_`, and `apiBuildEvaluationSheets_`. These wrappers accept only plain parameter objects and are intended for persistent-token automation loops rather than UI-driven operation.
 
+Additional public non-menu wrappers now available for inspection/reporting are:
+
+- `debugHistoricalContextForEvent(eventId)`
+- `buildPredictionAggregateForEvent(eventId)`
+- `buildPredictionAggregatesSheet()`
+- `buildOutcomeLedgerSheet()`
+- `apiBuildOutcomeLedgerSheet()`
+
 Summary rows count only genuinely scored outcomes. Rows that remain unscored because of unavailable market reaction data, including `market_closed`, are retained in `Evaluation_Rows` for traceability but excluded from `Evaluation_Summary` rate math.
 
 Implementation note.  
 These tabs are fully rewritten on each build; they do not append history and they do not modify `Event`, `Predictions`, or `MR_ProviderRuns`.
+
+---
+
+### 2.6C Prediction_Aggregates derived tab
+
+When `buildPredictionAggregatesSheet()` runs, the system rewrites the derived reporting tab:
+
+- `Prediction_Aggregates`
+
+This sheet is not canonical. It is a reporting-only projection from `Predictions` with one aggregate row per `event_id`.
+
+Representative fields include:
+
+generated_ts, event_id, batch_id, type, country, indicator_name, release_ts,  
+provider_count, economic_aggregate_bias, economic_agreement_level,  
+market_aggregate_bias, market_agreement_level, market_disagreement_level,  
+up_count, down_count, flat_count, uncertain_count,  
+whipsaw_risk, volatility_risk, aggregate_confidence, summary_note, no_trade_advice_flag
+
+The aggregate builder is deterministic and read-only over `Predictions`. It deduplicates by canonical prediction identity `(event_id, ai_name)`, uses `prediction_id` as trace metadata only, keeps the newest row by `created_ts`, and treats non-`ok` rows as `uncertain`.
+
+`summary_note` must remain responsibility-safe reporting text and not trade advice.
+
+---
+
+### 2.6D Outcome_Ledger derived tab
+
+When `buildOutcomeLedgerSheet()` runs, the system rewrites the derived reporting tab:
+
+- `Outcome_Ledger`
+
+This sheet is not canonical. It is a reporting-only projection from deduped `Predictions` rows for provider and family outcome analysis.
+
+In Phase 1, `Outcome_Ledger` is a rebuilt derived audit sheet. It is intentionally conservative and does not yet function as the final immutable learning warehouse. Future phases may introduce an append-only or versioned learning ledger after this derived view is validated.
+
+Representative fields include:
+
+generated_ts, release_date, release_ts, event_id, batch_id, prediction_id, run_id,  
+type, outcome_family, indicator_name, country, genre, importance,  
+ai_name, ai_model, status, qualitative_result,  
+mr_pred_dir, mr_pred_net_pips, mr_pred_strength, mr_pred_sustain_min,  
+mr_real_dir, mr_real_strength, mr_real_sustain_min, realized_pips,  
+mr_dir_ok, mr_strength_ok, mr_sustain_ok, overall_ok,  
+outcome_score, outcome_bucket, scored_flag, prediction_bias, confidence,  
+pre_signal_mode, pre_risk_level, pre_volatility_level,  
+batch_anchor_mode, batch_anchor_confidence, trace_prediction_key, eval_ts, eval_note, no_trade_advice_flag
+
+The builder is deterministic and read-only over `Predictions`. It deduplicates by canonical prediction identity `(event_id, ai_name)`, uses `prediction_id` as trace metadata only, keeps the newest row by `created_ts` then `eval_ts`, and labels outcomes for analysis without changing scoring or provider outputs. It may create or append missing `Outcome_Ledger` headers, but it must not reorder existing `Outcome_Ledger` headers.
+
+`Outcome_Ledger` is decision-support reporting only and must not present aggregate results as trade advice.
 
 ---
 
@@ -755,12 +832,13 @@ Below is the rewritten Rule Book section aligned with:
 
 ### 5.5 Provider Prompt Payload
 
-The current prediction runner does not build or persist a separate deterministic `feature_pack` object.
+The current prediction runner does build a deterministic in-memory `feature_pack` object for same-indicator historical context, but it does not persist that feature pack as new sheet columns.
 
-Instead, each provider call receives:
+Each provider call receives:
 
 - a static system instruction
 - a strict JSON payload built from Event-row metadata
+- compact deterministic historical context when available
 - a compact instruction contract describing output requirements and prediction discipline
 
 For concrete event predictions, the payload includes fields such as:
@@ -775,6 +853,7 @@ For concrete event predictions, the payload includes fields such as:
 - `consensus_value`
 - `prev_revision`
 - `fx_pair`
+- `feature_pack.historical_context.same_indicator`
 - policy / prediction-discipline guidance
 - required output contract
 
@@ -786,21 +865,69 @@ For batch predictions, the payload includes:
 - `release_ts`
 - `member_count`
 - `members[]` with compact member metadata
+- member-level `historical_context_same_indicator` views
 - `anchor_selection` with mode/confidence/score/margin/reason trace
 - `anchor_member` only when the selector finds a clear usable anchor
 - `supporting_members` for the remaining batch members
 - batch-level policy / prediction-discipline guidance
 - required output contract
 
+Historical context is supporting context only. It must not be used as a mechanical forecast override, and `partial` / `cold_start` history should reduce reliance rather than increase it.
+
+The current live planner now makes that confidence reduction explicit through `scenario_confidence`. This calibration remains deterministic and schema-preserving: it uses already available signals such as `history_quality`, `batch_anchor_mode`, `batch_anchor_confidence`, consensus presence, and hidden-detail risk to downgrade conviction when the payload is structurally incomplete or ambiguous. The first claims-family refinement is intentionally narrow and applies only to standalone `jobless_claims` member rows when mixed/thin same-indicator history or supporting-role conditions imply weaker conviction.
+
 If `anchor_selection.mode` is `weak_anchor` or `no_clear_anchor`, provider prompts and guardrails must treat the batch as scenario/watchlist planning instead of forcing a dominant member. Weak anchors remain stored as trace metadata, but they are not passed as the default `anchor_member`; only `clear_anchor` may become the model's default market focus. Same-family release clusters with multiple plausible drivers, such as monthly labor or ISM PMI/subcomponent groups, should prefer conservative scenario behavior unless one member has a clear scoring margin.
 
-Known release-family profiles may override the generic score order for scenario watchlists. For `ism_services` / ISM Non-Manufacturing clusters, the pre-release watchlist prioritizes `Prices`, `New Orders`, `Business Activity`, and `Employment`; headline PMI is context rather than a default watchlist winner when those subcomponents are present. For `monthly_labor`, the pre-release watchlist prioritizes headline NFP, unemployment rate, wages, manufacturing payrolls, and private payrolls so labor detail rows can be tracked when the anchor margin is weak. For `jobless_claims`, the pre-release watchlist prioritizes initial claims, continuing claims, and the 4-week average as a single claims family rather than mixing them with trade or productivity rows that happen to share the same timestamp. For `factory_orders`, the pre-release watchlist prioritizes `Factory Orders ex Transportation`, then headline `Factory Orders`, then `ex Defense`, so the batch logic does not overread the broad headline when the cleaner core orders row is the more decision-relevant member. For `macro_inflation_retail`, the pre-release watchlist prioritizes core CPI, headline CPI, retail sales MoM, retail sales ex-autos / ex-gas-autos, retail sales YoY, and CPI s.a. so same-minute inflation-and-demand pileups are represented as one macro watch object instead of dropping one side of the release mix. For `cftc_positions`, the pre-release watchlist is intentionally conservative and representative rather than exhaustive: it prioritizes S&P 500, Nasdaq 100, gold, silver, and crude oil positioning while lowering risk, volatility, and confidence because these batches are indirect and noisy for USDJPY. For large `eia_petroleum` clusters, the pre-release watchlist prioritizes distillate production, refinery activity, crude stocks, gasoline stocks, gasoline production, and distillate stocks ahead of imports or Cushing-only rows, because the wider product/refining mix often matters more than the most familiar oil headline when the batch has no clear anchor. For `mba_mortgage`, the pre-release watchlist prioritizes purchase index, market index, refinance index, and the 30-year mortgage rate so the system does not overfocus on rates while missing the underlying demand signal.
+Known release-family profiles may override the generic score order for scenario watchlists. For `ism_services` / ISM Non-Manufacturing clusters, the pre-release watchlist prioritizes `Prices`, `New Orders`, `Business Activity`, and `Employment`; headline PMI is context rather than a default watchlist winner when those subcomponents are present. For `monthly_labor`, the pre-release watchlist prioritizes headline NFP, unemployment rate, wages, manufacturing payrolls, and private payrolls so labor detail rows can be tracked when the anchor margin is weak. For `jobless_claims`, the pre-release watchlist prioritizes initial claims, continuing claims, and the 4-week average as a single claims family rather than mixing them with trade or productivity rows that happen to share the same timestamp. For `factory_orders`, the pre-release watchlist prioritizes `Factory Orders ex Transportation`, then headline `Factory Orders`, then `ex Defense`, so the batch logic does not overread the broad headline when the cleaner core orders row is the more decision-relevant member. For `macro_inflation_retail`, the pre-release watchlist prioritizes core CPI, headline CPI, retail sales MoM, retail sales ex-autos / ex-gas-autos, retail sales YoY, and CPI s.a. so same-minute inflation-and-demand pileups are represented as one macro watch object instead of dropping one side of the release mix. For `cftc_positions`, the pre-release watchlist is intentionally conservative and representative rather than exhaustive: it prioritizes S&P 500, Nasdaq 100, gold, silver, and crude oil positioning while lowering risk, volatility, and confidence because these batches are indirect and noisy for USDJPY. For large `eia_petroleum` clusters, the pre-release watchlist prioritizes distillate production, refinery activity, crude stocks, gasoline stocks, gasoline production, distillate stocks, and Cushing crude oil stocks ahead of imports-only rows, because the wider product/refining mix can still be outranked by storage-location stress when the batch has no clear anchor. For `mba_mortgage`, the pre-release watchlist prioritizes purchase index, market index, refinance index, and the 30-year mortgage rate so the system does not overfocus on rates while missing the underlying demand signal.
 
 Provider-specific note:
 
 - Anthropic additionally receives a larger static reusable scaffold in the cached system block for prompt-caching efficiency.
 - That scaffold is provider-side instruction text only; it is not a separately stored system entity and is not shared with OpenAI or Gemini.
 - Provider cache counters are stored in `cache_creation_input_tokens` and `cache_read_input_tokens` when exposed by the provider response. For Anthropic, non-zero `cache_read_input_tokens` means the static block was read from provider-side prompt cache.
+
+### 5.5A HistoricalContext v1a (same-indicator feature pack)
+
+Current live scope:
+
+- reads Event-sheet history only
+- uses the last 3 prior same-indicator releases
+- does not call any AI provider
+- does not mutate `Event`
+- does not write to `Predictions`
+
+Normalized shape:
+
+- `feature_pack_version = "v1_historical_context"`
+- `historical_context.same_indicator.events_seen`
+- `historical_context.same_indicator.history_quality`
+- `historical_context.same_indicator.last_3_actuals`
+- `historical_context.same_indicator.last_3_consensus`
+- `historical_context.same_indicator.last_3_surprises`
+- `historical_context.same_indicator.surprise_bias`
+- `historical_context.same_indicator.surprise_pattern`
+- `historical_context.same_indicator.surprise_volatility`
+- `historical_context.same_indicator.consensus_accuracy_trend`
+
+Supported `history_quality` values:
+
+- `full`
+- `partial`
+- `cold_start`
+
+Supported `surprise_pattern` values:
+
+- `persistent_positive`
+- `persistent_negative`
+- `mixed`
+- `flat`
+- `unknown`
+
+Public debug wrapper:
+
+- `debugHistoricalContextForEvent(eventId)`
+
+This function computes and returns the feature pack for one Event row without calling providers or writing prediction rows.
 
 ---
 
