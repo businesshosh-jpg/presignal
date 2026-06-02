@@ -135,6 +135,17 @@ function apiBuildAttentionEvidenceReport() {
   return apiBuildAttentionEvidenceReport_();
 }
 
+function apiBuildAttentionBlockStability_() {
+  return {
+    status: 'ok',
+    attention_block_stability: buildAttentionBlockStability_()
+  };
+}
+
+function apiBuildAttentionBlockStability() {
+  return apiBuildAttentionBlockStability_();
+}
+
 function apiUpsertEventWindow_(params) {
   params = params || {};
 

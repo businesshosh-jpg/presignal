@@ -82,6 +82,7 @@ function onOpen() {
       .addItem('Build Attention Factor Summary', 'menuBuildAttentionFactorSummary_')
       .addItem('Build Provider Character Diagnostics', 'menuBuildProviderCharacterDiagnostics_')
       .addItem('Build Attention Evidence Report', 'menuBuildAttentionEvidenceReport_')
+      .addItem('Build Attention Block Stability', 'menuBuildAttentionBlockStability_')
       .addItem('Build Outcome Diagnostics', 'menuBuildOutcomeDiagnostics_')
       .addItem('Rebuild Logs / Diagnostics', 'menuMaintenanceDiagnostics_')
       .addItem('System Health Check', 'menuMaintenanceHealthCheck_')

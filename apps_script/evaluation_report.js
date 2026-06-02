@@ -257,6 +257,37 @@ function menuBuildAttentionEvidenceReport_() {
   }
 }
 
+function menuBuildAttentionBlockStability_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildAttentionBlockStability_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Attention block stability -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Attention block stability rows=' + (res.rows_written || 0),
+      'Attention Block Stability',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Attention block stability -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function buildEvaluationSheets_() {
   var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
   if (!predSheet) throw new Error('Predictions sheet missing');
@@ -400,6 +431,10 @@ function getOrCreateAttentionEvidenceReportSheet_() {
   return _getOrCreateSheet_('Attention_Evidence_Report');
 }
 
+function getOrCreateAttentionBlockStabilitySheet_() {
+  return _getOrCreateSheet_('Attention_Block_Stability');
+}
+
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
@@ -418,6 +453,10 @@ function ensureProviderCharacterDiagnosticsHeaders_(sheet) {
 
 function ensureAttentionEvidenceReportHeaders_(sheet) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionEvidenceReportHeaders_());
+}
+
+function ensureAttentionBlockStabilityHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionBlockStabilityHeaders_());
 }
 
 function buildOutcomeSummaries_() {
@@ -619,6 +658,33 @@ function buildAttentionEvidenceReport_() {
   };
 }
 
+function buildAttentionBlockStability_() {
+  var ledgerSheet = getOrCreateOutcomeLedgerSheet_();
+  var ledgerHeaders = getHeaderNames(ledgerSheet);
+  if (!ledgerHeaders || !ledgerHeaders.length) {
+    throw new Error('Outcome_Ledger sheet is missing headers.');
+  }
+
+  var ledgerRows = _readDataRows_(ledgerSheet);
+  var ledgerIdx = _headerIndexMap_(ledgerHeaders);
+  var stabilitySheet = getOrCreateAttentionBlockStabilitySheet_();
+  var headers = _attentionBlockStabilityHeaders_();
+  var rowsOut = buildAttentionBlockStabilityRows_(ledgerRows, ledgerIdx, new Date().toISOString());
+  _sortAttentionBlockStabilityRows_(headers, rowsOut);
+
+  var actualHeaders = ensureAttentionBlockStabilityHeaders_(stabilitySheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    stabilitySheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+
+  return {
+    attention_block_stability_sheet: stabilitySheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
 function _outcomeDiagnosticsHeaders_() {
   return [
     'generated_ts',
@@ -688,6 +754,36 @@ function _attentionEvidenceReportHeaders_() {
     'lift_vs_baseline',
     'evidence_level',
     'evidence_summary',
+    'recommended_next_step',
+    'decision_support_note'
+  ];
+}
+
+function _attentionBlockStabilityHeaders_() {
+  return [
+    'generated_ts',
+    'diagnostic_type',
+    'block_id',
+    'block_label',
+    'block_start_date',
+    'block_end_date',
+    'scope',
+    'scope_key',
+    'outcome_family',
+    'ai_name',
+    'attention_factor',
+    'metric_name',
+    'metric_value',
+    'baseline_block_id',
+    'baseline_value',
+    'delta_vs_baseline',
+    'rows_total',
+    'rows_scored',
+    'overall_hit_rate',
+    'avg_outcome_score',
+    'convergence_rate',
+    'stability_level',
+    'diagnostic_summary',
     'recommended_next_step',
     'decision_support_note'
   ];
@@ -1060,6 +1156,341 @@ function _attentionEvidenceDetailNumber_(detail, key) {
 
 function _attentionEvidenceRowsTotalFromDetail_(detail) {
   return _attentionEvidenceDetailNumber_(detail, 'rows_total');
+}
+
+function buildAttentionBlockStabilityRows_(ledgerRows, ledgerIdx, generatedTs) {
+  var blocks = _attentionBlockDefinitions_();
+  var metricGroups = {};
+  var targetGroups = {};
+  for (var i = 0; i < (ledgerRows || []).length; i++) {
+    var row = ledgerRows[i];
+    if (!_isAttentionEraLedgerRow_(row, ledgerIdx)) continue;
+    var date = _ledgerReleaseDateString_(row, ledgerIdx);
+    var block = _attentionBlockForDate_(date, blocks);
+    if (!block) continue;
+
+    var family = String(_predValue_(row, ledgerIdx, 'outcome_family') || '').trim() || 'other';
+    var aiName = String(_predValue_(row, ledgerIdx, 'ai_name') || '').trim() || 'unknown_provider';
+    var factors = _attentionFactorsFromLedgerRow_(row, ledgerIdx);
+    var uniqueFactors = _uniqueStrings_(factors.map(function(f){ return f.factor; }));
+
+    _addAttentionBlockMetricSample_(metricGroups, block, 'block_overview', 'block', block.block_id, '', '', '', row, ledgerIdx);
+    _addAttentionBlockMetricSample_(metricGroups, block, 'provider_block_performance', 'provider', aiName, '', aiName, '', row, ledgerIdx);
+    _addAttentionBlockMetricSample_(metricGroups, block, 'family_block_performance', 'family', family, family, '', '', row, ledgerIdx);
+    for (var f = 0; f < uniqueFactors.length; f++) {
+      var factor = uniqueFactors[f];
+      _addAttentionBlockMetricSample_(metricGroups, block, 'attention_factor_block_performance', 'attention_factor', factor, '', '', factor, row, ledgerIdx);
+      _addAttentionBlockMetricSample_(metricGroups, block, 'provider_factor_block_performance', 'provider_factor', aiName + '|' + factor, '', aiName, factor, row, ledgerIdx);
+    }
+
+    var targetKey = _providerCharacterTargetKey_(row, ledgerIdx);
+    if (targetKey) {
+      var fullTargetKey = block.block_id + '|' + targetKey;
+      if (!targetGroups[fullTargetKey]) {
+        targetGroups[fullTargetKey] = { block: block, rows: [] };
+      }
+      targetGroups[fullTargetKey].rows.push(row);
+    }
+  }
+
+  var rowsOut = [];
+  var metricSnapshots = {};
+  Object.keys(metricGroups).sort().forEach(function(key) {
+    var g = metricGroups[key];
+    var rowOut = _makeAttentionBlockStabilityMetricRow_(generatedTs, g);
+    rowsOut.push(rowOut);
+    metricSnapshots[g.diagnostic_type + '|' + g.scope + '|' + g.scope_key + '|' + g.block.block_id] = {
+      block: g.block,
+      diagnostic_type: g.diagnostic_type,
+      scope: g.scope,
+      scope_key: g.scope_key,
+      outcome_family: g.outcome_family,
+      ai_name: g.ai_name,
+      attention_factor: g.attention_factor,
+      avg_outcome_score: g.score_count ? _roundRate_(g.score_sum / g.score_count) : null,
+      overall_hit_rate: g.rows_scored ? _roundRate_(g.overall_hit_count / g.rows_scored) : null,
+      rows_scored: g.rows_scored
+    };
+  });
+
+  var convergenceRows = _buildAttentionBlockConvergenceRows_(targetGroups, ledgerIdx, generatedTs);
+  rowsOut = rowsOut.concat(convergenceRows);
+  rowsOut = rowsOut.concat(_buildAttentionBlockCrossBlockRows_(metricSnapshots, blocks, generatedTs));
+  rowsOut = rowsOut.concat(_buildAttentionBlockReadinessRows_(metricSnapshots, convergenceRows, blocks, generatedTs));
+  return rowsOut;
+}
+
+function _attentionBlockDefinitions_() {
+  return [
+    { block_id: 'nov_01_10_2024', label: 'Nov 1-10 2024', start: '2024-11-01', end: '2024-11-10' },
+    { block_id: 'nov_11_15_2024', label: 'Nov 11-15 2024', start: '2024-11-11', end: '2024-11-15' },
+    { block_id: 'nov_18_22_2024', label: 'Nov 18-22 2024', start: '2024-11-18', end: '2024-11-22' }
+  ];
+}
+
+function _attentionBlockForDate_(dateString, blocks) {
+  if (!dateString) return null;
+  for (var i = 0; i < (blocks || []).length; i++) {
+    var block = blocks[i];
+    if (dateString >= block.start && dateString <= block.end) return block;
+  }
+  return null;
+}
+
+function _ledgerReleaseDateString_(row, idx) {
+  var releaseDate = String(_predValue_(row, idx, 'release_date') || '').trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(releaseDate)) return releaseDate;
+  var releaseTs = _predValue_(row, idx, 'release_ts');
+  if (!releaseTs) return '';
+  var d = releaseTs instanceof Date ? releaseTs : new Date(releaseTs);
+  if (isNaN(d.getTime())) return '';
+  return d.toISOString().slice(0, 10);
+}
+
+function _addAttentionBlockMetricSample_(groups, block, diagnosticType, scope, scopeKey, family, aiName, factor, row, ledgerIdx) {
+  var key = diagnosticType + '|' + block.block_id + '|' + scope + '|' + scopeKey;
+  if (!groups[key]) {
+    groups[key] = {
+      block: block,
+      diagnostic_type: diagnosticType,
+      scope: scope,
+      scope_key: scopeKey,
+      outcome_family: family || '',
+      ai_name: aiName || '',
+      attention_factor: factor || '',
+      rows_total: 0,
+      rows_scored: 0,
+      overall_hit_count: 0,
+      score_sum: 0,
+      score_count: 0
+    };
+  }
+  var g = groups[key];
+  var scored = _isTrueCell_(_predValue_(row, ledgerIdx, 'scored_flag'));
+  var score = _numOrNull_(_predValue_(row, ledgerIdx, 'outcome_score'));
+  g.rows_total += 1;
+  if (scored) g.rows_scored += 1;
+  if (scored && _isTrueCell_(_predValue_(row, ledgerIdx, 'overall_ok'))) g.overall_hit_count += 1;
+  if (scored && score != null) {
+    g.score_sum += score;
+    g.score_count += 1;
+  }
+}
+
+function _makeAttentionBlockStabilityMetricRow_(generatedTs, g) {
+  var avgScore = g.score_count ? _roundRate_(g.score_sum / g.score_count) : '';
+  var hitRate = _rateOrBlank_(g.overall_hit_count, g.rows_scored);
+  var level = _attentionBlockMetricLevel_(g.rows_scored, avgScore, hitRate);
+  return _makeAttentionBlockStabilityRow_(generatedTs, {
+    diagnostic_type: g.diagnostic_type,
+    block: g.block,
+    scope: g.scope,
+    scope_key: g.scope_key,
+    outcome_family: g.outcome_family,
+    ai_name: g.ai_name,
+    attention_factor: g.attention_factor,
+    metric_name: 'avg_outcome_score',
+    metric_value: avgScore,
+    rows_total: g.rows_total,
+    rows_scored: g.rows_scored,
+    overall_hit_rate: hitRate,
+    avg_outcome_score: avgScore,
+    stability_level: level,
+    diagnostic_summary: 'Block-level observed outcome slice for stability comparison.',
+    recommended_next_step: 'Compare this slice across blocks before drawing provider or factor conclusions.'
+  });
+}
+
+function _attentionBlockMetricLevel_(rowsScored, avgScore, hitRate) {
+  rowsScored = Number(rowsScored || 0);
+  if (rowsScored < 10) return 'low_sample';
+  var score = _numOrNull_(avgScore);
+  var hit = _numOrNull_(hitRate);
+  if ((score != null && score >= 2.2) || (hit != null && hit >= 0.35)) return 'strong_observed';
+  if ((score != null && score <= 1.2) || (hit != null && hit <= 0.15)) return 'weak_observed';
+  return 'mixed_observed';
+}
+
+function _buildAttentionBlockConvergenceRows_(targetGroups, ledgerIdx, generatedTs) {
+  var groups = {};
+  Object.keys(targetGroups || {}).forEach(function(key) {
+    var target = targetGroups[key];
+    var rows = target.rows || [];
+    if (rows.length < 2) return;
+    var firstFamily = String(_predValue_(rows[0], ledgerIdx, 'outcome_family') || '').trim() || 'other';
+    var block = target.block;
+    var dirMap = {};
+    var strengthMap = {};
+    for (var i = 0; i < rows.length; i++) {
+      var dir = String(_predValue_(rows[i], ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase() || 'blank';
+      var strength = String(_predValue_(rows[i], ledgerIdx, 'mr_pred_strength') || '').trim().toLowerCase() || 'blank';
+      dirMap[dir] = (dirMap[dir] || 0) + 1;
+      strengthMap[strength] = (strengthMap[strength] || 0) + 1;
+    }
+    var maxDir = _maxCount_(dirMap);
+    var maxStrength = _maxCount_(strengthMap);
+    var highConvergence = maxDir >= rows.length && maxStrength >= rows.length;
+    _addAttentionBlockConvergenceSample_(groups, block, 'global', 'all', '', rows.length, highConvergence);
+    _addAttentionBlockConvergenceSample_(groups, block, 'family', firstFamily, firstFamily, rows.length, highConvergence);
+  });
+
+  var rowsOut = [];
+  Object.keys(groups).sort().forEach(function(key) {
+    var g = groups[key];
+    var rate = _rateOrBlank_(g.high_convergence_count, g.target_count);
+    var level = 'low';
+    if (_numOrZero_(rate) >= 0.70) level = 'high';
+    else if (_numOrZero_(rate) >= 0.40) level = 'moderate';
+    rowsOut.push(_makeAttentionBlockStabilityRow_(generatedTs, {
+      diagnostic_type: 'convergence_block_risk',
+      block: g.block,
+      scope: g.scope,
+      scope_key: g.scope_key,
+      outcome_family: g.outcome_family,
+      metric_name: 'high_convergence_rate',
+      metric_value: rate,
+      rows_total: g.target_count,
+      rows_scored: g.target_count,
+      convergence_rate: rate,
+      stability_level: level,
+      diagnostic_summary: 'Provider outputs show block-level direction/strength similarity for this scope.',
+      recommended_next_step: 'Track whether convergence remains stable before changing provider framing.'
+    }));
+  });
+  return rowsOut;
+}
+
+function _addAttentionBlockConvergenceSample_(groups, block, scope, scopeKey, family, providerCount, highConvergence) {
+  var key = block.block_id + '|' + scope + '|' + scopeKey;
+  if (!groups[key]) {
+    groups[key] = {
+      block: block,
+      scope: scope,
+      scope_key: scopeKey,
+      outcome_family: family || '',
+      target_count: 0,
+      provider_row_count: 0,
+      high_convergence_count: 0
+    };
+  }
+  groups[key].target_count += 1;
+  groups[key].provider_row_count += Number(providerCount || 0);
+  if (highConvergence) groups[key].high_convergence_count += 1;
+}
+
+function _buildAttentionBlockCrossBlockRows_(metricSnapshots, blocks, generatedTs) {
+  var rowsOut = [];
+  if (!blocks || blocks.length < 2) return rowsOut;
+  var baselineBlock = blocks[0];
+  Object.keys(metricSnapshots || {}).sort().forEach(function(key) {
+    var snap = metricSnapshots[key];
+    if (!snap || !snap.block || snap.block.block_id === baselineBlock.block_id) return;
+    var baseKey = snap.diagnostic_type + '|' + snap.scope + '|' + snap.scope_key + '|' + baselineBlock.block_id;
+    var base = metricSnapshots[baseKey];
+    if (!base) return;
+    var delta = (snap.avg_outcome_score != null && base.avg_outcome_score != null)
+      ? _roundRate_(snap.avg_outcome_score - base.avg_outcome_score)
+      : '';
+    var level = _attentionBlockDeltaLevel_(snap.rows_scored, base.rows_scored, delta);
+    rowsOut.push(_makeAttentionBlockStabilityRow_(generatedTs, {
+      diagnostic_type: 'cross_block_stability',
+      block: snap.block,
+      scope: snap.scope,
+      scope_key: snap.scope_key,
+      outcome_family: snap.outcome_family,
+      ai_name: snap.ai_name,
+      attention_factor: snap.attention_factor,
+      metric_name: 'avg_outcome_score_delta',
+      metric_value: delta,
+      baseline_block_id: baselineBlock.block_id,
+      baseline_value: base.avg_outcome_score != null ? base.avg_outcome_score : '',
+      delta_vs_baseline: delta,
+      rows_scored: snap.rows_scored,
+      avg_outcome_score: snap.avg_outcome_score != null ? snap.avg_outcome_score : '',
+      stability_level: level,
+      diagnostic_summary: 'Cross-block score movement versus the first comparison block.',
+      recommended_next_step: 'Treat movement as diagnostic evidence only until a third block confirms the pattern.'
+    }));
+  });
+  return rowsOut;
+}
+
+function _attentionBlockDeltaLevel_(rowsScored, baselineRowsScored, delta) {
+  if (Number(rowsScored || 0) < 10 || Number(baselineRowsScored || 0) < 10) return 'low_sample';
+  var d = _numOrNull_(delta);
+  if (d == null) return 'unknown';
+  if (Math.abs(d) <= 0.20) return 'stable';
+  if (d >= 0.50) return 'improved';
+  if (d <= -0.50) return 'weakened';
+  return 'shifted';
+}
+
+function _buildAttentionBlockReadinessRows_(metricSnapshots, convergenceRows, blocks, generatedTs) {
+  var observedBlocks = {};
+  Object.keys(metricSnapshots || {}).forEach(function(key) {
+    var snap = metricSnapshots[key];
+    if (snap && snap.block && Number(snap.rows_scored || 0) > 0) observedBlocks[snap.block.block_id] = true;
+  });
+  var observedCount = Object.keys(observedBlocks).length;
+  var level = observedCount >= 3 ? 'ready' : (observedCount >= 2 ? 'partial' : 'not_ready');
+  return [
+    _makeAttentionBlockStabilityRow_(generatedTs, {
+      diagnostic_type: 'readiness_next_block',
+      block: blocks && blocks.length ? blocks[blocks.length - 1] : { block_id: '', label: '', start: '', end: '' },
+      scope: 'global',
+      scope_key: 'all',
+      metric_name: 'observed_block_count',
+      metric_value: observedCount,
+      rows_total: (convergenceRows || []).length,
+      stability_level: level,
+      diagnostic_summary: observedCount >= 3
+        ? 'Three observed blocks are available for stability review.'
+        : 'A third observed block is still needed before treating factor/provider patterns as persistent.',
+      recommended_next_step: observedCount >= 3
+        ? 'Review repeated provider, family, factor, score, hit-rate, and convergence patterns.'
+        : 'Backtest the next planned block, then rebuild this diagnostic.'
+    })
+  ];
+}
+
+function _makeAttentionBlockStabilityRow_(generatedTs, attrs) {
+  attrs = attrs || {};
+  var block = attrs.block || {};
+  return [
+    generatedTs,
+    attrs.diagnostic_type || '',
+    block.block_id || attrs.block_id || '',
+    block.label || attrs.block_label || '',
+    block.start || attrs.block_start_date || '',
+    block.end || attrs.block_end_date || '',
+    attrs.scope || '',
+    attrs.scope_key || '',
+    attrs.outcome_family || '',
+    attrs.ai_name || '',
+    attrs.attention_factor || '',
+    attrs.metric_name || '',
+    attrs.metric_value == null ? '' : attrs.metric_value,
+    attrs.baseline_block_id || '',
+    attrs.baseline_value == null ? '' : attrs.baseline_value,
+    attrs.delta_vs_baseline == null ? '' : attrs.delta_vs_baseline,
+    attrs.rows_total == null ? '' : attrs.rows_total,
+    attrs.rows_scored == null ? '' : attrs.rows_scored,
+    attrs.overall_hit_rate == null ? '' : attrs.overall_hit_rate,
+    attrs.avg_outcome_score == null ? '' : attrs.avg_outcome_score,
+    attrs.convergence_rate == null ? '' : attrs.convergence_rate,
+    attrs.stability_level || '',
+    attrs.diagnostic_summary || '',
+    attrs.recommended_next_step || '',
+    'Block stability diagnostic only; not trading advice.'
+  ];
+}
+
+function _maxCount_(map) {
+  var best = 0;
+  Object.keys(map || {}).forEach(function(key) {
+    best = Math.max(best, Number(map[key] || 0));
+  });
+  return best;
 }
 
 function buildAttentionFactorSummaryRows_(ledgerRows, ledgerIdx, generatedTs) {
@@ -3757,6 +4188,36 @@ function _sortAttentionEvidenceReportRows_(headers, rows) {
       idx.ai_name,
       idx.attention_factor,
       idx.factor_combo,
+      idx.scope_key
+    ]);
+  });
+}
+
+function _sortAttentionBlockStabilityRows_(headers, rows) {
+  if (!rows || rows.length < 2) return;
+  var idx = _headerIndexMap_(headers);
+  var typeOrder = {
+    block_overview: 1,
+    provider_block_performance: 2,
+    family_block_performance: 3,
+    attention_factor_block_performance: 4,
+    provider_factor_block_performance: 5,
+    convergence_block_risk: 6,
+    cross_block_stability: 7,
+    readiness_next_block: 8
+  };
+  rows.sort(function(a, b) {
+    var aType = String(a[idx.diagnostic_type] || '');
+    var bType = String(b[idx.diagnostic_type] || '');
+    var aOrder = typeOrder[aType] || 999;
+    var bOrder = typeOrder[bType] || 999;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    return _cmpByColumns_(a, b, [
+      idx.block_id,
+      idx.scope,
+      idx.outcome_family,
+      idx.ai_name,
+      idx.attention_factor,
       idx.scope_key
     ]);
   });

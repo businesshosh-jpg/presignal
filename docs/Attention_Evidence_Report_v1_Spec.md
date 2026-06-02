@@ -8,6 +8,8 @@ It converts `Attention_Factor_Summary` and `Provider_Character_Diagnostics` into
 
 This sheet is observational only. It must not control prompts, predictions, provider weighting, calibration, Market Reaction Memory, or signal generation.
 
+`Attention_Block_Stability` is the follow-up derived diagnostic for comparing whether these attention-era patterns persist across separate backtest blocks.
+
 ## Source Sheets
 
 - `Attention_Factor_Summary`
