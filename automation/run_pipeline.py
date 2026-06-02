@@ -447,6 +447,23 @@ def _window_bounds_from_params(params: Dict[str, Any]):
         return None, None
 
 
+def _window_utc_iso_params(params: Dict[str, Any]) -> Dict[str, str]:
+    lo, hi = _window_bounds_from_params(params)
+    if not lo or not hi:
+        raise RuntimeError("Unable to resolve UTC window bounds for event upsert.")
+    return {
+        "from_utc_iso": lo.isoformat().replace("+00:00", "Z"),
+        "to_utc_iso": hi.isoformat().replace("+00:00", "Z"),
+    }
+
+
+def _event_upsert_fetched_count(event_upsert: Dict[str, Any]) -> int:
+    try:
+        return int(((event_upsert or {}).get("upsert") or {}).get("fetched") or 0)
+    except Exception:
+        return 0
+
+
 def _format_local_minute(dt_utc: datetime, tz_name: str) -> str:
     tzinfo = ZoneInfo(tz_name or "UTC")
     return dt_utc.astimezone(tzinfo).strftime("%Y-%m-%d %H:%M")
@@ -538,7 +555,7 @@ def _event_cluster_preflight(
     estimated_provider_rows = sum(int(c["event_count"]) for c in cluster_list) * max(1, int(provider_count or 0))
 
     reasons: List[str] = []
-    if max_cluster_members >= 10 or max_cluster_events >= 12:
+    if max_cluster_members >= 6 or max_cluster_events >= 12:
         reasons.append("large_same_time_cluster")
     if max_cluster_genres >= 3 or max_cluster_families >= 3:
         reasons.append("mixed_family_cluster")
@@ -1275,6 +1292,7 @@ def _run_prediction_sequence(
     log_path: Path = None,
     provider_split_first: bool = False,
     provider_split_cap: int = None,
+    fail_when_all_degraded: bool = True,
 ) -> Dict[str, Any]:
     provider_list = list(base_params.get("providers") or [])
     allow_provider_split = str(base_params.get("runner_mode") or "").lower() == "day-run"
@@ -1318,10 +1336,11 @@ def _run_prediction_sequence(
 
         if degraded_providers and not any(group.get("final") for group in group_runs):
             degraded_names = [d.get("provider", "") for d in degraded_providers if d.get("provider")]
-            raise RuntimeError(
-                "All providers degraded after repeated timeout failures: "
-                + ", ".join(degraded_names or ["unknown"])
-            )
+            if fail_when_all_degraded:
+                raise RuntimeError(
+                    "All providers degraded after repeated timeout failures: "
+                    + ", ".join(degraded_names or ["unknown"])
+                )
 
     if provider_split_first and allow_provider_split and provider_list and len(provider_list) > 1:
         run_provider_split("provider_split_first")
@@ -1371,6 +1390,8 @@ def _run_prediction_sequence(
         status = str(group.get("status") or "ok").lower()
         if status == "partial":
             final_status = "partial"
+    if degraded_providers and not finals:
+        final_status = "partial"
 
     return {
         "passes": flat_passes,
@@ -1417,7 +1438,7 @@ def _run_heavy_prediction_sequence(
         cluster = cluster_by_release.get(release_key, {})
         provider_split_first = len(base_params.get("providers") or []) > 1
         window_cap = _cluster_work_unit_cap(cluster, pred_max_work_units_per_run)
-        provider_split_cap = 2 if provider_split_first else None
+        provider_split_cap = 1 if provider_split_first else None
         _append_run_log(
             log_path,
             "heavy_prediction_window_start",
@@ -1450,6 +1471,7 @@ def _run_heavy_prediction_sequence(
             log_path=log_path,
             provider_split_first=provider_split_first,
             provider_split_cap=provider_split_cap,
+            fail_when_all_degraded=False,
         )
         window_runs.append({
             "window_from_local": cluster_params["window_from_local"],
@@ -1516,6 +1538,45 @@ def _run_pipeline_sequence(
     from automation.google_clients import run_script_function
 
     out: Dict[str, Any] = {"status": "ok", "steps": {}}
+
+    if str(params.get("runner_mode") or "").lower() == "day-run":
+        _append_run_log(log_path, "pipeline_phase_start", phase="event_upsert")
+        _update_run_lock(lock_path, phase="event_upsert")
+        event_window = _window_utc_iso_params(params)
+        try:
+            with _RunnerCallTimeout(_runner_call_timeout_sec(), "apiUpsertEventWindow"):
+                out["steps"]["event_upsert"] = run_script_function(
+                    script_service,
+                    script_id,
+                    "apiUpsertEventWindow",
+                    [event_window],
+                )
+        except Exception as exc:
+            out["status"] = "blocked_event_fetch"
+            out["steps"]["event_upsert"] = {
+                "status": "blocked",
+                "error": str(exc),
+                "window": event_window,
+                "manual_action": "Event fetch/upsert failed; stop runner and handle the event window manually.",
+            }
+            _append_run_log(
+                log_path,
+                "event_upsert_blocked",
+                error=str(exc),
+                window=event_window,
+            )
+            return out
+        if _event_upsert_fetched_count(out["steps"]["event_upsert"]) <= 0:
+            out["steps"]["no_events_skip"] = {
+                "status": "ok",
+                "reason": "event_upsert fetched zero rows; skipped prediction, actuals, market reaction, and evaluation",
+            }
+            _append_run_log(
+                log_path,
+                "no_events_skip",
+                reason="event_upsert fetched zero rows",
+            )
+            return out
 
     if params.get("run_predictions", True):
         heavy_day_mode = str(params.get("heavy_day_mode") or "off").lower()

@@ -34,6 +34,7 @@ FORCE_GOOGLE_API_IPV4 = os.environ.get("PRESIGNAL_FORCE_GOOGLE_API_IPV4", "1") =
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/script.deployments",
     "https://www.googleapis.com/auth/script.projects",
     "https://www.googleapis.com/auth/script.scriptapp",
 ]
@@ -101,7 +102,7 @@ def load_credentials(interactive: bool = False) -> Credentials:
         )
 
     flow = InstalledAppFlow.from_client_secrets_file(str(CREDENTIALS_PATH), SCOPES)
-    creds = flow.run_local_server(port=0)
+    creds = flow.run_local_server(port=0, prompt="consent", include_granted_scopes="true")
     TOKEN_PATH.write_text(creds.to_json())
     return creds
 
@@ -129,6 +130,9 @@ def run_script_function(
     parameters: Optional[Iterable[Any]] = None,
     dev_mode: bool = True,
 ) -> Any:
+    # Apps Script API executable deployment ids (AKfy...) cannot run in devMode.
+    if str(script_id or "").startswith("AKfy"):
+        dev_mode = False
     body: Dict[str, Any] = {
         "function": function_name,
         "parameters": list(parameters or []),
