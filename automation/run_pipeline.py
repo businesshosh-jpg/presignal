@@ -609,6 +609,33 @@ def _cluster_work_unit_cap(cluster: Dict[str, Any], default_cap: int) -> int:
     return cap
 
 
+def _cluster_provider_split_first_decision(
+    cluster: Dict[str, Any],
+    provider_count: int,
+) -> Dict[str, Any]:
+    if int(provider_count or 0) <= 1:
+        return {"provider_split_first": False, "reason": "single_provider"}
+
+    event_count = _safe_int(cluster.get("event_count"))
+    member_count = _safe_int(cluster.get("member_count"))
+    genres = cluster.get("genres") if isinstance(cluster.get("genres"), list) else []
+    families = cluster.get("families") if isinstance(cluster.get("families"), list) else []
+    genre_count = len(genres)
+    family_count = len(families)
+
+    reasons = []
+    if event_count >= 5 or member_count >= 5:
+        reasons.append("large_cluster")
+    if genre_count >= 3 or family_count >= 3:
+        reasons.append("mixed_family_cluster")
+    if event_count >= 4 and (genre_count >= 2 or family_count >= 2):
+        reasons.append("broad_multi_event_cluster")
+
+    if reasons:
+        return {"provider_split_first": True, "reason": ",".join(reasons)}
+    return {"provider_split_first": False, "reason": "combined_first"}
+
+
 def _safe_int(value: Any) -> int:
     try:
         return int(float(value))
@@ -1436,7 +1463,11 @@ def _run_heavy_prediction_sequence(
         cluster_params = _cluster_window_params(base_params, release_dt)
         release_key = release_dt.isoformat().replace("+00:00", "Z")
         cluster = cluster_by_release.get(release_key, {})
-        provider_split_first = len(base_params.get("providers") or []) > 1
+        split_decision = _cluster_provider_split_first_decision(
+            cluster,
+            len(base_params.get("providers") or []),
+        )
+        provider_split_first = bool(split_decision.get("provider_split_first"))
         window_cap = _cluster_work_unit_cap(cluster, pred_max_work_units_per_run)
         provider_split_cap = 1 if provider_split_first else None
         _append_run_log(
@@ -1448,6 +1479,7 @@ def _run_heavy_prediction_sequence(
             cluster_event_count=_safe_int(cluster.get("event_count")),
             cluster_member_count=_safe_int(cluster.get("member_count")),
             provider_split_first=provider_split_first,
+            provider_split_reason=split_decision.get("reason", ""),
             window_pred_max_work_units_per_run=window_cap,
             provider_split_cap=provider_split_cap,
         )
@@ -1458,6 +1490,7 @@ def _run_heavy_prediction_sequence(
             window_to_local=cluster_params["window_to_local"],
             window_tz=cluster_params["window_tz"],
             provider_split_first=provider_split_first,
+            provider_split_reason=split_decision.get("reason", ""),
         )
         result = _run_prediction_sequence(
             script_service,
@@ -1479,6 +1512,7 @@ def _run_heavy_prediction_sequence(
             "window_tz": cluster_params["window_tz"],
             "cluster": cluster,
             "provider_split_first": provider_split_first,
+            "provider_split_reason": split_decision.get("reason", ""),
             "window_pred_max_work_units_per_run": window_cap,
             "provider_split_cap": provider_split_cap,
             "result": result,
