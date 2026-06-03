@@ -319,6 +319,37 @@ function menuBuildAttentionDisagreementReview_() {
   }
 }
 
+function menuBuildAttentionDisagreementSummary_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildAttentionDisagreementSummary_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Attention disagreement summary -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Attention disagreement summary rows=' + (res.rows_written || 0),
+      'Attention Disagreement Summary',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Attention disagreement summary -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function buildEvaluationSheets_() {
   var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
   if (!predSheet) throw new Error('Predictions sheet missing');
@@ -470,6 +501,10 @@ function getOrCreateAttentionDisagreementReviewSheet_() {
   return _getOrCreateSheet_('Attention_Disagreement_Review');
 }
 
+function getOrCreateAttentionDisagreementSummarySheet_() {
+  return _getOrCreateSheet_('Attention_Disagreement_Summary');
+}
+
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
@@ -496,6 +531,10 @@ function ensureAttentionBlockStabilityHeaders_(sheet) {
 
 function ensureAttentionDisagreementReviewHeaders_(sheet) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionDisagreementReviewHeaders_());
+}
+
+function ensureAttentionDisagreementSummaryHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionDisagreementSummaryHeaders_());
 }
 
 function buildOutcomeSummaries_() {
@@ -751,6 +790,33 @@ function buildAttentionDisagreementReview_() {
   };
 }
 
+function buildAttentionDisagreementSummary_() {
+  var reviewSheet = getOrCreateAttentionDisagreementReviewSheet_();
+  var reviewHeaders = getHeaderNames(reviewSheet);
+  if (!reviewHeaders || !reviewHeaders.length) {
+    throw new Error('Attention_Disagreement_Review sheet is missing headers.');
+  }
+
+  var reviewRows = _readDataRows_(reviewSheet);
+  var reviewIdx = _headerIndexMap_(reviewHeaders);
+  var summarySheet = getOrCreateAttentionDisagreementSummarySheet_();
+  var headers = _attentionDisagreementSummaryHeaders_();
+  var rowsOut = buildAttentionDisagreementSummaryRows_(reviewRows, reviewIdx, new Date().toISOString());
+  _sortAttentionDisagreementSummaryRows_(headers, rowsOut);
+
+  var actualHeaders = ensureAttentionDisagreementSummaryHeaders_(summarySheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    summarySheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+
+  return {
+    attention_disagreement_summary_sheet: summarySheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
 function _outcomeDiagnosticsHeaders_() {
   return [
     'generated_ts',
@@ -886,6 +952,33 @@ function _attentionDisagreementReviewHeaders_() {
     'provider_score_detail',
     'provider_prediction_detail',
     'provider_attention_detail',
+    'recommended_next_step',
+    'decision_support_note'
+  ];
+}
+
+function _attentionDisagreementSummaryHeaders_() {
+  return [
+    'generated_ts',
+    'summary_type',
+    'scope',
+    'scope_key',
+    'outcome_family',
+    'winner_provider',
+    'attention_factor',
+    'disagreement_kind',
+    'rows_total',
+    'useful_disagreement_count',
+    'possible_signal_count',
+    'no_clear_winner_count',
+    'unscored_or_thin_count',
+    'high_disagreement_count',
+    'avg_score_spread',
+    'avg_pips_spread',
+    'top_winner_provider',
+    'top_attention_factor',
+    'diagnostic_level',
+    'diagnostic_summary',
     'recommended_next_step',
     'decision_support_note'
   ];
@@ -1772,6 +1865,154 @@ function _attentionProviderFactorDetail_(providers, byProvider, ledgerIdx) {
     });
     return provider + ':' + factors.join('+');
   }).join(' | ');
+}
+
+function buildAttentionDisagreementSummaryRows_(reviewRows, reviewIdx, generatedTs) {
+  var groups = {};
+  for (var i = 0; i < (reviewRows || []).length; i++) {
+    var row = reviewRows[i];
+    var family = String(_predValue_(row, reviewIdx, 'outcome_family') || '').trim() || 'other';
+    var winner = String(_predValue_(row, reviewIdx, 'winner_provider') || '').trim();
+    var kind = String(_predValue_(row, reviewIdx, 'disagreement_kind') || '').trim() || 'unknown';
+    var usefulness = String(_predValue_(row, reviewIdx, 'usefulness_label') || '').trim() || 'unknown';
+    var winnerFactors = _attentionDisagreementWinnerFactors_(row, reviewIdx);
+
+    _addAttentionDisagreementSummarySample_(groups, 'global', 'global', 'all', '', '', '', '', row, reviewIdx);
+    _addAttentionDisagreementSummarySample_(groups, 'family', 'family', family, family, '', '', '', row, reviewIdx);
+    _addAttentionDisagreementSummarySample_(groups, 'disagreement_kind', 'kind', kind, '', '', '', kind, row, reviewIdx);
+    _addAttentionDisagreementSummarySample_(groups, 'usefulness', 'usefulness', usefulness, '', '', '', '', row, reviewIdx);
+    if (winner && winner !== 'tie') {
+      _addAttentionDisagreementSummarySample_(groups, 'winner_provider', 'provider', winner, '', winner, '', '', row, reviewIdx);
+      _addAttentionDisagreementSummarySample_(groups, 'family_winner', 'family_provider', family + '|' + winner, family, winner, '', '', row, reviewIdx);
+      for (var f = 0; f < winnerFactors.length; f++) {
+        var factor = winnerFactors[f];
+        _addAttentionDisagreementSummarySample_(groups, 'winner_factor', 'provider_factor', winner + '|' + factor, '', winner, factor, '', row, reviewIdx);
+        _addAttentionDisagreementSummarySample_(groups, 'family_winner_factor', 'family_provider_factor', family + '|' + winner + '|' + factor, family, winner, factor, '', row, reviewIdx);
+      }
+    }
+  }
+
+  var rowsOut = [];
+  Object.keys(groups).sort().forEach(function(key) {
+    rowsOut.push(_makeAttentionDisagreementSummaryRow_(generatedTs, groups[key]));
+  });
+  return rowsOut;
+}
+
+function _addAttentionDisagreementSummarySample_(groups, summaryType, scope, scopeKey, family, winner, factor, kind, row, reviewIdx) {
+  var key = summaryType + '|' + scope + '|' + scopeKey;
+  if (!groups[key]) {
+    groups[key] = {
+      summary_type: summaryType,
+      scope: scope,
+      scope_key: scopeKey,
+      outcome_family: family || '',
+      winner_provider: winner || '',
+      attention_factor: factor || '',
+      disagreement_kind: kind || '',
+      rows_total: 0,
+      useful_disagreement_count: 0,
+      possible_signal_count: 0,
+      no_clear_winner_count: 0,
+      unscored_or_thin_count: 0,
+      high_disagreement_count: 0,
+      score_spread_sum: 0,
+      score_spread_count: 0,
+      pips_spread_sum: 0,
+      pips_spread_count: 0,
+      winners: {},
+      factors: {}
+    };
+  }
+  var g = groups[key];
+  var usefulness = String(_predValue_(row, reviewIdx, 'usefulness_label') || '').trim();
+  var level = String(_predValue_(row, reviewIdx, 'disagreement_level') || '').trim();
+  var rowWinner = String(_predValue_(row, reviewIdx, 'winner_provider') || '').trim();
+  var scoreSpread = _numOrNull_(_predValue_(row, reviewIdx, 'score_spread'));
+  var pipsSpread = _numOrNull_(_predValue_(row, reviewIdx, 'pips_spread'));
+  var winnerFactors = _attentionDisagreementWinnerFactors_(row, reviewIdx);
+
+  g.rows_total += 1;
+  if (usefulness === 'useful_disagreement') g.useful_disagreement_count += 1;
+  else if (usefulness === 'possible_signal') g.possible_signal_count += 1;
+  else if (usefulness === 'no_clear_winner') g.no_clear_winner_count += 1;
+  else if (usefulness === 'unscored_or_thin') g.unscored_or_thin_count += 1;
+  if (level === 'high') g.high_disagreement_count += 1;
+  if (scoreSpread != null) {
+    g.score_spread_sum += scoreSpread;
+    g.score_spread_count += 1;
+  }
+  if (pipsSpread != null) {
+    g.pips_spread_sum += pipsSpread;
+    g.pips_spread_count += 1;
+  }
+  if (rowWinner) g.winners[rowWinner] = (g.winners[rowWinner] || 0) + 1;
+  for (var i = 0; i < winnerFactors.length; i++) {
+    var f = winnerFactors[i];
+    g.factors[f] = (g.factors[f] || 0) + 1;
+  }
+}
+
+function _makeAttentionDisagreementSummaryRow_(generatedTs, g) {
+  var topWinner = _topCountMapItems_(g.winners, 1);
+  var topFactor = _topCountMapItems_(g.factors, 1);
+  var usefulRate = _rateRaw_(g.useful_disagreement_count + g.possible_signal_count, g.rows_total);
+  var level = 'observed';
+  if (g.rows_total < 5) level = 'low_sample';
+  else if (usefulRate >= 0.50) level = 'useful_pattern';
+  else if (g.no_clear_winner_count >= g.rows_total * 0.50) level = 'mostly_tied';
+  else if (g.unscored_or_thin_count >= g.rows_total * 0.50) level = 'thin_scoring';
+
+  return [
+    generatedTs,
+    g.summary_type,
+    g.scope,
+    g.scope_key,
+    g.outcome_family,
+    g.winner_provider,
+    g.attention_factor,
+    g.disagreement_kind,
+    g.rows_total,
+    g.useful_disagreement_count,
+    g.possible_signal_count,
+    g.no_clear_winner_count,
+    g.unscored_or_thin_count,
+    g.high_disagreement_count,
+    g.score_spread_count ? _roundRate_(g.score_spread_sum / g.score_spread_count) : '',
+    g.pips_spread_count ? _roundRate_(g.pips_spread_sum / g.pips_spread_count) : '',
+    topWinner.length ? topWinner[0].key : '',
+    topFactor.length ? topFactor[0].key : '',
+    level,
+    'Derived summary of provider disagreement review cases.',
+    _attentionDisagreementSummaryNextStep_(level),
+    'Disagreement summary is diagnostic only; not trading advice.'
+  ];
+}
+
+function _attentionDisagreementSummaryNextStep_(level) {
+  if (level === 'useful_pattern') return 'Review repeated family/provider/factor slices before any later weighting discussion.';
+  if (level === 'mostly_tied') return 'Treat as convergence evidence; inspect only cases with clear score separation.';
+  if (level === 'thin_scoring') return 'Improve scoring coverage before drawing conclusions from this slice.';
+  if (level === 'low_sample') return 'Collect more disagreement cases before interpreting this slice.';
+  return 'Use as audit context only; do not change provider roles or prediction logic.';
+}
+
+function _attentionDisagreementWinnerFactors_(row, reviewIdx) {
+  var winner = String(_predValue_(row, reviewIdx, 'winner_provider') || '').trim();
+  if (!winner || winner === 'tie') return [];
+  var detail = String(_predValue_(row, reviewIdx, 'provider_attention_detail') || '');
+  var parts = detail.split(' | ');
+  for (var i = 0; i < parts.length; i++) {
+    var part = parts[i];
+    var sep = part.indexOf(':');
+    if (sep < 0) continue;
+    var provider = part.slice(0, sep).trim();
+    if (provider !== winner) continue;
+    return _uniqueStrings_(part.slice(sep + 1).split('+').map(function(f) {
+      return String(f || '').trim();
+    }));
+  }
+  return [];
 }
 
 function _maxCount_(map) {
@@ -4535,6 +4776,38 @@ function _sortAttentionDisagreementReviewRows_(headers, rows) {
       idx.type,
       idx.indicator_name,
       idx.target_key
+    ]);
+  });
+}
+
+function _sortAttentionDisagreementSummaryRows_(headers, rows) {
+  if (!rows || rows.length < 2) return;
+  var idx = _headerIndexMap_(headers);
+  var typeOrder = {
+    global: 1,
+    usefulness: 2,
+    winner_provider: 3,
+    family: 4,
+    family_winner: 5,
+    winner_factor: 6,
+    family_winner_factor: 7,
+    disagreement_kind: 8
+  };
+  rows.sort(function(a, b) {
+    var aType = String(a[idx.summary_type] || '');
+    var bType = String(b[idx.summary_type] || '');
+    var aOrder = typeOrder[aType] || 999;
+    var bOrder = typeOrder[bType] || 999;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    var aUseful = Number(a[idx.useful_disagreement_count] || 0) + Number(a[idx.possible_signal_count] || 0);
+    var bUseful = Number(b[idx.useful_disagreement_count] || 0) + Number(b[idx.possible_signal_count] || 0);
+    if (aUseful !== bUseful) return bUseful - aUseful;
+    return _cmpByColumns_(a, b, [
+      idx.outcome_family,
+      idx.winner_provider,
+      idx.attention_factor,
+      idx.disagreement_kind,
+      idx.scope_key
     ]);
   });
 }
