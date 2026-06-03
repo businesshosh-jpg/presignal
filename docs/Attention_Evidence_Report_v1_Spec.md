@@ -10,6 +10,8 @@ This sheet is observational only. It must not control prompts, predictions, prov
 
 `Attention_Block_Stability` is the follow-up derived diagnostic for comparing whether these attention-era patterns persist across separate backtest blocks.
 
+`Attention_Disagreement_Review` is the Phase 2C follow-up for inspecting case-level provider disagreements after block stability indicates enough observed blocks for review.
+
 ## Source Sheets
 
 - `Attention_Factor_Summary`

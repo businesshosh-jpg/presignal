@@ -107,6 +107,7 @@ Outcome_Diagnostics
 Attention_Factor_Summary
 Provider_Character_Diagnostics
 Attention_Evidence_Report
+Attention_Disagreement_Review
 
 **Legacy compatibility (read-only fallbacks in limited modules)**
 
@@ -331,10 +332,11 @@ The following reporting tabs are derived-only rebuilds and are not canonical sou
 - `Attention_Factor_Summary`
 - `Provider_Character_Diagnostics`
 - `Attention_Evidence_Report`
+- `Attention_Disagreement_Review`
 
 They may be created if missing, may append missing headers, and may clear/rewrite their own body rows. They must not reorder existing headers and must not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or existing evaluation sheets.
 
-`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, and `Attention_Evidence_Report` are Phase 2 shadow-mode analysis layers. They may summarize attention-era rows and provider-character evidence, but they must not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
+`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Evidence_Report`, and `Attention_Disagreement_Review` are Phase 2 shadow-mode analysis layers. They may summarize attention-era rows, provider-character evidence, and case-level disagreement evidence, but they must not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
 
 All rows remain decision-support reporting only and must not present direct action language.
 

@@ -81,6 +81,7 @@ Outcome_Diagnostics
 Attention_Factor_Summary
 Provider_Character_Diagnostics
 Attention_Evidence_Report
+Attention_Disagreement_Review
 
 #### Optional / legacy / compatibility
 Config (optional): If present, the runner can read key-value configuration from it (best-effort; absence is allowed).
@@ -199,10 +200,11 @@ The system also supports rebuilt derived reporting tabs for outcome and attentio
 - `Attention_Factor_Summary`
 - `Provider_Character_Diagnostics`
 - `Attention_Evidence_Report`
+- `Attention_Disagreement_Review`
 
 These sheets are read-only over their source layers and rewrite only their own body rows. Missing headers are appended, existing header order is preserved, and the builders do not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or evaluation sheets.
 
-`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, and `Attention_Evidence_Report` are Phase 2 shadow-mode analysis layers. They expose selected reasoning-factor evidence and provider-character evidence for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
+`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Evidence_Report`, and `Attention_Disagreement_Review` are Phase 2 shadow-mode analysis layers. They expose selected reasoning-factor evidence, provider-character evidence, and case-level disagreement evidence for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
 
 #### log sheet headers (best-effort, non-reordering)
 

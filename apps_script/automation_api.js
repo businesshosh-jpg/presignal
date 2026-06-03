@@ -146,6 +146,17 @@ function apiBuildAttentionBlockStability() {
   return apiBuildAttentionBlockStability_();
 }
 
+function apiBuildAttentionDisagreementReview_() {
+  return {
+    status: 'ok',
+    attention_disagreement_review: buildAttentionDisagreementReview_()
+  };
+}
+
+function apiBuildAttentionDisagreementReview() {
+  return apiBuildAttentionDisagreementReview_();
+}
+
 function apiUpsertEventWindow_(params) {
   params = params || {};
 

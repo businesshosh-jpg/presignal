@@ -288,6 +288,37 @@ function menuBuildAttentionBlockStability_() {
   }
 }
 
+function menuBuildAttentionDisagreementReview_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildAttentionDisagreementReview_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Attention disagreement review -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Attention disagreement review rows=' + (res.rows_written || 0),
+      'Attention Disagreement Review',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Attention disagreement review -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function buildEvaluationSheets_() {
   var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
   if (!predSheet) throw new Error('Predictions sheet missing');
@@ -435,6 +466,10 @@ function getOrCreateAttentionBlockStabilitySheet_() {
   return _getOrCreateSheet_('Attention_Block_Stability');
 }
 
+function getOrCreateAttentionDisagreementReviewSheet_() {
+  return _getOrCreateSheet_('Attention_Disagreement_Review');
+}
+
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
@@ -457,6 +492,10 @@ function ensureAttentionEvidenceReportHeaders_(sheet) {
 
 function ensureAttentionBlockStabilityHeaders_(sheet) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionBlockStabilityHeaders_());
+}
+
+function ensureAttentionDisagreementReviewHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionDisagreementReviewHeaders_());
 }
 
 function buildOutcomeSummaries_() {
@@ -685,6 +724,33 @@ function buildAttentionBlockStability_() {
   };
 }
 
+function buildAttentionDisagreementReview_() {
+  var ledgerSheet = getOrCreateOutcomeLedgerSheet_();
+  var ledgerHeaders = getHeaderNames(ledgerSheet);
+  if (!ledgerHeaders || !ledgerHeaders.length) {
+    throw new Error('Outcome_Ledger sheet is missing headers.');
+  }
+
+  var ledgerRows = _readDataRows_(ledgerSheet);
+  var ledgerIdx = _headerIndexMap_(ledgerHeaders);
+  var reviewSheet = getOrCreateAttentionDisagreementReviewSheet_();
+  var headers = _attentionDisagreementReviewHeaders_();
+  var rowsOut = buildAttentionDisagreementReviewRows_(ledgerRows, ledgerIdx, new Date().toISOString());
+  _sortAttentionDisagreementReviewRows_(headers, rowsOut);
+
+  var actualHeaders = ensureAttentionDisagreementReviewHeaders_(reviewSheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    reviewSheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+
+  return {
+    attention_disagreement_review_sheet: reviewSheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
 function _outcomeDiagnosticsHeaders_() {
   return [
     'generated_ts',
@@ -784,6 +850,42 @@ function _attentionBlockStabilityHeaders_() {
     'convergence_rate',
     'stability_level',
     'diagnostic_summary',
+    'recommended_next_step',
+    'decision_support_note'
+  ];
+}
+
+function _attentionDisagreementReviewHeaders_() {
+  return [
+    'generated_ts',
+    'review_type',
+    'target_key',
+    'release_date',
+    'release_ts',
+    'event_id',
+    'batch_id',
+    'type',
+    'outcome_family',
+    'indicator_name',
+    'country',
+    'provider_count',
+    'provider_names',
+    'direction_set',
+    'strength_set',
+    'pips_min',
+    'pips_max',
+    'pips_spread',
+    'realized_pips',
+    'mr_real_dir',
+    'winner_provider',
+    'winner_score',
+    'score_spread',
+    'disagreement_kind',
+    'disagreement_level',
+    'usefulness_label',
+    'provider_score_detail',
+    'provider_prediction_detail',
+    'provider_attention_detail',
     'recommended_next_step',
     'decision_support_note'
   ];
@@ -1483,6 +1585,193 @@ function _makeAttentionBlockStabilityRow_(generatedTs, attrs) {
     attrs.recommended_next_step || '',
     'Block stability diagnostic only; not trading advice.'
   ];
+}
+
+function buildAttentionDisagreementReviewRows_(ledgerRows, ledgerIdx, generatedTs) {
+  var targetGroups = {};
+  for (var i = 0; i < (ledgerRows || []).length; i++) {
+    var row = ledgerRows[i];
+    if (!_isAttentionEraLedgerRow_(row, ledgerIdx)) continue;
+    var targetKey = _providerCharacterTargetKey_(row, ledgerIdx);
+    if (!targetKey) continue;
+    if (!targetGroups[targetKey]) targetGroups[targetKey] = [];
+    targetGroups[targetKey].push(row);
+  }
+
+  var rowsOut = [];
+  Object.keys(targetGroups).sort().forEach(function(targetKey) {
+    var rowOut = _makeAttentionDisagreementReviewRow_(generatedTs, targetKey, targetGroups[targetKey], ledgerIdx);
+    if (rowOut) rowsOut.push(rowOut);
+  });
+  return rowsOut;
+}
+
+function _makeAttentionDisagreementReviewRow_(generatedTs, targetKey, rows, ledgerIdx) {
+  var byProvider = {};
+  for (var i = 0; i < (rows || []).length; i++) {
+    var aiName = String(_predValue_(rows[i], ledgerIdx, 'ai_name') || '').trim();
+    if (aiName) byProvider[aiName] = rows[i];
+  }
+  var providers = Object.keys(byProvider).sort();
+  if (providers.length < 2) return null;
+
+  var first = byProvider[providers[0]];
+  var dirMap = {};
+  var strengthMap = {};
+  var pipsValues = [];
+  var scores = [];
+  var scoredCount = 0;
+  var bestScore = null;
+  var winnerProviders = [];
+
+  for (var p = 0; p < providers.length; p++) {
+    var provider = providers[p];
+    var row = byProvider[provider];
+    var dir = String(_predValue_(row, ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase();
+    var strength = String(_predValue_(row, ledgerIdx, 'mr_pred_strength') || '').trim().toLowerCase();
+    var pips = _numOrNull_(_predValue_(row, ledgerIdx, 'mr_pred_net_pips'));
+    var score = _numOrNull_(_predValue_(row, ledgerIdx, 'outcome_score'));
+    if (dir) dirMap[dir] = true;
+    if (strength) strengthMap[strength] = true;
+    if (pips != null) pipsValues.push(pips);
+    if (_isTrueCell_(_predValue_(row, ledgerIdx, 'scored_flag'))) scoredCount += 1;
+    if (score != null) {
+      scores.push(score);
+      if (bestScore == null || score > bestScore) {
+        bestScore = score;
+        winnerProviders = [provider];
+      } else if (score === bestScore) {
+        winnerProviders.push(provider);
+      }
+    }
+  }
+
+  var dirs = Object.keys(dirMap).sort();
+  var strengths = Object.keys(strengthMap).sort();
+  var pipsMin = pipsValues.length ? Math.min.apply(null, pipsValues) : null;
+  var pipsMax = pipsValues.length ? Math.max.apply(null, pipsValues) : null;
+  var pipsSpread = (pipsMin != null && pipsMax != null) ? _roundRate_(pipsMax - pipsMin) : null;
+  var directionDisagreement = dirs.length > 1;
+  var strengthDisagreement = strengths.length > 1;
+  var pipsDisagreement = pipsSpread != null && pipsSpread >= 5;
+  if (!directionDisagreement && !strengthDisagreement && !pipsDisagreement) return null;
+
+  var scoreSpread = '';
+  if (scores.length) {
+    scoreSpread = _roundRate_(Math.max.apply(null, scores) - Math.min.apply(null, scores));
+  }
+  var winnerProvider = winnerProviders.length === 1 ? winnerProviders[0] : (winnerProviders.length ? 'tie' : '');
+  var usefulness = _attentionDisagreementUsefulnessLabel_(scoredCount, winnerProvider, scoreSpread);
+  var disagreementKind = _attentionDisagreementKind_(directionDisagreement, strengthDisagreement, pipsDisagreement);
+  var level = _attentionDisagreementLevel_(directionDisagreement, strengthDisagreement, pipsSpread, scoreSpread);
+
+  return [
+    generatedTs,
+    'case_review',
+    targetKey,
+    String(_predValue_(first, ledgerIdx, 'release_date') || ''),
+    String(_predValue_(first, ledgerIdx, 'release_ts') || ''),
+    String(_predValue_(first, ledgerIdx, 'event_id') || ''),
+    String(_predValue_(first, ledgerIdx, 'batch_id') || ''),
+    String(_predValue_(first, ledgerIdx, 'type') || ''),
+    String(_predValue_(first, ledgerIdx, 'outcome_family') || '') || 'other',
+    String(_predValue_(first, ledgerIdx, 'indicator_name') || ''),
+    String(_predValue_(first, ledgerIdx, 'country') || ''),
+    providers.length,
+    providers.join(', '),
+    dirs.join(', '),
+    strengths.join(', '),
+    pipsMin == null ? '' : pipsMin,
+    pipsMax == null ? '' : pipsMax,
+    pipsSpread == null ? '' : pipsSpread,
+    _firstNonBlankProviderValue_(providers, byProvider, ledgerIdx, 'realized_pips'),
+    _firstNonBlankProviderValue_(providers, byProvider, ledgerIdx, 'mr_real_dir'),
+    winnerProvider,
+    bestScore == null ? '' : bestScore,
+    scoreSpread,
+    disagreementKind,
+    level,
+    usefulness,
+    _attentionProviderScoreDetail_(providers, byProvider, ledgerIdx),
+    _attentionProviderPredictionDetail_(providers, byProvider, ledgerIdx),
+    _attentionProviderFactorDetail_(providers, byProvider, ledgerIdx),
+    _attentionDisagreementRecommendedNextStep_(usefulness),
+    'Disagreement review is diagnostic only; not trading advice.'
+  ];
+}
+
+function _attentionDisagreementKind_(directionDisagreement, strengthDisagreement, pipsDisagreement) {
+  var parts = [];
+  if (directionDisagreement) parts.push('direction');
+  if (strengthDisagreement) parts.push('strength');
+  if (pipsDisagreement) parts.push('pips');
+  return parts.join('+') || 'none';
+}
+
+function _attentionDisagreementLevel_(directionDisagreement, strengthDisagreement, pipsSpread, scoreSpread) {
+  var scoreGap = _numOrNull_(scoreSpread);
+  if (directionDisagreement && (scoreGap == null || scoreGap >= 2)) return 'high';
+  if (directionDisagreement || strengthDisagreement || Number(pipsSpread || 0) >= 10) return 'moderate';
+  return 'low';
+}
+
+function _attentionDisagreementUsefulnessLabel_(scoredCount, winnerProvider, scoreSpread) {
+  if (Number(scoredCount || 0) < 2) return 'unscored_or_thin';
+  var gap = _numOrNull_(scoreSpread);
+  if (winnerProvider && winnerProvider !== 'tie' && gap != null && gap >= 2) return 'useful_disagreement';
+  if (winnerProvider && winnerProvider !== 'tie' && gap != null && gap >= 1) return 'possible_signal';
+  if (winnerProvider === 'tie') return 'no_clear_winner';
+  return 'noisy_or_small_gap';
+}
+
+function _attentionDisagreementRecommendedNextStep_(usefulness) {
+  if (usefulness === 'useful_disagreement') {
+    return 'Review repeated factor/provider patterns in similar disagreement cases before any later weighting discussion.';
+  }
+  if (usefulness === 'possible_signal') {
+    return 'Keep as candidate evidence and compare against future disagreement cases.';
+  }
+  if (usefulness === 'unscored_or_thin') {
+    return 'Improve scoring coverage before learning from this disagreement case.';
+  }
+  return 'Treat as audit context only; do not change provider roles or prediction logic.';
+}
+
+function _firstNonBlankProviderValue_(providers, byProvider, ledgerIdx, key) {
+  for (var i = 0; i < (providers || []).length; i++) {
+    var v = _predValue_(byProvider[providers[i]], ledgerIdx, key);
+    if (v !== '' && v !== null && v !== undefined) return v;
+  }
+  return '';
+}
+
+function _attentionProviderScoreDetail_(providers, byProvider, ledgerIdx) {
+  return (providers || []).map(function(provider) {
+    var row = byProvider[provider];
+    return provider + ':score=' + String(_predValue_(row, ledgerIdx, 'outcome_score') || '') +
+      ',bucket=' + String(_predValue_(row, ledgerIdx, 'outcome_bucket') || '') +
+      ',dir_ok=' + String(_predValue_(row, ledgerIdx, 'mr_dir_ok') || '') +
+      ',overall_ok=' + String(_predValue_(row, ledgerIdx, 'overall_ok') || '');
+  }).join(' | ');
+}
+
+function _attentionProviderPredictionDetail_(providers, byProvider, ledgerIdx) {
+  return (providers || []).map(function(provider) {
+    var row = byProvider[provider];
+    return provider + ':dir=' + String(_predValue_(row, ledgerIdx, 'mr_pred_dir') || '') +
+      ',pips=' + String(_predValue_(row, ledgerIdx, 'mr_pred_net_pips') || '') +
+      ',strength=' + String(_predValue_(row, ledgerIdx, 'mr_pred_strength') || '') +
+      ',sustain=' + String(_predValue_(row, ledgerIdx, 'mr_pred_sustain_min') || '');
+  }).join(' | ');
+}
+
+function _attentionProviderFactorDetail_(providers, byProvider, ledgerIdx) {
+  return (providers || []).map(function(provider) {
+    var factors = _attentionFactorsFromLedgerRow_(byProvider[provider], ledgerIdx).map(function(f) {
+      return f.factor;
+    });
+    return provider + ':' + factors.join('+');
+  }).join(' | ');
 }
 
 function _maxCount_(map) {
@@ -4219,6 +4508,33 @@ function _sortAttentionBlockStabilityRows_(headers, rows) {
       idx.ai_name,
       idx.attention_factor,
       idx.scope_key
+    ]);
+  });
+}
+
+function _sortAttentionDisagreementReviewRows_(headers, rows) {
+  if (!rows || rows.length < 2) return;
+  var idx = _headerIndexMap_(headers);
+  var usefulnessOrder = {
+    useful_disagreement: 1,
+    possible_signal: 2,
+    no_clear_winner: 3,
+    noisy_or_small_gap: 4,
+    unscored_or_thin: 5
+  };
+  rows.sort(function(a, b) {
+    var aOrder = usefulnessOrder[String(a[idx.usefulness_label] || '')] || 999;
+    var bOrder = usefulnessOrder[String(b[idx.usefulness_label] || '')] || 999;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    var aSpread = _numOrNull_(a[idx.score_spread]);
+    var bSpread = _numOrNull_(b[idx.score_spread]);
+    if (aSpread !== bSpread) return (bSpread || -999999) - (aSpread || -999999);
+    return _cmpByColumns_(a, b, [
+      idx.release_ts,
+      idx.outcome_family,
+      idx.type,
+      idx.indicator_name,
+      idx.target_key
     ]);
   });
 }

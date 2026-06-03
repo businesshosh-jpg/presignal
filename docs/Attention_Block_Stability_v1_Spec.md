@@ -6,6 +6,8 @@
 
 It checks whether observed provider, family, attention-factor, score, hit-rate, and convergence patterns remain similar across blocks such as `Nov 1-10 2024`, `Nov 11-15 2024`, and later `Nov 18-22 2024`.
 
+After three observed blocks are available, `Attention_Disagreement_Review` may be used as a Phase 2C case-level diagnostic for rows where provider outputs actually diverge.
+
 This sheet is analysis-only. It must not control prompts, prediction logic, provider weighting, calibration, Market Reaction Memory, or signal generation.
 
 ## Source Sheet
