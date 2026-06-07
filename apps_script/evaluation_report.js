@@ -350,6 +350,69 @@ function menuBuildAttentionDisagreementSummary_() {
   }
 }
 
+function menuBuildAttentionPhase3Candidates_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildAttentionPhase3Candidates_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Attention Phase3 candidates -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Attention Phase3 candidates rows=' + (res.rows_written || 0),
+      'Attention Phase3 Candidates',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Attention Phase3 candidates -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildAttentionShadowExperiments_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildAttentionShadowExperiments_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Attention shadow experiments -> Build sheets', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Attention shadow rows=' + (res.rows_written || 0) +
+      ' | summary=' + (res.summary_rows_written || 0),
+      'Attention Shadow Experiments',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Attention shadow experiments -> Build sheets failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function buildEvaluationSheets_() {
   var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
   if (!predSheet) throw new Error('Predictions sheet missing');
@@ -505,6 +568,18 @@ function getOrCreateAttentionDisagreementSummarySheet_() {
   return _getOrCreateSheet_('Attention_Disagreement_Summary');
 }
 
+function getOrCreateAttentionPhase3CandidatesSheet_() {
+  return _getOrCreateSheet_('Attention_Phase3_Candidates');
+}
+
+function getOrCreateAttentionShadowExperimentsSheet_() {
+  return _getOrCreateSheet_('Attention_Shadow_Experiments');
+}
+
+function getOrCreateAttentionShadowSummarySheet_() {
+  return _getOrCreateSheet_('Attention_Shadow_Summary');
+}
+
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
@@ -535,6 +610,14 @@ function ensureAttentionDisagreementReviewHeaders_(sheet) {
 
 function ensureAttentionDisagreementSummaryHeaders_(sheet) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionDisagreementSummaryHeaders_());
+}
+
+function ensureAttentionPhase3CandidateHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionPhase3CandidateHeaders_());
+}
+
+function ensureAttentionShadowHeaders_(sheet, headers) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
 
 function buildOutcomeSummaries_() {
@@ -817,6 +900,106 @@ function buildAttentionDisagreementSummary_() {
   };
 }
 
+function buildAttentionPhase3Candidates_() {
+  var reviewSheet = getOrCreateAttentionDisagreementReviewSheet_();
+  var reviewHeaders = getHeaderNames(reviewSheet);
+  if (!reviewHeaders || !reviewHeaders.length) {
+    throw new Error('Attention_Disagreement_Review sheet is missing headers.');
+  }
+
+  var summarySheet = getOrCreateAttentionDisagreementSummarySheet_();
+  var summaryHeaders = getHeaderNames(summarySheet);
+  if (!summaryHeaders || !summaryHeaders.length) {
+    throw new Error('Attention_Disagreement_Summary sheet is missing headers.');
+  }
+
+  var reviewRows = _readDataRows_(reviewSheet);
+  var reviewIdx = _headerIndexMap_(reviewHeaders);
+  var summaryRows = _readDataRows_(summarySheet);
+  var summaryIdx = _headerIndexMap_(summaryHeaders);
+  var candidateSheet = getOrCreateAttentionPhase3CandidatesSheet_();
+  var headers = _attentionPhase3CandidateHeaders_();
+  var rowsOut = buildAttentionPhase3CandidateRows_(reviewRows, reviewIdx, summaryRows, summaryIdx, new Date().toISOString());
+  _sortAttentionPhase3CandidateRows_(headers, rowsOut);
+
+  var actualHeaders = ensureAttentionPhase3CandidateHeaders_(candidateSheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    candidateSheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+
+  return {
+    attention_phase3_candidates_sheet: candidateSheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
+function buildAttentionShadowExperiments_() {
+  var ledgerRowsBundle = getOutcomeLedgerRowsForShadow_();
+  var ledgerRows = ledgerRowsBundle.rows;
+  var ledgerIdx = ledgerRowsBundle.idx;
+  var convergenceInfo = _getConvergenceInfoForShadow_();
+  var groups = groupOutcomeRowsForShadow_(ledgerRows, ledgerIdx);
+  var generatedTs = new Date().toISOString();
+  var rowsOut = [];
+
+  Object.keys(groups).sort().forEach(function(groupKey) {
+    var groupRows = groups[groupKey] || [];
+    var baseline = computeShadowBaselineForGroup_(groupRows, ledgerIdx);
+    var info = convergenceInfo[groupKey] || _deriveShadowConvergenceInfo_(groupRows, ledgerIdx);
+    rowsOut = rowsOut.concat(buildProviderFactorCandidateRows_(groupRows, ledgerIdx, baseline, generatedTs));
+    rowsOut = rowsOut.concat(buildDisagreementProviderSelectorRows_(groupRows, ledgerIdx, baseline, info, generatedTs));
+    rowsOut = rowsOut.concat(buildLowSignalWatchlistRows_(groupRows, ledgerIdx, generatedTs));
+    rowsOut = rowsOut.concat(buildHiddenDetailRiskConfidenceRows_(groupRows, ledgerIdx, generatedTs));
+    rowsOut = rowsOut.concat(buildConvergenceNoWeightingRows_(groupRows, ledgerIdx, info, generatedTs));
+  });
+
+  var experimentHeaders = _attentionShadowExperimentHeaders_();
+  _sortAttentionShadowExperimentRows_(experimentHeaders, rowsOut);
+  var experimentSheet = getOrCreateAttentionShadowExperimentsSheet_();
+  var actualExperimentHeaders = ensureAttentionShadowHeaders_(experimentSheet, experimentHeaders);
+  _rewriteSheetRowsPreservingHeaders_(
+    experimentSheet,
+    actualExperimentHeaders,
+    _remapRowsToHeaders_(experimentHeaders, actualExperimentHeaders, rowsOut)
+  );
+
+  var summaryResult = buildAttentionShadowSummary_({
+    generated_ts: generatedTs,
+    experiment_headers: experimentHeaders,
+    experiment_rows: rowsOut
+  });
+
+  return {
+    attention_shadow_experiments_sheet: experimentSheet.getName(),
+    attention_shadow_summary_sheet: summaryResult.sheet_name,
+    rows_written: rowsOut.length,
+    summary_rows_written: summaryResult.rows_written
+  };
+}
+
+function buildAttentionShadowSummary_(opts) {
+  opts = opts || {};
+  var headers = _attentionShadowSummaryHeaders_();
+  var experimentHeaders = opts.experiment_headers || _attentionShadowExperimentHeaders_();
+  var experimentIdx = _headerIndexMap_(experimentHeaders);
+  var experimentRows = opts.experiment_rows || [];
+  var rowsOut = _buildAttentionShadowSummaryRows_(experimentRows, experimentIdx, opts.generated_ts || new Date().toISOString());
+  _sortAttentionShadowSummaryRows_(headers, rowsOut);
+  var summarySheet = getOrCreateAttentionShadowSummarySheet_();
+  var actualHeaders = ensureAttentionShadowHeaders_(summarySheet, headers);
+  _rewriteSheetRowsPreservingHeaders_(
+    summarySheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    sheet_name: summarySheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
 function _outcomeDiagnosticsHeaders_() {
   return [
     'generated_ts',
@@ -982,6 +1165,330 @@ function _attentionDisagreementSummaryHeaders_() {
     'recommended_next_step',
     'decision_support_note'
   ];
+}
+
+function _attentionPhase3CandidateHeaders_() {
+  return [
+    'generated_ts',
+    'candidate_type',
+    'candidate_key',
+    'target_key',
+    'release_date',
+    'release_ts',
+    'event_id',
+    'batch_id',
+    'type',
+    'outcome_family',
+    'indicator_name',
+    'country',
+    'winner_provider',
+    'attention_factor',
+    'disagreement_kind',
+    'usefulness_label',
+    'score_spread',
+    'pips_spread',
+    'evidence_rows',
+    'useful_rows',
+    'evidence_level',
+    'candidate_summary',
+    'future_experiment_hint',
+    'status',
+    'decision_support_note'
+  ];
+}
+
+function _attentionShadowExperimentHeaders_() {
+  return [
+    'generated_ts',
+    'experiment_id',
+    'experiment_name',
+    'experiment_version',
+    'experiment_type',
+    'rule_description',
+    'source_scope',
+    'event_id',
+    'batch_id',
+    'type',
+    'release_ts',
+    'release_date',
+    'outcome_family',
+    'indicator_name',
+    'country',
+    'provider_count',
+    'candidate_provider',
+    'candidate_factor',
+    'candidate_factor_weight',
+    'candidate_rule_triggered',
+    'baseline_method',
+    'baseline_provider',
+    'baseline_outcome_score',
+    'baseline_outcome_bucket',
+    'candidate_outcome_score',
+    'candidate_outcome_bucket',
+    'candidate_vs_baseline_delta',
+    'candidate_won_flag',
+    'candidate_lost_flag',
+    'candidate_tied_flag',
+    'direction_changed_flag',
+    'miss_avoided_flag',
+    'severe_miss_created_flag',
+    'shadow_signal_mode',
+    'shadow_confidence_action',
+    'shadow_behavior_note',
+    'activation_status',
+    'activation_blocker',
+    'decision_support_note'
+  ];
+}
+
+function _attentionShadowSummaryHeaders_() {
+  return [
+    'generated_ts',
+    'experiment_name',
+    'outcome_family',
+    'candidate_provider',
+    'candidate_factor',
+    'rows_total',
+    'rows_scored',
+    'candidate_win_count',
+    'candidate_loss_count',
+    'candidate_tie_count',
+    'candidate_win_rate',
+    'avg_candidate_delta',
+    'miss_avoided_count',
+    'severe_miss_created_count',
+    'activation_readiness',
+    'activation_blocker',
+    'decision_support_note'
+  ];
+}
+
+function getOutcomeLedgerRowsForShadow_() {
+  var ledgerSheet = getSheet('Outcome_Ledger');
+  if (!ledgerSheet) {
+    throw new Error('Outcome_Ledger sheet is required before building Attention_Shadow_Experiments.');
+  }
+  var ledgerHeaders = getHeaderNames(ledgerSheet);
+  if (!ledgerHeaders || !ledgerHeaders.length) {
+    throw new Error('Outcome_Ledger sheet is missing headers.');
+  }
+  return {
+    rows: _readDataRows_(ledgerSheet),
+    headers: ledgerHeaders,
+    idx: _headerIndexMap_(ledgerHeaders)
+  };
+}
+
+function groupOutcomeRowsForShadow_(rows, headerMap) {
+  var groups = {};
+  for (var i = 0; i < (rows || []).length; i++) {
+    var row = rows[i];
+    var groupKey = _attentionShadowGroupKey_(row, headerMap);
+    if (!groupKey) continue;
+    if (!groups[groupKey]) groups[groupKey] = [];
+    groups[groupKey].push(row);
+  }
+  return groups;
+}
+
+function extractAttentionFactorsFromOutcomeRow_(rowObj) {
+  var out = [];
+  for (var i = 1; i <= 3; i++) {
+    var factor = String(rowObj['attention_factor_' + i] || '').trim();
+    if (!factor) continue;
+    out.push({
+      factor: factor,
+      weight: _numOrNull_(rowObj['attention_factor_' + i + '_weight']),
+      rank: i
+    });
+  }
+  return out;
+}
+
+function computeShadowBaselineForGroup_(groupRows, ledgerIdx) {
+  var bestScore = null;
+  var bestRow = null;
+  var scoreSum = 0;
+  var scoreCount = 0;
+  for (var i = 0; i < (groupRows || []).length; i++) {
+    var score = _numOrNull_(_predValue_(groupRows[i], ledgerIdx, 'outcome_score'));
+    if (score == null) continue;
+    scoreSum += score;
+    scoreCount += 1;
+    if (bestScore == null || score > bestScore) {
+      bestScore = score;
+      bestRow = groupRows[i];
+    }
+  }
+  return {
+    method: 'best_equal_provider_observed',
+    provider_average_score: scoreCount ? _roundRate_(scoreSum / scoreCount) : null,
+    baseline_provider: bestRow ? String(_predValue_(bestRow, ledgerIdx, 'ai_name') || '').trim() : '',
+    baseline_outcome_score: bestScore,
+    baseline_outcome_bucket: bestRow ? String(_predValue_(bestRow, ledgerIdx, 'outcome_bucket') || '').trim() : '',
+    baseline_pred_dir: bestRow ? String(_predValue_(bestRow, ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase() : ''
+  };
+}
+
+function buildProviderFactorCandidateRows_(groupRows, ledgerIdx, baseline, generatedTs) {
+  var rowsOut = [];
+  var providerCount = _attentionShadowProviderCount_(groupRows, ledgerIdx);
+  for (var i = 0; i < (groupRows || []).length; i++) {
+    var row = groupRows[i];
+    var factors = _attentionFactorsWithWeightsFromLedgerRow_(row, ledgerIdx);
+    for (var f = 0; f < factors.length; f++) {
+      rowsOut.push(_makeAttentionShadowExperimentRow_(generatedTs, {
+        experiment_name: 'provider_factor_candidate',
+        experiment_type: 'provider_selector_shadow',
+        rule_description: 'Provider plus selected reasoning factor is compared against the best observed equal-provider row.',
+        source_scope: 'outcome_ledger',
+        source_row: row,
+        ledger_idx: ledgerIdx,
+        provider_count: providerCount,
+        candidate_provider: String(_predValue_(row, ledgerIdx, 'ai_name') || '').trim(),
+        candidate_factor: factors[f].factor,
+        candidate_factor_weight: factors[f].weight,
+        candidate_rule_triggered: 'TRUE',
+        baseline: baseline,
+        candidate_score: _numOrNull_(_predValue_(row, ledgerIdx, 'outcome_score')),
+        candidate_bucket: String(_predValue_(row, ledgerIdx, 'outcome_bucket') || '').trim(),
+        candidate_pred_dir: String(_predValue_(row, ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase(),
+        shadow_behavior_note: 'Counterfactual provider-factor selector audit only.',
+        activation_blocker: _isTrueCell_(_predValue_(row, ledgerIdx, 'scored_flag')) ? 'needs_more_future_blocks' : 'unscored_row'
+      }));
+    }
+  }
+  return rowsOut;
+}
+
+function buildDisagreementProviderSelectorRows_(groupRows, ledgerIdx, baseline, convergenceInfo, generatedTs) {
+  var rowsOut = [];
+  var providerCount = _attentionShadowProviderCount_(groupRows, ledgerIdx);
+  var isDisagreement = _attentionShadowIsDisagreement_(groupRows, ledgerIdx, convergenceInfo);
+  if (providerCount < 2 || !isDisagreement) return rowsOut;
+  for (var i = 0; i < (groupRows || []).length; i++) {
+    var row = groupRows[i];
+    rowsOut.push(_makeAttentionShadowExperimentRow_(generatedTs, {
+      experiment_name: 'disagreement_provider_selector',
+      experiment_type: 'provider_selector_shadow',
+      rule_description: 'Provider selection is tested only for observed provider disagreement groups.',
+      source_scope: 'outcome_ledger_with_convergence',
+      source_row: row,
+      ledger_idx: ledgerIdx,
+      provider_count: providerCount,
+      candidate_provider: String(_predValue_(row, ledgerIdx, 'ai_name') || '').trim(),
+      candidate_factor: '',
+      candidate_factor_weight: '',
+      candidate_rule_triggered: 'TRUE',
+      baseline: baseline,
+      candidate_score: _numOrNull_(_predValue_(row, ledgerIdx, 'outcome_score')),
+      candidate_bucket: String(_predValue_(row, ledgerIdx, 'outcome_bucket') || '').trim(),
+      candidate_pred_dir: String(_predValue_(row, ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase(),
+      shadow_behavior_note: 'Observed disagreement selector audit only.',
+      activation_blocker: 'needs_more_future_blocks'
+    }));
+  }
+  return rowsOut;
+}
+
+function buildLowSignalWatchlistRows_(groupRows, ledgerIdx, generatedTs) {
+  var rowsOut = [];
+  var providerCount = _attentionShadowProviderCount_(groupRows, ledgerIdx);
+  for (var i = 0; i < (groupRows || []).length; i++) {
+    var row = groupRows[i];
+    var lowSignal = _attentionShadowFactorMatch_(row, ledgerIdx, 'low_signal_event');
+    if (!lowSignal) continue;
+    var bucket = String(_predValue_(row, ledgerIdx, 'outcome_bucket') || '').trim();
+    rowsOut.push(_makeAttentionShadowExperimentRow_(generatedTs, {
+      experiment_name: 'low_signal_watchlist_shadow',
+      experiment_type: 'watchlist_shadow',
+      rule_description: 'Selected low-signal factor is audited as a possible watchlist-only tag.',
+      source_scope: 'outcome_ledger',
+      source_row: row,
+      ledger_idx: ledgerIdx,
+      provider_count: providerCount,
+      candidate_provider: String(_predValue_(row, ledgerIdx, 'ai_name') || '').trim(),
+      candidate_factor: lowSignal.factor,
+      candidate_factor_weight: lowSignal.weight,
+      candidate_rule_triggered: 'TRUE',
+      baseline: { method: '', baseline_provider: '', baseline_outcome_score: null, baseline_outcome_bucket: '', baseline_pred_dir: '' },
+      candidate_score: _numOrNull_(_predValue_(row, ledgerIdx, 'outcome_score')),
+      candidate_bucket: bucket,
+      candidate_pred_dir: String(_predValue_(row, ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase(),
+      candidate_vs_baseline_delta: '',
+      miss_avoided_flag: (bucket === 'miss' || bucket === 'weak_fit') ? 'TRUE' : 'FALSE',
+      severe_miss_created_flag: 'FALSE',
+      shadow_signal_mode: 'watchlist_only',
+      shadow_behavior_note: 'Shadow watchlist tag would have reduced emphasis without changing direction.',
+      activation_blocker: 'shadow_only_needs_more_blocks'
+    }));
+  }
+  return rowsOut;
+}
+
+function buildHiddenDetailRiskConfidenceRows_(groupRows, ledgerIdx, generatedTs) {
+  var rowsOut = [];
+  var providerCount = _attentionShadowProviderCount_(groupRows, ledgerIdx);
+  for (var i = 0; i < (groupRows || []).length; i++) {
+    var row = groupRows[i];
+    var hiddenRisk = _attentionShadowFactorMatch_(row, ledgerIdx, 'hidden_detail_risk');
+    if (!hiddenRisk) continue;
+    var bucket = String(_predValue_(row, ledgerIdx, 'outcome_bucket') || '').trim();
+    var note = 'Hidden-detail risk confidence audit only.';
+    if (bucket === 'miss' || bucket === 'weak_fit') note = 'Risk flag may have been useful in a weak or missed outcome.';
+    else if (bucket === 'full_hit') note = 'Risk flag would have been conservative despite a strong observed outcome.';
+    rowsOut.push(_makeAttentionShadowExperimentRow_(generatedTs, {
+      experiment_name: 'hidden_detail_risk_confidence_shadow',
+      experiment_type: 'confidence_shadow',
+      rule_description: 'Selected hidden-detail risk factor is audited as a possible confidence-reduction tag.',
+      source_scope: 'outcome_ledger',
+      source_row: row,
+      ledger_idx: ledgerIdx,
+      provider_count: providerCount,
+      candidate_provider: String(_predValue_(row, ledgerIdx, 'ai_name') || '').trim(),
+      candidate_factor: hiddenRisk.factor,
+      candidate_factor_weight: hiddenRisk.weight,
+      candidate_rule_triggered: 'TRUE',
+      baseline: { method: '', baseline_provider: '', baseline_outcome_score: null, baseline_outcome_bucket: '', baseline_pred_dir: '' },
+      candidate_score: _numOrNull_(_predValue_(row, ledgerIdx, 'outcome_score')),
+      candidate_bucket: bucket,
+      candidate_pred_dir: String(_predValue_(row, ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase(),
+      candidate_vs_baseline_delta: '',
+      shadow_confidence_action: 'reduce_confidence_candidate',
+      shadow_behavior_note: note,
+      activation_blocker: 'shadow_only_needs_numeric_calibration'
+    }));
+  }
+  return rowsOut;
+}
+
+function buildConvergenceNoWeightingRows_(groupRows, ledgerIdx, convergenceInfo, generatedTs) {
+  var rowsOut = [];
+  var level = String((convergenceInfo && convergenceInfo.convergence_level) || '').trim().toLowerCase();
+  if (level !== 'high') return rowsOut;
+  var first = (groupRows || [])[0];
+  if (!first) return rowsOut;
+  rowsOut.push(_makeAttentionShadowExperimentRow_(generatedTs, {
+    experiment_name: 'convergence_no_weighting_shadow',
+    experiment_type: 'convergence_shadow',
+    rule_description: 'High provider convergence is audited as a reason to avoid provider-weighting claims.',
+    source_scope: 'outcome_summary_convergence',
+    source_row: first,
+    ledger_idx: ledgerIdx,
+    provider_count: _attentionShadowProviderCount_(groupRows, ledgerIdx),
+    candidate_provider: '',
+    candidate_factor: '',
+    candidate_factor_weight: '',
+    candidate_rule_triggered: 'TRUE',
+    baseline: { method: '', baseline_provider: '', baseline_outcome_score: null, baseline_outcome_bucket: '', baseline_pred_dir: '' },
+    candidate_score: null,
+    candidate_bucket: '',
+    candidate_pred_dir: '',
+    candidate_vs_baseline_delta: '',
+    shadow_behavior_note: 'high convergence; weighting likely adds fake precision',
+    activation_blocker: 'high_convergence_weighting_not_recommended'
+  }));
+  return rowsOut;
 }
 
 function buildAttentionEvidenceReportRows_(summaryRows, summaryIdx, characterRows, characterIdx, generatedTs) {
@@ -4812,6 +5319,33 @@ function _sortAttentionDisagreementSummaryRows_(headers, rows) {
   });
 }
 
+function _sortAttentionPhase3CandidateRows_(headers, rows) {
+  if (!rows || rows.length < 2) return;
+  var idx = _headerIndexMap_(headers);
+  var usefulOrder = {
+    useful_disagreement: 1,
+    possible_signal: 2
+  };
+  rows.sort(function(a, b) {
+    var aOrder = usefulOrder[String(a[idx.usefulness_label] || '')] || 999;
+    var bOrder = usefulOrder[String(b[idx.usefulness_label] || '')] || 999;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    var aUseful = Number(a[idx.useful_rows] || 0);
+    var bUseful = Number(b[idx.useful_rows] || 0);
+    if (aUseful !== bUseful) return bUseful - aUseful;
+    var aScore = _numOrNull_(a[idx.score_spread]);
+    var bScore = _numOrNull_(b[idx.score_spread]);
+    if (aScore !== bScore) return (bScore || -999999) - (aScore || -999999);
+    return _cmpByColumns_(a, b, [
+      idx.release_ts,
+      idx.outcome_family,
+      idx.winner_provider,
+      idx.attention_factor,
+      idx.target_key
+    ]);
+  });
+}
+
 function _attentionFactorsFromLedgerRow_(row, idx) {
   var out = [];
   for (var i = 1; i <= 3; i++) {
@@ -4820,6 +5354,431 @@ function _attentionFactorsFromLedgerRow_(row, idx) {
     out.push({ factor: factor, rank: i });
   }
   return out;
+}
+
+function _attentionFactorsWithWeightsFromLedgerRow_(row, idx) {
+  var out = [];
+  for (var i = 1; i <= 3; i++) {
+    var factor = String(_predValue_(row, idx, 'attention_factor_' + i) || '').trim();
+    if (!factor) continue;
+    out.push({
+      factor: factor,
+      rank: i,
+      weight: _numOrNull_(_predValue_(row, idx, 'attention_factor_' + i + '_weight'))
+    });
+  }
+  return out;
+}
+
+function _attentionShadowGroupKey_(row, idx) {
+  var eventId = String(_predValue_(row, idx, 'event_id') || '').trim();
+  var batchId = String(_predValue_(row, idx, 'batch_id') || '').trim();
+  var rowType = String(_predValue_(row, idx, 'type') || '').trim().toLowerCase();
+  if (rowType === 'batch' && batchId) return 'batch|' + batchId;
+  if (eventId) return 'event|' + eventId;
+  if (batchId) return 'batch|' + batchId;
+  return '';
+}
+
+function _getConvergenceInfoForShadow_() {
+  var sheet = getSheet('Outcome_Summary_Convergence');
+  if (!sheet) return {};
+  var headers = getHeaderNames(sheet);
+  var out = {};
+  if (!headers || !headers.length) return out;
+  var idx = _headerIndexMap_(headers);
+  var rows = _readDataRows_(sheet);
+  for (var i = 0; i < (rows || []).length; i++) {
+    var row = rows[i];
+    var eventId = String(_predValue_(row, idx, 'event_id') || '').trim();
+    var batchId = String(_predValue_(row, idx, 'batch_id') || '').trim();
+    var rowType = String(_predValue_(row, idx, 'type') || '').trim().toLowerCase();
+    var key = (rowType === 'batch' && batchId) ? ('batch|' + batchId) : (eventId ? ('event|' + eventId) : (batchId ? ('batch|' + batchId) : ''));
+    if (!key) continue;
+    out[key] = {
+      convergence_level: String(_predValue_(row, idx, 'convergence_level') || '').trim().toLowerCase(),
+      unique_pred_dirs: Number(_predValue_(row, idx, 'unique_pred_dirs') || 0),
+      provider_count: Number(_predValue_(row, idx, 'provider_count') || 0)
+    };
+  }
+  return out;
+}
+
+function _deriveShadowConvergenceInfo_(groupRows, ledgerIdx) {
+  var dirs = {};
+  var strengths = {};
+  for (var i = 0; i < (groupRows || []).length; i++) {
+    var dir = String(_predValue_(groupRows[i], ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase();
+    var strength = String(_predValue_(groupRows[i], ledgerIdx, 'mr_pred_strength') || '').trim().toLowerCase();
+    if (dir) dirs[dir] = true;
+    if (strength) strengths[strength] = true;
+  }
+  var dirCount = Object.keys(dirs).length;
+  var strengthCount = Object.keys(strengths).length;
+  var level = (dirCount <= 1 && strengthCount <= 1) ? 'high' : (dirCount > 1 ? 'low' : 'medium');
+  return {
+    convergence_level: level,
+    unique_pred_dirs: dirCount,
+    provider_count: _attentionShadowProviderCount_(groupRows, ledgerIdx)
+  };
+}
+
+function _attentionShadowProviderCount_(groupRows, ledgerIdx) {
+  var providers = {};
+  for (var i = 0; i < (groupRows || []).length; i++) {
+    var provider = String(_predValue_(groupRows[i], ledgerIdx, 'ai_name') || '').trim();
+    if (provider) providers[provider] = true;
+  }
+  return Object.keys(providers).length;
+}
+
+function _attentionShadowIsDisagreement_(groupRows, ledgerIdx, convergenceInfo) {
+  if (convergenceInfo && String(convergenceInfo.convergence_level || '').toLowerCase() === 'low') return true;
+  if (convergenceInfo && Number(convergenceInfo.unique_pred_dirs || 0) > 1) return true;
+  var dirs = {};
+  for (var i = 0; i < (groupRows || []).length; i++) {
+    var dir = String(_predValue_(groupRows[i], ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase();
+    if (dir) dirs[dir] = true;
+  }
+  return Object.keys(dirs).length > 1;
+}
+
+function _attentionShadowFactorMatch_(row, ledgerIdx, factorName) {
+  var factors = _attentionFactorsWithWeightsFromLedgerRow_(row, ledgerIdx);
+  for (var i = 0; i < factors.length; i++) {
+    if (factors[i].factor === factorName) return factors[i];
+  }
+  return null;
+}
+
+function _makeAttentionShadowExperimentRow_(generatedTs, attrs) {
+  attrs = attrs || {};
+  var row = attrs.source_row || [];
+  var idx = attrs.ledger_idx || {};
+  var baseline = attrs.baseline || {};
+  var candidateScore = attrs.candidate_score;
+  var baselineScore = baseline.baseline_outcome_score;
+  var delta = attrs.candidate_vs_baseline_delta;
+  if (delta === undefined) {
+    delta = (candidateScore != null && baselineScore != null) ? _roundRate_(Number(candidateScore) - Number(baselineScore)) : '';
+  }
+  var won = delta !== '' && Number(delta) > 0;
+  var lost = delta !== '' && Number(delta) < 0;
+  var tied = delta !== '' && Number(delta) === 0;
+  var candidateDir = attrs.candidate_pred_dir || '';
+  var directionChanged = candidateDir && baseline.baseline_pred_dir && candidateDir !== baseline.baseline_pred_dir;
+  var experimentId = [
+    attrs.experiment_name || '',
+    String(_predValue_(row, idx, 'event_id') || ''),
+    String(_predValue_(row, idx, 'batch_id') || ''),
+    attrs.candidate_provider || '',
+    attrs.candidate_factor || ''
+  ].join('|');
+  var severeMissCreated = attrs.severe_miss_created_flag;
+  if (severeMissCreated === undefined) {
+    severeMissCreated = (attrs.candidate_bucket === 'miss' && baseline.baseline_outcome_bucket && baseline.baseline_outcome_bucket !== 'miss') ? 'TRUE' : 'FALSE';
+  }
+  return [
+    generatedTs,
+    experimentId,
+    attrs.experiment_name || '',
+    '3A.1',
+    attrs.experiment_type || '',
+    attrs.rule_description || '',
+    attrs.source_scope || '',
+    String(_predValue_(row, idx, 'event_id') || ''),
+    String(_predValue_(row, idx, 'batch_id') || ''),
+    String(_predValue_(row, idx, 'type') || ''),
+    String(_predValue_(row, idx, 'release_ts') || ''),
+    String(_predValue_(row, idx, 'release_date') || ''),
+    String(_predValue_(row, idx, 'outcome_family') || '') || 'other',
+    String(_predValue_(row, idx, 'indicator_name') || ''),
+    String(_predValue_(row, idx, 'country') || ''),
+    attrs.provider_count === undefined ? '' : attrs.provider_count,
+    attrs.candidate_provider || '',
+    attrs.candidate_factor || '',
+    attrs.candidate_factor_weight == null ? '' : attrs.candidate_factor_weight,
+    attrs.candidate_rule_triggered || '',
+    baseline.method || 'best_equal_provider_observed',
+    baseline.baseline_provider || '',
+    baselineScore == null ? '' : baselineScore,
+    baseline.baseline_outcome_bucket || '',
+    candidateScore == null ? '' : candidateScore,
+    attrs.candidate_bucket || '',
+    delta,
+    attrs.candidate_won_flag || (won ? 'TRUE' : 'FALSE'),
+    attrs.candidate_lost_flag || (lost ? 'TRUE' : 'FALSE'),
+    attrs.candidate_tied_flag || (tied ? 'TRUE' : 'FALSE'),
+    attrs.direction_changed_flag || (directionChanged ? 'TRUE' : 'FALSE'),
+    attrs.miss_avoided_flag || 'FALSE',
+    severeMissCreated,
+    attrs.shadow_signal_mode || '',
+    attrs.shadow_confidence_action || '',
+    attrs.shadow_behavior_note || '',
+    'shadow_only',
+    attrs.activation_blocker || 'needs_more_future_blocks',
+    'Shadow experiment only; not trading advice.'
+  ];
+}
+
+function _buildAttentionShadowSummaryRows_(experimentRows, experimentIdx, generatedTs) {
+  var groups = {};
+  for (var i = 0; i < (experimentRows || []).length; i++) {
+    var row = experimentRows[i];
+    var key = [
+      String(_predValue_(row, experimentIdx, 'experiment_name') || '').trim(),
+      String(_predValue_(row, experimentIdx, 'outcome_family') || '').trim() || 'other',
+      String(_predValue_(row, experimentIdx, 'candidate_provider') || '').trim(),
+      String(_predValue_(row, experimentIdx, 'candidate_factor') || '').trim()
+    ].join('|');
+    if (!groups[key]) {
+      groups[key] = {
+        experiment_name: String(_predValue_(row, experimentIdx, 'experiment_name') || '').trim(),
+        outcome_family: String(_predValue_(row, experimentIdx, 'outcome_family') || '').trim() || 'other',
+        candidate_provider: String(_predValue_(row, experimentIdx, 'candidate_provider') || '').trim(),
+        candidate_factor: String(_predValue_(row, experimentIdx, 'candidate_factor') || '').trim(),
+        blockers: {},
+        rows_total: 0,
+        rows_scored: 0,
+        win_count: 0,
+        loss_count: 0,
+        tie_count: 0,
+        delta_sum: 0,
+        delta_count: 0,
+        miss_avoided_count: 0,
+        severe_miss_created_count: 0
+      };
+    }
+    var g = groups[key];
+    var delta = _numOrNull_(_predValue_(row, experimentIdx, 'candidate_vs_baseline_delta'));
+    var candidateScore = _numOrNull_(_predValue_(row, experimentIdx, 'candidate_outcome_score'));
+    var blocker = String(_predValue_(row, experimentIdx, 'activation_blocker') || '').trim();
+    g.rows_total += 1;
+    if (candidateScore != null) g.rows_scored += 1;
+    if (_isTrueCell_(_predValue_(row, experimentIdx, 'candidate_won_flag'))) g.win_count += 1;
+    if (_isTrueCell_(_predValue_(row, experimentIdx, 'candidate_lost_flag'))) g.loss_count += 1;
+    if (_isTrueCell_(_predValue_(row, experimentIdx, 'candidate_tied_flag'))) g.tie_count += 1;
+    if (delta != null) {
+      g.delta_sum += delta;
+      g.delta_count += 1;
+    }
+    if (_isTrueCell_(_predValue_(row, experimentIdx, 'miss_avoided_flag'))) g.miss_avoided_count += 1;
+    if (_isTrueCell_(_predValue_(row, experimentIdx, 'severe_miss_created_flag'))) g.severe_miss_created_count += 1;
+    if (blocker) g.blockers[blocker] = (g.blockers[blocker] || 0) + 1;
+  }
+
+  var rowsOut = [];
+  Object.keys(groups).sort().forEach(function(key) {
+    var g = groups[key];
+    var winRate = _rateOrBlank_(g.win_count, g.rows_scored);
+    var avgDelta = g.delta_count ? _roundRate_(g.delta_sum / g.delta_count) : '';
+    var readiness = _attentionShadowActivationReadiness_(g.rows_scored, winRate, avgDelta);
+    rowsOut.push([
+      generatedTs,
+      g.experiment_name,
+      g.outcome_family,
+      g.candidate_provider,
+      g.candidate_factor,
+      g.rows_total,
+      g.rows_scored,
+      g.win_count,
+      g.loss_count,
+      g.tie_count,
+      winRate,
+      avgDelta,
+      g.miss_avoided_count,
+      g.severe_miss_created_count,
+      readiness,
+      _attentionShadowSummaryBlocker_(readiness, g.blockers),
+      'Shadow summary only; not trading advice.'
+    ]);
+  });
+  return rowsOut;
+}
+
+function _attentionShadowActivationReadiness_(rowsScored, winRate, avgDelta) {
+  var n = Number(rowsScored || 0);
+  var w = _numOrNull_(winRate);
+  var d = _numOrNull_(avgDelta);
+  if (n < 20) return 'not_ready';
+  if (w != null && w <= 0.45) return 'reject_or_monitor';
+  if (n >= 40 && w != null && w >= 0.60 && d != null && d > 0.5) return 'strong_shadow_candidate';
+  if (w != null && w >= 0.55 && d != null && d > 0) return 'watchlist_candidate';
+  return 'inconclusive';
+}
+
+function _attentionShadowSummaryBlocker_(readiness, blockers) {
+  if (readiness === 'strong_shadow_candidate' || readiness === 'watchlist_candidate') {
+    return 'needs_future_block_confirmation';
+  }
+  var top = _topCountMapItems_(blockers || {}, 1);
+  if (top.length) return top[0].key;
+  return readiness === 'not_ready' ? 'insufficient_sample_size' : 'needs_more_future_blocks';
+}
+
+function _sortAttentionShadowExperimentRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx.experiment_name,
+      idx.release_ts,
+      idx.outcome_family,
+      idx.event_id,
+      idx.candidate_provider,
+      idx.candidate_factor
+    ]);
+  });
+}
+
+function _sortAttentionShadowSummaryRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    var aRows = Number(a[idx.rows_scored] || 0);
+    var bRows = Number(b[idx.rows_scored] || 0);
+    if (aRows !== bRows) return bRows - aRows;
+    return _cmpByColumns_(a, b, [
+      idx.experiment_name,
+      idx.outcome_family,
+      idx.candidate_provider,
+      idx.candidate_factor
+    ]);
+  });
+}
+
+function buildAttentionPhase3CandidateRows_(reviewRows, reviewIdx, summaryRows, summaryIdx, generatedTs) {
+  var evidenceMap = _buildAttentionPhase3EvidenceMap_(summaryRows, summaryIdx);
+  var rowsOut = [];
+  var seen = {};
+
+  for (var i = 0; i < (reviewRows || []).length; i++) {
+    var reviewRow = reviewRows[i];
+    var usefulness = String(_predValue_(reviewRow, reviewIdx, 'usefulness_label') || '').trim();
+    if (usefulness !== 'useful_disagreement' && usefulness !== 'possible_signal') continue;
+
+    var winner = String(_predValue_(reviewRow, reviewIdx, 'winner_provider') || '').trim();
+    if (!winner || winner === 'tie') continue;
+
+    var family = String(_predValue_(reviewRow, reviewIdx, 'outcome_family') || '').trim() || 'other';
+    var targetKey = String(_predValue_(reviewRow, reviewIdx, 'target_key') || '').trim();
+    var winnerFactors = _attentionDisagreementWinnerFactors_(reviewRow, reviewIdx);
+    var bestEvidence = _selectAttentionPhase3Evidence_(family, winner, winnerFactors, evidenceMap);
+    if (!bestEvidence) continue;
+
+    var candidateFactor = bestEvidence.attention_factor || '';
+    var candidateKey = targetKey + '|' + winner + '|' + candidateFactor;
+    if (seen[candidateKey]) continue;
+    seen[candidateKey] = true;
+
+    rowsOut.push([
+      generatedTs,
+      bestEvidence.summary_type,
+      candidateKey,
+      targetKey,
+      String(_predValue_(reviewRow, reviewIdx, 'release_date') || ''),
+      String(_predValue_(reviewRow, reviewIdx, 'release_ts') || ''),
+      String(_predValue_(reviewRow, reviewIdx, 'event_id') || ''),
+      String(_predValue_(reviewRow, reviewIdx, 'batch_id') || ''),
+      String(_predValue_(reviewRow, reviewIdx, 'type') || ''),
+      family,
+      String(_predValue_(reviewRow, reviewIdx, 'indicator_name') || ''),
+      String(_predValue_(reviewRow, reviewIdx, 'country') || ''),
+      winner,
+      candidateFactor,
+      String(_predValue_(reviewRow, reviewIdx, 'disagreement_kind') || ''),
+      usefulness,
+      String(_predValue_(reviewRow, reviewIdx, 'score_spread') || ''),
+      String(_predValue_(reviewRow, reviewIdx, 'pips_spread') || ''),
+      bestEvidence.rows_total == null ? '' : bestEvidence.rows_total,
+      bestEvidence.useful_rows == null ? '' : bestEvidence.useful_rows,
+      bestEvidence.diagnostic_level || '',
+      _attentionPhase3CandidateSummary_(family, winner, candidateFactor, bestEvidence),
+      _attentionPhase3CandidateHint_(bestEvidence),
+      'candidate_only',
+      'Phase 3 candidate review only; not trading advice.'
+    ]);
+  }
+
+  return rowsOut;
+}
+
+function _buildAttentionPhase3EvidenceMap_(summaryRows, summaryIdx) {
+  var out = {};
+  for (var i = 0; i < (summaryRows || []).length; i++) {
+    var row = summaryRows[i];
+    var summaryType = String(_predValue_(row, summaryIdx, 'summary_type') || '').trim();
+    if (summaryType !== 'family_winner_factor' && summaryType !== 'family_winner' && summaryType !== 'winner_factor') {
+      continue;
+    }
+
+    var level = String(_predValue_(row, summaryIdx, 'diagnostic_level') || '').trim();
+    var rowsTotal = Number(_predValue_(row, summaryIdx, 'rows_total') || 0);
+    var usefulRows = Number(_predValue_(row, summaryIdx, 'useful_disagreement_count') || 0) +
+      Number(_predValue_(row, summaryIdx, 'possible_signal_count') || 0);
+    if (level !== 'useful_pattern' || rowsTotal < 5 || usefulRows < 4) continue;
+
+    var family = String(_predValue_(row, summaryIdx, 'outcome_family') || '').trim() || 'other';
+    var winner = String(_predValue_(row, summaryIdx, 'winner_provider') || '').trim();
+    var factor = String(_predValue_(row, summaryIdx, 'attention_factor') || '').trim();
+    var key = summaryType + '|' + family + '|' + winner + '|' + factor;
+    out[key] = {
+      summary_type: summaryType,
+      outcome_family: family,
+      winner_provider: winner,
+      attention_factor: factor,
+      rows_total: rowsTotal,
+      useful_rows: usefulRows,
+      diagnostic_level: level
+    };
+  }
+  return out;
+}
+
+function _selectAttentionPhase3Evidence_(family, winner, winnerFactors, evidenceMap) {
+  var factors = (winnerFactors && winnerFactors.length) ? winnerFactors : [''];
+  var candidates = [];
+  for (var i = 0; i < factors.length; i++) {
+    var factor = factors[i] || '';
+    _maybePushAttentionPhase3Evidence_(candidates, evidenceMap['family_winner_factor|' + family + '|' + winner + '|' + factor], 1);
+    _maybePushAttentionPhase3Evidence_(candidates, evidenceMap['winner_factor|' + 'other' + '|' + winner + '|' + factor], 3);
+  }
+  _maybePushAttentionPhase3Evidence_(candidates, evidenceMap['family_winner|' + family + '|' + winner + '|'], 2);
+
+  if (!candidates.length) return null;
+  candidates.sort(function(a, b) {
+    if (a.rank !== b.rank) return a.rank - b.rank;
+    if (a.evidence.useful_rows !== b.evidence.useful_rows) return b.evidence.useful_rows - a.evidence.useful_rows;
+    return b.evidence.rows_total - a.evidence.rows_total;
+  });
+  return candidates[0].evidence;
+}
+
+function _maybePushAttentionPhase3Evidence_(list, evidence, rank) {
+  if (!evidence) return;
+  list.push({ evidence: evidence, rank: rank });
+}
+
+function _attentionPhase3CandidateSummary_(family, winner, factor, evidence) {
+  var parts = [
+    'Repeated useful disagreement pattern',
+    'family=' + family,
+    'winner=' + winner
+  ];
+  if (factor) parts.push('factor=' + factor);
+  if (evidence && evidence.useful_rows != null && evidence.rows_total != null) {
+    parts.push('evidence=' + evidence.useful_rows + '/' + evidence.rows_total);
+  }
+  return parts.join('; ') + '.';
+}
+
+function _attentionPhase3CandidateHint_(evidence) {
+  var summaryType = evidence && evidence.summary_type ? evidence.summary_type : '';
+  if (summaryType === 'family_winner_factor') {
+    return 'In a later shadow comparison, inspect whether this family-plus-factor disagreement slice stays consistently useful before any behavior change.';
+  }
+  if (summaryType === 'family_winner') {
+    return 'In a later shadow comparison, inspect whether this provider keeps winning disagreement cases for the same family before any behavior change.';
+  }
+  return 'In a later shadow comparison, inspect whether this provider-plus-factor disagreement slice persists before any behavior change.';
 }
 
 function _uniqueStrings_(items) {

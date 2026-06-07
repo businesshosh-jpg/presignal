@@ -84,6 +84,8 @@ Attention_Evidence_Report
 Attention_Disagreement_Review
 Attention_Disagreement_Summary
 Attention_Phase3_Candidates
+Attention_Shadow_Experiments
+Attention_Shadow_Summary
 
 #### Optional / legacy / compatibility
 Config (optional): If present, the runner can read key-value configuration from it (best-effort; absence is allowed).
@@ -205,10 +207,12 @@ The system also supports rebuilt derived reporting tabs for outcome and attentio
 - `Attention_Disagreement_Review`
 - `Attention_Disagreement_Summary`
 - `Attention_Phase3_Candidates`
+- `Attention_Shadow_Experiments`
+- `Attention_Shadow_Summary`
 
 These sheets are read-only over their source layers and rewrite only their own body rows. Missing headers are appended, existing header order is preserved, and the builders do not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or evaluation sheets.
 
-`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Phase3_Candidates` is a conservative bridge layer for Phase 3 design review. These sheets expose selected reasoning-factor evidence, provider-character evidence, case-level disagreement evidence, and candidate-only experiment slices for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
+`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Phase3_Candidates` is a conservative bridge layer for Phase 3 design review. `Attention_Shadow_Experiments` and `Attention_Shadow_Summary` are Phase 3A counterfactual reporting layers. These sheets expose selected reasoning-factor evidence, provider-character evidence, case-level disagreement evidence, candidate-only experiment slices, and shadow experiment outcomes for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
 
 #### log sheet headers (best-effort, non-reordering)
 

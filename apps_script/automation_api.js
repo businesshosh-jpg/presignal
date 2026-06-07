@@ -168,6 +168,28 @@ function apiBuildAttentionDisagreementSummary() {
   return apiBuildAttentionDisagreementSummary_();
 }
 
+function apiBuildAttentionPhase3Candidates_() {
+  return {
+    status: 'ok',
+    attention_phase3_candidates: buildAttentionPhase3Candidates_()
+  };
+}
+
+function apiBuildAttentionPhase3Candidates() {
+  return apiBuildAttentionPhase3Candidates_();
+}
+
+function apiBuildAttentionShadowExperiments_() {
+  return {
+    status: 'ok',
+    attention_shadow_experiments: buildAttentionShadowExperiments_()
+  };
+}
+
+function apiBuildAttentionShadowExperiments() {
+  return apiBuildAttentionShadowExperiments_();
+}
+
 function apiUpsertEventWindow_(params) {
   params = params || {};
 

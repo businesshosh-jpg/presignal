@@ -191,6 +191,10 @@ After enough attention-era rows are collected, the following derived sheets may 
 
 These sheets are observational only. They do not change prompts, predictions, scoring, provider weighting, calibration, or signal generation.
 
+## Phase 3A Shadow Experiments
+
+Phase 3A uses attention factors only for shadow counterfactual experiments. It does not activate provider weighting, calibration, or behavior overrides.
+
 ## Decision Support Wording
 
 Attention factor metadata is explanatory analysis only and not trading advice.
