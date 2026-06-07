@@ -26,7 +26,7 @@ DEFAULT_SPREADSHEET_ID = os.environ.get(
 )
 DEFAULT_HTTP_TIMEOUT_SEC = int(os.environ.get("PRESIGNAL_HTTP_TIMEOUT_SEC", "300"))
 DEFAULT_SHEETS_HTTP_TIMEOUT_SEC = int(os.environ.get("PRESIGNAL_SHEETS_HTTP_TIMEOUT_SEC", str(DEFAULT_HTTP_TIMEOUT_SEC)))
-DEFAULT_SCRIPT_HTTP_TIMEOUT_SEC = int(os.environ.get("PRESIGNAL_SCRIPT_HTTP_TIMEOUT_SEC", "180"))
+DEFAULT_SCRIPT_HTTP_TIMEOUT_SEC = int(os.environ.get("PRESIGNAL_SCRIPT_HTTP_TIMEOUT_SEC", "300"))
 DEFAULT_API_RETRY_COUNT = int(os.environ.get("PRESIGNAL_API_RETRY_COUNT", "4"))
 DEFAULT_API_RETRY_SLEEP_SEC = float(os.environ.get("PRESIGNAL_API_RETRY_SLEEP_SEC", "2"))
 FORCE_GOOGLE_API_IPV4 = os.environ.get("PRESIGNAL_FORCE_GOOGLE_API_IPV4", "1") == "1"
@@ -37,6 +37,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/script.deployments",
     "https://www.googleapis.com/auth/script.projects",
     "https://www.googleapis.com/auth/script.scriptapp",
+    "https://www.googleapis.com/auth/script.container.ui",
 ]
 
 

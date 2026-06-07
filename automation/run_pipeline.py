@@ -3,6 +3,7 @@ import json
 import os
 import signal
 import sys
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List
@@ -511,6 +512,53 @@ def _read_event_rows_for_window(
     return _filter_dict_rows_by_release_window(rows, lo, hi)
 
 
+def _load_prediction_coverage_summary_from_sheet(
+    sheets_service,
+    spreadsheet_id: str,
+    base_params: Dict[str, Any],
+    providers: List[str],
+) -> Dict[str, Any]:
+    from automation.google_clients import get_sheet_values
+
+    provider_list = [str(p).strip() for p in (providers or []) if str(p).strip()]
+    if not provider_list:
+        return {}
+
+    events = _read_event_rows_for_window(sheets_service, spreadsheet_id, base_params)
+    event_ids = [str(row.get("event_id") or "").strip() for row in events if str(row.get("event_id") or "").strip()]
+    if not event_ids:
+        return {}
+
+    values = get_sheet_values(sheets_service, spreadsheet_id, "Predictions!A:EZ")
+    prediction_rows = _dict_rows_from_sheet_values(values)
+    target_events = set(event_ids)
+    target_providers = set(provider_list)
+    seen = set()
+    for row in prediction_rows:
+        event_id = str(row.get("event_id") or "").strip()
+        provider = str(row.get("ai_name") or "").strip()
+        if event_id in target_events and provider in target_providers:
+            seen.add((event_id, provider))
+
+    expected_count = len(target_events) * len(target_providers)
+    landed_count = len(seen)
+    missing_count = max(0, expected_count - landed_count)
+    if landed_count <= 0:
+        return {}
+
+    target_lo, target_hi = _window_bounds_from_params(base_params)
+    return {
+        "status": "ok" if missing_count == 0 else "partial",
+        "remaining_work_units": missing_count,
+        "total_work_units": expected_count,
+        "completed_work_units": landed_count,
+        "window_start_iso": target_lo.isoformat().replace("+00:00", "Z") if target_lo else "",
+        "window_end_iso": target_hi.isoformat().replace("+00:00", "Z") if target_hi else "",
+        "providers": provider_list,
+        "recovery_source": "prediction_coverage_recheck",
+    }
+
+
 def _event_cluster_preflight(
     event_rows: List[Dict[str, Any]],
     provider_count: int,
@@ -624,7 +672,7 @@ def _cluster_provider_split_first_decision(
     family_count = len(families)
 
     reasons = []
-    if event_count >= 5 or member_count >= 5:
+    if event_count >= 4 or member_count >= 4:
         reasons.append("large_cluster")
     if genre_count >= 3 or family_count >= 3:
         reasons.append("mixed_family_cluster")
@@ -1192,6 +1240,14 @@ def _run_prediction_group_(
                     providers,
                     call_started_iso,
                 )
+                if not recovered_summary:
+                    time.sleep(float(os.getenv("PRESIGNAL_POST_TIMEOUT_RECHECK_SLEEP_SEC", "8")))
+                    recovered_summary = _load_prediction_coverage_summary_from_sheet(
+                        sheets_service,
+                        spreadsheet_id,
+                        base_params,
+                        providers,
+                    )
             if recovered_summary:
                 degrade_count += 1
                 _append_run_log(

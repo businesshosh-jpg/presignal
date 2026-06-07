@@ -109,6 +109,7 @@ Provider_Character_Diagnostics
 Attention_Evidence_Report
 Attention_Disagreement_Review
 Attention_Disagreement_Summary
+Attention_Phase3_Candidates
 
 **Legacy compatibility (read-only fallbacks in limited modules)**
 
@@ -335,10 +336,11 @@ The following reporting tabs are derived-only rebuilds and are not canonical sou
 - `Attention_Evidence_Report`
 - `Attention_Disagreement_Review`
 - `Attention_Disagreement_Summary`
+- `Attention_Phase3_Candidates`
 
 They may be created if missing, may append missing headers, and may clear/rewrite their own body rows. They must not reorder existing headers and must not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or existing evaluation sheets.
 
-`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. They may summarize attention-era rows, provider-character evidence, and case-level disagreement evidence, but they must not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
+`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Phase3_Candidates` is a candidate-only bridge layer for later Phase 3 design review. These sheets may summarize attention-era rows, provider-character evidence, case-level disagreement evidence, and repeated candidate slices, but they must not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
 
 All rows remain decision-support reporting only and must not present direct action language.
 
@@ -813,6 +815,7 @@ Required behavior:
 - Preserve `(event_id, ai_name)` prediction upsert behavior.
 - Preserve batch/member/type semantics.
 - Use checkpoint/resume behavior inside each release window.
+- Allow local post-timeout coverage rechecks before declaring a prediction window failed when rows may already have landed in `Predictions`.
 - Treat provider/timeouts as orchestration failures or degraded provider runs, not as changes to prediction logic.
 - Run actuals, market reaction, and evaluation after prediction windows when requested.
 - Use `--skip-predictions` for post-prediction cleanup passes so scoring can be retried without repeating AI calls.

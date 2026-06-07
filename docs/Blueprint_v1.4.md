@@ -83,6 +83,7 @@ Provider_Character_Diagnostics
 Attention_Evidence_Report
 Attention_Disagreement_Review
 Attention_Disagreement_Summary
+Attention_Phase3_Candidates
 
 #### Optional / legacy / compatibility
 Config (optional): If present, the runner can read key-value configuration from it (best-effort; absence is allowed).
@@ -203,10 +204,11 @@ The system also supports rebuilt derived reporting tabs for outcome and attentio
 - `Attention_Evidence_Report`
 - `Attention_Disagreement_Review`
 - `Attention_Disagreement_Summary`
+- `Attention_Phase3_Candidates`
 
 These sheets are read-only over their source layers and rewrite only their own body rows. Missing headers are appended, existing header order is preserved, and the builders do not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or evaluation sheets.
 
-`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. They expose selected reasoning-factor evidence, provider-character evidence, and case-level disagreement evidence for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
+`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Phase3_Candidates` is a conservative bridge layer for Phase 3 design review. These sheets expose selected reasoning-factor evidence, provider-character evidence, case-level disagreement evidence, and candidate-only experiment slices for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
 
 #### log sheet headers (best-effort, non-reordering)
 
@@ -3721,6 +3723,11 @@ If SeriesMap is not maintained, the trigger can still resolve many rows through 
 The local Python runner supports adaptive day-run orchestration for historically heavy days. Before prediction, it can read the selected `Event` window and group events by release timestamp. A day is treated as heavy when same-time clusters are large, mixed across several genres/families, or have high estimated provider-row load.
 
 When heavy-day mode is active, predictions are executed one release timestamp window at a time. Each release window runs providers one at a time first, using the existing prediction checkpoint/resume mechanism within that window. This is intended to avoid all-provider transport stalls while preserving the same provider prompts, strict JSON contract, `(event_id, ai_name)` upsert identity, batch/member semantics, and decision-support wording.
+
+Operational note:
+- Local runner default Apps Script HTTP timeout is `300` seconds.
+- If an Apps Script prediction call times out locally, the runner may recheck `Predictions` coverage for that exact release window/provider set before treating the window as failed.
+- Release clusters with `event_count >= 4` or `member_count >= 4` should start in provider-split-first mode to reduce combined-call stalls.
 
 After prediction windows complete, the runner may run actuals, market reaction, and evaluation for the requested full day/window. If those post-prediction phases need to be retried, use `--skip-predictions` so provider predictions are not repeated.
 
