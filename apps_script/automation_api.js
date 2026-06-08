@@ -95,11 +95,19 @@ function apiBuildOutcomeSummaries_() {
   };
 }
 
+function apiBuildOutcomeSummaries() {
+  return apiBuildOutcomeSummaries_();
+}
+
 function apiBuildOutcomeDiagnostics_() {
   return {
     status: 'ok',
     outcome_diagnostics: buildOutcomeDiagnostics_()
   };
+}
+
+function apiBuildOutcomeDiagnostics() {
+  return apiBuildOutcomeDiagnostics_();
 }
 
 function apiBuildAttentionFactorSummary_() {
