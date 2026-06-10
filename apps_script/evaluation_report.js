@@ -226,6 +226,37 @@ function menuBuildProviderCharacterDiagnostics_() {
   }
 }
 
+function menuBuildAttentionProviderIndividuality_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildAttentionProviderIndividuality_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Attention provider individuality -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Attention provider individuality rows=' + (res.rows_written || 0),
+      'Attention Provider Individuality',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Attention provider individuality -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function menuBuildAttentionEvidenceReport_() {
   var ss = SpreadsheetApp.getActive();
   var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
@@ -552,6 +583,10 @@ function getOrCreateProviderCharacterDiagnosticsSheet_() {
   return _getOrCreateSheet_('Provider_Character_Diagnostics');
 }
 
+function getOrCreateAttentionProviderIndividualitySheet_() {
+  return _getOrCreateSheet_('Attention_Provider_Individuality');
+}
+
 function getOrCreateAttentionEvidenceReportSheet_() {
   return _getOrCreateSheet_('Attention_Evidence_Report');
 }
@@ -594,6 +629,10 @@ function ensureAttentionFactorSummaryHeaders_(sheet) {
 
 function ensureProviderCharacterDiagnosticsHeaders_(sheet) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _providerCharacterDiagnosticsHeaders_());
+}
+
+function ensureAttentionProviderIndividualityHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionProviderIndividualityHeaders_());
 }
 
 function ensureAttentionEvidenceReportHeaders_(sheet) {
@@ -780,6 +819,33 @@ function buildProviderCharacterDiagnostics_() {
 
   return {
     provider_character_diagnostics_sheet: diagnosticsSheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
+function buildAttentionProviderIndividuality_() {
+  var ledgerSheet = getOrCreateOutcomeLedgerSheet_();
+  var ledgerHeaders = getHeaderNames(ledgerSheet);
+  if (!ledgerHeaders || !ledgerHeaders.length) {
+    throw new Error('Outcome_Ledger sheet is missing headers.');
+  }
+
+  var ledgerRows = _readDataRows_(ledgerSheet);
+  var ledgerIdx = _headerIndexMap_(ledgerHeaders);
+  var reportSheet = getOrCreateAttentionProviderIndividualitySheet_();
+  var headers = _attentionProviderIndividualityHeaders_();
+  var rowsOut = buildAttentionProviderIndividualityRows_(ledgerRows, ledgerIdx, new Date().toISOString());
+  _sortAttentionProviderIndividualityRows_(headers, rowsOut);
+
+  var actualHeaders = ensureAttentionProviderIndividualityHeaders_(reportSheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    reportSheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+
+  return {
+    attention_provider_individuality_sheet: reportSheet.getName(),
     rows_written: rowsOut.length
   };
 }
@@ -1050,6 +1116,49 @@ function _attentionFactorSummaryHeaders_() {
 
 function _providerCharacterDiagnosticsHeaders_() {
   return _outcomeDiagnosticsHeaders_();
+}
+
+function _attentionProviderIndividualityHeaders_() {
+  return [
+    'generated_ts',
+    'report_section',
+    'scope',
+    'scope_key',
+    'provider',
+    'event_family',
+    'attention_factor',
+    'row_count',
+    'share_within_provider',
+    'overall_share',
+    'rank_within_provider',
+    'share_within_provider_family',
+    'rank_within_provider_family',
+    'event_id',
+    'batch_id',
+    'type',
+    'release_ts',
+    'release_date',
+    'indicator_name',
+    'providers_present',
+    'distinct_attention_factors_count',
+    'all_same_factor',
+    'partial_divergence',
+    'full_divergence',
+    'prediction_direction_diverged',
+    'qualitative_result_diverged',
+    'same_direction_different_factors_count',
+    'different_direction_different_factors_count',
+    'same_direction_same_factor_count',
+    'different_direction_same_factor_count',
+    'top_attention_factors',
+    'top_family_attention_factors',
+    'concentration_score',
+    'individuality_label',
+    'individuality_evidence',
+    'performance_evidence_note',
+    'diagnostic_note',
+    'decision_support_note'
+  ];
 }
 
 function _attentionEvidenceReportHeaders_() {
@@ -2898,6 +3007,422 @@ function _makeProviderCharacterDiagnosticRow_(generatedTs, attrs) {
     attrs.recommended_next_step || '',
     'Provider-character diagnostic only; not trading advice.'
   ];
+}
+
+function buildAttentionProviderIndividualityRows_(ledgerRows, ledgerIdx, generatedTs) {
+  var usableRows = [];
+  var providerFactorCounts = {};
+  var providerTotals = {};
+  var factorTotals = {};
+  var providerFamilyFactorCounts = {};
+  var providerFamilyTotals = {};
+  var providerFamilies = {};
+  var targetGroups = {};
+  var warnings = [];
+  var required = ['ai_name', 'outcome_family', 'attention_factor_1'];
+  for (var r = 0; r < required.length; r++) {
+    if (ledgerIdx[required[r]] === undefined) {
+      warnings.push('missing_required_or_useful_header=' + required[r]);
+    }
+  }
+
+  for (var i = 0; i < (ledgerRows || []).length; i++) {
+    var row = ledgerRows[i];
+    if (!_isAttentionEraLedgerRow_(row, ledgerIdx)) continue;
+    var provider = String(_predValue_(row, ledgerIdx, 'ai_name') || '').trim();
+    if (!provider) continue;
+    var family = String(_predValue_(row, ledgerIdx, 'outcome_family') || '').trim() || 'other';
+    var factors = _attentionFactorsFromLedgerRow_(row, ledgerIdx);
+    if (!factors.length) continue;
+    usableRows.push(row);
+    providerFamilies[provider + '|' + family] = true;
+
+    for (var f = 0; f < factors.length; f++) {
+      var factor = factors[f].factor;
+      _incCount_(providerFactorCounts, provider + '|' + factor, 1);
+      _incCount_(providerTotals, provider, 1);
+      _incCount_(factorTotals, factor, 1);
+      _incCount_(providerFamilyFactorCounts, provider + '|' + family + '|' + factor, 1);
+      _incCount_(providerFamilyTotals, provider + '|' + family, 1);
+    }
+
+    var targetKey = _providerCharacterTargetKey_(row, ledgerIdx);
+    if (targetKey) {
+      if (!targetGroups[targetKey]) targetGroups[targetKey] = [];
+      targetGroups[targetKey].push(row);
+    }
+  }
+
+  var generatedRows = [];
+  generatedRows = generatedRows.concat(_buildAttentionProviderFactorFrequencyRows_(
+    generatedTs,
+    providerFactorCounts,
+    providerTotals,
+    factorTotals
+  ));
+  generatedRows = generatedRows.concat(_buildAttentionProviderFamilyFactorRows_(
+    generatedTs,
+    providerFamilyFactorCounts,
+    providerFamilyTotals
+  ));
+  var divergenceBundle = _buildAttentionProviderDivergenceRows_(generatedTs, targetGroups, ledgerIdx);
+  generatedRows = generatedRows.concat(divergenceBundle.rows);
+  generatedRows = generatedRows.concat(_buildAttentionConvergenceVsDivergenceRows_(generatedTs, divergenceBundle.categoryCounts, divergenceBundle.totalGroups));
+  generatedRows = generatedRows.concat(_buildAttentionProviderPersonalityRows_(
+    generatedTs,
+    providerFactorCounts,
+    providerTotals,
+    providerFamilyFactorCounts,
+    providerFamilyTotals,
+    providerFamilies
+  ));
+  generatedRows = generatedRows.concat(_buildAttentionIndividualitySummaryRows_(
+    generatedTs,
+    usableRows.length,
+    divergenceBundle.totalGroups,
+    divergenceBundle.divergentGroups,
+    divergenceBundle.categoryCounts,
+    warnings
+  ));
+  return generatedRows;
+}
+
+function _buildAttentionProviderFactorFrequencyRows_(generatedTs, providerFactorCounts, providerTotals, factorTotals) {
+  var rowsOut = [];
+  var totalSelections = 0;
+  Object.keys(factorTotals || {}).forEach(function(factor) {
+    totalSelections += Number(factorTotals[factor] || 0);
+  });
+  var byProvider = {};
+  Object.keys(providerFactorCounts || {}).forEach(function(key) {
+    var parts = key.split('|');
+    var provider = parts[0] || '';
+    var factor = parts.slice(1).join('|') || '';
+    if (!byProvider[provider]) byProvider[provider] = [];
+    byProvider[provider].push({ provider: provider, factor: factor, count: Number(providerFactorCounts[key] || 0) });
+  });
+  Object.keys(byProvider).sort().forEach(function(provider) {
+    var items = byProvider[provider].sort(function(a, b) {
+      if (a.count !== b.count) return b.count - a.count;
+      return String(a.factor).localeCompare(String(b.factor));
+    });
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      rowsOut.push(_makeAttentionProviderIndividualityRow_(generatedTs, {
+        report_section: 'provider_factor_frequency',
+        scope: 'provider_factor',
+        scope_key: provider + '|' + item.factor,
+        provider: provider,
+        attention_factor: item.factor,
+        row_count: item.count,
+        share_within_provider: _rateOrBlank_(item.count, providerTotals[provider]),
+        overall_share: _rateOrBlank_(item.count, totalSelections),
+        rank_within_provider: i + 1,
+        individuality_evidence: 'Provider attention factor frequency; explainability evidence only.',
+        performance_evidence_note: 'No outcome improvement is inferred from this frequency row.'
+      }));
+    }
+  });
+  return rowsOut;
+}
+
+function _buildAttentionProviderFamilyFactorRows_(generatedTs, providerFamilyFactorCounts, providerFamilyTotals) {
+  var rowsOut = [];
+  var byProviderFamily = {};
+  Object.keys(providerFamilyFactorCounts || {}).forEach(function(key) {
+    var parts = key.split('|');
+    var provider = parts[0] || '';
+    var family = parts[1] || '';
+    var factor = parts.slice(2).join('|') || '';
+    var pfKey = provider + '|' + family;
+    if (!byProviderFamily[pfKey]) byProviderFamily[pfKey] = [];
+    byProviderFamily[pfKey].push({
+      provider: provider,
+      family: family,
+      factor: factor,
+      count: Number(providerFamilyFactorCounts[key] || 0)
+    });
+  });
+  Object.keys(byProviderFamily).sort().forEach(function(pfKey) {
+    var items = byProviderFamily[pfKey].sort(function(a, b) {
+      if (a.count !== b.count) return b.count - a.count;
+      return String(a.factor).localeCompare(String(b.factor));
+    });
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      rowsOut.push(_makeAttentionProviderIndividualityRow_(generatedTs, {
+        report_section: 'provider_family_factor_matrix',
+        scope: 'provider_family_factor',
+        scope_key: item.provider + '|' + item.family + '|' + item.factor,
+        provider: item.provider,
+        event_family: item.family,
+        attention_factor: item.factor,
+        row_count: item.count,
+        share_within_provider_family: _rateOrBlank_(item.count, providerFamilyTotals[item.provider + '|' + item.family]),
+        rank_within_provider_family: i + 1,
+        individuality_evidence: 'Provider attention factor choice within family; explainability evidence only.',
+        performance_evidence_note: 'No outcome improvement is inferred from this matrix row.'
+      }));
+    }
+  });
+  return rowsOut;
+}
+
+function _buildAttentionProviderDivergenceRows_(generatedTs, targetGroups, ledgerIdx) {
+  var rowsOut = [];
+  var categoryCounts = {
+    same_direction_different_factors: 0,
+    different_direction_different_factors: 0,
+    same_direction_same_factor: 0,
+    different_direction_same_factor: 0
+  };
+  var totalGroups = 0;
+  var divergentGroups = 0;
+  Object.keys(targetGroups || {}).sort().forEach(function(targetKey) {
+    var rows = targetGroups[targetKey] || [];
+    var providers = {};
+    var dirs = {};
+    var primaryFactors = {};
+    var qualitative = {};
+    var first = rows[0];
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var provider = String(_predValue_(row, ledgerIdx, 'ai_name') || '').trim();
+      if (provider) providers[provider] = true;
+      var dir = String(_predValue_(row, ledgerIdx, 'mr_pred_dir') || '').trim().toLowerCase();
+      if (dir) dirs[dir] = true;
+      var factors = _attentionFactorsFromLedgerRow_(row, ledgerIdx);
+      if (factors.length) primaryFactors[factors[0].factor] = true;
+      var qual = String(_predValue_(row, ledgerIdx, 'qualitative_result') || '').trim();
+      if (qual) qualitative[qual] = true;
+    }
+    var providerNames = Object.keys(providers).sort();
+    if (providerNames.length < 2) return;
+    totalGroups += 1;
+    var factorCount = Object.keys(primaryFactors).length;
+    var directionCount = Object.keys(dirs).length;
+    var sameFactor = factorCount <= 1;
+    var directionDiverged = directionCount > 1;
+    if (!sameFactor) divergentGroups += 1;
+    if (!directionDiverged && !sameFactor) categoryCounts.same_direction_different_factors += 1;
+    else if (directionDiverged && !sameFactor) categoryCounts.different_direction_different_factors += 1;
+    else if (!directionDiverged && sameFactor) categoryCounts.same_direction_same_factor += 1;
+    else categoryCounts.different_direction_same_factor += 1;
+
+    rowsOut.push(_makeAttentionProviderIndividualityRow_(generatedTs, {
+      report_section: 'provider_divergence_summary',
+      scope: 'target',
+      scope_key: targetKey,
+      event_id: String(_predValue_(first, ledgerIdx, 'event_id') || '').trim(),
+      batch_id: String(_predValue_(first, ledgerIdx, 'batch_id') || '').trim(),
+      type: String(_predValue_(first, ledgerIdx, 'type') || '').trim(),
+      release_ts: String(_predValue_(first, ledgerIdx, 'release_ts') || '').trim(),
+      release_date: String(_predValue_(first, ledgerIdx, 'release_date') || '').trim(),
+      event_family: String(_predValue_(first, ledgerIdx, 'outcome_family') || '').trim() || 'other',
+      indicator_name: String(_predValue_(first, ledgerIdx, 'indicator_name') || '').trim(),
+      providers_present: providerNames.join(','),
+      distinct_attention_factors_count: factorCount,
+      all_same_factor: sameFactor ? 'TRUE' : 'FALSE',
+      partial_divergence: factorCount > 1 && factorCount < providerNames.length ? 'TRUE' : 'FALSE',
+      full_divergence: factorCount >= providerNames.length && providerNames.length >= 2 ? 'TRUE' : 'FALSE',
+      prediction_direction_diverged: directionDiverged ? 'TRUE' : 'FALSE',
+      qualitative_result_diverged: Object.keys(qualitative).length > 1 ? 'TRUE' : 'FALSE',
+      individuality_evidence: sameFactor
+        ? 'Providers selected the same primary attention factor.'
+        : 'Providers selected different primary attention factors for a comparable target.',
+      performance_evidence_note: 'This row measures reasoning diversity only, not forecast quality.'
+    }));
+  });
+  return {
+    rows: rowsOut,
+    categoryCounts: categoryCounts,
+    totalGroups: totalGroups,
+    divergentGroups: divergentGroups
+  };
+}
+
+function _buildAttentionConvergenceVsDivergenceRows_(generatedTs, categoryCounts, totalGroups) {
+  var rowsOut = [];
+  var mapping = [
+    ['same_direction_different_factors', 'cases where providers predicted same direction but chose different factors'],
+    ['different_direction_different_factors', 'cases where providers predicted different directions and chose different factors'],
+    ['same_direction_same_factor', 'cases where providers predicted same direction and chose same factor'],
+    ['different_direction_same_factor', 'cases where providers predicted different direction but chose same factor']
+  ];
+  for (var i = 0; i < mapping.length; i++) {
+    var key = mapping[i][0];
+    var count = Number((categoryCounts || {})[key] || 0);
+    rowsOut.push(_makeAttentionProviderIndividualityRow_(generatedTs, {
+      report_section: 'convergence_vs_attention_divergence',
+      scope: 'global',
+      scope_key: key,
+      row_count: count,
+      same_direction_different_factors_count: key === 'same_direction_different_factors' ? count : '',
+      different_direction_different_factors_count: key === 'different_direction_different_factors' ? count : '',
+      same_direction_same_factor_count: key === 'same_direction_same_factor' ? count : '',
+      different_direction_same_factor_count: key === 'different_direction_same_factor' ? count : '',
+      overall_share: _rateOrBlank_(count, totalGroups),
+      individuality_evidence: mapping[i][1],
+      performance_evidence_note: 'This summary separates attention divergence from performance evidence.'
+    }));
+  }
+  return rowsOut;
+}
+
+function _buildAttentionProviderPersonalityRows_(generatedTs, providerFactorCounts, providerTotals, providerFamilyFactorCounts, providerFamilyTotals, providerFamilies) {
+  var rowsOut = [];
+  var providers = Object.keys(providerTotals || {}).sort();
+  for (var i = 0; i < providers.length; i++) {
+    var provider = providers[i];
+    var factorMap = {};
+    Object.keys(providerFactorCounts || {}).forEach(function(key) {
+      if (key.indexOf(provider + '|') !== 0) return;
+      factorMap[key.substring(provider.length + 1)] = Number(providerFactorCounts[key] || 0);
+    });
+    var top = _topCountMapItems_(factorMap, 3);
+    var topText = top.map(function(item){ return item.key + '=' + item.count; }).join('; ');
+    var concentration = top.length ? _rateRaw_(top[0].count, providerTotals[provider]) : 0;
+    var familyRows = _attentionProviderFamilyPersonalityTexts_(provider, providerFamilyFactorCounts, providerFamilyTotals, providerFamilies);
+    rowsOut.push(_makeAttentionProviderIndividualityRow_(generatedTs, {
+      report_section: 'provider_personality_summary',
+      scope: 'provider',
+      scope_key: provider,
+      provider: provider,
+      row_count: providerTotals[provider],
+      top_attention_factors: topText,
+      top_family_attention_factors: familyRows.join(' | '),
+      concentration_score: _roundRate_(concentration),
+      individuality_label: _attentionIndividualityLabel_(concentration, familyRows.length),
+      individuality_evidence: 'Provider attention-factor habit summary. Label is descriptive and explainability-only.',
+      performance_evidence_note: 'No routing, weighting, or calibration decision is inferred from provider personality.'
+    }));
+  }
+  return rowsOut;
+}
+
+function _attentionProviderFamilyPersonalityTexts_(provider, providerFamilyFactorCounts, providerFamilyTotals, providerFamilies) {
+  var texts = [];
+  Object.keys(providerFamilies || {}).sort().forEach(function(pfKey) {
+    if (pfKey.indexOf(provider + '|') !== 0) return;
+    var family = pfKey.substring(provider.length + 1);
+    var factorMap = {};
+    Object.keys(providerFamilyFactorCounts || {}).forEach(function(key) {
+      if (key.indexOf(provider + '|' + family + '|') !== 0) return;
+      factorMap[key.substring((provider + '|' + family + '|').length)] = Number(providerFamilyFactorCounts[key] || 0);
+    });
+    var top = _topCountMapItems_(factorMap, 3);
+    if (!top.length) return;
+    texts.push(family + ': ' + top.map(function(item){ return item.key + '=' + item.count; }).join(','));
+  });
+  return texts.slice(0, 8);
+}
+
+function _attentionIndividualityLabel_(concentration, familyCount) {
+  if (concentration >= 0.70) return 'factor-concentrated';
+  if (concentration <= 0.35 && familyCount >= 3) return 'diversified';
+  if (familyCount >= 4) return 'family-sensitive';
+  return 'indistinct';
+}
+
+function _buildAttentionIndividualitySummaryRows_(generatedTs, usableRowCount, totalGroups, divergentGroups, categoryCounts, warnings) {
+  var rowsOut = [];
+  var divergenceRate = _rateRaw_(divergentGroups, totalGroups);
+  rowsOut.push(_makeAttentionProviderIndividualityRow_(generatedTs, {
+    report_section: 'individuality_summary',
+    scope: 'global',
+    scope_key: 'all',
+    row_count: usableRowCount,
+    distinct_attention_factors_count: divergentGroups,
+    overall_share: _roundRate_(divergenceRate),
+    individuality_label: divergenceRate >= 0.50 ? 'meaningful_reasoning_diversity' : (divergenceRate >= 0.25 ? 'emerging_reasoning_diversity' : 'limited_reasoning_diversity'),
+    individuality_evidence: 'Comparable groups with primary attention-factor divergence=' + divergentGroups + '/' + totalGroups + '.',
+    performance_evidence_note: 'This report evaluates individuality/explainability before forecast improvement.',
+    diagnostic_note: 'Goal 1 report only; Phase 3A promotion rules are unchanged.'
+  }));
+  if (warnings && warnings.length) {
+    rowsOut.push(_makeAttentionProviderIndividualityRow_(generatedTs, {
+      report_section: 'build_warning',
+      scope: 'global',
+      scope_key: 'missing_optional_or_required_headers',
+      diagnostic_note: warnings.join('; '),
+      individuality_evidence: 'Some columns were unavailable; affected sections were built with available fields.',
+      performance_evidence_note: 'No performance inference is made from warning rows.'
+    }));
+    if (typeof Logger !== 'undefined') Logger.log('Attention_Provider_Individuality warnings: ' + warnings.join('; '));
+  }
+  rowsOut.push(_makeAttentionProviderIndividualityRow_(generatedTs, {
+    report_section: 'baseline_convergence_comparison',
+    scope: 'global',
+    scope_key: 'pre_attention_baseline',
+    diagnostic_note: 'Skipped: no deterministic pre-attention baseline convergence table is wired into this report yet.',
+    individuality_evidence: 'Post-attention attention-factor divergence is reported; pre-attention comparison is deferred.',
+    performance_evidence_note: 'Skipped baseline comparison does not affect Phase 3A promotion rules.'
+  }));
+  return rowsOut;
+}
+
+function _makeAttentionProviderIndividualityRow_(generatedTs, attrs) {
+  attrs = attrs || {};
+  return [
+    generatedTs,
+    attrs.report_section || '',
+    attrs.scope || '',
+    attrs.scope_key || '',
+    attrs.provider || '',
+    attrs.event_family || '',
+    attrs.attention_factor || '',
+    attrs.row_count === undefined ? '' : attrs.row_count,
+    attrs.share_within_provider === undefined ? '' : attrs.share_within_provider,
+    attrs.overall_share === undefined ? '' : attrs.overall_share,
+    attrs.rank_within_provider === undefined ? '' : attrs.rank_within_provider,
+    attrs.share_within_provider_family === undefined ? '' : attrs.share_within_provider_family,
+    attrs.rank_within_provider_family === undefined ? '' : attrs.rank_within_provider_family,
+    attrs.event_id || '',
+    attrs.batch_id || '',
+    attrs.type || '',
+    attrs.release_ts || '',
+    attrs.release_date || '',
+    attrs.indicator_name || '',
+    attrs.providers_present || '',
+    attrs.distinct_attention_factors_count === undefined ? '' : attrs.distinct_attention_factors_count,
+    attrs.all_same_factor || '',
+    attrs.partial_divergence || '',
+    attrs.full_divergence || '',
+    attrs.prediction_direction_diverged || '',
+    attrs.qualitative_result_diverged || '',
+    attrs.same_direction_different_factors_count === undefined ? '' : attrs.same_direction_different_factors_count,
+    attrs.different_direction_different_factors_count === undefined ? '' : attrs.different_direction_different_factors_count,
+    attrs.same_direction_same_factor_count === undefined ? '' : attrs.same_direction_same_factor_count,
+    attrs.different_direction_same_factor_count === undefined ? '' : attrs.different_direction_same_factor_count,
+    attrs.top_attention_factors || '',
+    attrs.top_family_attention_factors || '',
+    attrs.concentration_score === undefined ? '' : attrs.concentration_score,
+    attrs.individuality_label || '',
+    attrs.individuality_evidence || '',
+    attrs.performance_evidence_note || 'Performance evidence is out of scope for this individuality row.',
+    attrs.diagnostic_note || '',
+    'Provider individuality / explainability report only; not trading advice.'
+  ];
+}
+
+function _sortAttentionProviderIndividualityRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx.report_section,
+      idx.provider,
+      idx.event_family,
+      idx.rank_within_provider,
+      idx.rank_within_provider_family,
+      idx.release_ts,
+      idx.scope_key
+    ]);
+  });
+}
+
+function _incCount_(map, key, amount) {
+  if (!key) return;
+  map[key] = Number(map[key] || 0) + Number(amount || 1);
 }
 
 function buildProviderFamilyDiagnostics_(providerFamilyRows, providerFamilyIdx, generatedTs) {

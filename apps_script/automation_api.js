@@ -132,6 +132,17 @@ function apiBuildProviderCharacterDiagnostics() {
   return apiBuildProviderCharacterDiagnostics_();
 }
 
+function apiBuildAttentionProviderIndividuality_() {
+  return {
+    status: 'ok',
+    attention_provider_individuality: buildAttentionProviderIndividuality_()
+  };
+}
+
+function apiBuildAttentionProviderIndividuality() {
+  return apiBuildAttentionProviderIndividuality_();
+}
+
 function apiBuildAttentionEvidenceReport_() {
   return {
     status: 'ok',

@@ -80,6 +80,7 @@ Outcome_Summary_Bucket
 Outcome_Diagnostics
 Attention_Factor_Summary
 Provider_Character_Diagnostics
+Attention_Provider_Individuality
 Attention_Evidence_Report
 Attention_Disagreement_Review
 Attention_Disagreement_Summary
@@ -203,6 +204,7 @@ The system also supports rebuilt derived reporting tabs for outcome and attentio
 - `Outcome_Diagnostics`
 - `Attention_Factor_Summary`
 - `Provider_Character_Diagnostics`
+- `Attention_Provider_Individuality`
 - `Attention_Evidence_Report`
 - `Attention_Disagreement_Review`
 - `Attention_Disagreement_Summary`
@@ -212,7 +214,7 @@ The system also supports rebuilt derived reporting tabs for outcome and attentio
 
 These sheets are read-only over their source layers and rewrite only their own body rows. Missing headers are appended, existing header order is preserved, and the builders do not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or evaluation sheets.
 
-`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Phase3_Candidates` is a conservative bridge layer for Phase 3 design review. `Attention_Shadow_Experiments` and `Attention_Shadow_Summary` are Phase 3A counterfactual reporting layers. These sheets expose selected reasoning-factor evidence, provider-character evidence, case-level disagreement evidence, candidate-only experiment slices, and shadow experiment outcomes for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
+`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Provider_Individuality`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Provider_Individuality` specifically separates provider individuality/explainability evidence from performance evidence. `Attention_Phase3_Candidates` is a conservative bridge layer for Phase 3 design review. `Attention_Shadow_Experiments` and `Attention_Shadow_Summary` are Phase 3A counterfactual reporting layers. These sheets expose selected reasoning-factor evidence, provider-character evidence, case-level disagreement evidence, candidate-only experiment slices, and shadow experiment outcomes for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
 
 #### log sheet headers (best-effort, non-reordering)
 

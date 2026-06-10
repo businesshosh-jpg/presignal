@@ -81,6 +81,7 @@ function onOpen() {
       .addItem('Build Outcome Summaries', 'menuBuildOutcomeSummaries_')
       .addItem('Build Attention Factor Summary', 'menuBuildAttentionFactorSummary_')
       .addItem('Build Provider Character Diagnostics', 'menuBuildProviderCharacterDiagnostics_')
+      .addItem('Build Attention Provider Individuality', 'menuBuildAttentionProviderIndividuality_')
       .addItem('Build Attention Evidence Report', 'menuBuildAttentionEvidenceReport_')
       .addItem('Build Attention Block Stability', 'menuBuildAttentionBlockStability_')
       .addItem('Build Attention Disagreement Review', 'menuBuildAttentionDisagreementReview_')

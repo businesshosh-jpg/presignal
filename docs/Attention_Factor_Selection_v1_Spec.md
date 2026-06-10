@@ -187,6 +187,7 @@ After enough attention-era rows are collected, the following derived sheets may 
 
 - `Attention_Factor_Summary`: summarizes selected reasoning factors, factor combinations, factor ranks, and outcome context.
 - `Provider_Character_Diagnostics`: summarizes provider style, provider attention patterns, convergence/tie patterns, and unique-win patterns.
+- `Attention_Provider_Individuality`: separates provider individuality/explainability evidence from performance evidence before routing or weighting is considered.
 - `Attention_Evidence_Report`: converts the Phase 2 derived sheets into compact evidence conclusions and Phase 3 readiness.
 
 These sheets are observational only. They do not change prompts, predictions, scoring, provider weighting, calibration, or signal generation.
