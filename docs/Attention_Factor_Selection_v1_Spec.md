@@ -8,6 +8,97 @@ Each provider continues making predictions exactly as before, but may also retur
 
 This layer must not control, modify, override, or influence core prediction outputs or signal logic.
 
+## Jan 31 2025 Checkpoint Status
+
+Status labels:
+
+- `attention_factor_v1_status = frozen_explainability`
+- `attention_factor_v1_goal_1_status = successful_provider_individuality_layer`
+- `attention_factor_v1_goal_2_status = not_approved_for_routing_or_weighting`
+- `attention_phase_3a_v1_promotion_status = closed_frozen`
+- `attention_phase_3b_status = not_approved`
+- `next_active_track = family_rule_and_batch_splitting`
+- `future_item = attention_factor_v2_causal_attention_experiment`
+
+The Jan 31 2025 checkpoint closed the v1 promotion review. `Attention_Provider_Individuality` rebuilt with 1911 rows and showed primary attention-factor divergence in 1447 of 1676 comparable groups, a divergence rate of 0.8634. Providers often kept the same prediction direction while selecting different factors: 1136 same-direction/different-factor cases versus 210 same-direction/same-factor cases.
+
+Goal 1 is considered successful enough to preserve Attention Factor Selection v1 as an explainability, provider-personality, future-learning, and non-control shadow metadata layer.
+
+Observed provider habits at the checkpoint:
+
+- Anthropic: `low_signal_event`, `hidden_detail_risk`, `missing_consensus`
+- Gemini: `direct_fx_transmission`, `missing_consensus`, `low_signal_event`
+- OpenAI: `importance`, `low_signal_event`, `missing_consensus`
+
+Goal 2 did not clear the bar for Phase 3B. `Attention_Shadow_Summary` contained 173 `reject_or_monitor` rows and 103 `not_ready` rows, with 0 `watchlist_candidate` and 0 `strong_shadow_candidate` rows. Phase 3B is not approved, and routing, weighting, calibration, and behavior overrides are not supported by current v1 evidence.
+
+## One-Shot v1 Causality Boundary
+
+Attention Factor Selection v1 is one-shot: the provider receives one event or batch payload and returns one JSON response containing both prediction fields and `attention_factors`.
+
+Implementation order:
+
+`event payload -> one provider response -> prediction + attention_factors together`
+
+Therefore, v1 proves provider-reported individuality and explanation diversity. It does not prove that selected attention factors causally steered prediction behavior. Do not claim that attention factors caused prediction differences in v1.
+
+## Future v2 Roadmap Item
+
+`Attention Factor v2 - Causal Attention Experiment` is a future experimental item only.
+
+Purpose:
+
+- test whether selecting attention factors before prediction changes prediction behavior
+- compare a two-step causal-attention architecture against the current one-shot v1 baseline
+
+Proposed future architecture:
+
+1. provider chooses 2-3 attention factors only
+2. provider generates prediction using those selected factors as primary reasoning anchors
+3. compare outcomes and reasoning behavior against v1 one-shot baseline
+
+Boundaries:
+
+- future experiment only
+- not production
+- not subscriber-facing
+- not a replacement for v1
+- no Phase 3B implementation is approved by this roadmap item
+
+The next active development recommendation is to investigate recurring `family_rule` and `batch_splitting` findings separately from Attention Factor v1 promotion.
+
+## Next Track: Family Rule / Batch Splitting Investigation
+
+The Jan 31 2025 checkpoint surfaced recurring `family_rule` and `batch_splitting` findings as the next active investigation candidate.
+
+Purpose:
+
+Determine whether recurring family-rule and batch-splitting patterns point to a stronger structural source of prediction error or evaluation noise than provider-level attention routing.
+
+Why this matters:
+
+Attention Factor v1 showed providers are not clones, but it did not produce control or routing evidence. Recurring `family_rule` and `batch_splitting` findings may indicate that the next bottleneck is event structure, family classification, batch construction, or comparison logic rather than provider individuality.
+
+Scope:
+
+- diagnostics, reporting, and design investigation only
+- no live prediction behavior change yet
+- no prompt change yet
+- no scoring change yet
+- no routing or provider weighting
+- no Phase 3B promotion
+
+Questions this track should answer:
+
+1. Are certain event families being grouped, compared, or scored incorrectly?
+2. Are same-minute batches mixing unrelated or weakly related events?
+3. Does batch-level prediction lose signal compared with member-level prediction?
+4. Are family rules needed before any provider weighting or routing can work?
+5. Is `batch_splitting` a better accuracy-improvement path than Attention Factor routing?
+6. Are `family_rule` findings pointing to deterministic system structure issues rather than AI-provider issues?
+
+This is not an implementation approval. It is a roadmap/status direction for the next investigation track.
+
 ## Version Labeling
 
 When enabled, this feature distinguishes the build from earlier `v1.4` behavior as:
@@ -195,6 +286,8 @@ These sheets are observational only. They do not change prompts, predictions, sc
 ## Phase 3A Shadow Experiments
 
 Phase 3A uses attention factors only for shadow counterfactual experiments. It does not activate provider weighting, calibration, or behavior overrides.
+
+As of the Jan 31 2025 checkpoint, Phase 3A promotion-focused testing for v1 is closed/frozen. The Phase 3A sheets may continue to be rebuilt for diagnostics, but v1 is not being promoted to Phase 3B.
 
 ## Decision Support Wording
 

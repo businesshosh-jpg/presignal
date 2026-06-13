@@ -23,6 +23,41 @@ For repo-level comparison and replay analysis, the `ver.1.4` line may be referen
 
 This distinction is intended to separate metadata-era builds from earlier `v1.4` runs without implying a new major architecture or a new active prediction controller.
 
+### Jan 31 2025 Attention Factor checkpoint
+
+Status labels:
+
+- `attention_factor_v1_status = frozen_explainability`
+- `attention_factor_v1_goal_1_status = successful_provider_individuality_layer`
+- `attention_factor_v1_goal_2_status = not_approved_for_routing_or_weighting`
+- `attention_phase_3a_v1_promotion_status = closed_frozen`
+- `attention_phase_3b_status = not_approved`
+- `next_active_track = family_rule_and_batch_splitting`
+- `future_item = attention_factor_v2_causal_attention_experiment`
+
+The Jan 31 2025 checkpoint preserves Attention Factor Selection v1 as an explainability/provider-individuality diagnostics layer. The checkpoint did not approve Phase 3B, provider routing, provider weighting, calibration, or behavior overrides.
+
+Important implementation boundary: Attention Factor v1 is one-shot. Providers return prediction fields and `attention_factors` together in a single provider response. This establishes provider-reported individuality and explanation diversity, not proven causal attention steering.
+
+Future roadmap item: `Attention Factor v2 - Causal Attention Experiment` may later test a two-step architecture where providers first choose 2-3 attention factors and then generate predictions using those selected factors as primary reasoning anchors. That future item is experimental only and is not production, subscriber-facing, or a replacement for v1.
+
+The next active development recommendation is to investigate recurring `family_rule` and `batch_splitting` findings as separate development tracks.
+
+#### Next Track: Family Rule / Batch Splitting Investigation
+
+The next active track is a diagnostics/reporting/design investigation into recurring `family_rule` and `batch_splitting` findings. It should determine whether event-family grouping, same-minute batch construction, batch-vs-member comparison, or family scoring structure is a stronger source of prediction error or evaluation noise than provider-level Attention Factor routing.
+
+Questions this track should answer:
+
+1. Are certain event families being grouped, compared, or scored incorrectly?
+2. Are same-minute batches mixing unrelated or weakly related events?
+3. Does batch-level prediction lose signal compared with member-level prediction?
+4. Are family rules needed before any provider weighting or routing can work?
+5. Is `batch_splitting` a better accuracy-improvement path than Attention Factor routing?
+6. Are `family_rule` findings pointing to deterministic system structure issues rather than AI-provider issues?
+
+This track is not an implemented behavior change. It does not approve prompt changes, scoring changes, live prediction behavior changes, provider routing, provider weighting, calibration, or Phase 3B promotion.
+
 
 ## 2) Data Model & Tabs (Blueprint ver.1.4)
 
@@ -87,6 +122,7 @@ Attention_Disagreement_Summary
 Attention_Phase3_Candidates
 Attention_Shadow_Experiments
 Attention_Shadow_Summary
+Family_Structure_Report
 
 #### Optional / legacy / compatibility
 Config (optional): If present, the runner can read key-value configuration from it (best-effort; absence is allowed).
@@ -211,10 +247,15 @@ The system also supports rebuilt derived reporting tabs for outcome and attentio
 - `Attention_Phase3_Candidates`
 - `Attention_Shadow_Experiments`
 - `Attention_Shadow_Summary`
+- `Family_Structure_Report`
 
 These sheets are read-only over their source layers and rewrite only their own body rows. Missing headers are appended, existing header order is preserved, and the builders do not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or evaluation sheets.
 
-`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Provider_Individuality`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Provider_Individuality` specifically separates provider individuality/explainability evidence from performance evidence. `Attention_Phase3_Candidates` is a conservative bridge layer for Phase 3 design review. `Attention_Shadow_Experiments` and `Attention_Shadow_Summary` are Phase 3A counterfactual reporting layers. These sheets expose selected reasoning-factor evidence, provider-character evidence, case-level disagreement evidence, candidate-only experiment slices, and shadow experiment outcomes for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation.
+`Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Provider_Individuality`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Provider_Individuality` specifically separates provider individuality/explainability evidence from performance evidence. As of the Jan 31 2025 checkpoint, Attention Factor v1 is frozen as an explainability/provider-individuality layer. `Attention_Phase3_Candidates` is a conservative bridge layer for Phase 3 design review, and `Attention_Shadow_Experiments` and `Attention_Shadow_Summary` are Phase 3A counterfactual reporting layers, but Phase 3A v1 promotion is closed/frozen and Phase 3B is not approved. These sheets expose selected reasoning-factor evidence, provider-character evidence, case-level disagreement evidence, candidate-only experiment slices, and shadow experiment outcomes for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation. V1 attention factors are returned in the same provider response as prediction fields and must not be described as proven causal controls.
+
+`Family_Structure_Report` is the active post-Attention-v1 diagnostic layer for Family Structure Investigation v1. It is read-only over existing outcome, evaluation, and attention review sheets. It exists to decide whether future `Family Rule v1` or `Batch Splitting v1` work is justified by recurring structure evidence. It must not change prediction prompts, prediction semantics, batching rules, scoring, market reaction logic, provider weighting, calibration, routing, or subscriber-facing behavior.
+
+Next Track: Family Rule / Batch Splitting Investigation. Attention Factor v1 showed providers are not clones, but it did not produce control/routing evidence. Recurring `family_rule` and `batch_splitting` findings may indicate the next bottleneck is event structure, family classification, or batch construction rather than provider individuality.
 
 #### log sheet headers (best-effort, non-reordering)
 

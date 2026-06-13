@@ -209,6 +209,17 @@ function apiBuildAttentionShadowExperiments() {
   return apiBuildAttentionShadowExperiments_();
 }
 
+function apiBuildFamilyStructureReport_() {
+  return {
+    status: 'ok',
+    family_structure_report: buildFamilyStructureReport_()
+  };
+}
+
+function apiBuildFamilyStructureReport() {
+  return apiBuildFamilyStructureReport_();
+}
+
 function apiUpsertEventWindow_(params) {
   params = params || {};
 

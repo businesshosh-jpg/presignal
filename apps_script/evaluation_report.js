@@ -444,6 +444,37 @@ function menuBuildAttentionShadowExperiments_() {
   }
 }
 
+function menuBuildFamilyStructureReport_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildFamilyStructureReport_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Family structure report -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Family structure rows=' + (res.rows_written || 0),
+      'Family Structure Report',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Family structure report -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function buildEvaluationSheets_() {
   var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
   if (!predSheet) throw new Error('Predictions sheet missing');
@@ -615,6 +646,10 @@ function getOrCreateAttentionShadowSummarySheet_() {
   return _getOrCreateSheet_('Attention_Shadow_Summary');
 }
 
+function getOrCreateFamilyStructureReportSheet_() {
+  return _getOrCreateSheet_('Family_Structure_Report');
+}
+
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
@@ -657,6 +692,10 @@ function ensureAttentionPhase3CandidateHeaders_(sheet) {
 
 function ensureAttentionShadowHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
+}
+
+function ensureFamilyStructureReportHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _familyStructureReportHeaders_());
 }
 
 function buildOutcomeSummaries_() {
@@ -1066,6 +1105,49 @@ function buildAttentionShadowSummary_(opts) {
   };
 }
 
+function buildFamilyStructureReport_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var sources = {
+    ledger: _readFamilyStructureSource_('Outcome_Ledger', warnings),
+    providerFamily: _readFamilyStructureSource_('Outcome_Summary_ProviderFamily', warnings),
+    convergence: _readFamilyStructureSource_('Outcome_Summary_Convergence', warnings),
+    batchCompare: _readFamilyStructureSource_('Evaluation_BatchCompare', warnings),
+    scenario: _readFamilyStructureSource_('Evaluation_Scenario', warnings),
+    diagnostics: _readFamilyStructureSource_('Outcome_Diagnostics', warnings),
+    disagreementReview: _readFamilyStructureSource_('Attention_Disagreement_Review', warnings),
+    disagreementSummary: _readFamilyStructureSource_('Attention_Disagreement_Summary', warnings),
+    phase3: _readFamilyStructureSource_('Attention_Phase3_Candidates', warnings)
+  };
+
+  var rowsOut = [];
+  var composition = _familyStructureBatchCompositionMap_(sources.ledger);
+  var batchCompare = _familyStructureBatchCompareMap_(sources.batchCompare);
+  rowsOut = rowsOut.concat(_buildFamilyPerformanceSummaryRows_(generatedTs, sources, warnings));
+  rowsOut = rowsOut.concat(_buildBatchCompositionSummaryRows_(generatedTs, composition, batchCompare, warnings));
+  rowsOut = rowsOut.concat(_buildBatchVsMemberComparisonRows_(generatedTs, batchCompare, composition, warnings));
+  rowsOut = rowsOut.concat(_buildFamilyMixingRiskRows_(generatedTs, composition, batchCompare, warnings));
+  rowsOut = rowsOut.concat(_buildRecurringFamilyRuleRows_(generatedTs, sources, batchCompare, warnings));
+  rowsOut = rowsOut.concat(_buildRecurringBatchSplittingRows_(generatedTs, composition, batchCompare, warnings));
+  rowsOut = rowsOut.concat(_buildFamilyInvestigationSummaryRows_(generatedTs, rowsOut, composition, batchCompare, warnings));
+
+  var headers = _familyStructureReportHeaders_();
+  _sortFamilyStructureReportRows_(headers, rowsOut);
+  var reportSheet = getOrCreateFamilyStructureReportSheet_();
+  var actualHeaders = ensureFamilyStructureReportHeaders_(reportSheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    reportSheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+
+  return {
+    family_structure_report_sheet: reportSheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
 function _outcomeDiagnosticsHeaders_() {
   return [
     'generated_ts',
@@ -1158,6 +1240,87 @@ function _attentionProviderIndividualityHeaders_() {
     'performance_evidence_note',
     'diagnostic_note',
     'decision_support_note'
+  ];
+}
+
+function _familyStructureReportHeaders_() {
+  return [
+    'generated_ts',
+    'section',
+    'scope',
+    'scope_key',
+    'source_sheet',
+    'source_layer',
+    'outcome_family',
+    'event_family',
+    'family',
+    'family_combo_key',
+    'batch_id',
+    'event_id',
+    'release_ts',
+    'release_date',
+    'country',
+    'type',
+    'provider_count',
+    'row_count',
+    'rows_scored',
+    'member_count',
+    'distinct_family_count',
+    'batch_count',
+    'total_member_count',
+    'batch_prediction_count',
+    'member_prediction_count',
+    'member_event_ids',
+    'member_indicator_names',
+    'member_families',
+    'is_mixed_family_batch',
+    'has_low_signal_family',
+    'has_clear_anchor',
+    'batch_anchor_mode',
+    'batch_anchor_confidence',
+    'batch_anchor_event_id',
+    'batch_anchor_indicator_name',
+    'batch_anchor_margin',
+    'dir_ok_rate',
+    'mr_strength_ok_rate',
+    'mr_sustain_ok_rate',
+    'overall_ok_rate',
+    'avg_realized_abs_pips',
+    'avg_pred_abs_pips',
+    'convergence_rate',
+    'disagreement_rate',
+    'batch_dir_ok_rate',
+    'best_member_dir_ok_rate',
+    'batch_overall_ok_rate',
+    'best_member_overall_ok_rate',
+    'batch_vs_best_member_delta',
+    'best_member_event_id',
+    'best_member_indicator_name',
+    'best_member_family',
+    'anchor_matches_best_member',
+    'anchor_match_rate',
+    'problematic_batch_count',
+    'rule_or_finding',
+    'affected_batches',
+    'affected_events',
+    'why_splitting_may_matter',
+    'batch_prediction_result',
+    'member_prediction_result',
+    'evidence_summary',
+    'recommended_next_question',
+    'total_families_reviewed',
+    'total_batches_reviewed',
+    'mixed_family_batch_count',
+    'mixed_family_batch_rate',
+    'batch_underperformance_count',
+    'anchor_mismatch_count',
+    'strongest_family_rule_candidates',
+    'strongest_batch_splitting_candidates',
+    'recommendation_label',
+    'diagnostic_label',
+    'summary_note',
+    'decision_support_note',
+    'warnings'
   ];
 }
 
@@ -6139,6 +6302,688 @@ function _attentionShadowSummaryBlocker_(readiness, blockers) {
   var top = _topCountMapItems_(blockers || {}, 1);
   if (top.length) return top[0].key;
   return readiness === 'not_ready' ? 'insufficient_sample_size' : 'needs_more_future_blocks';
+}
+
+function _readFamilyStructureSource_(sheetName, warnings) {
+  var ss = SpreadsheetApp.getActive();
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    warnings.push('missing_sheet:' + sheetName);
+    return { name: sheetName, headers: [], idx: {}, rows: [] };
+  }
+  var headers = getHeaderNames(sheet) || [];
+  if (!headers.length) {
+    warnings.push('missing_headers:' + sheetName);
+    return { name: sheetName, headers: [], idx: {}, rows: [] };
+  }
+  return {
+    name: sheetName,
+    headers: headers,
+    idx: _headerIndexMap_(headers),
+    rows: _readDataRows_(sheet)
+  };
+}
+
+function _makeFamilyStructureReportRow_(generatedTs, attrs) {
+  attrs = attrs || {};
+  var headers = _familyStructureReportHeaders_();
+  var row = [];
+  for (var i = 0; i < headers.length; i++) {
+    var h = headers[i];
+    row.push(attrs[h] === undefined || attrs[h] === null ? '' : attrs[h]);
+  }
+  row[0] = generatedTs;
+  if (!attrs.decision_support_note) {
+    row[_headerIndexMap_(headers).decision_support_note] = 'Family Structure Investigation is diagnostic only; not trading advice.';
+  }
+  return row;
+}
+
+function _buildFamilyPerformanceSummaryRows_(generatedTs, sources, warnings) {
+  var rowsOut = [];
+  var ledger = sources.ledger;
+  if (!ledger.rows.length) return rowsOut;
+  _familyStructureRequireColumns_(ledger, ['outcome_family', 'ai_name', 'scored_flag'], warnings);
+
+  var groups = {};
+  for (var i = 0; i < ledger.rows.length; i++) {
+    var row = ledger.rows[i];
+    var family = _familyStructureRowFamily_(row, ledger.idx);
+    if (!groups[family]) {
+      groups[family] = {
+        family: family,
+        providers: {},
+        rows_total: 0,
+        rows_scored: 0,
+        dir_ok: 0,
+        strength_ok: 0,
+        sustain_ok: 0,
+        overall_ok: 0,
+        realized_abs_sum: 0,
+        realized_abs_count: 0,
+        pred_abs_sum: 0,
+        pred_abs_count: 0
+      };
+    }
+    var g = groups[family];
+    var provider = String(_predValue_(row, ledger.idx, 'ai_name') || '').trim();
+    var scored = _isTrueCell_(_predValue_(row, ledger.idx, 'scored_flag'));
+    var realized = _numOrNull_(_predValue_(row, ledger.idx, 'realized_pips'));
+    var pred = _numOrNull_(_predValue_(row, ledger.idx, 'mr_pred_net_pips'));
+    g.rows_total += 1;
+    if (provider) g.providers[provider] = true;
+    if (scored) {
+      g.rows_scored += 1;
+      if (_isTrueCell_(_predValue_(row, ledger.idx, 'mr_dir_ok'))) g.dir_ok += 1;
+      if (_isTrueCell_(_predValue_(row, ledger.idx, 'mr_strength_ok'))) g.strength_ok += 1;
+      if (_isTrueCell_(_predValue_(row, ledger.idx, 'mr_sustain_ok'))) g.sustain_ok += 1;
+      if (_isTrueCell_(_predValue_(row, ledger.idx, 'overall_ok'))) g.overall_ok += 1;
+    }
+    if (realized != null) {
+      g.realized_abs_sum += Math.abs(realized);
+      g.realized_abs_count += 1;
+    }
+    if (pred != null) {
+      g.pred_abs_sum += Math.abs(pred);
+      g.pred_abs_count += 1;
+    }
+  }
+
+  var convergenceByFamily = _familyStructureConvergenceByFamily_(sources.convergence);
+  Object.keys(groups).sort().forEach(function(family) {
+    var g = groups[family];
+    var conv = convergenceByFamily[family] || {};
+    rowsOut.push(_makeFamilyStructureReportRow_(generatedTs, {
+      section: 'family_performance_summary',
+      scope: 'family',
+      scope_key: family,
+      source_sheet: ledger.name,
+      source_layer: 'Outcome_Ledger',
+      outcome_family: family,
+      event_family: family,
+      family: family,
+      provider_count: Object.keys(g.providers).length,
+      row_count: g.rows_total,
+      rows_scored: g.rows_scored,
+      dir_ok_rate: _rateOrBlank_(g.dir_ok, g.rows_scored),
+      mr_strength_ok_rate: _rateOrBlank_(g.strength_ok, g.rows_scored),
+      mr_sustain_ok_rate: _rateOrBlank_(g.sustain_ok, g.rows_scored),
+      overall_ok_rate: _rateOrBlank_(g.overall_ok, g.rows_scored),
+      avg_realized_abs_pips: g.realized_abs_count ? _roundRate_(g.realized_abs_sum / g.realized_abs_count) : '',
+      avg_pred_abs_pips: g.pred_abs_count ? _roundRate_(g.pred_abs_sum / g.pred_abs_count) : '',
+      convergence_rate: conv.convergence_rate || '',
+      disagreement_rate: conv.disagreement_rate || '',
+      diagnostic_label: _familyStructurePerformanceLabel_(g),
+      evidence_summary: 'Family-level outcome summary for structural investigation only.',
+      recommended_next_question: 'Are weak families affected by family classification, batch construction, or evaluation mismatch?'
+    }));
+  });
+  return rowsOut;
+}
+
+function _buildBatchCompositionSummaryRows_(generatedTs, composition, batchCompare, warnings) {
+  var rowsOut = [];
+  Object.keys(composition).sort().forEach(function(batchId) {
+    var g = composition[batchId];
+    var bc = batchCompare[batchId] || {};
+    rowsOut.push(_makeFamilyStructureReportRow_(generatedTs, {
+      section: 'batch_composition_summary',
+      scope: 'batch',
+      scope_key: batchId,
+      source_sheet: 'Outcome_Ledger',
+      source_layer: 'Outcome_Ledger',
+      family_combo_key: g.family_combo_key,
+      batch_id: batchId,
+      release_ts: g.release_ts,
+      release_date: g.release_date,
+      country: g.country,
+      type: 'batch',
+      member_count: g.member_event_ids.length,
+      distinct_family_count: g.member_families.length,
+      member_event_ids: g.member_event_ids.join('|'),
+      member_indicator_names: g.member_indicator_names.join('|'),
+      member_families: g.member_families.join('|'),
+      is_mixed_family_batch: g.member_families.length > 1 ? 'TRUE' : 'FALSE',
+      has_low_signal_family: g.has_low_signal_family ? 'TRUE' : 'FALSE',
+      has_clear_anchor: bc.has_clear_anchor || g.has_clear_anchor || '',
+      batch_anchor_mode: bc.batch_anchor_mode || g.batch_anchor_mode,
+      batch_anchor_confidence: bc.batch_anchor_confidence || g.batch_anchor_confidence,
+      batch_anchor_event_id: bc.batch_anchor_event_id || g.batch_anchor_event_id,
+      batch_anchor_indicator_name: bc.batch_anchor_indicator_name || g.batch_anchor_indicator_name,
+      batch_anchor_margin: bc.batch_anchor_margin || '',
+      diagnostic_label: _familyStructureBatchCompositionLabel_(g, bc),
+      evidence_summary: 'Batch member composition and anchor trace are reported for structural review only.',
+      recommended_next_question: 'Would this batch be clearer if same-minute members were separated by family or anchor relevance?'
+    }));
+  });
+  return rowsOut;
+}
+
+function _buildBatchVsMemberComparisonRows_(generatedTs, batchCompare, composition, warnings) {
+  var rowsOut = [];
+  Object.keys(batchCompare).sort().forEach(function(batchId) {
+    var g = batchCompare[batchId];
+    var comp = composition[batchId] || {};
+    rowsOut.push(_makeFamilyStructureReportRow_(generatedTs, {
+      section: 'batch_vs_member_outcome_comparison',
+      scope: 'batch',
+      scope_key: batchId,
+      source_sheet: 'Evaluation_BatchCompare',
+      source_layer: 'Evaluation_BatchCompare',
+      family_combo_key: comp.family_combo_key || '',
+      batch_id: batchId,
+      release_ts: g.release_ts,
+      release_date: g.release_date,
+      member_count: comp.member_event_ids ? comp.member_event_ids.length : '',
+      distinct_family_count: comp.member_families ? comp.member_families.length : '',
+      batch_prediction_count: g.batch_prediction_count,
+      member_prediction_count: g.member_prediction_count,
+      batch_dir_ok_rate: _rateOrBlank_(g.batch_dir_ok, g.scored_count),
+      best_member_dir_ok_rate: _rateOrBlank_(g.best_member_dir_ok, g.scored_count),
+      batch_overall_ok_rate: _rateOrBlank_(g.batch_overall_ok, g.scored_count),
+      best_member_overall_ok_rate: _rateOrBlank_(g.best_member_overall_ok, g.scored_count),
+      batch_vs_best_member_delta: g.scored_count ? _roundRate_(_rateNumber_(g.batch_overall_ok, g.scored_count) - _rateNumber_(g.best_member_overall_ok, g.scored_count)) : '',
+      best_member_event_id: _topCountMapItems_(g.best_member_event_ids, 1).length ? _topCountMapItems_(g.best_member_event_ids, 1)[0].key : '',
+      best_member_indicator_name: _topCountMapItems_(g.best_member_indicator_names, 1).length ? _topCountMapItems_(g.best_member_indicator_names, 1)[0].key : '',
+      best_member_family: _topCountMapItems_(g.best_member_families, 1).length ? _topCountMapItems_(g.best_member_families, 1)[0].key : '',
+      batch_anchor_event_id: g.batch_anchor_event_id,
+      batch_anchor_indicator_name: g.batch_anchor_indicator_name,
+      anchor_matches_best_member: _familyStructureMixedFlag_(g.anchor_match_values),
+      anchor_match_rate: _rateOrBlank_(g.anchor_match_count, g.anchor_match_known_count),
+      diagnostic_label: _familyStructureBatchVsMemberLabel_(g),
+      evidence_summary: 'Compares current batch-level outcomes against best member outcomes without changing scoring.',
+      recommended_next_question: 'Is batch-level prediction losing signal versus a member-level or family-filtered comparison?'
+    }));
+  });
+  return rowsOut;
+}
+
+function _buildFamilyMixingRiskRows_(generatedTs, composition, batchCompare, warnings) {
+  var combos = {};
+  Object.keys(composition).forEach(function(batchId) {
+    var comp = composition[batchId];
+    var key = comp.family_combo_key || 'unknown';
+    if (!combos[key]) {
+      combos[key] = {
+        key: key,
+        batch_count: 0,
+        total_member_count: 0,
+        distinct_family_sum: 0,
+        batch_dir_ok: 0,
+        best_member_dir_ok: 0,
+        scored_count: 0,
+        anchor_match_count: 0,
+        anchor_match_known_count: 0,
+        problematic_batch_count: 0
+      };
+    }
+    var g = combos[key];
+    var bc = batchCompare[batchId] || {};
+    var underperformed = _familyStructureBatchUnderperformed_(bc);
+    var anchorMismatch = _familyStructureAnchorMismatch_(bc);
+    g.batch_count += 1;
+    g.total_member_count += comp.member_event_ids.length;
+    g.distinct_family_sum += comp.member_families.length;
+    g.batch_dir_ok += Number(bc.batch_dir_ok || 0);
+    g.best_member_dir_ok += Number(bc.best_member_dir_ok || 0);
+    g.scored_count += Number(bc.scored_count || 0);
+    g.anchor_match_count += Number(bc.anchor_match_count || 0);
+    g.anchor_match_known_count += Number(bc.anchor_match_known_count || 0);
+    if ((comp.member_families.length > 1 && underperformed) || anchorMismatch) g.problematic_batch_count += 1;
+  });
+
+  var rowsOut = [];
+  Object.keys(combos).sort().forEach(function(key) {
+    var g = combos[key];
+    rowsOut.push(_makeFamilyStructureReportRow_(generatedTs, {
+      section: 'family_mixing_risk_summary',
+      scope: 'family_combo',
+      scope_key: key,
+      source_sheet: 'Outcome_Ledger|Evaluation_BatchCompare',
+      source_layer: 'derived_join',
+      family_combo_key: key,
+      batch_count: g.batch_count,
+      total_member_count: g.total_member_count,
+      distinct_family_count: g.batch_count ? _roundRate_(g.distinct_family_sum / g.batch_count) : '',
+      batch_dir_ok_rate: _rateOrBlank_(g.batch_dir_ok, g.scored_count),
+      best_member_dir_ok_rate: _rateOrBlank_(g.best_member_dir_ok, g.scored_count),
+      anchor_match_rate: _rateOrBlank_(g.anchor_match_count, g.anchor_match_known_count),
+      problematic_batch_count: g.problematic_batch_count,
+      diagnostic_label: g.problematic_batch_count >= 3 ? 'recurring_mixing_risk' : (g.problematic_batch_count ? 'possible_mixing_risk' : 'no_recurring_mixing_signal'),
+      evidence_summary: 'Family-combination summary for recurring mixed-batch risk.',
+      recommended_next_question: 'Are repeated mixed-family combinations adding evaluation noise or hiding member-level signal?'
+    }));
+  });
+  return rowsOut;
+}
+
+function _buildRecurringFamilyRuleRows_(generatedTs, sources, batchCompare, warnings) {
+  var groups = {};
+  _addFamilyRuleGroupsFromDiagnostics_(groups, sources.diagnostics);
+  _addFamilyRuleGroupsFromAttentionPhase3_(groups, sources.phase3);
+  _addFamilyRuleGroupsFromScenario_(groups, sources.scenario);
+
+  var rowsOut = [];
+  Object.keys(groups).sort().forEach(function(key) {
+    var g = groups[key];
+    rowsOut.push(_makeFamilyStructureReportRow_(generatedTs, {
+      section: 'recurring_family_rule_findings',
+      scope: 'family_rule',
+      scope_key: key,
+      source_sheet: g.source_sheet,
+      source_layer: g.source_layer,
+      family: g.family,
+      outcome_family: g.family,
+      event_family: g.family,
+      rule_or_finding: g.rule_or_finding,
+      row_count: g.row_count,
+      affected_batches: _keysSorted_(g.batches).join('|'),
+      affected_events: _keysSorted_(g.events).join('|'),
+      evidence_summary: g.evidence_summary,
+      recommended_next_question: 'Do repeated family-rule findings point to deterministic structure fixes before provider routing?'
+    }));
+  });
+  return rowsOut;
+}
+
+function _buildRecurringBatchSplittingRows_(generatedTs, composition, batchCompare, warnings) {
+  var rowsOut = [];
+  Object.keys(composition).sort().forEach(function(batchId) {
+    var comp = composition[batchId];
+    var bc = batchCompare[batchId] || {};
+    var underperformed = _familyStructureBatchUnderperformed_(bc);
+    var anchorMismatch = _familyStructureAnchorMismatch_(bc);
+    if (comp.member_families.length <= 1 && !underperformed && !anchorMismatch) return;
+    rowsOut.push(_makeFamilyStructureReportRow_(generatedTs, {
+      section: 'recurring_batch_splitting_findings',
+      scope: 'batch',
+      scope_key: batchId,
+      source_sheet: 'Outcome_Ledger|Evaluation_BatchCompare',
+      source_layer: 'derived_join',
+      batch_id: batchId,
+      release_ts: comp.release_ts || bc.release_ts,
+      release_date: comp.release_date || bc.release_date,
+      member_count: comp.member_event_ids.length,
+      distinct_family_count: comp.member_families.length,
+      member_event_ids: comp.member_event_ids.join('|'),
+      member_indicator_names: comp.member_indicator_names.join('|'),
+      member_families: comp.member_families.join('|'),
+      why_splitting_may_matter: _familyStructureSplitReason_(comp, bc),
+      batch_prediction_result: 'batch_overall_ok_rate=' + (_rateOrBlank_(bc.batch_overall_ok, bc.scored_count) || 'n/a'),
+      member_prediction_result: 'best_member_overall_ok_rate=' + (_rateOrBlank_(bc.best_member_overall_ok, bc.scored_count) || 'n/a'),
+      evidence_summary: 'Batch is structurally mixed, underperformed best member, or has an anchor/best-member mismatch.',
+      recommended_next_question: 'Should a future diagnostic compare same-minute batch prediction against family-split member groups?',
+      diagnostic_label: comp.member_families.length > 1 ? 'batch_splitting_candidate' : 'member_outperformance_candidate'
+    }));
+  });
+  return rowsOut;
+}
+
+function _buildFamilyInvestigationSummaryRows_(generatedTs, rowsOut, composition, batchCompare, warnings) {
+  var families = {};
+  var mixedCount = 0;
+  var underCount = 0;
+  var anchorMismatchCount = 0;
+  var familyRuleCounts = {};
+  var splittingCounts = {};
+  Object.keys(composition).forEach(function(batchId) {
+    var comp = composition[batchId];
+    for (var i = 0; i < comp.member_families.length; i++) families[comp.member_families[i]] = true;
+    if (comp.member_families.length > 1) mixedCount += 1;
+    if (_familyStructureBatchUnderperformed_(batchCompare[batchId] || {})) underCount += 1;
+    if (_familyStructureAnchorMismatch_(batchCompare[batchId] || {})) anchorMismatchCount += 1;
+    if (comp.member_families.length > 1 || _familyStructureBatchUnderperformed_(batchCompare[batchId] || {})) {
+      splittingCounts[comp.family_combo_key || 'unknown'] = (splittingCounts[comp.family_combo_key || 'unknown'] || 0) + 1;
+    }
+  });
+  for (var r = 0; r < rowsOut.length; r++) {
+    var row = rowsOut[r];
+    var idx = _headerIndexMap_(_familyStructureReportHeaders_());
+    if (String(row[idx.section] || '') === 'recurring_family_rule_findings') {
+      var f = String(row[idx.family] || 'unknown');
+      familyRuleCounts[f] = (familyRuleCounts[f] || 0) + Number(row[idx.row_count] || 1);
+    }
+  }
+  var totalBatches = Object.keys(composition).length;
+  var familyCandidates = _topCountMapItems_(familyRuleCounts, 5).map(function(item){ return item.key + ':' + item.count; }).join(', ');
+  var splitCandidates = _topCountMapItems_(splittingCounts, 5).map(function(item){ return item.key + ':' + item.count; }).join(', ');
+  var label = 'no_structural_signal_yet';
+  if (underCount >= 3 || anchorMismatchCount >= 3) label = 'batch_splitting_candidate';
+  else if (familyCandidates) label = 'family_rule_candidate';
+  else if (totalBatches || Object.keys(families).length) label = 'investigate_more';
+  return [_makeFamilyStructureReportRow_(generatedTs, {
+    section: 'investigation_summary',
+    scope: 'global',
+    scope_key: 'all',
+    source_sheet: 'Outcome_Ledger|Evaluation_BatchCompare|Outcome_Diagnostics|Attention_Phase3_Candidates',
+    source_layer: 'derived_summary',
+    total_families_reviewed: Object.keys(families).length,
+    total_batches_reviewed: totalBatches,
+    mixed_family_batch_count: mixedCount,
+    mixed_family_batch_rate: _rateOrBlank_(mixedCount, totalBatches),
+    batch_underperformance_count: underCount,
+    anchor_mismatch_count: anchorMismatchCount,
+    strongest_family_rule_candidates: familyCandidates,
+    strongest_batch_splitting_candidates: splitCandidates,
+    recommendation_label: label,
+    summary_note: 'Attention Factor v1 showed provider individuality, but not routing/control evidence. This report checks whether event structure, family classification, or batch construction is the stronger next bottleneck.',
+    warnings: _uniqueSortedStrings_(warnings).join(' | ')
+  })];
+}
+
+function _familyStructureBatchCompositionMap_(source) {
+  var map = {};
+  if (!source || !source.rows.length) return map;
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    var batchId = String(_predValue_(row, source.idx, 'batch_id') || '').trim();
+    if (!batchId) continue;
+    var type = String(_predValue_(row, source.idx, 'type') || '').trim().toLowerCase();
+    if (!map[batchId]) {
+      map[batchId] = {
+        batch_id: batchId,
+        release_ts: String(_predValue_(row, source.idx, 'release_ts') || '').trim(),
+        release_date: String(_predValue_(row, source.idx, 'release_date') || '').trim(),
+        country: String(_predValue_(row, source.idx, 'country') || '').trim(),
+        member_event_ids_map: {},
+        member_indicator_names_map: {},
+        member_families_map: {},
+        member_event_ids: [],
+        member_indicator_names: [],
+        member_families: [],
+        has_low_signal_family: false,
+        has_clear_anchor: '',
+        batch_anchor_mode: '',
+        batch_anchor_confidence: '',
+        batch_anchor_event_id: '',
+        batch_anchor_indicator_name: ''
+      };
+    }
+    var g = map[batchId];
+    if (!g.release_ts) g.release_ts = String(_predValue_(row, source.idx, 'release_ts') || '').trim();
+    if (!g.release_date) g.release_date = String(_predValue_(row, source.idx, 'release_date') || '').trim();
+    if (!g.country) g.country = String(_predValue_(row, source.idx, 'country') || '').trim();
+    if (type === 'batch') {
+      g.batch_anchor_mode = g.batch_anchor_mode || String(_predValue_(row, source.idx, 'batch_anchor_mode') || '').trim();
+      g.batch_anchor_confidence = g.batch_anchor_confidence || String(_predValue_(row, source.idx, 'batch_anchor_confidence') || '').trim();
+      g.has_clear_anchor = g.batch_anchor_mode && g.batch_anchor_mode !== 'no_clear_anchor' ? 'TRUE' : (g.batch_anchor_mode === 'no_clear_anchor' ? 'FALSE' : g.has_clear_anchor);
+    } else {
+      var eventId = String(_predValue_(row, source.idx, 'event_id') || '').trim();
+      var name = String(_predValue_(row, source.idx, 'indicator_name') || '').trim();
+      var family = _familyStructureRowFamily_(row, source.idx);
+      if (eventId) g.member_event_ids_map[eventId] = true;
+      if (name) g.member_indicator_names_map[name] = true;
+      if (family) {
+        g.member_families_map[family] = true;
+        if (_familyStructureIsLowSignalFamily_(family)) g.has_low_signal_family = true;
+      }
+    }
+  }
+  Object.keys(map).forEach(function(batchId) {
+    var g = map[batchId];
+    g.member_event_ids = _keysSorted_(g.member_event_ids_map);
+    g.member_indicator_names = _keysSorted_(g.member_indicator_names_map);
+    g.member_families = _keysSorted_(g.member_families_map);
+    g.family_combo_key = g.member_families.join('+') || 'unknown';
+  });
+  return map;
+}
+
+function _familyStructureBatchCompareMap_(source) {
+  var map = {};
+  if (!source || !source.rows.length) return map;
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    var batchId = String(_predValue_(row, source.idx, 'batch_id') || '').trim();
+    if (!batchId) continue;
+    if (!map[batchId]) {
+      map[batchId] = {
+        batch_id: batchId,
+        release_ts: String(_predValue_(row, source.idx, 'release_ts') || '').trim(),
+        release_date: String(_predValue_(row, source.idx, 'release_date') || '').trim(),
+        batch_prediction_count: 0,
+        member_prediction_count: 0,
+        scored_count: 0,
+        batch_dir_ok: 0,
+        best_member_dir_ok: 0,
+        batch_overall_ok: 0,
+        best_member_overall_ok: 0,
+        anchor_match_count: 0,
+        anchor_match_known_count: 0,
+        anchor_match_values: {},
+        best_member_event_ids: {},
+        best_member_indicator_names: {},
+        best_member_families: {},
+        batch_anchor_mode: '',
+        batch_anchor_confidence: '',
+        batch_anchor_event_id: '',
+        batch_anchor_indicator_name: '',
+        batch_anchor_margin: '',
+        has_clear_anchor: ''
+      };
+    }
+    var g = map[batchId];
+    g.batch_prediction_count += 1;
+    g.member_prediction_count += Number(_predValue_(row, source.idx, 'member_count') || 0);
+    g.scored_count += 1;
+    if (_isTrueCell_(_predValue_(row, source.idx, 'batch_dir_ok'))) g.batch_dir_ok += 1;
+    if (_isTrueCell_(_predValue_(row, source.idx, 'best_member_dir_ok'))) g.best_member_dir_ok += 1;
+    if (_isTrueCell_(_predValue_(row, source.idx, 'batch_overall_ok'))) g.batch_overall_ok += 1;
+    if (_isTrueCell_(_predValue_(row, source.idx, 'best_member_overall_ok'))) g.best_member_overall_ok += 1;
+    var bestEventId = String(_predValue_(row, source.idx, 'best_member_event_id') || '').trim();
+    var bestName = String(_predValue_(row, source.idx, 'best_member_indicator_name') || '').trim();
+    var bestFamily = deriveOutcomeFamily_(bestName, String(_predValue_(row, source.idx, 'best_member_genre') || ''));
+    if (bestEventId) g.best_member_event_ids[bestEventId] = (g.best_member_event_ids[bestEventId] || 0) + 1;
+    if (bestName) g.best_member_indicator_names[bestName] = (g.best_member_indicator_names[bestName] || 0) + 1;
+    if (bestFamily) g.best_member_families[bestFamily] = (g.best_member_families[bestFamily] || 0) + 1;
+    var anchorMatch = String(_predValue_(row, source.idx, 'selected_anchor_matches_best_member') || '').trim();
+    if (anchorMatch) g.anchor_match_values[anchorMatch] = true;
+    if (anchorMatch === 'TRUE') {
+      g.anchor_match_count += 1;
+      g.anchor_match_known_count += 1;
+    } else if (anchorMatch === 'FALSE') {
+      g.anchor_match_known_count += 1;
+    }
+    g.batch_anchor_mode = g.batch_anchor_mode || String(_predValue_(row, source.idx, 'selected_anchor_mode') || '').trim();
+    g.batch_anchor_confidence = g.batch_anchor_confidence || String(_predValue_(row, source.idx, 'selected_anchor_confidence') || '').trim();
+    g.batch_anchor_event_id = g.batch_anchor_event_id || String(_predValue_(row, source.idx, 'selected_anchor_event_id') || '').trim();
+    g.batch_anchor_indicator_name = g.batch_anchor_indicator_name || String(_predValue_(row, source.idx, 'selected_anchor_indicator_name') || '').trim();
+    g.batch_anchor_margin = g.batch_anchor_margin || String(_predValue_(row, source.idx, 'selected_anchor_margin') || '').trim();
+    if (g.batch_anchor_mode) g.has_clear_anchor = g.batch_anchor_mode === 'no_clear_anchor' ? 'FALSE' : 'TRUE';
+  }
+  return map;
+}
+
+function _familyStructureConvergenceByFamily_(source) {
+  var out = {};
+  if (!source || !source.rows.length) return out;
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    var family = String(_predValue_(row, source.idx, 'outcome_family') || '').trim() || 'other';
+    if (!out[family]) out[family] = { total: 0, converged: 0, disagreed: 0 };
+    var g = out[family];
+    g.total += 1;
+    if (_isTrueCell_(_predValue_(row, source.idx, 'dir_converged_flag'))) g.converged += 1;
+    var dirs = _numOrNull_(_predValue_(row, source.idx, 'unique_pred_dirs'));
+    if (dirs != null && dirs > 1) g.disagreed += 1;
+  }
+  Object.keys(out).forEach(function(family) {
+    var g = out[family];
+    g.convergence_rate = _rateOrBlank_(g.converged, g.total);
+    g.disagreement_rate = _rateOrBlank_(g.disagreed, g.total);
+  });
+  return out;
+}
+
+function _addFamilyRuleGroupsFromDiagnostics_(groups, source) {
+  if (!source || !source.rows.length) return;
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    var type = String(_predValue_(row, source.idx, 'diagnostic_type') || '').toLowerCase();
+    var summary = String(_predValue_(row, source.idx, 'diagnostic_summary') || '').toLowerCase();
+    var next = String(_predValue_(row, source.idx, 'recommended_next_step') || '').toLowerCase();
+    if (type.indexOf('family') < 0 && summary.indexOf('family') < 0 && next.indexOf('family') < 0) continue;
+    var family = String(_predValue_(row, source.idx, 'outcome_family') || '').trim() || 'other';
+    _familyStructureAddFindingGroup_(groups, 'Outcome_Diagnostics|family_rule|' + family, {
+      source_sheet: 'Outcome_Diagnostics',
+      source_layer: 'Outcome_Diagnostics',
+      rule_or_finding: String(_predValue_(row, source.idx, 'metric_name') || type || 'family_rule'),
+      family: family,
+      evidence_summary: String(_predValue_(row, source.idx, 'diagnostic_summary') || 'Family diagnostic surfaced in Outcome_Diagnostics.')
+    }, '', '');
+  }
+}
+
+function _addFamilyRuleGroupsFromAttentionPhase3_(groups, source) {
+  if (!source || !source.rows.length) return;
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    var family = String(_predValue_(row, source.idx, 'outcome_family') || '').trim() || 'other';
+    var type = String(_predValue_(row, source.idx, 'candidate_type') || '').trim() || 'attention_phase3_candidate';
+    _familyStructureAddFindingGroup_(groups, 'Attention_Phase3_Candidates|' + type + '|' + family, {
+      source_sheet: 'Attention_Phase3_Candidates',
+      source_layer: 'Attention_Phase3_Candidates',
+      rule_or_finding: type,
+      family: family,
+      evidence_summary: 'Attention Phase 3 candidate evidence is retained as context, not promotion evidence.'
+    }, String(_predValue_(row, source.idx, 'batch_id') || ''), String(_predValue_(row, source.idx, 'event_id') || ''));
+  }
+}
+
+function _addFamilyRuleGroupsFromScenario_(groups, source) {
+  if (!source || !source.rows.length) return;
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    var result = String(_predValue_(row, source.idx, 'scenario_eval_result') || '').trim();
+    if (!result || result === 'watchlist_hit') continue;
+    var name = String(_predValue_(row, source.idx, 'best_member_indicator_name') || '').trim();
+    var genre = String(_predValue_(row, source.idx, 'best_member_genre') || '').trim();
+    var family = deriveOutcomeFamily_(name, genre);
+    _familyStructureAddFindingGroup_(groups, 'Evaluation_Scenario|' + result + '|' + family, {
+      source_sheet: 'Evaluation_Scenario',
+      source_layer: 'Evaluation_Scenario',
+      rule_or_finding: result,
+      family: family,
+      evidence_summary: 'Scenario best-member/watchlist mismatch may indicate family-rule or anchor-selection friction.'
+    }, String(_predValue_(row, source.idx, 'batch_id') || ''), String(_predValue_(row, source.idx, 'best_member_event_id') || ''));
+  }
+}
+
+function _familyStructureAddFindingGroup_(groups, key, attrs, batchId, eventId) {
+  if (!groups[key]) {
+    groups[key] = {
+      source_sheet: attrs.source_sheet || '',
+      source_layer: attrs.source_layer || '',
+      rule_or_finding: attrs.rule_or_finding || '',
+      family: attrs.family || 'other',
+      row_count: 0,
+      batches: {},
+      events: {},
+      evidence_summary: attrs.evidence_summary || ''
+    };
+  }
+  groups[key].row_count += 1;
+  if (batchId) groups[key].batches[batchId] = true;
+  if (eventId) groups[key].events[eventId] = true;
+}
+
+function _familyStructureRowFamily_(row, idx) {
+  var family = String(_predValue_(row, idx, 'outcome_family') || '').trim();
+  if (family) return family;
+  return deriveOutcomeFamily_(String(_predValue_(row, idx, 'indicator_name') || ''), String(_predValue_(row, idx, 'genre') || '')) || 'other';
+}
+
+function _familyStructureRequireColumns_(source, required, warnings) {
+  for (var i = 0; i < (required || []).length; i++) {
+    if (source.idx[required[i]] === undefined) warnings.push('missing_column:' + source.name + '.' + required[i]);
+  }
+}
+
+function _familyStructureIsLowSignalFamily_(family) {
+  var f = String(family || '').toLowerCase();
+  return f === 'other' || f === 'positioning' || f === 'central_bank';
+}
+
+function _familyStructurePerformanceLabel_(g) {
+  if (!g.rows_scored) return 'unscored_or_thin';
+  var overall = _rateNumber_(g.overall_ok, g.rows_scored);
+  if (g.rows_scored < 10) return 'thin_sample';
+  if (overall >= 0.60) return 'strong_family_outcomes';
+  if (overall <= 0.40) return 'weak_family_outcomes';
+  return 'mixed_family_outcomes';
+}
+
+function _familyStructureBatchCompositionLabel_(comp, bc) {
+  if (comp.member_families.length > 1 && _familyStructureAnchorMismatch_(bc)) return 'mixed_family_anchor_mismatch';
+  if (comp.member_families.length > 1) return 'mixed_family_batch';
+  if (comp.has_low_signal_family) return 'low_signal_family_present';
+  return 'single_family_batch';
+}
+
+function _familyStructureBatchVsMemberLabel_(g) {
+  if (_familyStructureBatchUnderperformed_(g) && _familyStructureAnchorMismatch_(g)) return 'batch_underperformed_anchor_mismatch';
+  if (_familyStructureBatchUnderperformed_(g)) return 'batch_underperformed_best_member';
+  if (_familyStructureAnchorMismatch_(g)) return 'anchor_mismatch';
+  return 'no_member_advantage_signal';
+}
+
+function _familyStructureBatchUnderperformed_(g) {
+  if (!g || !g.scored_count) return false;
+  return Number(g.best_member_overall_ok || 0) > Number(g.batch_overall_ok || 0);
+}
+
+function _familyStructureAnchorMismatch_(g) {
+  if (!g || !g.anchor_match_known_count) return false;
+  return Number(g.anchor_match_count || 0) < Number(g.anchor_match_known_count || 0);
+}
+
+function _familyStructureSplitReason_(comp, bc) {
+  var parts = [];
+  if (comp.member_families.length > 1) parts.push('mixed_family_batch');
+  if (comp.has_low_signal_family) parts.push('low_signal_family_present');
+  if (_familyStructureBatchUnderperformed_(bc)) parts.push('best_member_outperformed_batch');
+  if (_familyStructureAnchorMismatch_(bc)) parts.push('anchor_did_not_match_best_member');
+  return parts.join('|') || 'structural_review';
+}
+
+function _familyStructureMixedFlag_(values) {
+  var keys = _keysSorted_(values || {});
+  if (!keys.length) return '';
+  if (keys.length === 1) return keys[0];
+  return 'MIXED';
+}
+
+function _rateNumber_(count, total) {
+  var t = Number(total || 0);
+  return t ? Number(count || 0) / t : 0;
+}
+
+function _keysSorted_(map) {
+  return Object.keys(map || {}).sort();
+}
+
+function _uniqueSortedStrings_(values) {
+  var seen = {};
+  for (var i = 0; i < (values || []).length; i++) {
+    var v = String(values[i] || '').trim();
+    if (v) seen[v] = true;
+  }
+  return Object.keys(seen).sort();
+}
+
+function _sortFamilyStructureReportRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx.section,
+      idx.scope,
+      idx.scope_key,
+      idx.release_ts,
+      idx.batch_id,
+      idx.family_combo_key,
+      idx.family
+    ]);
+  });
 }
 
 function _sortAttentionShadowExperimentRows_(headers, rows) {

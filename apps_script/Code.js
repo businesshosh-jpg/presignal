@@ -88,6 +88,7 @@ function onOpen() {
       .addItem('Build Attention Disagreement Summary', 'menuBuildAttentionDisagreementSummary_')
       .addItem('Build Attention Phase3 Candidates', 'menuBuildAttentionPhase3Candidates_')
       .addItem('Build Attention Shadow Experiments', 'menuBuildAttentionShadowExperiments_')
+      .addItem('Build Family Structure Report', 'menuBuildFamilyStructureReport_')
       .addItem('Build Outcome Diagnostics', 'menuBuildOutcomeDiagnostics_')
       .addItem('Rebuild Logs / Diagnostics', 'menuMaintenanceDiagnostics_')
       .addItem('System Health Check', 'menuMaintenanceHealthCheck_')

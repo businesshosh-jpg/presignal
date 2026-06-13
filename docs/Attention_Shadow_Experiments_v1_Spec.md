@@ -8,6 +8,40 @@ Two weeks of attention-era backtesting is enough to begin counterfactual shadow 
 
 This is post-hoc analysis only. It does not call AI providers, create predictions, alter provider output, change scoring, or affect subscriber-facing signals.
 
+## Jan 31 2025 Checkpoint Status
+
+Status labels:
+
+- `attention_phase_3a_v1_promotion_status = closed_frozen`
+- `attention_phase_3b_status = not_approved`
+- `attention_factor_v1_goal_2_status = not_approved_for_routing_or_weighting`
+
+The Jan 31 2025 checkpoint closed the v1 promotion-focused Phase 3A review. `Attention_Shadow_Summary` contained:
+
+- 173 `reject_or_monitor`
+- 103 `not_ready`
+- 0 `watchlist_candidate`
+- 0 `strong_shadow_candidate`
+
+This result does not support Phase 3B promotion, provider routing, provider weighting, calibration, or behavior overrides.
+
+The Phase 3A sheets may remain rebuildable diagnostics, but they are no longer the main development track for forcing Attention Factor v1 promotion. The next active development recommendation is to investigate recurring `family_rule` and `batch_splitting` findings.
+
+### Next Track: Family Rule / Batch Splitting Investigation
+
+The Jan 31 2025 checkpoint redirects the next active investigation away from Phase 3B promotion and toward recurring `family_rule` and `batch_splitting` findings.
+
+Purpose: determine whether event-family grouping, same-minute batch construction, batch-vs-member comparison, or family scoring structure explains more error or noise than provider-level attention routing.
+
+Scope:
+
+- diagnostics, reporting, and design investigation only
+- no live prediction behavior change yet
+- no prompt change yet
+- no scoring change yet
+- no routing or provider weighting
+- no Phase 3B promotion
+
 ## Source Sheets
 
 Preferred sources:
