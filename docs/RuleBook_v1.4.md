@@ -149,6 +149,10 @@ Attention_Phase3_Candidates
 Attention_Shadow_Experiments
 Attention_Shadow_Summary
 Family_Structure_Report
+Batch_Splitting_Candidates
+Batch_Split_Counterfactuals
+Batch_Baseline_Coverage_Audit
+Batch_Split_Group_Counterfactuals
 
 **Legacy compatibility (read-only fallbacks in limited modules)**
 
@@ -380,12 +384,34 @@ The following reporting tabs are derived-only rebuilds and are not canonical sou
 - `Attention_Shadow_Experiments`
 - `Attention_Shadow_Summary`
 - `Family_Structure_Report`
+- `Batch_Splitting_Candidates`
+- `Batch_Split_Counterfactuals`
+- `Batch_Baseline_Coverage_Audit`
+- `Batch_Split_Group_Counterfactuals`
 
 They may be created if missing, may append missing headers, and may clear/rewrite their own body rows. They must not reorder existing headers and must not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or existing evaluation sheets.
 
 `Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Provider_Individuality`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Provider_Individuality` specifically separates provider individuality/explainability evidence from performance evidence. As of the Jan 31 2025 checkpoint, Attention Factor v1 is frozen as an explainability/provider-individuality layer. `Attention_Phase3_Candidates` is a candidate-only bridge layer for later Phase 3 design review, and `Attention_Shadow_Experiments` and `Attention_Shadow_Summary` are Phase 3A counterfactual reporting layers, but Phase 3A v1 promotion is closed/frozen and Phase 3B is not approved. These sheets may summarize attention-era rows, provider-character evidence, provider individuality evidence, case-level disagreement evidence, repeated candidate slices, and shadow experiment outcomes, but they must not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation. V1 attention factors are returned in the same provider response as prediction fields and must not be described as proven causal controls.
 
 `Family_Structure_Report` is the active Family Structure Investigation v1 reporting sheet after the Attention Factor v1 checkpoint. It may summarize family performance, batch composition, batch-vs-member comparisons, family-mixing risk, recurring `family_rule` findings, and recurring `batch_splitting` findings. It is diagnostic-only and must not implement or imply live family-rule behavior, batch splitting, prediction prompt changes, scoring changes, provider weighting, routing, calibration, market reaction changes, or subscriber-facing behavior changes.
+
+`Batch_Splitting_Candidates` is a derived diagnostic ranking sheet over `Family_Structure_Report`. It may rank candidate batches by mixed-family status, low-signal/`other` member presence, best-member outperformance, and repeated family-combo evidence. It must not implement live batch splitting, alter `Event`, alter `Predictions`, change scoring, change prompts, or change subscriber-facing behavior.
+
+As of the 2026-06-14 checkpoint, `Batch_Splitting_Candidates` is in `diagnostic_review_layer` status and live `Batch Splitting v1` is not approved. High-priority candidate review may justify a future shadow-only `Batch_Split_Counterfactuals` report. Any later behavior design requires separate approval and must preserve identity semantics, append-only headers, and decision-support wording.
+
+`Batch_Split_Counterfactuals` is a shadow-only derived report. It may compare current batch outcomes against best-member-derived split proxies from existing scored rows, but it must not be treated as live split execution. It must not create predictions, change batch construction, alter `Event`, alter `Predictions`, change market reaction or outcome scoring, or change subscriber-facing behavior.
+
+The corrected counterfactual result shows positive split-proxy evidence across the 20 high-priority rows after reading observed baselines from `Evaluation_BatchCompare`. This must not be used to justify live batch splitting. The next diagnostic step is a true shadow split-group counterfactual with deterministic grouping rules.
+
+`Batch_Baseline_Coverage_Audit` is a read-only derived audit over existing reporting sheets. It may identify missing batch rows, unscored batch rows, or missing evaluation comparison rows. It must not rebuild `Outcome_Ledger`, rebuild evaluation sheets, change scoring, change batch construction, or change subscriber-facing behavior.
+
+The initial coverage audit found `baseline_coverage_ok`; the prior missing-baseline issue was a derived-report mapping gap, not missing source coverage.
+
+`Batch_Split_Group_Counterfactuals` is a shadow-only derived report over existing scored member rows. It may group members by outcome family for diagnostic comparison, but it must not alter live batch construction, create predictions, change scoring, alter `Event`, alter `Predictions`, or change subscriber-facing behavior.
+
+Initial group-counterfactual evidence is mixed and does not approve live batch splitting. Broad `Batch Splitting v1` remains not approved unless later evidence shows stable benefit without damage versus best-member and batch baselines.
+
+As of the 2026-06-14 Family Structure Investigation checkpoint, Family Structure Investigation v1 is closed as diagnostics. Broad `Batch Splitting v1` is not approved and is rejected/frozen for now. Existing reports may remain rebuildable diagnostics, but no behavior changes may be inferred from them without a separate explicit approval prompt and new spec.
 
 Next Track: Family Rule / Batch Splitting Investigation. This track is a design investigation only. It asks whether recurring family and batch-structure findings point to deterministic system-structure issues before any future provider-level routing or weighting work can be justified.
 

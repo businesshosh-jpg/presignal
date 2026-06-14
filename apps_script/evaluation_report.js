@@ -475,6 +475,114 @@ function menuBuildFamilyStructureReport_() {
   }
 }
 
+function menuBuildBatchSplittingCandidates_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildBatchSplittingCandidates_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Batch splitting candidates -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Batch splitting candidates=' + (res.rows_written || 0), 'Batch Splitting Candidates', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Batch splitting candidates -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildBatchSplitCounterfactuals_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildBatchSplitCounterfactuals_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Batch split counterfactuals -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Batch split counterfactuals=' + (res.rows_written || 0), 'Batch Split Counterfactuals', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Batch split counterfactuals -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildBatchBaselineCoverageAudit_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildBatchBaselineCoverageAudit_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Batch baseline coverage audit -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Batch baseline audit rows=' + (res.rows_written || 0), 'Batch Baseline Coverage Audit', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Batch baseline coverage audit -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildBatchSplitGroupCounterfactuals_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildBatchSplitGroupCounterfactuals_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Batch split group counterfactuals -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Batch split group counterfactuals=' + (res.rows_written || 0), 'Batch Split Group Counterfactuals', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Batch split group counterfactuals -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function buildEvaluationSheets_() {
   var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
   if (!predSheet) throw new Error('Predictions sheet missing');
@@ -650,6 +758,22 @@ function getOrCreateFamilyStructureReportSheet_() {
   return _getOrCreateSheet_('Family_Structure_Report');
 }
 
+function getOrCreateBatchSplittingCandidatesSheet_() {
+  return _getOrCreateSheet_('Batch_Splitting_Candidates');
+}
+
+function getOrCreateBatchSplitCounterfactualsSheet_() {
+  return _getOrCreateSheet_('Batch_Split_Counterfactuals');
+}
+
+function getOrCreateBatchBaselineCoverageAuditSheet_() {
+  return _getOrCreateSheet_('Batch_Baseline_Coverage_Audit');
+}
+
+function getOrCreateBatchSplitGroupCounterfactualsSheet_() {
+  return _getOrCreateSheet_('Batch_Split_Group_Counterfactuals');
+}
+
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
@@ -696,6 +820,22 @@ function ensureAttentionShadowHeaders_(sheet, headers) {
 
 function ensureFamilyStructureReportHeaders_(sheet) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _familyStructureReportHeaders_());
+}
+
+function ensureBatchSplittingCandidatesHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _batchSplittingCandidatesHeaders_());
+}
+
+function ensureBatchSplitCounterfactualsHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _batchSplitCounterfactualsHeaders_());
+}
+
+function ensureBatchBaselineCoverageAuditHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _batchBaselineCoverageAuditHeaders_());
+}
+
+function ensureBatchSplitGroupCounterfactualsHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _batchSplitGroupCounterfactualsHeaders_());
 }
 
 function buildOutcomeSummaries_() {
@@ -1148,6 +1288,104 @@ function buildFamilyStructureReport_() {
   };
 }
 
+function buildBatchSplittingCandidates_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var source = _readFamilyStructureSource_('Family_Structure_Report', warnings);
+  if (!source.rows.length) {
+    warnings.push('missing_or_empty_source:Family_Structure_Report');
+  }
+  var headers = _batchSplittingCandidatesHeaders_();
+  var rowsOut = _buildBatchSplittingCandidateRows_(generatedTs, source, warnings);
+  _sortBatchSplittingCandidateRows_(headers, rowsOut);
+  var sheet = getOrCreateBatchSplittingCandidatesSheet_();
+  var actualHeaders = ensureBatchSplittingCandidatesHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    batch_splitting_candidates_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildBatchSplitCounterfactuals_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var source = _readFamilyStructureSource_('Batch_Splitting_Candidates', warnings);
+  var batchCompare = _readFamilyStructureSource_('Evaluation_BatchCompare', warnings);
+  if (!source.rows.length) {
+    warnings.push('missing_or_empty_source:Batch_Splitting_Candidates');
+  }
+  var headers = _batchSplitCounterfactualsHeaders_();
+  var rowsOut = _buildBatchSplitCounterfactualRows_(generatedTs, source, warnings, _batchBaselineEvalCompareCoverageMap_(batchCompare));
+  _sortBatchSplitCounterfactualRows_(headers, rowsOut);
+  var sheet = getOrCreateBatchSplitCounterfactualsSheet_();
+  var actualHeaders = ensureBatchSplitCounterfactualsHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    batch_split_counterfactuals_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildBatchBaselineCoverageAudit_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var sources = {
+    counterfactuals: _readFamilyStructureSource_('Batch_Split_Counterfactuals', warnings),
+    ledger: _readFamilyStructureSource_('Outcome_Ledger', warnings),
+    batchCompare: _readFamilyStructureSource_('Evaluation_BatchCompare', warnings)
+  };
+  var headers = _batchBaselineCoverageAuditHeaders_();
+  var rowsOut = _buildBatchBaselineCoverageAuditRows_(generatedTs, sources, warnings);
+  _sortBatchBaselineCoverageAuditRows_(headers, rowsOut);
+  var sheet = getOrCreateBatchBaselineCoverageAuditSheet_();
+  var actualHeaders = ensureBatchBaselineCoverageAuditHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    batch_baseline_coverage_audit_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildBatchSplitGroupCounterfactuals_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var sources = {
+    counterfactuals: _readFamilyStructureSource_('Batch_Split_Counterfactuals', warnings),
+    ledger: _readFamilyStructureSource_('Outcome_Ledger', warnings)
+  };
+  var headers = _batchSplitGroupCounterfactualsHeaders_();
+  var rowsOut = _buildBatchSplitGroupCounterfactualRows_(generatedTs, sources, warnings);
+  _sortBatchSplitGroupCounterfactualRows_(headers, rowsOut);
+  var sheet = getOrCreateBatchSplitGroupCounterfactualsSheet_();
+  var actualHeaders = ensureBatchSplitGroupCounterfactualsHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    batch_split_group_counterfactuals_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
 function _outcomeDiagnosticsHeaders_() {
   return [
     'generated_ts',
@@ -1321,6 +1559,142 @@ function _familyStructureReportHeaders_() {
     'summary_note',
     'decision_support_note',
     'warnings'
+  ];
+}
+
+function _batchSplittingCandidatesHeaders_() {
+  return [
+    'generated_ts',
+    'candidate_rank',
+    'candidate_priority',
+    'candidate_key',
+    'batch_id',
+    'release_ts',
+    'release_date',
+    'family_combo_key',
+    'member_families',
+    'member_count',
+    'distinct_family_count',
+    'member_event_ids',
+    'member_indicator_names',
+    'is_mixed_family_batch',
+    'has_low_signal_family',
+    'best_member_outperformed_batch',
+    'batch_prediction_result',
+    'member_prediction_result',
+    'batch_overall_ok_rate',
+    'best_member_overall_ok_rate',
+    'batch_vs_best_member_delta',
+    'split_candidate_score',
+    'split_reason',
+    'repeated_combo_count',
+    'combo_problematic_count',
+    'combo_batch_dir_ok_rate',
+    'combo_best_member_dir_ok_rate',
+    'diagnostic_label',
+    'recommended_next_question',
+    'decision_support_note'
+  ];
+}
+
+function _batchSplitCounterfactualsHeaders_() {
+  return [
+    'generated_ts',
+    'counterfactual_rank',
+    'counterfactual_id',
+    'source_candidate_rank',
+    'source_candidate_priority',
+    'batch_id',
+    'release_ts',
+    'release_date',
+    'family_combo_key',
+    'member_families',
+    'member_count',
+    'distinct_family_count',
+    'member_event_ids',
+    'member_indicator_names',
+    'baseline_method',
+    'baseline_result_source',
+    'baseline_batch_overall_ok_rate',
+    'baseline_batch_result_available',
+    'split_proxy_method',
+    'split_proxy_result_source',
+    'split_proxy_overall_ok_rate',
+    'split_proxy_result_available',
+    'counterfactual_delta',
+    'counterfactual_result_label',
+    'would_have_helped_flag',
+    'would_have_hurt_flag',
+    'inconclusive_flag',
+    'split_reason',
+    'repeated_combo_count',
+    'combo_problematic_count',
+    'evidence_strength',
+    'activation_status',
+    'activation_blocker',
+    'decision_support_note'
+  ];
+}
+
+function _batchBaselineCoverageAuditHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'audit_rank',
+    'batch_id',
+    'release_ts',
+    'family_combo_key',
+    'source_counterfactual_label',
+    'source_evidence_strength',
+    'baseline_batch_result_available',
+    'ledger_batch_row_count',
+    'ledger_batch_provider_count',
+    'ledger_batch_scored_count',
+    'ledger_batch_overall_ok_count',
+    'ledger_member_row_count',
+    'ledger_member_scored_count',
+    'evaluation_batch_compare_row_count',
+    'evaluation_batch_compare_scored_count',
+    'evaluation_batch_overall_ok_count',
+    'member_proxy_available',
+    'coverage_gap_label',
+    'coverage_gap_detail',
+    'recommended_next_step',
+    'total_counterfactual_rows',
+    'baseline_available_count',
+    'missing_baseline_count',
+    'missing_eval_compare_count',
+    'ledger_unscored_batch_count',
+    'missing_ledger_batch_count',
+    'decision_support_note'
+  ];
+}
+
+function _batchSplitGroupCounterfactualsHeaders_() {
+  return [
+    'generated_ts',
+    'group_counterfactual_rank',
+    'batch_id',
+    'release_ts',
+    'family_combo_key',
+    'baseline_batch_overall_ok_rate',
+    'best_member_proxy_overall_ok_rate',
+    'best_family_group',
+    'best_family_group_member_count',
+    'best_family_group_scored_count',
+    'best_family_group_overall_ok_rate',
+    'best_family_group_event_ids',
+    'best_family_group_indicator_names',
+    'all_family_group_rates',
+    'group_vs_batch_delta',
+    'group_vs_best_member_delta',
+    'counterfactual_result_label',
+    'would_have_helped_flag',
+    'possible_damage_flag',
+    'evidence_strength',
+    'activation_status',
+    'activation_blocker',
+    'decision_support_note'
   ];
 }
 
@@ -6983,6 +7357,650 @@ function _sortFamilyStructureReportRows_(headers, rows) {
       idx.family_combo_key,
       idx.family
     ]);
+  });
+}
+
+function _buildBatchSplittingCandidateRows_(generatedTs, source, warnings) {
+  var rows = source.rows || [];
+  var idx = source.idx || {};
+  var comboStats = {};
+  var candidates = [];
+
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var section = String(_predValue_(row, idx, 'section') || '').trim();
+    if (section === 'family_mixing_risk_summary') {
+      var combo = String(_predValue_(row, idx, 'scope_key') || _predValue_(row, idx, 'family_combo_key') || '').trim();
+      if (combo) {
+        comboStats[combo] = {
+          batch_count: _numOrNull_(_predValue_(row, idx, 'batch_count')) || 0,
+          problematic_batch_count: _numOrNull_(_predValue_(row, idx, 'problematic_batch_count')) || 0,
+          batch_dir_ok_rate: _predValue_(row, idx, 'batch_dir_ok_rate'),
+          best_member_dir_ok_rate: _predValue_(row, idx, 'best_member_dir_ok_rate')
+        };
+      }
+    }
+  }
+
+  for (var r = 0; r < rows.length; r++) {
+    var src = rows[r];
+    if (String(_predValue_(src, idx, 'section') || '').trim() !== 'recurring_batch_splitting_findings') continue;
+    var reason = String(_predValue_(src, idx, 'why_splitting_may_matter') || '').trim();
+    var memberFamilies = String(_predValue_(src, idx, 'member_families') || '').trim();
+    var comboKey = memberFamilies ? memberFamilies.replace(/\|/g, '+') : String(_predValue_(src, idx, 'family_combo_key') || '').trim();
+    var stats = comboStats[comboKey] || {};
+    var mixed = reason.indexOf('mixed_family_batch') >= 0 || Number(_predValue_(src, idx, 'distinct_family_count') || 0) > 1;
+    var lowSignal = reason.indexOf('low_signal_family_present') >= 0;
+    var outperformed = reason.indexOf('best_member_outperformed_batch') >= 0;
+    var score = _batchSplittingCandidateScore_(mixed, lowSignal, outperformed, stats);
+    candidates.push({
+      row: src,
+      combo_key: comboKey,
+      stats: stats,
+      mixed: mixed,
+      low_signal: lowSignal,
+      outperformed: outperformed,
+      score: score,
+      priority: _batchSplittingCandidatePriority_(score, outperformed, stats)
+    });
+  }
+
+  candidates.sort(function(a, b) {
+    if (a.score !== b.score) return b.score - a.score;
+    var ap = Number(a.stats.problematic_batch_count || 0);
+    var bp = Number(b.stats.problematic_batch_count || 0);
+    if (ap !== bp) return bp - ap;
+    return String(_predValue_(a.row, idx, 'release_ts') || '').localeCompare(String(_predValue_(b.row, idx, 'release_ts') || ''));
+  });
+
+  var out = [];
+  for (var c = 0; c < candidates.length; c++) {
+    var item = candidates[c];
+    var srcRow = item.row;
+    var batchId = String(_predValue_(srcRow, idx, 'batch_id') || _predValue_(srcRow, idx, 'scope_key') || '').trim();
+    out.push([
+      generatedTs,
+      c + 1,
+      item.priority,
+      batchId || item.combo_key,
+      batchId,
+      _predValue_(srcRow, idx, 'release_ts'),
+      _predValue_(srcRow, idx, 'release_date'),
+      item.combo_key,
+      _predValue_(srcRow, idx, 'member_families'),
+      _predValue_(srcRow, idx, 'member_count'),
+      _predValue_(srcRow, idx, 'distinct_family_count'),
+      _predValue_(srcRow, idx, 'member_event_ids'),
+      _predValue_(srcRow, idx, 'member_indicator_names'),
+      item.mixed ? 'TRUE' : 'FALSE',
+      item.low_signal ? 'TRUE' : 'FALSE',
+      item.outperformed ? 'TRUE' : 'FALSE',
+      _predValue_(srcRow, idx, 'batch_prediction_result'),
+      _predValue_(srcRow, idx, 'member_prediction_result'),
+      _extractRateFromResultText_(_predValue_(srcRow, idx, 'batch_prediction_result')),
+      _extractRateFromResultText_(_predValue_(srcRow, idx, 'member_prediction_result')),
+      _batchSplittingCandidateDelta_(_predValue_(srcRow, idx, 'batch_prediction_result'), _predValue_(srcRow, idx, 'member_prediction_result')),
+      item.score,
+      _predValue_(srcRow, idx, 'why_splitting_may_matter'),
+      item.stats.batch_count || '',
+      item.stats.problematic_batch_count || '',
+      item.stats.batch_dir_ok_rate || '',
+      item.stats.best_member_dir_ok_rate || '',
+      item.priority === 'high_priority_diagnostic' ? 'focused_split_review' : (item.priority === 'medium_priority_diagnostic' ? 'monitor_split_pattern' : 'low_priority_context'),
+      _batchSplittingRecommendedQuestion_(item),
+      'Batch splitting candidate is diagnostic only; not trading advice and not a live batching behavior change.'
+    ]);
+  }
+  if (!out.length && warnings) warnings.push('no_batch_splitting_candidates_from:Family_Structure_Report');
+  return out;
+}
+
+function _batchSplittingCandidateScore_(mixed, lowSignal, outperformed, stats) {
+  var score = 0;
+  if (mixed) score += 3;
+  if (lowSignal) score += 2;
+  if (outperformed) score += 4;
+  if (Number(stats.problematic_batch_count || 0) >= 5) score += 3;
+  else if (Number(stats.problematic_batch_count || 0) >= 2) score += 2;
+  if (Number(stats.batch_count || 0) >= 20) score += 1;
+  return score;
+}
+
+function _batchSplittingCandidatePriority_(score, outperformed, stats) {
+  if (score >= 10 || (outperformed && Number(stats.problematic_batch_count || 0) >= 3)) return 'high_priority_diagnostic';
+  if (score >= 7) return 'medium_priority_diagnostic';
+  return 'low_priority_diagnostic';
+}
+
+function _extractRateFromResultText_(value) {
+  var text = String(value || '');
+  var match = text.match(/=([0-9.]+)/);
+  return match ? match[1] : '';
+}
+
+function _batchSplittingCandidateDelta_(batchResult, memberResult) {
+  var b = _numOrNull_(_extractRateFromResultText_(batchResult));
+  var m = _numOrNull_(_extractRateFromResultText_(memberResult));
+  if (b == null || m == null) return '';
+  return _roundRate_(b - m);
+}
+
+function _batchSplittingRecommendedQuestion_(item) {
+  if (item.outperformed && item.mixed) {
+    return 'Would a family-split diagnostic comparison preserve the best-member signal better than the current batch aggregate?';
+  }
+  if (item.mixed && item.low_signal) {
+    return 'Is a low-signal or other-family member diluting the batch anchor or evaluation target?';
+  }
+  if (item.outperformed) {
+    return 'Why did the best member outperform the batch even without mixed-family evidence?';
+  }
+  return 'Monitor this batch pattern for repeated structural noise before proposing behavior changes.';
+}
+
+function _sortBatchSplittingCandidateRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    var ar = Number(a[idx.candidate_rank] || 0);
+    var br = Number(b[idx.candidate_rank] || 0);
+    if (ar !== br) return ar - br;
+    return _cmpByColumns_(a, b, [idx.release_ts, idx.batch_id]);
+  });
+}
+
+function _buildBatchSplitCounterfactualRows_(generatedTs, source, warnings, evalCoverageMap) {
+  var rowsOut = [];
+  var rows = source.rows || [];
+  var idx = source.idx || {};
+  evalCoverageMap = evalCoverageMap || {};
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var priority = String(_predValue_(row, idx, 'candidate_priority') || '').trim();
+    if (priority !== 'high_priority_diagnostic') continue;
+
+    var batchId = String(_predValue_(row, idx, 'batch_id') || '').trim();
+    var batchRate = _numOrNull_(_predValue_(row, idx, 'batch_overall_ok_rate'));
+    var baselineSource = 'Batch_Splitting_Candidates.batch_overall_ok_rate';
+    if (batchRate == null && evalCoverageMap[batchId] && Number(evalCoverageMap[batchId].scored_count || 0) > 0) {
+      batchRate = _rateNumber_(evalCoverageMap[batchId].batch_overall_ok_count, evalCoverageMap[batchId].scored_count);
+      baselineSource = 'Evaluation_BatchCompare.batch_overall_ok';
+    }
+    var splitRate = _numOrNull_(_predValue_(row, idx, 'best_member_overall_ok_rate'));
+    var delta = (batchRate != null && splitRate != null) ? _roundRate_(splitRate - batchRate) : '';
+    var label = _batchSplitCounterfactualLabel_(batchRate, splitRate, delta);
+    var evidenceStrength = _batchSplitCounterfactualEvidenceStrength_(row, idx, label);
+    var counterfactualId = [
+      'batch_split_counterfactual_v1',
+      batchId || String(_predValue_(row, idx, 'candidate_key') || '').trim(),
+      String(_predValue_(row, idx, 'family_combo_key') || '').trim()
+    ].join('|');
+
+    rowsOut.push([
+      generatedTs,
+      '',
+      counterfactualId,
+      _predValue_(row, idx, 'candidate_rank'),
+      priority,
+      batchId,
+      _predValue_(row, idx, 'release_ts'),
+      _predValue_(row, idx, 'release_date'),
+      _predValue_(row, idx, 'family_combo_key'),
+      _predValue_(row, idx, 'member_families'),
+      _predValue_(row, idx, 'member_count'),
+      _predValue_(row, idx, 'distinct_family_count'),
+      _predValue_(row, idx, 'member_event_ids'),
+      _predValue_(row, idx, 'member_indicator_names'),
+      'current_batch_observed',
+      baselineSource,
+      batchRate == null ? '' : batchRate,
+      batchRate == null ? 'FALSE' : 'TRUE',
+      'best_member_proxy_from_existing_scored_rows',
+      'Batch_Splitting_Candidates.best_member_overall_ok_rate',
+      splitRate == null ? '' : splitRate,
+      splitRate == null ? 'FALSE' : 'TRUE',
+      delta,
+      label,
+      label === 'split_proxy_helped' ? 'TRUE' : 'FALSE',
+      label === 'split_proxy_hurt' ? 'TRUE' : 'FALSE',
+      label === 'inconclusive_missing_baseline' || label === 'inconclusive_no_delta' ? 'TRUE' : 'FALSE',
+      _predValue_(row, idx, 'split_reason'),
+      _predValue_(row, idx, 'repeated_combo_count'),
+      _predValue_(row, idx, 'combo_problematic_count'),
+      evidenceStrength,
+      'shadow_only',
+      _batchSplitCounterfactualBlocker_(label),
+      'Shadow-only counterfactual using existing scored rows; not trading advice and not live batch splitting.'
+    ]);
+  }
+
+  rowsOut.sort(function(a, b) {
+    var h = _batchSplitCounterfactualsHeaders_();
+    var outIdx = _headerIndexMap_(h);
+    var aStrength = _batchSplitEvidenceSortValue_(a[outIdx.evidence_strength]);
+    var bStrength = _batchSplitEvidenceSortValue_(b[outIdx.evidence_strength]);
+    if (aStrength !== bStrength) return bStrength - aStrength;
+    var ad = _numOrNull_(a[outIdx.counterfactual_delta]);
+    var bd = _numOrNull_(b[outIdx.counterfactual_delta]);
+    if (ad != null && bd != null && ad !== bd) return bd - ad;
+    return Number(a[outIdx.source_candidate_rank] || 0) - Number(b[outIdx.source_candidate_rank] || 0);
+  });
+  for (var r = 0; r < rowsOut.length; r++) {
+    rowsOut[r][1] = r + 1;
+  }
+  if (!rowsOut.length && warnings) warnings.push('no_high_priority_candidates_from:Batch_Splitting_Candidates');
+  return rowsOut;
+}
+
+function _batchSplitCounterfactualLabel_(batchRate, splitRate, delta) {
+  if (batchRate == null || splitRate == null) return 'inconclusive_missing_baseline';
+  var d = _numOrNull_(delta);
+  if (d == null || d === 0) return 'inconclusive_no_delta';
+  if (d > 0) return 'split_proxy_helped';
+  return 'split_proxy_hurt';
+}
+
+function _batchSplitCounterfactualEvidenceStrength_(row, idx, label) {
+  var repeated = Number(_predValue_(row, idx, 'repeated_combo_count') || 0);
+  var problematic = Number(_predValue_(row, idx, 'combo_problematic_count') || 0);
+  if (label === 'split_proxy_helped' && problematic >= 5 && repeated >= 20) return 'strong_shadow_evidence';
+  if (label === 'split_proxy_helped' && problematic >= 2) return 'moderate_shadow_evidence';
+  if (label === 'inconclusive_missing_baseline' && problematic >= 4) return 'needs_more_scored_batch_rows';
+  return 'thin_or_context_only';
+}
+
+function _batchSplitCounterfactualBlocker_(label) {
+  if (label === 'split_proxy_helped') return 'needs_true_family_split_counterfactual_not_best_member_proxy';
+  if (label === 'split_proxy_hurt') return 'proxy_suggests_possible_damage';
+  return 'missing_current_batch_score_or_no_delta';
+}
+
+function _batchSplitEvidenceSortValue_(value) {
+  var v = String(value || '');
+  if (v === 'strong_shadow_evidence') return 4;
+  if (v === 'moderate_shadow_evidence') return 3;
+  if (v === 'needs_more_scored_batch_rows') return 2;
+  return 1;
+}
+
+function _sortBatchSplitCounterfactualRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    var ar = Number(a[idx.counterfactual_rank] || 0);
+    var br = Number(b[idx.counterfactual_rank] || 0);
+    if (ar !== br) return ar - br;
+    return _cmpByColumns_(a, b, [idx.release_ts, idx.batch_id]);
+  });
+}
+
+function _buildBatchBaselineCoverageAuditRows_(generatedTs, sources, warnings) {
+  var counter = sources.counterfactuals || { rows: [], idx: {} };
+  var ledgerMap = _batchBaselineLedgerCoverageMap_(sources.ledger);
+  var evalMap = _batchBaselineEvalCompareCoverageMap_(sources.batchCompare);
+  var rowsOut = [];
+  var summary = {
+    total: 0,
+    baseline_available: 0,
+    missing_baseline: 0,
+    missing_eval_compare: 0,
+    ledger_unscored_batch: 0,
+    missing_ledger_batch: 0
+  };
+
+  for (var i = 0; i < (counter.rows || []).length; i++) {
+    var row = counter.rows[i];
+    var batchId = String(_predValue_(row, counter.idx, 'batch_id') || '').trim();
+    if (!batchId) continue;
+    var ledger = ledgerMap[batchId] || _emptyBatchBaselineLedgerCoverage_();
+    var ev = evalMap[batchId] || _emptyBatchBaselineEvalCoverage_();
+    var baselineAvailable = _isTrueCell_(_predValue_(row, counter.idx, 'baseline_batch_result_available'));
+    var gap = _batchBaselineCoverageGap_(baselineAvailable, ledger, ev);
+    summary.total += 1;
+    if (baselineAvailable) summary.baseline_available += 1;
+    else summary.missing_baseline += 1;
+    if (gap.label === 'missing_evaluation_batch_compare') summary.missing_eval_compare += 1;
+    if (gap.label === 'batch_rows_present_but_unscored') summary.ledger_unscored_batch += 1;
+    if (gap.label === 'missing_ledger_batch_rows') summary.missing_ledger_batch += 1;
+
+    rowsOut.push([
+      generatedTs,
+      'batch_baseline_audit',
+      _predValue_(row, counter.idx, 'counterfactual_rank'),
+      batchId,
+      _predValue_(row, counter.idx, 'release_ts'),
+      _predValue_(row, counter.idx, 'family_combo_key'),
+      _predValue_(row, counter.idx, 'counterfactual_result_label'),
+      _predValue_(row, counter.idx, 'evidence_strength'),
+      baselineAvailable ? 'TRUE' : 'FALSE',
+      ledger.batch_row_count,
+      Object.keys(ledger.batch_providers).length,
+      ledger.batch_scored_count,
+      ledger.batch_overall_ok_count,
+      ledger.member_row_count,
+      ledger.member_scored_count,
+      ev.row_count,
+      ev.scored_count,
+      ev.batch_overall_ok_count,
+      _isTrueCell_(_predValue_(row, counter.idx, 'split_proxy_result_available')) ? 'TRUE' : 'FALSE',
+      gap.label,
+      gap.detail,
+      gap.next_step,
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      'Coverage audit only; not trading advice and not a scoring change.'
+    ]);
+  }
+
+  rowsOut.push([
+    generatedTs,
+    'coverage_summary',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    _batchBaselineSummaryLabel_(summary),
+    'Summarizes why Batch_Split_Counterfactuals is mostly inconclusive.',
+    _batchBaselineSummaryNextStep_(summary),
+    summary.total,
+    summary.baseline_available,
+    summary.missing_baseline,
+    summary.missing_eval_compare,
+    summary.ledger_unscored_batch,
+    summary.missing_ledger_batch,
+    'Coverage audit only; not trading advice and not a scoring change.'
+  ]);
+  return rowsOut;
+}
+
+function _batchBaselineLedgerCoverageMap_(source) {
+  var map = {};
+  if (!source || !source.rows) return map;
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    var batchId = String(_predValue_(row, source.idx, 'batch_id') || '').trim();
+    if (!batchId) continue;
+    if (!map[batchId]) map[batchId] = _emptyBatchBaselineLedgerCoverage_();
+    var g = map[batchId];
+    var type = String(_predValue_(row, source.idx, 'type') || '').trim().toLowerCase();
+    var provider = String(_predValue_(row, source.idx, 'ai_name') || '').trim();
+    var scored = _isTrueCell_(_predValue_(row, source.idx, 'scored_flag'));
+    if (type === 'batch') {
+      g.batch_row_count += 1;
+      if (provider) g.batch_providers[provider] = true;
+      if (scored) g.batch_scored_count += 1;
+      if (_isTrueCell_(_predValue_(row, source.idx, 'overall_ok'))) g.batch_overall_ok_count += 1;
+    } else {
+      g.member_row_count += 1;
+      if (scored) g.member_scored_count += 1;
+    }
+  }
+  return map;
+}
+
+function _batchBaselineEvalCompareCoverageMap_(source) {
+  var map = {};
+  if (!source || !source.rows) return map;
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    var batchId = String(_predValue_(row, source.idx, 'batch_id') || '').trim();
+    if (!batchId) continue;
+    if (!map[batchId]) map[batchId] = _emptyBatchBaselineEvalCoverage_();
+    var g = map[batchId];
+    g.row_count += 1;
+    var hasBatchResult = _predValue_(row, source.idx, 'batch_overall_ok') !== '';
+    if (hasBatchResult) g.scored_count += 1;
+    if (_isTrueCell_(_predValue_(row, source.idx, 'batch_overall_ok'))) g.batch_overall_ok_count += 1;
+  }
+  return map;
+}
+
+function _emptyBatchBaselineLedgerCoverage_() {
+  return {
+    batch_row_count: 0,
+    batch_providers: {},
+    batch_scored_count: 0,
+    batch_overall_ok_count: 0,
+    member_row_count: 0,
+    member_scored_count: 0
+  };
+}
+
+function _emptyBatchBaselineEvalCoverage_() {
+  return { row_count: 0, scored_count: 0, batch_overall_ok_count: 0 };
+}
+
+function _batchBaselineCoverageGap_(baselineAvailable, ledger, ev) {
+  if (baselineAvailable) {
+    return {
+      label: 'baseline_available',
+      detail: 'Current batch baseline is available for counterfactual comparison.',
+      next_step: 'Keep as usable counterfactual evidence; do not activate behavior from one row.'
+    };
+  }
+  if (!ledger.batch_row_count) {
+    return {
+      label: 'missing_ledger_batch_rows',
+      detail: 'No batch-type Outcome_Ledger rows were found for this batch_id.',
+      next_step: 'Audit whether historical batch predictions exist or need a derived rebuild/backfill.'
+    };
+  }
+  if (!ledger.batch_scored_count) {
+    return {
+      label: 'batch_rows_present_but_unscored',
+      detail: 'Batch Outcome_Ledger rows exist, but none are scored.',
+      next_step: 'Audit market reaction scoring coverage for batch rows before split-design work.'
+    };
+  }
+  if (!ev.row_count) {
+    return {
+      label: 'missing_evaluation_batch_compare',
+      detail: 'Scored batch rows exist, but Evaluation_BatchCompare has no comparison row.',
+      next_step: 'Rebuild or audit evaluation comparison coverage for this batch.'
+    };
+  }
+  if (!ev.scored_count) {
+    return {
+      label: 'evaluation_batch_compare_unscored',
+      detail: 'Evaluation_BatchCompare row exists, but batch_overall_ok is blank.',
+      next_step: 'Audit why comparison rows lack batch outcome fields.'
+    };
+  }
+  return {
+    label: 'unknown_missing_baseline',
+    detail: 'Baseline is missing in counterfactual source despite available coverage signals.',
+    next_step: 'Inspect source row mapping between Batch_Splitting_Candidates and Batch_Split_Counterfactuals.'
+  };
+}
+
+function _batchBaselineSummaryLabel_(summary) {
+  if (summary.missing_ledger_batch >= summary.missing_baseline && summary.missing_baseline) return 'missing_ledger_batch_rows_dominant';
+  if (summary.ledger_unscored_batch >= summary.missing_baseline && summary.missing_baseline) return 'unscored_batch_rows_dominant';
+  if (summary.missing_eval_compare >= summary.missing_baseline && summary.missing_baseline) return 'missing_evaluation_compare_dominant';
+  if (summary.missing_baseline) return 'mixed_coverage_gap';
+  return 'baseline_coverage_ok';
+}
+
+function _batchBaselineSummaryNextStep_(summary) {
+  if (!summary.missing_baseline) {
+    return 'Baseline coverage is available; evaluate whether split-proxy evidence is stable enough for a future true shadow split-group design.';
+  }
+  return 'Improve or audit scored batch baseline coverage before live batch-splitting design.';
+}
+
+function _sortBatchBaselineCoverageAuditRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    var at = String(a[idx.row_type] || '');
+    var bt = String(b[idx.row_type] || '');
+    if (at !== bt) return at === 'coverage_summary' ? 1 : (bt === 'coverage_summary' ? -1 : at.localeCompare(bt));
+    return Number(a[idx.audit_rank] || 999999) - Number(b[idx.audit_rank] || 999999);
+  });
+}
+
+function _buildBatchSplitGroupCounterfactualRows_(generatedTs, sources, warnings) {
+  var counter = sources.counterfactuals || { rows: [], idx: {} };
+  var groupMap = _batchSplitLedgerFamilyGroups_(sources.ledger);
+  var rowsOut = [];
+  for (var i = 0; i < (counter.rows || []).length; i++) {
+    var row = counter.rows[i];
+    var batchId = String(_predValue_(row, counter.idx, 'batch_id') || '').trim();
+    if (!batchId) continue;
+    var groups = groupMap[batchId] || {};
+    var best = _batchSplitBestFamilyGroup_(groups);
+    var batchRate = _numOrNull_(_predValue_(row, counter.idx, 'baseline_batch_overall_ok_rate'));
+    var bestMemberRate = _numOrNull_(_predValue_(row, counter.idx, 'split_proxy_overall_ok_rate'));
+    var groupRate = best ? best.overall_ok_rate : null;
+    var groupDelta = (batchRate != null && groupRate != null) ? _roundRate_(groupRate - batchRate) : '';
+    var memberDelta = (bestMemberRate != null && groupRate != null) ? _roundRate_(groupRate - bestMemberRate) : '';
+    var label = _batchSplitGroupCounterfactualLabel_(batchRate, groupRate, memberDelta);
+    rowsOut.push([
+      generatedTs,
+      '',
+      batchId,
+      _predValue_(row, counter.idx, 'release_ts'),
+      _predValue_(row, counter.idx, 'family_combo_key'),
+      batchRate == null ? '' : batchRate,
+      bestMemberRate == null ? '' : bestMemberRate,
+      best ? best.family : '',
+      best ? best.member_count : '',
+      best ? best.scored_count : '',
+      groupRate == null ? '' : groupRate,
+      best ? _keysSorted_(best.event_ids).join('|') : '',
+      best ? _keysSorted_(best.indicator_names).join('|') : '',
+      _batchSplitFamilyGroupRatesString_(groups),
+      groupDelta,
+      memberDelta,
+      label,
+      label === 'family_group_helped' ? 'TRUE' : 'FALSE',
+      label === 'family_group_hurt_vs_best_member' ? 'TRUE' : 'FALSE',
+      _batchSplitGroupEvidenceStrength_(label, best, groupDelta),
+      'shadow_only',
+      _batchSplitGroupActivationBlocker_(label),
+      'True shadow family-group counterfactual using existing scored member rows; not trading advice and not live batch splitting.'
+    ]);
+  }
+  rowsOut.sort(function(a, b) {
+    var h = _batchSplitGroupCounterfactualsHeaders_();
+    var idx = _headerIndexMap_(h);
+    var ad = _numOrNull_(a[idx.group_vs_batch_delta]);
+    var bd = _numOrNull_(b[idx.group_vs_batch_delta]);
+    if (ad != null && bd != null && ad !== bd) return bd - ad;
+    return String(a[idx.batch_id] || '').localeCompare(String(b[idx.batch_id] || ''));
+  });
+  for (var r = 0; r < rowsOut.length; r++) rowsOut[r][1] = r + 1;
+  if (!rowsOut.length && warnings) warnings.push('no_counterfactual_rows_from:Batch_Split_Counterfactuals');
+  return rowsOut;
+}
+
+function _batchSplitLedgerFamilyGroups_(source) {
+  var map = {};
+  if (!source || !source.rows) return map;
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    var type = String(_predValue_(row, source.idx, 'type') || '').trim().toLowerCase();
+    if (type === 'batch') continue;
+    var batchId = String(_predValue_(row, source.idx, 'batch_id') || '').trim();
+    if (!batchId) continue;
+    var family = _familyStructureRowFamily_(row, source.idx);
+    if (!map[batchId]) map[batchId] = {};
+    if (!map[batchId][family]) {
+      map[batchId][family] = {
+        family: family,
+        rows_total: 0,
+        scored_count: 0,
+        overall_ok_count: 0,
+        event_ids: {},
+        indicator_names: {}
+      };
+    }
+    var g = map[batchId][family];
+    var eventId = String(_predValue_(row, source.idx, 'event_id') || '').trim();
+    var name = String(_predValue_(row, source.idx, 'indicator_name') || '').trim();
+    g.rows_total += 1;
+    if (eventId) g.event_ids[eventId] = true;
+    if (name) g.indicator_names[name] = true;
+    if (_isTrueCell_(_predValue_(row, source.idx, 'scored_flag'))) {
+      g.scored_count += 1;
+      if (_isTrueCell_(_predValue_(row, source.idx, 'overall_ok'))) g.overall_ok_count += 1;
+    }
+  }
+  Object.keys(map).forEach(function(batchId) {
+    Object.keys(map[batchId]).forEach(function(family) {
+      var g = map[batchId][family];
+      g.member_count = Object.keys(g.event_ids).length;
+      g.overall_ok_rate = g.scored_count ? _roundRate_(g.overall_ok_count / g.scored_count) : null;
+    });
+  });
+  return map;
+}
+
+function _batchSplitBestFamilyGroup_(groups) {
+  var best = null;
+  Object.keys(groups || {}).forEach(function(family) {
+    var g = groups[family];
+    if (g.overall_ok_rate == null) return;
+    if (!best || g.overall_ok_rate > best.overall_ok_rate ||
+        (g.overall_ok_rate === best.overall_ok_rate && g.scored_count > best.scored_count)) {
+      best = g;
+    }
+  });
+  return best;
+}
+
+function _batchSplitFamilyGroupRatesString_(groups) {
+  return Object.keys(groups || {}).sort().map(function(family) {
+    var g = groups[family];
+    return family + ':rate=' + (g.overall_ok_rate == null ? 'n/a' : g.overall_ok_rate) +
+      ',scored=' + g.scored_count +
+      ',members=' + g.member_count;
+  }).join(' | ');
+}
+
+function _batchSplitGroupCounterfactualLabel_(batchRate, groupRate, memberDelta) {
+  if (batchRate == null || groupRate == null) return 'inconclusive_missing_group_or_batch';
+  if (groupRate <= batchRate) return 'family_group_not_better_than_batch';
+  var md = _numOrNull_(memberDelta);
+  if (md != null && md < 0) return 'family_group_hurt_vs_best_member';
+  return 'family_group_helped';
+}
+
+function _batchSplitGroupEvidenceStrength_(label, best, groupDelta) {
+  var d = _numOrNull_(groupDelta);
+  if (label === 'family_group_helped' && best && best.scored_count >= 6 && d != null && d >= 0.3) return 'strong_group_shadow_evidence';
+  if (label === 'family_group_helped') return 'moderate_group_shadow_evidence';
+  if (label === 'family_group_hurt_vs_best_member') return 'possible_proxy_damage';
+  return 'inconclusive';
+}
+
+function _batchSplitGroupActivationBlocker_(label) {
+  if (label === 'family_group_helped') return 'needs_future_block_confirmation_and_design_spec';
+  if (label === 'family_group_hurt_vs_best_member') return 'possible_damage_vs_best_member_proxy';
+  return 'insufficient_group_or_batch_data';
+}
+
+function _sortBatchSplitGroupCounterfactualRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    var ar = Number(a[idx.group_counterfactual_rank] || 0);
+    var br = Number(b[idx.group_counterfactual_rank] || 0);
+    if (ar !== br) return ar - br;
+    return _cmpByColumns_(a, b, [idx.release_ts, idx.batch_id]);
   });
 }
 

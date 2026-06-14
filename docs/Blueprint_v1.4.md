@@ -123,6 +123,10 @@ Attention_Phase3_Candidates
 Attention_Shadow_Experiments
 Attention_Shadow_Summary
 Family_Structure_Report
+Batch_Splitting_Candidates
+Batch_Split_Counterfactuals
+Batch_Baseline_Coverage_Audit
+Batch_Split_Group_Counterfactuals
 
 #### Optional / legacy / compatibility
 Config (optional): If present, the runner can read key-value configuration from it (best-effort; absence is allowed).
@@ -248,12 +252,34 @@ The system also supports rebuilt derived reporting tabs for outcome and attentio
 - `Attention_Shadow_Experiments`
 - `Attention_Shadow_Summary`
 - `Family_Structure_Report`
+- `Batch_Splitting_Candidates`
+- `Batch_Split_Counterfactuals`
+- `Batch_Baseline_Coverage_Audit`
+- `Batch_Split_Group_Counterfactuals`
 
 These sheets are read-only over their source layers and rewrite only their own body rows. Missing headers are appended, existing header order is preserved, and the builders do not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or evaluation sheets.
 
 `Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Provider_Individuality`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Provider_Individuality` specifically separates provider individuality/explainability evidence from performance evidence. As of the Jan 31 2025 checkpoint, Attention Factor v1 is frozen as an explainability/provider-individuality layer. `Attention_Phase3_Candidates` is a conservative bridge layer for Phase 3 design review, and `Attention_Shadow_Experiments` and `Attention_Shadow_Summary` are Phase 3A counterfactual reporting layers, but Phase 3A v1 promotion is closed/frozen and Phase 3B is not approved. These sheets expose selected reasoning-factor evidence, provider-character evidence, case-level disagreement evidence, candidate-only experiment slices, and shadow experiment outcomes for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation. V1 attention factors are returned in the same provider response as prediction fields and must not be described as proven causal controls.
 
 `Family_Structure_Report` is the active post-Attention-v1 diagnostic layer for Family Structure Investigation v1. It is read-only over existing outcome, evaluation, and attention review sheets. It exists to decide whether future `Family Rule v1` or `Batch Splitting v1` work is justified by recurring structure evidence. It must not change prediction prompts, prediction semantics, batching rules, scoring, market reaction logic, provider weighting, calibration, routing, or subscriber-facing behavior.
+
+`Batch_Splitting_Candidates` is a derived diagnostic ranking layer over `Family_Structure_Report`. It ranks mixed-family, low-signal, and best-member-outperformed batch cases for review. It does not split batches, change event construction, change scoring, change prediction prompts, or approve live `Batch Splitting v1`.
+
+As of the 2026-06-14 checkpoint, `Batch_Splitting_Candidates` is in `diagnostic_review_layer` status and live `Batch Splitting v1` is not approved. High-priority candidate review found enough repeated structure to justify a future shadow-only `Batch_Split_Counterfactuals` report, but not live behavior changes.
+
+`Batch_Split_Counterfactuals` is a shadow-only counterfactual layer over `Batch_Splitting_Candidates`. It compares observed batch-level results against a best-member-derived split proxy from existing scored rows. It must label proxy-derived evidence clearly and must not create predictions, split live batches, alter `Event`, alter `Predictions`, change scoring, or change subscriber-facing behavior.
+
+The corrected counterfactual result found `split_proxy_helped` across all 20 high-priority rows after mapping observed batch baselines from `Evaluation_BatchCompare`. This supports a future true shadow split-group counterfactual, not live batch splitting.
+
+`Batch_Baseline_Coverage_Audit` is a derived diagnostic layer over `Batch_Split_Counterfactuals`, `Outcome_Ledger`, and `Evaluation_BatchCompare`. It audits why high-priority split candidates lack usable current batch baselines. It must not rebuild source reports, change scoring, change batch construction, or alter live behavior.
+
+The initial coverage audit found `baseline_coverage_ok`; the earlier missing-baseline issue was a derived-report mapping gap, not missing source coverage.
+
+`Batch_Split_Group_Counterfactuals` is a true shadow family-group counterfactual over existing scored member rows. It deterministically groups batch members by outcome family and compares the strongest family-group proxy against the observed batch baseline and best-member proxy. It must not create predictions, alter `Event`, alter `Predictions`, split live batches, change scoring, or change subscriber-facing behavior.
+
+Initial group-counterfactual evidence is mixed and does not approve live batch splitting: 4 rows helped at the family-group level and 16 rows underperformed the best-member proxy. Further work, if any, should be narrow family-combo review rather than broad batch-splitting design.
+
+As of the 2026-06-14 Family Structure Investigation checkpoint, Family Structure Investigation v1 is closed as diagnostics. Broad `Batch Splitting v1` is not approved and is rejected/frozen for now. The reports remain preserved diagnostics, and optional future work is limited to narrow family-combo review such as `housing+other`, `growth+other`, or `labor+other`.
 
 Next Track: Family Rule / Batch Splitting Investigation. Attention Factor v1 showed providers are not clones, but it did not produce control/routing evidence. Recurring `family_rule` and `batch_splitting` findings may indicate the next bottleneck is event structure, family classification, or batch construction rather than provider individuality.
 

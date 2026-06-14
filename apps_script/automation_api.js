@@ -220,6 +220,50 @@ function apiBuildFamilyStructureReport() {
   return apiBuildFamilyStructureReport_();
 }
 
+function apiBuildBatchSplittingCandidates_() {
+  return {
+    status: 'ok',
+    batch_splitting_candidates: buildBatchSplittingCandidates_()
+  };
+}
+
+function apiBuildBatchSplittingCandidates() {
+  return apiBuildBatchSplittingCandidates_();
+}
+
+function apiBuildBatchSplitCounterfactuals_() {
+  return {
+    status: 'ok',
+    batch_split_counterfactuals: buildBatchSplitCounterfactuals_()
+  };
+}
+
+function apiBuildBatchSplitCounterfactuals() {
+  return apiBuildBatchSplitCounterfactuals_();
+}
+
+function apiBuildBatchBaselineCoverageAudit_() {
+  return {
+    status: 'ok',
+    batch_baseline_coverage_audit: buildBatchBaselineCoverageAudit_()
+  };
+}
+
+function apiBuildBatchBaselineCoverageAudit() {
+  return apiBuildBatchBaselineCoverageAudit_();
+}
+
+function apiBuildBatchSplitGroupCounterfactuals_() {
+  return {
+    status: 'ok',
+    batch_split_group_counterfactuals: buildBatchSplitGroupCounterfactuals_()
+  };
+}
+
+function apiBuildBatchSplitGroupCounterfactuals() {
+  return apiBuildBatchSplitGroupCounterfactuals_();
+}
+
 function apiUpsertEventWindow_(params) {
   params = params || {};
 
