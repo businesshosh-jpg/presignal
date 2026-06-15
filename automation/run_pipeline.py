@@ -559,6 +559,170 @@ def _load_prediction_coverage_summary_from_sheet(
     }
 
 
+def _missing_prediction_event_ids_for_provider(
+    sheets_service,
+    spreadsheet_id: str,
+    base_params: Dict[str, Any],
+    provider: str,
+) -> List[str]:
+    from automation.google_clients import get_sheet_values
+
+    target_provider = str(provider or "").strip()
+    if not target_provider:
+        return []
+
+    events = _read_event_rows_for_window(sheets_service, spreadsheet_id, base_params)
+    event_ids = [
+        str(row.get("event_id") or "").strip()
+        for row in events
+        if str(row.get("event_id") or "").strip()
+    ]
+    if not event_ids:
+        return []
+
+    values = get_sheet_values(sheets_service, spreadsheet_id, "Predictions!A:EZ")
+    prediction_rows = _dict_rows_from_sheet_values(values)
+    target_events = set(event_ids)
+    seen = set()
+    for row in prediction_rows:
+        event_id = str(row.get("event_id") or "").strip()
+        ai_name = str(row.get("ai_name") or "").strip()
+        if event_id in target_events and ai_name == target_provider:
+            seen.add(event_id)
+
+    return [event_id for event_id in event_ids if event_id not in seen]
+
+
+def _auto_recover_degraded_provider_by_event_(
+    script_service,
+    script_id: str,
+    sheets_service,
+    spreadsheet_id: str,
+    base_params: Dict[str, Any],
+    provider: str,
+    lock_path: Path = None,
+    log_path: Path = None,
+) -> Dict[str, Any]:
+    from automation.google_clients import run_script_function
+
+    target_provider = str(provider or "").strip()
+    if not target_provider:
+        return {"status": "skipped", "reason": "missing_provider"}
+
+    missing_event_ids = _missing_prediction_event_ids_for_provider(
+        sheets_service,
+        spreadsheet_id,
+        base_params,
+        target_provider,
+    )
+    if not missing_event_ids:
+        coverage = _load_prediction_coverage_summary_from_sheet(
+            sheets_service,
+            spreadsheet_id,
+            base_params,
+            [target_provider],
+        )
+        return {
+            "status": "ok",
+            "provider": target_provider,
+            "attempted_event_ids": [],
+            "recovered_event_ids": [],
+            "failed_event_ids": [],
+            "coverage": coverage,
+        }
+
+    _append_run_log(
+        log_path,
+        "prediction_provider_event_fallback_start",
+        provider=target_provider,
+        missing_event_count=len(missing_event_ids),
+        event_ids=missing_event_ids,
+    )
+    _update_run_lock(
+        lock_path,
+        phase="predictions_event_fallback",
+        degraded_provider=target_provider,
+        degraded_missing_event_count=len(missing_event_ids),
+    )
+
+    recovered_event_ids: List[str] = []
+    failed_event_ids: List[str] = []
+    event_results: List[Dict[str, Any]] = []
+
+    for event_id in missing_event_ids:
+        try:
+            with _RunnerCallTimeout(
+                _runner_call_timeout_sec(),
+                f"apiRunPredictionForEvent provider={target_provider} event_id={event_id}",
+            ):
+                resp = run_script_function(
+                    script_service,
+                    script_id,
+                    "apiRunPredictionForEvent",
+                    [{"event_id": event_id, "providers": [target_provider]}],
+                )
+            recovered_event_ids.append(event_id)
+            event_results.append({
+                "event_id": event_id,
+                "status": "ok",
+                "response": resp,
+            })
+            _append_run_log(
+                log_path,
+                "prediction_provider_event_fallback_ok",
+                provider=target_provider,
+                event_id=event_id,
+            )
+        except Exception as exc:
+            failed_event_ids.append(event_id)
+            event_results.append({
+                "event_id": event_id,
+                "status": "error",
+                "error": str(exc),
+            })
+            _append_run_log(
+                log_path,
+                "prediction_provider_event_fallback_error",
+                provider=target_provider,
+                event_id=event_id,
+                error=str(exc),
+            )
+            break
+
+    coverage = _load_prediction_coverage_summary_from_sheet(
+        sheets_service,
+        spreadsheet_id,
+        base_params,
+        [target_provider],
+    )
+    unresolved_event_ids = _missing_prediction_event_ids_for_provider(
+        sheets_service,
+        spreadsheet_id,
+        base_params,
+        target_provider,
+    )
+    status = "ok" if not unresolved_event_ids else "partial"
+    _append_run_log(
+        log_path,
+        "prediction_provider_event_fallback_complete",
+        provider=target_provider,
+        status=status,
+        recovered_event_count=len(recovered_event_ids),
+        unresolved_event_count=len(unresolved_event_ids),
+        unresolved_event_ids=unresolved_event_ids,
+    )
+    return {
+        "status": status,
+        "provider": target_provider,
+        "attempted_event_ids": missing_event_ids,
+        "recovered_event_ids": recovered_event_ids,
+        "failed_event_ids": failed_event_ids,
+        "unresolved_event_ids": unresolved_event_ids,
+        "coverage": coverage,
+        "event_results": event_results,
+    }
+
+
 def _event_cluster_preflight(
     event_rows: List[Dict[str, Any]],
     provider_count: int,
@@ -1412,10 +1576,28 @@ def _run_prediction_sequence(
             )
             group_runs.append(group)
             if str(group.get("status") or "").lower() == "provider_degraded_timeout":
-                degraded_providers.append({
+                degraded_info = {
                     "provider": provider,
                     "error": group.get("error", ""),
-                })
+                }
+                fallback = _auto_recover_degraded_provider_by_event_(
+                    script_service,
+                    script_id,
+                    sheets_service,
+                    spreadsheet_id,
+                    base_params,
+                    provider,
+                    lock_path=lock_path,
+                    log_path=log_path,
+                )
+                group["event_fallback"] = fallback
+                if str((fallback or {}).get("status") or "").lower() == "ok":
+                    coverage = (fallback or {}).get("coverage") or {}
+                    group["final"] = coverage
+                    group["status"] = str(coverage.get("status") or "ok").lower()
+                else:
+                    degraded_info["event_fallback"] = fallback
+                    degraded_providers.append(degraded_info)
 
         if degraded_providers and not any(group.get("final") for group in group_runs):
             degraded_names = [d.get("provider", "") for d in degraded_providers if d.get("provider")]
