@@ -26,6 +26,21 @@ function apiRunPredictionsWindow(params) {
   return apiRunPredictionsWindow_(params);
 }
 
+function apiRunPredictionForEvent_(params) {
+  params = params || {};
+  var eventId = String(params.event_id || '').trim();
+  if (!eventId) throw new Error('apiRunPredictionForEvent requires event_id.');
+  var providers = _apiNormalizeProviderList_(params.providers);
+  return {
+    status: 'ok',
+    prediction: runPredictionForEventId_(eventId, providers)
+  };
+}
+
+function apiRunPredictionForEvent(params) {
+  return apiRunPredictionForEvent_(params);
+}
+
 function apiFetchActualsWindow_(params) {
   params = params || {};
   var applied = _apiApplyWindowConfig_(params);
@@ -108,6 +123,17 @@ function apiBuildOutcomeDiagnostics_() {
 
 function apiBuildOutcomeDiagnostics() {
   return apiBuildOutcomeDiagnostics_();
+}
+
+function apiBuildActiveDecisionReports_() {
+  return {
+    status: 'ok',
+    active_decision_reports: buildActiveDecisionReports_()
+  };
+}
+
+function apiBuildActiveDecisionReports() {
+  return apiBuildActiveDecisionReports_();
 }
 
 function apiBuildAttentionFactorSummary_() {
@@ -262,6 +288,83 @@ function apiBuildBatchSplitGroupCounterfactuals_() {
 
 function apiBuildBatchSplitGroupCounterfactuals() {
   return apiBuildBatchSplitGroupCounterfactuals_();
+}
+
+function apiBuildEconomicValueAccuracy_() {
+  return {
+    status: 'ok',
+    economic_value_accuracy: buildEconomicValueAccuracy_()
+  };
+}
+
+function apiBuildEconomicValueAccuracy() {
+  return apiBuildEconomicValueAccuracy_();
+}
+
+function apiBuildProviderFamilyEconomicAccuracy_() {
+  return {
+    status: 'ok',
+    provider_family_economic_accuracy: buildProviderFamilyEconomicAccuracy_()
+  };
+}
+
+function apiBuildProviderFamilyEconomicAccuracy() {
+  return apiBuildProviderFamilyEconomicAccuracy_();
+}
+
+function apiBuildEconomicToMarketTranslationErrors_() {
+  return {
+    status: 'ok',
+    economic_to_market_translation_errors: buildEconomicToMarketTranslationErrors_()
+  };
+}
+
+function apiBuildEconomicToMarketTranslationErrors() {
+  return apiBuildEconomicToMarketTranslationErrors_();
+}
+
+function apiBuildMarketSensitivityFilterCandidates_() {
+  return {
+    status: 'ok',
+    market_sensitivity_filter_candidates: buildMarketSensitivityFilterCandidates_()
+  };
+}
+
+function apiBuildMarketSensitivityFilterCandidates() {
+  return apiBuildMarketSensitivityFilterCandidates_();
+}
+
+function apiBuildMarketSensitivityFilterSummary_() {
+  return {
+    status: 'ok',
+    market_sensitivity_filter_summary: buildMarketSensitivityFilterSummary_()
+  };
+}
+
+function apiBuildMarketSensitivityFilterSummary() {
+  return apiBuildMarketSensitivityFilterSummary_();
+}
+
+function apiBuildMarketSensitivityNoSignalCounterfactuals_() {
+  return {
+    status: 'ok',
+    market_sensitivity_no_signal_counterfactuals: buildMarketSensitivityNoSignalCounterfactuals_()
+  };
+}
+
+function apiBuildMarketSensitivityNoSignalCounterfactuals() {
+  return apiBuildMarketSensitivityNoSignalCounterfactuals_();
+}
+
+function apiBuildInflationNoSignalReview_() {
+  return {
+    status: 'ok',
+    inflation_no_signal_review: buildInflationNoSignalReview_()
+  };
+}
+
+function apiBuildInflationNoSignalReview() {
+  return apiBuildInflationNoSignalReview_();
 }
 
 function apiUpsertEventWindow_(params) {

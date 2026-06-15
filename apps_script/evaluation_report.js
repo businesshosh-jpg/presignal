@@ -164,6 +164,38 @@ function menuBuildOutcomeDiagnostics_() {
   }
 }
 
+function menuBuildActiveDecisionReports_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildActiveDecisionReports_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Active decision reports -> Build active stack', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast(
+      'Builders=' + ((res.included_builders || []).length || 0) +
+      ' | Sheets=' + (res.total_sheets_written || 0),
+      'Active Decision Reports',
+      8
+    );
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Active decision reports -> Build active stack failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function menuBuildAttentionFactorSummary_() {
   var ss = SpreadsheetApp.getActive();
   var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
@@ -583,6 +615,195 @@ function menuBuildBatchSplitGroupCounterfactuals_() {
   }
 }
 
+function menuBuildEconomicValueAccuracy_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildEconomicValueAccuracy_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Economic value accuracy -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Economic value accuracy rows=' + (res.rows_written || 0), 'Economic Value Accuracy', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Economic value accuracy -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildProviderFamilyEconomicAccuracy_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildProviderFamilyEconomicAccuracy_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Provider x family economic accuracy -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Provider x family economic rows=' + (res.rows_written || 0), 'Provider x Family Economic Accuracy', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Provider x family economic accuracy -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildEconomicToMarketTranslationErrors_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildEconomicToMarketTranslationErrors_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Economic to market translation errors -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Economic to market translation rows=' + (res.rows_written || 0), 'Economic to Market Translation Errors', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Economic to market translation errors -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildMarketSensitivityFilterCandidates_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildMarketSensitivityFilterCandidates_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Market sensitivity filter candidates -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Market sensitivity candidates=' + (res.rows_written || 0), 'Market Sensitivity Filter Candidates', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Market sensitivity filter candidates -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildMarketSensitivityFilterSummary_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildMarketSensitivityFilterSummary_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Market sensitivity filter summary -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Market sensitivity summary=' + (res.rows_written || 0), 'Market Sensitivity Filter Summary', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Market sensitivity filter summary -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildMarketSensitivityNoSignalCounterfactuals_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildMarketSensitivityNoSignalCounterfactuals_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Market sensitivity no-signal counterfactuals -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Market sensitivity no-signal counterfactuals=' + (res.rows_written || 0), 'Market Sensitivity No-Signal Counterfactuals', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Market sensitivity no-signal counterfactuals -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildInflationNoSignalReview_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildInflationNoSignalReview_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Inflation no-signal review -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Inflation no-signal review=' + (res.rows_written || 0), 'Inflation No-Signal Review', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Inflation no-signal review -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function buildEvaluationSheets_() {
   var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
   if (!predSheet) throw new Error('Predictions sheet missing');
@@ -644,6 +865,71 @@ function buildEvaluationSheets_() {
     summary_written: summaryOut.length,
     batch_compare_written: batchCompareOut.length,
     scenario_written: scenarioOut.length
+  };
+}
+
+function buildActiveDecisionReports_() {
+  var startedTs = new Date().toISOString();
+  var steps = [
+    { name: 'buildEvaluationSheets_', fn: buildEvaluationSheets_, outputs: ['Evaluation_Rows', 'Evaluation_Summary', 'Evaluation_BatchCompare', 'Evaluation_Scenario'] },
+    { name: 'buildOutcomeLedger_', fn: buildOutcomeLedger_, outputs: ['Outcome_Ledger'] },
+    { name: 'buildOutcomeSummaries_', fn: buildOutcomeSummaries_, outputs: ['Outcome_Summary_ProviderFamily', 'Outcome_Summary_Convergence', 'Outcome_Summary_Bucket'] },
+    { name: 'buildOutcomeDiagnostics_', fn: buildOutcomeDiagnostics_, outputs: ['Outcome_Diagnostics'] },
+    { name: 'buildEconomicValueAccuracy_', fn: buildEconomicValueAccuracy_, outputs: ['Economic_Value_Accuracy'] },
+    { name: 'buildProviderFamilyEconomicAccuracy_', fn: buildProviderFamilyEconomicAccuracy_, outputs: ['Provider_Family_Economic_Accuracy'] },
+    { name: 'buildEconomicToMarketTranslationErrors_', fn: buildEconomicToMarketTranslationErrors_, outputs: ['Economic_To_Market_Translation_Errors'] },
+    { name: 'buildMarketSensitivityFilterCandidates_', fn: buildMarketSensitivityFilterCandidates_, outputs: ['Market_Sensitivity_Filter_Candidates'], dependency_only: true },
+    { name: 'buildMarketSensitivityFilterSummary_', fn: buildMarketSensitivityFilterSummary_, outputs: ['Market_Sensitivity_Filter_Summary'] },
+    { name: 'buildMarketSensitivityNoSignalCounterfactuals_', fn: buildMarketSensitivityNoSignalCounterfactuals_, outputs: ['Market_Sensitivity_NoSignal_Counterfactuals'] },
+    { name: 'buildInflationNoSignalReview_', fn: buildInflationNoSignalReview_, outputs: ['Inflation_NoSignal_Review'] }
+  ];
+  var excludedBuilders = [
+    'buildAttentionFactorSummary_',
+    'buildProviderCharacterDiagnostics_',
+    'buildAttentionProviderIndividuality_',
+    'buildAttentionEvidenceReport_',
+    'buildAttentionBlockStability_',
+    'buildAttentionDisagreementReview_',
+    'buildAttentionDisagreementSummary_',
+    'buildAttentionPhase3Candidates_',
+    'buildAttentionShadowExperiments_',
+    'buildFamilyStructureReport_',
+    'buildBatchSplittingCandidates_',
+    'buildBatchSplitCounterfactuals_',
+    'buildBatchBaselineCoverageAudit_',
+    'buildBatchSplitGroupCounterfactuals_'
+  ];
+
+  var results = [];
+  var totalSheetsWritten = 0;
+  for (var i = 0; i < steps.length; i++) {
+    var step = steps[i];
+    var res = step.fn();
+    results.push({
+      builder: step.name,
+      outputs: step.outputs,
+      dependency_only: !!step.dependency_only,
+      result: res
+    });
+    totalSheetsWritten += (step.outputs || []).length;
+  }
+
+  return {
+    status: 'ok',
+    started_ts: startedTs,
+    ended_ts: new Date().toISOString(),
+    active_decision_path: [
+      'Economic_Value_Accuracy',
+      'Provider_Family_Economic_Accuracy',
+      'Economic_To_Market_Translation_Errors',
+      'Market_Sensitivity_Filter_Summary',
+      'Market_Sensitivity_NoSignal_Counterfactuals',
+      'Inflation_NoSignal_Review'
+    ],
+    included_builders: steps.map(function(step) { return step.name; }),
+    excluded_builders: excludedBuilders,
+    total_sheets_written: totalSheetsWritten,
+    results: results
   };
 }
 
@@ -774,6 +1060,34 @@ function getOrCreateBatchSplitGroupCounterfactualsSheet_() {
   return _getOrCreateSheet_('Batch_Split_Group_Counterfactuals');
 }
 
+function getOrCreateEconomicValueAccuracySheet_() {
+  return _getOrCreateSheet_('Economic_Value_Accuracy');
+}
+
+function getOrCreateProviderFamilyEconomicAccuracySheet_() {
+  return _getOrCreateSheet_('Provider_Family_Economic_Accuracy');
+}
+
+function getOrCreateEconomicToMarketTranslationErrorsSheet_() {
+  return _getOrCreateSheet_('Economic_To_Market_Translation_Errors');
+}
+
+function getOrCreateMarketSensitivityFilterCandidatesSheet_() {
+  return _getOrCreateSheet_('Market_Sensitivity_Filter_Candidates');
+}
+
+function getOrCreateMarketSensitivityFilterSummarySheet_() {
+  return _getOrCreateSheet_('Market_Sensitivity_Filter_Summary');
+}
+
+function getOrCreateMarketSensitivityNoSignalCounterfactualsSheet_() {
+  return _getOrCreateSheet_('Market_Sensitivity_NoSignal_Counterfactuals');
+}
+
+function getOrCreateInflationNoSignalReviewSheet_() {
+  return _getOrCreateSheet_('Inflation_NoSignal_Review');
+}
+
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
@@ -836,6 +1150,34 @@ function ensureBatchBaselineCoverageAuditHeaders_(sheet) {
 
 function ensureBatchSplitGroupCounterfactualsHeaders_(sheet) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _batchSplitGroupCounterfactualsHeaders_());
+}
+
+function ensureEconomicValueAccuracyHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _economicValueAccuracyHeaders_());
+}
+
+function ensureProviderFamilyEconomicAccuracyHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _providerFamilyEconomicAccuracyHeaders_());
+}
+
+function ensureEconomicToMarketTranslationErrorsHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _economicToMarketTranslationErrorsHeaders_());
+}
+
+function ensureMarketSensitivityFilterCandidatesHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _marketSensitivityFilterCandidatesHeaders_());
+}
+
+function ensureMarketSensitivityFilterSummaryHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _marketSensitivityFilterSummaryHeaders_());
+}
+
+function ensureMarketSensitivityNoSignalCounterfactualsHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _marketSensitivityNoSignalCounterfactualsHeaders_());
+}
+
+function ensureInflationNoSignalReviewHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _inflationNoSignalReviewHeaders_());
 }
 
 function buildOutcomeSummaries_() {
@@ -1386,6 +1728,180 @@ function buildBatchSplitGroupCounterfactuals_() {
   };
 }
 
+function buildEconomicValueAccuracy_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
+  if (!predSheet) throw new Error('Predictions sheet missing');
+
+  var predHeaders = (typeof _ensurePredHeaders_ === 'function') ? _ensurePredHeaders_(predSheet) : getHeaderNames(predSheet);
+  var predIdx = _headerIndexMap_(predHeaders);
+  var predLastRow = predSheet.getLastRow();
+  var predLastCol = predSheet.getLastColumn();
+  var predRows = (predLastRow >= 2 && predLastCol >= 1)
+    ? predSheet.getRange(2, 1, predLastRow - 1, predLastCol).getValues()
+    : [];
+
+  var eventSheet = getSheet((CFG && CFG.SHEET_EVENT) ? CFG.SHEET_EVENT : 'Event');
+  var eventSource = _economicValueAccuracyEventSource_(eventSheet, warnings);
+  var deduped = _economicValueAccuracyDedupedPredictions_(predRows, predIdx, warnings);
+  var caseObjects = _economicValueAccuracyCaseObjects_(deduped, predIdx, eventSource, generatedTs, warnings);
+
+  var headers = _economicValueAccuracyHeaders_();
+  var rowObjects = []
+    .concat(_economicValueAccuracySummaryRows_(caseObjects, generatedTs))
+    .concat(_economicValueAccuracyProviderSummaryRows_(caseObjects, generatedTs))
+    .concat(_economicValueAccuracyFamilySummaryRows_(caseObjects, generatedTs))
+    .concat(_economicValueAccuracyProviderFamilyRows_(caseObjects, generatedTs))
+    .concat(_economicValueAccuracyCaseRows_(caseObjects));
+  var rowsOut = _economicValueAccuracyRowsToArrays_(headers, rowObjects);
+
+  _sortEconomicValueAccuracyRows_(headers, rowsOut);
+  var sheet = getOrCreateEconomicValueAccuracySheet_();
+  var actualHeaders = ensureEconomicValueAccuracyHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    economic_value_accuracy_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    case_rows_written: caseObjects.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildProviderFamilyEconomicAccuracy_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var source = _readFamilyStructureSource_('Economic_Value_Accuracy', warnings);
+  var headers = _providerFamilyEconomicAccuracyHeaders_();
+  var rowsOut = _buildProviderFamilyEconomicAccuracyRows_(generatedTs, source, warnings);
+  _sortProviderFamilyEconomicAccuracyRows_(headers, rowsOut);
+  var sheet = getOrCreateProviderFamilyEconomicAccuracySheet_();
+  var actualHeaders = ensureProviderFamilyEconomicAccuracyHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    provider_family_economic_accuracy_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildEconomicToMarketTranslationErrors_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var economic = _readFamilyStructureSource_('Economic_Value_Accuracy', warnings);
+  var providerFamily = _readFamilyStructureSource_('Provider_Family_Economic_Accuracy', warnings);
+  var headers = _economicToMarketTranslationErrorsHeaders_();
+  var rowsOut = _buildEconomicToMarketTranslationErrorsRows_(generatedTs, economic, providerFamily, warnings);
+  _sortEconomicToMarketTranslationErrorsRows_(headers, rowsOut);
+  var sheet = getOrCreateEconomicToMarketTranslationErrorsSheet_();
+  var actualHeaders = ensureEconomicToMarketTranslationErrorsHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    economic_to_market_translation_errors_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildMarketSensitivityFilterCandidates_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var translation = _readFamilyStructureSource_('Economic_To_Market_Translation_Errors', warnings);
+  var providerFamily = _readFamilyStructureSource_('Provider_Family_Economic_Accuracy', warnings);
+  var headers = _marketSensitivityFilterCandidatesHeaders_();
+  var rowsOut = _buildMarketSensitivityFilterCandidatesRows_(generatedTs, translation, providerFamily, warnings);
+  _sortMarketSensitivityFilterCandidatesRows_(headers, rowsOut);
+  var sheet = getOrCreateMarketSensitivityFilterCandidatesSheet_();
+  var actualHeaders = ensureMarketSensitivityFilterCandidatesHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    market_sensitivity_filter_candidates_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildMarketSensitivityFilterSummary_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var candidates = _readFamilyStructureSource_('Market_Sensitivity_Filter_Candidates', warnings);
+  var headers = _marketSensitivityFilterSummaryHeaders_();
+  var rowsOut = _buildMarketSensitivityFilterSummaryRows_(generatedTs, candidates, warnings);
+  _sortMarketSensitivityFilterSummaryRows_(headers, rowsOut);
+  var sheet = getOrCreateMarketSensitivityFilterSummarySheet_();
+  var actualHeaders = ensureMarketSensitivityFilterSummaryHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    market_sensitivity_filter_summary_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildMarketSensitivityNoSignalCounterfactuals_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var summary = _readFamilyStructureSource_('Market_Sensitivity_Filter_Summary', warnings);
+  var economic = _readFamilyStructureSource_('Economic_Value_Accuracy', warnings);
+  var headers = _marketSensitivityNoSignalCounterfactualsHeaders_();
+  var rowsOut = _buildMarketSensitivityNoSignalCounterfactualRows_(generatedTs, summary, economic, warnings);
+  _sortMarketSensitivityNoSignalCounterfactualRows_(headers, rowsOut);
+  var sheet = getOrCreateMarketSensitivityNoSignalCounterfactualsSheet_();
+  var actualHeaders = ensureMarketSensitivityNoSignalCounterfactualsHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    market_sensitivity_no_signal_counterfactuals_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildInflationNoSignalReview_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var counterfactuals = _readFamilyStructureSource_('Market_Sensitivity_NoSignal_Counterfactuals', warnings);
+  var translation = _readFamilyStructureSource_('Economic_To_Market_Translation_Errors', warnings);
+  var headers = _inflationNoSignalReviewHeaders_();
+  var rowsOut = _buildInflationNoSignalReviewRows_(generatedTs, counterfactuals, translation, warnings);
+  _sortInflationNoSignalReviewRows_(headers, rowsOut);
+  var sheet = getOrCreateInflationNoSignalReviewSheet_();
+  var actualHeaders = ensureInflationNoSignalReviewHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    inflation_no_signal_review_sheet: sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
 function _outcomeDiagnosticsHeaders_() {
   return [
     'generated_ts',
@@ -1694,6 +2210,249 @@ function _batchSplitGroupCounterfactualsHeaders_() {
     'evidence_strength',
     'activation_status',
     'activation_blocker',
+    'decision_support_note'
+  ];
+}
+
+function _economicValueAccuracyHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'summary_scope',
+    'summary_key',
+    'release_date',
+    'generated_note',
+    'total_prediction_rows',
+    'numeric_candidate_rows',
+    'value_scored_rows',
+    'value_dir_ok_count',
+    'value_dir_ok_rate',
+    'market_scored_rows',
+    'mr_dir_ok_rate',
+    'both_scored_rows',
+    'economic_value_correct_market_wrong_count',
+    'economic_value_wrong_market_correct_count',
+    'both_correct_count',
+    'both_wrong_count',
+    'summary_note',
+    'ai_name',
+    'family',
+    'rows',
+    'avg_value_error_abs',
+    'avg_value_error_pct',
+    'economic_vs_market_gap',
+    'diagnostic_label',
+    'event_id',
+    'batch_id',
+    'type',
+    'ai_model',
+    'created_ts',
+    'release_ts',
+    'indicator_name',
+    'country',
+    'genre',
+    'importance',
+    'consensus_value',
+    'prev_revision',
+    'ai_forecast_value',
+    'released_value',
+    'actual_surprise_dir',
+    'ai_value_dir',
+    'value_dir_ok',
+    'value_error_abs',
+    'value_error_pct',
+    'value_scored_flag',
+    'value_score_note',
+    'qualitative_only',
+    'qualitative_result',
+    'attention_primary_factor',
+    'attention_factors',
+    'mr_pred_dir',
+    'mr_real_dir',
+    'mr_dir_ok',
+    'mr_strength_ok',
+    'mr_sustain_ok',
+    'overall_ok',
+    'comparison_label',
+    'decision_support_note'
+  ];
+}
+
+function _providerFamilyEconomicAccuracyHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'summary_key',
+    'ai_name',
+    'family',
+    'rows',
+    'value_scored_rows',
+    'value_dir_ok_count',
+    'value_dir_ok_rate',
+    'market_scored_rows',
+    'mr_dir_ok_rate',
+    'economic_vs_market_gap',
+    'avg_value_error_abs',
+    'avg_value_error_pct',
+    'economic_value_correct_market_wrong_count',
+    'economic_value_wrong_market_correct_count',
+    'both_correct_count',
+    'both_wrong_count',
+    'rank_within_provider',
+    'rank_within_family',
+    'provider_best_family_flag',
+    'family_best_provider_flag',
+    'sample_status',
+    'diagnostic_label',
+    'recommendation_label',
+    'evidence_note',
+    'decision_support_note'
+  ];
+}
+
+function _economicToMarketTranslationErrorsHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'summary_key',
+    'ai_name',
+    'family',
+    'importance',
+    'attention_primary_factor',
+    'translation_focus_flag',
+    'rows',
+    'market_wrong_rows',
+    'market_wrong_rate',
+    'opposite_dir_count',
+    'flat_when_directional_count',
+    'directional_when_expected_flat_count',
+    'strength_failed_count',
+    'sustain_failed_count',
+    'overall_failed_count',
+    'top_failure_mode',
+    'diagnostic_label',
+    'recommendation_label',
+    'event_id',
+    'batch_id',
+    'type',
+    'release_ts',
+    'indicator_name',
+    'country',
+    'actual_surprise_dir',
+    'ai_value_dir',
+    'mr_pred_dir',
+    'mr_real_dir',
+    'mr_dir_ok',
+    'mr_strength_ok',
+    'mr_sustain_ok',
+    'overall_ok',
+    'comparison_label',
+    'failure_mode',
+    'evidence_note',
+    'decision_support_note'
+  ];
+}
+
+function _marketSensitivityFilterCandidatesHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'candidate_key',
+    'candidate_rule_label',
+    'ai_name',
+    'family',
+    'indicator_name',
+    'importance',
+    'attention_primary_factor',
+    'translation_focus_flag',
+    'rows',
+    'directional_when_expected_flat_count',
+    'flat_market_failure_rate',
+    'opposite_direction_count',
+    'other_failure_count',
+    'sample_status',
+    'diagnostic_label',
+    'recommendation_label',
+    'candidate_note',
+    'decision_support_note'
+  ];
+}
+
+function _marketSensitivityFilterSummaryHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'summary_scope',
+    'summary_key',
+    'family',
+    'ai_name',
+    'importance',
+    'rows',
+    'flat_failure_count',
+    'flat_failure_rate',
+    'opposite_direction_count',
+    'other_failure_count',
+    'candidate_count',
+    'top_rule_label',
+    'sample_status',
+    'diagnostic_label',
+    'recommendation_label',
+    'summary_note',
+    'decision_support_note'
+  ];
+}
+
+function _marketSensitivityNoSignalCounterfactualsHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'counterfactual_key',
+    'scope',
+    'scope_key',
+    'family',
+    'ai_name',
+    'rows_considered',
+    'baseline_miss_count',
+    'baseline_correct_count',
+    'would_suppress_count',
+    'misses_avoided_count',
+    'correct_calls_lost_count',
+    'net_miss_minus_loss_delta',
+    'miss_avoid_rate',
+    'correct_loss_rate',
+    'counterfactual_label',
+    'activation_status',
+    'activation_blocker',
+    'summary_note',
+    'decision_support_note'
+  ];
+}
+
+function _inflationNoSignalReviewHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'review_key',
+    'scope',
+    'scope_key',
+    'family',
+    'ai_name',
+    'importance',
+    'failure_mode',
+    'rows_considered',
+    'baseline_miss_count',
+    'baseline_correct_count',
+    'would_suppress_count',
+    'misses_avoided_count',
+    'correct_calls_lost_count',
+    'net_miss_minus_loss_delta',
+    'miss_avoid_rate',
+    'correct_loss_rate',
+    'net_benefit_rate',
+    'candidate_label',
+    'review_status',
+    'stability_note',
+    'summary_note',
     'decision_support_note'
   ];
 }
@@ -7994,6 +8753,1658 @@ function _batchSplitGroupActivationBlocker_(label) {
   return 'insufficient_group_or_batch_data';
 }
 
+function _economicValueAccuracyEventSource_(sheet, warnings) {
+  if (!sheet) {
+    if (warnings) warnings.push('missing_source_sheet:Event');
+    return { rows: [], idx: {}, by_event_id: {} };
+  }
+  var headers = getHeaderNames(sheet);
+  var idx = _headerIndexMap_(headers);
+  var lastRow = sheet.getLastRow();
+  var lastCol = sheet.getLastColumn();
+  var rows = (lastRow >= 2 && lastCol >= 1)
+    ? sheet.getRange(2, 1, lastRow - 1, lastCol).getValues()
+    : [];
+  var byEventId = {};
+  for (var i = 0; i < rows.length; i++) {
+    var eventId = String(_predValue_(rows[i], idx, 'event_id') || '').trim();
+    if (!eventId) continue;
+    byEventId[eventId] = rows[i];
+  }
+  return { rows: rows, idx: idx, by_event_id: byEventId };
+}
+
+function _economicValueAccuracyDedupedPredictions_(rows, predIdx, warnings) {
+  var latestByKey = {};
+  var order = [];
+  for (var i = 0; i < (rows || []).length; i++) {
+    var row = rows[i];
+    var eventId = String(_predValue_(row, predIdx, 'event_id') || '').trim();
+    var aiName = String(_predValue_(row, predIdx, 'ai_name') || '').trim();
+    if (!eventId || !aiName) {
+      if (warnings) warnings.push('skipped_prediction_missing_identity');
+      continue;
+    }
+    var key = eventId + '|' + aiName;
+    if (!latestByKey.hasOwnProperty(key)) {
+      latestByKey[key] = row;
+      order.push(key);
+      continue;
+    }
+    if (_economicValueAccuracyPredictionIsNewer_(row, latestByKey[key], predIdx)) latestByKey[key] = row;
+  }
+  var out = [];
+  for (var j = 0; j < order.length; j++) out.push(latestByKey[order[j]]);
+  return out;
+}
+
+function _economicValueAccuracyPredictionIsNewer_(candidate, existing, predIdx) {
+  var candidateCreatedMs = _evaluationDateMs_(_predValue_(candidate, predIdx, 'created_ts'));
+  var existingCreatedMs = _evaluationDateMs_(_predValue_(existing, predIdx, 'created_ts'));
+  if (candidateCreatedMs !== existingCreatedMs) return candidateCreatedMs > existingCreatedMs;
+  var candidateEvalMs = _evaluationDateMs_(_predValue_(candidate, predIdx, 'eval_ts'));
+  var existingEvalMs = _evaluationDateMs_(_predValue_(existing, predIdx, 'eval_ts'));
+  if (candidateEvalMs !== existingEvalMs) return candidateEvalMs > existingEvalMs;
+  return true;
+}
+
+function _economicValueAccuracyCaseObjects_(rows, predIdx, eventSource, generatedTs, warnings) {
+  var out = [];
+  for (var i = 0; i < (rows || []).length; i++) {
+    out.push(_economicValueAccuracyCaseObject_(rows[i], predIdx, eventSource, generatedTs, warnings));
+  }
+  return out;
+}
+
+function _economicValueAccuracyCaseObject_(row, predIdx, eventSource, generatedTs, warnings) {
+  var eventId = String(_predValue_(row, predIdx, 'event_id') || '').trim();
+  var eventRow = eventSource && eventSource.by_event_id ? eventSource.by_event_id[eventId] : null;
+  var eventIdx = eventSource ? eventSource.idx : {};
+  var type = String(_predValue_(row, predIdx, 'type') || '').trim().toLowerCase();
+  var releaseTs = String(_predValue_(row, predIdx, 'release_ts') || _predValue_(eventRow || [], eventIdx, 'release_ts') || '').trim();
+  var consensusValue = _economicValueAccuracyPreferredValue_(row, predIdx, eventRow, eventIdx, 'consensus_value');
+  var prevRevision = _economicValueAccuracyPreferredValue_(row, predIdx, eventRow, eventIdx, 'prev_revision');
+  var releasedValue = (type === 'batch')
+    ? null
+    : _economicValueAccuracyPreferredValue_(row, predIdx, eventRow, eventIdx, 'released_value');
+  var aiForecastValue = _numOrNull_(_predValue_(row, predIdx, 'ai_forecast_value'));
+  var qualitativeOnly = _economicValueAccuracyIsTruthy_(_predValue_(row, predIdx, 'qualitative_only'));
+  var family = deriveOutcomeFamily_(
+    String(_predValue_(row, predIdx, 'indicator_name') || _predValue_(eventRow || [], eventIdx, 'indicator_name') || ''),
+    String(_predValue_(row, predIdx, 'genre') || '')
+  ) || String(_predValue_(row, predIdx, 'genre') || '').trim() || 'other';
+  var actualSurprise = _economicValueAccuracyDirection_(releasedValue, consensusValue, prevRevision);
+  var aiValueDir = _economicValueAccuracyAiDirection_(row, predIdx, aiForecastValue, consensusValue, prevRevision, qualitativeOnly);
+  var valueErrorAbs = (releasedValue != null && aiForecastValue != null) ? _round4_(Math.abs(aiForecastValue - releasedValue)) : '';
+  var valueErrorPct = _economicValueAccuracyPctError_(releasedValue, aiForecastValue);
+  var mrScored = _economicValueAccuracyMarketScored_(row, predIdx);
+  var mrDirOk = _economicValueAccuracyBoolCell_(_predValue_(row, predIdx, 'mr_dir_ok'));
+  var valueScore = _economicValueAccuracyValueScore_(type, qualitativeOnly, releasedValue, aiForecastValue, actualSurprise, aiValueDir);
+  return {
+    generated_ts: generatedTs,
+    row_type: 'case',
+    summary_scope: '',
+    summary_key: '',
+    release_date: releaseTs ? releaseTs.slice(0, 10) : '',
+    generated_note: '',
+    total_prediction_rows: '',
+    numeric_candidate_rows: '',
+    value_scored_rows: '',
+    value_dir_ok_count: '',
+    value_dir_ok_rate: '',
+    market_scored_rows: '',
+    mr_dir_ok_rate: '',
+    both_scored_rows: '',
+    economic_value_correct_market_wrong_count: '',
+    economic_value_wrong_market_correct_count: '',
+    both_correct_count: '',
+    both_wrong_count: '',
+    summary_note: '',
+    ai_name: String(_predValue_(row, predIdx, 'ai_name') || '').trim(),
+    family: family,
+    rows: '',
+    avg_value_error_abs: '',
+    avg_value_error_pct: '',
+    economic_vs_market_gap: '',
+    diagnostic_label: _economicValueAccuracyCaseLabel_(valueScore, mrScored, mrDirOk),
+    event_id: eventId,
+    batch_id: String(_predValue_(row, predIdx, 'batch_id') || '').trim(),
+    type: String(_predValue_(row, predIdx, 'type') || '').trim(),
+    ai_model: String(_predValue_(row, predIdx, 'ai_model') || '').trim(),
+    created_ts: String(_predValue_(row, predIdx, 'created_ts') || '').trim(),
+    release_ts: releaseTs,
+    indicator_name: String(_predValue_(row, predIdx, 'indicator_name') || _predValue_(eventRow || [], eventIdx, 'indicator_name') || '').trim(),
+    country: String(_predValue_(row, predIdx, 'country') || _predValue_(eventRow || [], eventIdx, 'country') || '').trim(),
+    genre: String(_predValue_(row, predIdx, 'genre') || '').trim(),
+    importance: String(_predValue_(row, predIdx, 'importance') || '').trim(),
+    consensus_value: consensusValue == null ? '' : consensusValue,
+    prev_revision: prevRevision == null ? '' : prevRevision,
+    ai_forecast_value: aiForecastValue == null ? '' : aiForecastValue,
+    released_value: releasedValue == null ? '' : releasedValue,
+    actual_surprise_dir: actualSurprise.dir,
+    ai_value_dir: aiValueDir.dir,
+    value_dir_ok: valueScore.value_dir_ok,
+    value_error_abs: valueErrorAbs,
+    value_error_pct: valueErrorPct,
+    value_scored_flag: valueScore.value_scored_flag,
+    value_score_note: valueScore.note,
+    qualitative_only: qualitativeOnly ? 'TRUE' : 'FALSE',
+    qualitative_result: String(_predValue_(row, predIdx, 'qualitative_result') || '').trim(),
+    attention_primary_factor: String(_predValue_(row, predIdx, 'attention_primary_factor') || '').trim(),
+    attention_factors: String(_predValue_(row, predIdx, 'attention_factors') || '').trim(),
+    mr_pred_dir: String(_predValue_(row, predIdx, 'mr_pred_dir') || '').trim(),
+    mr_real_dir: String(_predValue_(row, predIdx, 'mr_real_dir') || '').trim(),
+    mr_dir_ok: mrDirOk === '' ? '' : mrDirOk,
+    mr_strength_ok: _economicValueAccuracyBoolCell_(_predValue_(row, predIdx, 'mr_strength_ok')),
+    mr_sustain_ok: _economicValueAccuracyBoolCell_(_predValue_(row, predIdx, 'mr_sustain_ok')),
+    overall_ok: _economicValueAccuracyBoolCell_(_predValue_(row, predIdx, 'overall_ok')),
+    comparison_label: _economicValueAccuracyComparisonLabel_(valueScore.value_dir_ok, mrScored, mrDirOk),
+    decision_support_note: 'Economic Value Accuracy is diagnostic-only and independent from market reaction scoring. No trading advice.'
+  };
+}
+
+function _economicValueAccuracyPreferredValue_(predRow, predIdx, eventRow, eventIdx, key) {
+  var predValue = _numOrNull_(_predValue_(predRow, predIdx, key));
+  if (predValue != null) return predValue;
+  return _numOrNull_(_predValue_(eventRow || [], eventIdx || {}, key));
+}
+
+function _economicValueAccuracyDirection_(value, consensusValue, prevRevision) {
+  var ref = consensusValue != null ? consensusValue : prevRevision;
+  var refSource = consensusValue != null ? 'consensus_value' : (prevRevision != null ? 'prev_revision' : '');
+  if (value == null || ref == null) return { dir: 'unknown', ref_source: refSource, ref_value: ref };
+  var delta = value - ref;
+  return {
+    dir: _economicValueAccuracyInlineDir_(delta, ref, value),
+    ref_source: refSource,
+    ref_value: ref
+  };
+}
+
+function _economicValueAccuracyAiDirection_(row, predIdx, aiForecastValue, consensusValue, prevRevision, qualitativeOnly) {
+  var ref = consensusValue != null ? consensusValue : prevRevision;
+  if (aiForecastValue != null && ref != null) {
+    return { dir: _economicValueAccuracyInlineDir_(aiForecastValue - ref, ref, aiForecastValue), method: 'numeric_forecast' };
+  }
+  if (!qualitativeOnly) return { dir: 'unknown', method: 'missing_numeric_forecast' };
+  var qual = _aggregateEconomicBucket_(_predValue_(row, predIdx, 'qualitative_result'));
+  if (qual === 'stronger') return { dir: 'above', method: 'qualitative_result' };
+  if (qual === 'weaker') return { dir: 'below', method: 'qualitative_result' };
+  if (qual === 'inline') return { dir: 'inline', method: 'qualitative_result' };
+  return { dir: 'unknown', method: 'qualitative_result_unknown' };
+}
+
+function _economicValueAccuracyInlineDir_(delta, referenceValue, actualValue) {
+  var tol = _economicValueAccuracyInlineTolerance_(referenceValue, actualValue);
+  if (Math.abs(delta) <= tol) return 'inline';
+  return delta > 0 ? 'above' : 'below';
+}
+
+function _economicValueAccuracyInlineTolerance_(referenceValue, actualValue) {
+  var ref = Math.abs(Number(referenceValue || 0));
+  var val = Math.abs(Number(actualValue || 0));
+  var scale = Math.max(ref, val, 1);
+  return Math.max(1e-9, scale * 0.001);
+}
+
+function _economicValueAccuracyPctError_(releasedValue, aiForecastValue) {
+  if (releasedValue == null || aiForecastValue == null) return '';
+  var base = Math.abs(releasedValue);
+  if (!(base > 1e-9)) return '';
+  return _round4_(Math.abs(aiForecastValue - releasedValue) / base);
+}
+
+function _economicValueAccuracyIsTruthy_(value) {
+  var s = String(value === null || value === undefined ? '' : value).trim().toLowerCase();
+  return s === 'true' || s === '1' || s === 'yes';
+}
+
+function _economicValueAccuracyBoolCell_(value) {
+  if (_isTrueCell_(value)) return 'TRUE';
+  var s = String(value === null || value === undefined ? '' : value).trim();
+  if (!s) return '';
+  if (s.toLowerCase() === 'false') return 'FALSE';
+  return '';
+}
+
+function _economicValueAccuracyMarketScored_(row, predIdx) {
+  var realDir = String(_predValue_(row, predIdx, 'mr_real_dir') || '').trim().toLowerCase();
+  if (realDir === 'up' || realDir === 'down' || realDir === 'flat') return true;
+  return _predValue_(row, predIdx, 'mr_dir_ok') !== '';
+}
+
+function _economicValueAccuracyValueScore_(type, qualitativeOnly, releasedValue, aiForecastValue, actualSurprise, aiValueDir) {
+  if (String(type || '').toLowerCase() === 'batch') {
+    return { value_dir_ok: '', value_scored_flag: 'FALSE', note: 'batch_not_value_scored' };
+  }
+  if (qualitativeOnly && aiForecastValue == null) {
+    return { value_dir_ok: '', value_scored_flag: 'FALSE', note: 'qualitative_only_row' };
+  }
+  if (releasedValue == null) {
+    return { value_dir_ok: '', value_scored_flag: 'FALSE', note: 'missing_released_value' };
+  }
+  if (actualSurprise.ref_value == null) {
+    return { value_dir_ok: '', value_scored_flag: 'FALSE', note: 'missing_consensus_and_prev_revision' };
+  }
+  if (actualSurprise.dir === 'unknown') {
+    return { value_dir_ok: '', value_scored_flag: 'FALSE', note: 'actual_surprise_unknown' };
+  }
+  if (aiValueDir.dir === 'unknown') {
+    return { value_dir_ok: '', value_scored_flag: 'FALSE', note: 'ai_value_dir_unknown' };
+  }
+  return {
+    value_dir_ok: aiValueDir.dir === actualSurprise.dir ? 'TRUE' : 'FALSE',
+    value_scored_flag: 'TRUE',
+    note: 'scored_independent_of_market_reaction'
+  };
+}
+
+function _economicValueAccuracyComparisonLabel_(valueDirOk, mrScored, mrDirOk) {
+  var valueKnown = valueDirOk === 'TRUE' || valueDirOk === 'FALSE';
+  var marketKnown = mrScored && (mrDirOk === 'TRUE' || mrDirOk === 'FALSE');
+  if (valueKnown && marketKnown) {
+    if (valueDirOk === 'TRUE' && mrDirOk === 'FALSE') return 'economic_value_correct_market_wrong';
+    if (valueDirOk === 'FALSE' && mrDirOk === 'TRUE') return 'economic_value_wrong_market_correct';
+    if (valueDirOk === 'TRUE' && mrDirOk === 'TRUE') return 'both_correct';
+    if (valueDirOk === 'FALSE' && mrDirOk === 'FALSE') return 'both_wrong';
+  }
+  if (valueKnown) return 'economic_only_scored';
+  if (marketKnown) return 'market_only_scored';
+  return 'unscored';
+}
+
+function _economicValueAccuracyCaseLabel_(valueScore, mrScored, mrDirOk) {
+  if (valueScore.note === 'batch_not_value_scored') return 'batch_not_value_scored';
+  if (valueScore.note === 'qualitative_only_row') return 'qualitative_only_not_value_scored';
+  if (valueScore.value_scored_flag === 'TRUE' && !mrScored) return 'value_only_scored';
+  if (valueScore.value_scored_flag !== 'TRUE' && mrScored && (mrDirOk === 'TRUE' || mrDirOk === 'FALSE')) return 'market_only_scored';
+  if (valueScore.value_scored_flag === 'TRUE' && mrScored && mrDirOk === 'TRUE') return 'both_scored_market_correct';
+  if (valueScore.value_scored_flag === 'TRUE' && mrScored && mrDirOk === 'FALSE') return 'both_scored_market_wrong';
+  return valueScore.note || 'unscored';
+}
+
+function _economicValueAccuracySummaryRows_(cases, generatedTs) {
+  var s = _economicValueAccuracyStats_(cases);
+  return [_economicValueAccuracySummaryRow_(generatedTs, 'summary', 'all', s, 'Independent economic-value accuracy versus market-reaction accuracy from existing Predictions and Event data only.')];
+}
+
+function _economicValueAccuracyProviderSummaryRows_(cases, generatedTs) {
+  var grouped = _economicValueAccuracyGroupBy_(cases, function(c) { return c.ai_name || 'unknown'; });
+  var rows = [];
+  Object.keys(grouped).sort().forEach(function(key) {
+    var stats = _economicValueAccuracyStats_(grouped[key]);
+    var row = _economicValueAccuracySummaryRow_(generatedTs, 'provider_summary', key, stats, 'Provider-level economic-value accuracy, independent from market reaction scoring.');
+    row.ai_name = key;
+    row.diagnostic_label = _economicValueAccuracyDiagnosticLabel_(stats);
+    rows.push(row);
+  });
+  return rows;
+}
+
+function _economicValueAccuracyFamilySummaryRows_(cases, generatedTs) {
+  var grouped = _economicValueAccuracyGroupBy_(cases, function(c) { return c.family || 'other'; });
+  var rows = [];
+  Object.keys(grouped).sort().forEach(function(key) {
+    var stats = _economicValueAccuracyStats_(grouped[key]);
+    var row = _economicValueAccuracySummaryRow_(generatedTs, 'family_summary', key, stats, 'Family-level comparison of economic-value accuracy versus market-reaction accuracy.');
+    row.family = key;
+    row.diagnostic_label = _economicValueAccuracyDiagnosticLabel_(stats);
+    rows.push(row);
+  });
+  return rows;
+}
+
+function _economicValueAccuracyProviderFamilyRows_(cases, generatedTs) {
+  var grouped = _economicValueAccuracyGroupBy_(cases, function(c) { return (c.ai_name || 'unknown') + '|' + (c.family || 'other'); });
+  var rows = [];
+  Object.keys(grouped).sort().forEach(function(key) {
+    var parts = key.split('|');
+    var stats = _economicValueAccuracyStats_(grouped[key]);
+    var row = _economicValueAccuracySummaryRow_(generatedTs, 'provider_family_summary', key, stats, 'Provider x family economic-value accuracy, independent from market reaction scoring.');
+    row.ai_name = parts[0] || '';
+    row.family = parts[1] || '';
+    row.diagnostic_label = _economicValueAccuracyDiagnosticLabel_(stats);
+    rows.push(row);
+  });
+  return rows;
+}
+
+function _economicValueAccuracySummaryRow_(generatedTs, rowType, summaryKey, stats, note) {
+  return {
+    generated_ts: generatedTs,
+    row_type: rowType,
+    summary_scope: rowType,
+    summary_key: summaryKey,
+    release_date: '',
+    generated_note: 'Derived-only diagnostic report. Economic value scoring is independent from market reaction scoring.',
+    total_prediction_rows: stats.total_prediction_rows,
+    numeric_candidate_rows: stats.numeric_candidate_rows,
+    value_scored_rows: stats.value_scored_rows,
+    value_dir_ok_count: stats.value_dir_ok_count,
+    value_dir_ok_rate: _rateOrBlank_(stats.value_dir_ok_count, stats.value_scored_rows),
+    market_scored_rows: stats.market_scored_rows,
+    mr_dir_ok_rate: _rateOrBlank_(stats.mr_dir_ok_count, stats.market_scored_rows),
+    both_scored_rows: stats.both_scored_rows,
+    economic_value_correct_market_wrong_count: stats.economic_value_correct_market_wrong_count,
+    economic_value_wrong_market_correct_count: stats.economic_value_wrong_market_correct_count,
+    both_correct_count: stats.both_correct_count,
+    both_wrong_count: stats.both_wrong_count,
+    summary_note: note,
+    ai_name: '',
+    family: '',
+    rows: stats.total_prediction_rows,
+    avg_value_error_abs: stats.value_error_abs_count ? _round4_(stats.value_error_abs_sum / stats.value_error_abs_count) : '',
+    avg_value_error_pct: stats.value_error_pct_count ? _round4_(stats.value_error_pct_sum / stats.value_error_pct_count) : '',
+    economic_vs_market_gap: (stats.value_scored_rows && stats.market_scored_rows)
+      ? _roundRate_(_rateNumber_(stats.value_dir_ok_count, stats.value_scored_rows) - _rateNumber_(stats.mr_dir_ok_count, stats.market_scored_rows))
+      : '',
+    diagnostic_label: '',
+    event_id: '',
+    batch_id: '',
+    type: '',
+    ai_model: '',
+    created_ts: '',
+    release_ts: '',
+    indicator_name: '',
+    country: '',
+    genre: '',
+    importance: '',
+    consensus_value: '',
+    prev_revision: '',
+    ai_forecast_value: '',
+    released_value: '',
+    actual_surprise_dir: '',
+    ai_value_dir: '',
+    value_dir_ok: '',
+    value_error_abs: '',
+    value_error_pct: '',
+    value_scored_flag: '',
+    value_score_note: '',
+    qualitative_only: '',
+    qualitative_result: '',
+    attention_primary_factor: '',
+    attention_factors: '',
+    mr_pred_dir: '',
+    mr_real_dir: '',
+    mr_dir_ok: '',
+    mr_strength_ok: '',
+    mr_sustain_ok: '',
+    overall_ok: '',
+    comparison_label: '',
+    decision_support_note: 'Diagnostic-only. This report asks whether PreSignal is weak at economic-value forecasting, market-reaction forecasting, or both. No trading advice.'
+  };
+}
+
+function _economicValueAccuracyStats_(cases) {
+  var stats = {
+    total_prediction_rows: 0,
+    numeric_candidate_rows: 0,
+    value_scored_rows: 0,
+    value_dir_ok_count: 0,
+    market_scored_rows: 0,
+    mr_dir_ok_count: 0,
+    both_scored_rows: 0,
+    economic_value_correct_market_wrong_count: 0,
+    economic_value_wrong_market_correct_count: 0,
+    both_correct_count: 0,
+    both_wrong_count: 0,
+    value_error_abs_sum: 0,
+    value_error_abs_count: 0,
+    value_error_pct_sum: 0,
+    value_error_pct_count: 0
+  };
+  for (var i = 0; i < (cases || []).length; i++) {
+    var c = cases[i];
+    stats.total_prediction_rows += 1;
+    if (c.type && String(c.type).toLowerCase() !== 'batch' && c.ai_forecast_value !== '') stats.numeric_candidate_rows += 1;
+    if (c.value_scored_flag === 'TRUE') {
+      stats.value_scored_rows += 1;
+      if (c.value_dir_ok === 'TRUE') stats.value_dir_ok_count += 1;
+    }
+    if (c.value_error_abs !== '') {
+      stats.value_error_abs_sum += Number(c.value_error_abs || 0);
+      stats.value_error_abs_count += 1;
+    }
+    if (c.value_error_pct !== '') {
+      stats.value_error_pct_sum += Number(c.value_error_pct || 0);
+      stats.value_error_pct_count += 1;
+    }
+    if (c.mr_dir_ok === 'TRUE' || c.mr_dir_ok === 'FALSE') {
+      stats.market_scored_rows += 1;
+      if (c.mr_dir_ok === 'TRUE') stats.mr_dir_ok_count += 1;
+    }
+    if (c.value_scored_flag === 'TRUE' && (c.mr_dir_ok === 'TRUE' || c.mr_dir_ok === 'FALSE')) stats.both_scored_rows += 1;
+    if (c.comparison_label === 'economic_value_correct_market_wrong') stats.economic_value_correct_market_wrong_count += 1;
+    if (c.comparison_label === 'economic_value_wrong_market_correct') stats.economic_value_wrong_market_correct_count += 1;
+    if (c.comparison_label === 'both_correct') stats.both_correct_count += 1;
+    if (c.comparison_label === 'both_wrong') stats.both_wrong_count += 1;
+  }
+  return stats;
+}
+
+function _economicValueAccuracyGroupBy_(cases, keyFn) {
+  var out = {};
+  for (var i = 0; i < (cases || []).length; i++) {
+    var key = keyFn(cases[i]) || 'unknown';
+    if (!out[key]) out[key] = [];
+    out[key].push(cases[i]);
+  }
+  return out;
+}
+
+function _economicValueAccuracyDiagnosticLabel_(stats) {
+  var valueRate = stats.value_scored_rows ? _rateNumber_(stats.value_dir_ok_count, stats.value_scored_rows) : null;
+  var marketRate = stats.market_scored_rows ? _rateNumber_(stats.mr_dir_ok_count, stats.market_scored_rows) : null;
+  if (valueRate == null && marketRate == null) return 'insufficient_scored_rows';
+  if (valueRate != null && marketRate != null) {
+    var gap = valueRate - marketRate;
+    if (gap >= 0.15) return 'economic_stronger_than_market_translation';
+    if (gap <= -0.15) return 'market_translation_stronger_than_value_forecast';
+    return 'economic_market_near_parity';
+  }
+  return valueRate != null ? 'economic_only_signal_available' : 'market_only_signal_available';
+}
+
+function _economicValueAccuracyCaseRows_(cases) {
+  return cases;
+}
+
+function _economicValueAccuracyRowsToArrays_(headers, rows) {
+  return (rows || []).map(function(row) {
+    return headers.map(function(header) {
+      return row && row.hasOwnProperty(header) ? row[header] : '';
+    });
+  });
+}
+
+function _buildProviderFamilyEconomicAccuracyRows_(generatedTs, source, warnings) {
+  var providerRows = [];
+  if (!source || !source.rows.length) {
+    if (warnings) warnings.push('missing_source_rows:Economic_Value_Accuracy');
+    return providerRows;
+  }
+
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    if (String(_predValue_(row, source.idx, 'row_type') || '').trim() !== 'provider_family_summary') continue;
+    providerRows.push({
+      generated_ts: generatedTs,
+      row_type: 'provider_family_summary',
+      summary_key: String(_predValue_(row, source.idx, 'summary_key') || '').trim(),
+      ai_name: String(_predValue_(row, source.idx, 'ai_name') || '').trim(),
+      family: String(_predValue_(row, source.idx, 'family') || '').trim() || 'other',
+      rows: Number(_predValue_(row, source.idx, 'rows') || 0),
+      value_scored_rows: Number(_predValue_(row, source.idx, 'value_scored_rows') || 0),
+      value_dir_ok_count: Number(_predValue_(row, source.idx, 'value_dir_ok_count') || 0),
+      value_dir_ok_rate: _numOrNull_(_predValue_(row, source.idx, 'value_dir_ok_rate')),
+      market_scored_rows: Number(_predValue_(row, source.idx, 'market_scored_rows') || 0),
+      mr_dir_ok_rate: _numOrNull_(_predValue_(row, source.idx, 'mr_dir_ok_rate')),
+      economic_vs_market_gap: _numOrNull_(_predValue_(row, source.idx, 'economic_vs_market_gap')),
+      avg_value_error_abs: _numOrNull_(_predValue_(row, source.idx, 'avg_value_error_abs')),
+      avg_value_error_pct: _numOrNull_(_predValue_(row, source.idx, 'avg_value_error_pct')),
+      economic_value_correct_market_wrong_count: Number(_predValue_(row, source.idx, 'economic_value_correct_market_wrong_count') || 0),
+      economic_value_wrong_market_correct_count: Number(_predValue_(row, source.idx, 'economic_value_wrong_market_correct_count') || 0),
+      both_correct_count: Number(_predValue_(row, source.idx, 'both_correct_count') || 0),
+      both_wrong_count: Number(_predValue_(row, source.idx, 'both_wrong_count') || 0),
+      rank_within_provider: '',
+      rank_within_family: '',
+      provider_best_family_flag: '',
+      family_best_provider_flag: '',
+      sample_status: '',
+      diagnostic_label: '',
+      recommendation_label: '',
+      evidence_note: '',
+      decision_support_note: 'Derived from Economic_Value_Accuracy only. Diagnostic layer; not trading advice.'
+    });
+  }
+
+  _assignProviderFamilyEconomicRanks_(providerRows);
+  for (var j = 0; j < providerRows.length; j++) {
+    var g = providerRows[j];
+    g.sample_status = _providerFamilyEconomicSampleStatus_(g);
+    g.diagnostic_label = _providerFamilyEconomicDiagnosticLabel_(g);
+    g.recommendation_label = _providerFamilyEconomicRecommendation_(g);
+    g.evidence_note = _providerFamilyEconomicEvidenceNote_(g);
+  }
+
+  var out = [];
+  out.push(_makeProviderFamilyEconomicAccuracySummaryRow_(generatedTs, providerRows));
+  for (var k = 0; k < providerRows.length; k++) out.push(_makeProviderFamilyEconomicAccuracyRow_(providerRows[k]));
+  return out;
+}
+
+function _assignProviderFamilyEconomicRanks_(rows) {
+  var byProvider = {};
+  var byFamily = {};
+  for (var i = 0; i < (rows || []).length; i++) {
+    var row = rows[i];
+    if (!byProvider[row.ai_name]) byProvider[row.ai_name] = [];
+    if (!byFamily[row.family]) byFamily[row.family] = [];
+    byProvider[row.ai_name].push(row);
+    byFamily[row.family].push(row);
+  }
+
+  Object.keys(byProvider).forEach(function(provider) {
+    var list = byProvider[provider].slice().sort(_providerFamilyEconomicRankSort_);
+    for (var i = 0; i < list.length; i++) {
+      list[i].rank_within_provider = i + 1;
+      if (i === 0) list[i].provider_best_family_flag = 'TRUE';
+    }
+  });
+
+  Object.keys(byFamily).forEach(function(family) {
+    var list = byFamily[family].slice().sort(_providerFamilyEconomicRankSort_);
+    for (var i = 0; i < list.length; i++) {
+      list[i].rank_within_family = i + 1;
+      if (i === 0) list[i].family_best_provider_flag = 'TRUE';
+    }
+  });
+}
+
+function _providerFamilyEconomicRankSort_(a, b) {
+  var aRate = a.value_dir_ok_rate == null ? -1 : a.value_dir_ok_rate;
+  var bRate = b.value_dir_ok_rate == null ? -1 : b.value_dir_ok_rate;
+  if (aRate !== bRate) return bRate - aRate;
+  if (a.value_scored_rows !== b.value_scored_rows) return b.value_scored_rows - a.value_scored_rows;
+  var aGap = a.economic_vs_market_gap == null ? -999 : a.economic_vs_market_gap;
+  var bGap = b.economic_vs_market_gap == null ? -999 : b.economic_vs_market_gap;
+  if (aGap !== bGap) return bGap - aGap;
+  return (a.ai_name + '|' + a.family).localeCompare(b.ai_name + '|' + b.family);
+}
+
+function _providerFamilyEconomicSampleStatus_(row) {
+  var n = Number(row.value_scored_rows || 0);
+  if (n >= 100) return 'deep_sample';
+  if (n >= 40) return 'workable_sample';
+  if (n >= 20) return 'thin_sample';
+  return 'too_thin';
+}
+
+function _providerFamilyEconomicDiagnosticLabel_(row) {
+  var rate = row.value_dir_ok_rate;
+  var gap = row.economic_vs_market_gap;
+  var n = Number(row.value_scored_rows || 0);
+  if (n < 20 || rate == null) return 'insufficient_family_sample';
+  if (rate >= 0.45 && gap != null && gap >= 0.10) return 'economic_edge_over_market_translation';
+  if (rate >= 0.40) return 'possible_economic_signal';
+  if (gap != null && gap <= -0.10) return 'market_translation_beats_value_signal';
+  if (rate <= 0.20) return 'weak_economic_signal';
+  return 'mixed_or_moderate_signal';
+}
+
+function _providerFamilyEconomicRecommendation_(row) {
+  var label = row.diagnostic_label;
+  var sample = row.sample_status;
+  if (label === 'economic_edge_over_market_translation' && (sample === 'deep_sample' || sample === 'workable_sample')) {
+    return 'shadow_watchlist_slice';
+  }
+  if (label === 'possible_economic_signal' && sample !== 'too_thin') {
+    return 'monitor_next_blocks';
+  }
+  if (label === 'insufficient_family_sample') return 'needs_more_rows';
+  if (label === 'weak_economic_signal') return 'reject_or_monitor';
+  return 'diagnostic_only';
+}
+
+function _providerFamilyEconomicEvidenceNote_(row) {
+  return (
+    'Economic dir rate=' + (row.value_dir_ok_rate == null ? 'n/a' : row.value_dir_ok_rate) +
+    ', market dir rate=' + (row.mr_dir_ok_rate == null ? 'n/a' : row.mr_dir_ok_rate) +
+    ', gap=' + (row.economic_vs_market_gap == null ? 'n/a' : row.economic_vs_market_gap) +
+    ', scored_rows=' + Number(row.value_scored_rows || 0) + '.'
+  );
+}
+
+function _makeProviderFamilyEconomicAccuracySummaryRow_(generatedTs, rows) {
+  var best = rows.slice().sort(_providerFamilyEconomicRankSort_).slice(0, 5);
+  return [
+    generatedTs,
+    'summary',
+    'all',
+    '',
+    '',
+    rows.length,
+    _sumNumbers_(rows.map(function(r){ return r.value_scored_rows; })),
+    _sumNumbers_(rows.map(function(r){ return r.value_dir_ok_count; })),
+    '',
+    _sumNumbers_(rows.map(function(r){ return r.market_scored_rows; })),
+    '',
+    '',
+    '',
+    '',
+    _sumNumbers_(rows.map(function(r){ return r.economic_value_correct_market_wrong_count; })),
+    _sumNumbers_(rows.map(function(r){ return r.economic_value_wrong_market_correct_count; })),
+    _sumNumbers_(rows.map(function(r){ return r.both_correct_count; })),
+    _sumNumbers_(rows.map(function(r){ return r.both_wrong_count; })),
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    'Top slices by economic value accuracy: ' + best.map(function(r){ return r.ai_name + '/' + r.family + '=' + (r.value_dir_ok_rate == null ? 'n/a' : r.value_dir_ok_rate); }).join(', '),
+    'Derived from Economic_Value_Accuracy provider_family_summary rows only. Diagnostic layer; not trading advice.'
+  ];
+}
+
+function _makeProviderFamilyEconomicAccuracyRow_(row) {
+  return [
+    row.generated_ts,
+    row.row_type,
+    row.summary_key,
+    row.ai_name,
+    row.family,
+    row.rows,
+    row.value_scored_rows,
+    row.value_dir_ok_count,
+    row.value_dir_ok_rate == null ? '' : row.value_dir_ok_rate,
+    row.market_scored_rows,
+    row.mr_dir_ok_rate == null ? '' : row.mr_dir_ok_rate,
+    row.economic_vs_market_gap == null ? '' : row.economic_vs_market_gap,
+    row.avg_value_error_abs == null ? '' : row.avg_value_error_abs,
+    row.avg_value_error_pct == null ? '' : row.avg_value_error_pct,
+    row.economic_value_correct_market_wrong_count,
+    row.economic_value_wrong_market_correct_count,
+    row.both_correct_count,
+    row.both_wrong_count,
+    row.rank_within_provider,
+    row.rank_within_family,
+    row.provider_best_family_flag || '',
+    row.family_best_provider_flag || '',
+    row.sample_status,
+    row.diagnostic_label,
+    row.recommendation_label,
+    row.evidence_note,
+    row.decision_support_note
+  ];
+}
+
+function _buildEconomicToMarketTranslationErrorsRows_(generatedTs, economic, providerFamily, warnings) {
+  var focusMap = _economicToMarketTranslationFocusMap_(providerFamily);
+  var cases = [];
+  if (!economic || !economic.rows.length) {
+    if (warnings) warnings.push('missing_source_rows:Economic_Value_Accuracy');
+    return cases;
+  }
+
+  for (var i = 0; i < economic.rows.length; i++) {
+    var row = economic.rows[i];
+    if (String(_predValue_(row, economic.idx, 'row_type') || '').trim() !== 'case') continue;
+    if (String(_predValue_(row, economic.idx, 'comparison_label') || '').trim() !== 'economic_value_correct_market_wrong') continue;
+    cases.push(_economicToMarketTranslationCaseRow_(generatedTs, row, economic.idx, focusMap));
+  }
+
+  var summaryRows = _economicToMarketTranslationSummaryRows_(generatedTs, cases);
+  return summaryRows.concat(cases);
+}
+
+function _economicToMarketTranslationFocusMap_(source) {
+  var out = {};
+  if (!source || !source.rows) return out;
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    if (String(_predValue_(row, source.idx, 'row_type') || '').trim() !== 'provider_family_summary') continue;
+    var recommendation = String(_predValue_(row, source.idx, 'recommendation_label') || '').trim();
+    var key = [
+      String(_predValue_(row, source.idx, 'ai_name') || '').trim(),
+      String(_predValue_(row, source.idx, 'family') || '').trim() || 'other'
+    ].join('|');
+    out[key] = {
+      translation_focus_flag: recommendation === 'shadow_watchlist_slice' ? 'TRUE' : '',
+      recommendation_label: recommendation,
+      diagnostic_label: String(_predValue_(row, source.idx, 'diagnostic_label') || '').trim()
+    };
+  }
+  return out;
+}
+
+function _economicToMarketTranslationCaseRow_(generatedTs, row, idx, focusMap) {
+  var aiName = String(_predValue_(row, idx, 'ai_name') || '').trim();
+  var family = String(_predValue_(row, idx, 'family') || '').trim() || 'other';
+  var focus = focusMap[aiName + '|' + family] || {};
+  var failureMode = _economicToMarketTranslationFailureMode_(row, idx);
+  return [
+    generatedTs,
+    'case',
+    aiName + '|' + family,
+    aiName,
+    family,
+    String(_predValue_(row, idx, 'importance') || '').trim(),
+    String(_predValue_(row, idx, 'attention_primary_factor') || '').trim(),
+    focus.translation_focus_flag || '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    focus.diagnostic_label || '',
+    focus.recommendation_label || 'diagnostic_only',
+    String(_predValue_(row, idx, 'event_id') || '').trim(),
+    String(_predValue_(row, idx, 'batch_id') || '').trim(),
+    String(_predValue_(row, idx, 'type') || '').trim(),
+    String(_predValue_(row, idx, 'release_ts') || '').trim(),
+    String(_predValue_(row, idx, 'indicator_name') || '').trim(),
+    String(_predValue_(row, idx, 'country') || '').trim(),
+    String(_predValue_(row, idx, 'actual_surprise_dir') || '').trim(),
+    String(_predValue_(row, idx, 'ai_value_dir') || '').trim(),
+    String(_predValue_(row, idx, 'mr_pred_dir') || '').trim(),
+    String(_predValue_(row, idx, 'mr_real_dir') || '').trim(),
+    String(_predValue_(row, idx, 'mr_dir_ok') || '').trim(),
+    String(_predValue_(row, idx, 'mr_strength_ok') || '').trim(),
+    String(_predValue_(row, idx, 'mr_sustain_ok') || '').trim(),
+    String(_predValue_(row, idx, 'overall_ok') || '').trim(),
+    String(_predValue_(row, idx, 'comparison_label') || '').trim(),
+    failureMode,
+    _economicToMarketTranslationEvidenceNote_(row, idx, failureMode),
+    'Translation-error diagnostic only. No prompt, scoring, or behavior change; not trading advice.'
+  ];
+}
+
+function _economicToMarketTranslationFailureMode_(row, idx) {
+  var pred = String(_predValue_(row, idx, 'mr_pred_dir') || '').trim().toLowerCase();
+  var real = String(_predValue_(row, idx, 'mr_real_dir') || '').trim().toLowerCase();
+  var strengthOk = String(_predValue_(row, idx, 'mr_strength_ok') || '').trim().toUpperCase();
+  var sustainOk = String(_predValue_(row, idx, 'mr_sustain_ok') || '').trim().toUpperCase();
+
+  if (pred && real && pred !== real) {
+    if (real === 'flat' && pred !== 'flat') return 'flat_when_directional_expected';
+    if (pred === 'flat' && real !== 'flat') return 'directional_when_expected_flat';
+    return 'opposite_direction';
+  }
+  if (strengthOk === 'FALSE' && sustainOk === 'FALSE') return 'strength_and_sustain_failure';
+  if (strengthOk === 'FALSE') return 'strength_failure';
+  if (sustainOk === 'FALSE') return 'sustain_failure';
+  return 'market_translation_miss_other';
+}
+
+function _economicToMarketTranslationEvidenceNote_(row, idx, failureMode) {
+  return (
+    'econ=' + String(_predValue_(row, idx, 'ai_value_dir') || '') +
+    ' vs actual=' + String(_predValue_(row, idx, 'actual_surprise_dir') || '') +
+    '; mr_pred=' + String(_predValue_(row, idx, 'mr_pred_dir') || '') +
+    ' vs mr_real=' + String(_predValue_(row, idx, 'mr_real_dir') || '') +
+    '; failure=' + failureMode + '.'
+  );
+}
+
+function _economicToMarketTranslationSummaryRows_(generatedTs, caseRows) {
+  var idx = _headerIndexMap_(_economicToMarketTranslationErrorsHeaders_());
+  var groups = {};
+
+  for (var i = 0; i < (caseRows || []).length; i++) {
+    var row = caseRows[i];
+    var key = [
+      String(row[idx.ai_name] || '').trim(),
+      String(row[idx.family] || '').trim() || 'other'
+    ].join('|');
+    if (!groups[key]) {
+      groups[key] = {
+        ai_name: String(row[idx.ai_name] || '').trim(),
+        family: String(row[idx.family] || '').trim() || 'other',
+        translation_focus_flag: String(row[idx.translation_focus_flag] || '').trim(),
+        diagnostic_label: String(row[idx.diagnostic_label] || '').trim(),
+        recommendation_label: String(row[idx.recommendation_label] || '').trim(),
+        rows: 0,
+        opposite_dir_count: 0,
+        flat_when_directional_count: 0,
+        directional_when_expected_flat_count: 0,
+        strength_failed_count: 0,
+        sustain_failed_count: 0,
+        overall_failed_count: 0,
+        failure_counts: {}
+      };
+    }
+    var g = groups[key];
+    var mode = String(row[idx.failure_mode] || '').trim();
+    g.rows += 1;
+    g.failure_counts[mode] = (g.failure_counts[mode] || 0) + 1;
+    if (mode === 'opposite_direction') g.opposite_dir_count += 1;
+    if (mode === 'flat_when_directional_expected') g.flat_when_directional_count += 1;
+    if (mode === 'directional_when_expected_flat') g.directional_when_expected_flat_count += 1;
+    if (mode === 'strength_failure' || mode === 'strength_and_sustain_failure') g.strength_failed_count += 1;
+    if (mode === 'sustain_failure' || mode === 'strength_and_sustain_failure') g.sustain_failed_count += 1;
+    var overall = String(row[idx.overall_ok] || '').trim().toUpperCase();
+    if (overall === 'FALSE') g.overall_failed_count += 1;
+  }
+
+  var out = [];
+  Object.keys(groups).sort().forEach(function(key) {
+    var g = groups[key];
+    var top = _topCountMapItems_(g.failure_counts, 1);
+    var topMode = top.length ? top[0].key : 'unknown';
+    out.push([
+      generatedTs,
+      'summary',
+      key,
+      g.ai_name,
+      g.family,
+      '',
+      '',
+      g.translation_focus_flag,
+      g.rows,
+      g.rows,
+      1,
+      g.opposite_dir_count,
+      g.flat_when_directional_count,
+      g.directional_when_expected_flat_count,
+      g.strength_failed_count,
+      g.sustain_failed_count,
+      g.overall_failed_count,
+      topMode,
+      g.diagnostic_label || _economicToMarketTranslationSummaryLabel_(g),
+      g.recommendation_label || 'diagnostic_only',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      'economic_value_correct_market_wrong',
+      topMode,
+      'Rows where economic value direction was correct but market direction failed, grouped for translation review.',
+      'Translation-error diagnostic only. No prompt, scoring, or behavior change; not trading advice.'
+    ]);
+  });
+
+  out.unshift(_economicToMarketTranslationGlobalSummaryRow_(generatedTs, groups));
+  return out;
+}
+
+function _economicToMarketTranslationSummaryLabel_(g) {
+  if (!g.rows) return 'no_translation_error_rows';
+  if (g.opposite_dir_count >= g.flat_when_directional_count && g.opposite_dir_count >= g.directional_when_expected_flat_count) {
+    return 'direction_logic_issue';
+  }
+  if (g.flat_when_directional_count >= g.directional_when_expected_flat_count) return 'market_reaction_muted_or_flat';
+  return 'market_reaction_more_directional_than_expected';
+}
+
+function _economicToMarketTranslationGlobalSummaryRow_(generatedTs, groups) {
+  var keys = Object.keys(groups || {});
+  var top = keys.map(function(key) {
+    return groups[key];
+  }).sort(function(a, b) {
+    if (a.rows !== b.rows) return b.rows - a.rows;
+    return (a.ai_name + '|' + a.family).localeCompare(b.ai_name + '|' + b.family);
+  }).slice(0, 5);
+
+  return [
+    generatedTs,
+    'summary',
+    'all',
+    '',
+    '',
+    '',
+    '',
+    '',
+    keys.length,
+    _sumNumbers_(keys.map(function(key){ return groups[key].rows; })),
+    '',
+    _sumNumbers_(keys.map(function(key){ return groups[key].opposite_dir_count; })),
+    _sumNumbers_(keys.map(function(key){ return groups[key].flat_when_directional_count; })),
+    _sumNumbers_(keys.map(function(key){ return groups[key].directional_when_expected_flat_count; })),
+    _sumNumbers_(keys.map(function(key){ return groups[key].strength_failed_count; })),
+    _sumNumbers_(keys.map(function(key){ return groups[key].sustain_failed_count; })),
+    _sumNumbers_(keys.map(function(key){ return groups[key].overall_failed_count; })),
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    'economic_value_correct_market_wrong',
+    '',
+    'Top translation-error slices: ' + top.map(function(g){ return g.ai_name + '/' + g.family + '=' + g.rows; }).join(', '),
+    'Translation-error diagnostic only. No prompt, scoring, or behavior change; not trading advice.'
+  ];
+}
+
+function _buildMarketSensitivityFilterCandidatesRows_(generatedTs, translation, providerFamily, warnings) {
+  var rowsOut = [];
+  if (!translation || !translation.rows.length) {
+    if (warnings) warnings.push('missing_source_rows:Economic_To_Market_Translation_Errors');
+    return rowsOut;
+  }
+
+  var focusMap = _economicToMarketTranslationFocusMap_(providerFamily);
+  var groups = {};
+
+  for (var i = 0; i < translation.rows.length; i++) {
+    var row = translation.rows[i];
+    if (String(_predValue_(row, translation.idx, 'row_type') || '').trim() !== 'case') continue;
+    var aiName = String(_predValue_(row, translation.idx, 'ai_name') || '').trim();
+    var family = String(_predValue_(row, translation.idx, 'family') || '').trim() || 'other';
+    var indicator = String(_predValue_(row, translation.idx, 'indicator_name') || '').trim() || 'unknown_indicator';
+    var importance = String(_predValue_(row, translation.idx, 'importance') || '').trim() || 'unknown';
+    var factor = String(_predValue_(row, translation.idx, 'attention_primary_factor') || '').trim() || 'none';
+    var failureMode = String(_predValue_(row, translation.idx, 'failure_mode') || '').trim();
+
+    var familyKey = aiName + '|' + family;
+    var focus = focusMap[familyKey] || {};
+    var candidateRule = _marketSensitivityCandidateRuleLabel_(family, indicator, importance);
+    var key = [candidateRule, aiName, family, indicator, importance, factor].join('|');
+    if (!groups[key]) {
+      groups[key] = {
+        candidate_key: key,
+        candidate_rule_label: candidateRule,
+        ai_name: aiName,
+        family: family,
+        indicator_name: indicator,
+        importance: importance,
+        attention_primary_factor: factor,
+        translation_focus_flag: focus.translation_focus_flag || '',
+        rows: 0,
+        directional_when_expected_flat_count: 0,
+        opposite_direction_count: 0,
+        other_failure_count: 0,
+        recommendation_seed: focus.recommendation_label || '',
+        diagnostic_seed: focus.diagnostic_label || ''
+      };
+    }
+    var g = groups[key];
+    g.rows += 1;
+    if (failureMode === 'directional_when_expected_flat') g.directional_when_expected_flat_count += 1;
+    else if (failureMode === 'opposite_direction') g.opposite_direction_count += 1;
+    else g.other_failure_count += 1;
+  }
+
+  var summaryItems = [];
+  Object.keys(groups).forEach(function(key) {
+    var g = groups[key];
+    var flatRate = g.rows ? _roundRate_(g.directional_when_expected_flat_count / g.rows) : '';
+    var sampleStatus = _marketSensitivitySampleStatus_(g.rows);
+    var diagnosticLabel = _marketSensitivityDiagnosticLabel_(g, flatRate);
+    var recommendation = _marketSensitivityRecommendation_(g, flatRate, sampleStatus);
+    summaryItems.push({
+      generated_ts: generatedTs,
+      row_type: 'candidate',
+      candidate_key: g.candidate_key,
+      candidate_rule_label: g.candidate_rule_label,
+      ai_name: g.ai_name,
+      family: g.family,
+      indicator_name: g.indicator_name,
+      importance: g.importance,
+      attention_primary_factor: g.attention_primary_factor,
+      translation_focus_flag: g.translation_focus_flag,
+      rows: g.rows,
+      directional_when_expected_flat_count: g.directional_when_expected_flat_count,
+      flat_market_failure_rate: flatRate,
+      opposite_direction_count: g.opposite_direction_count,
+      other_failure_count: g.other_failure_count,
+      sample_status: sampleStatus,
+      diagnostic_label: diagnosticLabel,
+      recommendation_label: recommendation,
+      candidate_note: _marketSensitivityCandidateNote_(g, flatRate),
+      decision_support_note: 'Market sensitivity filter diagnostics only. No prompt, scoring, or behavior change; not trading advice.'
+    });
+  });
+
+  var top = summaryItems.slice().sort(_marketSensitivityCandidateSort_).slice(0, 5);
+  rowsOut.push([
+    generatedTs,
+    'summary',
+    'all',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    summaryItems.length,
+    _sumNumbers_(summaryItems.map(function(item){ return item.directional_when_expected_flat_count; })),
+    '',
+    _sumNumbers_(summaryItems.map(function(item){ return item.opposite_direction_count; })),
+    _sumNumbers_(summaryItems.map(function(item){ return item.other_failure_count; })),
+    '',
+    '',
+    '',
+    'Top flat-market candidate rules: ' + top.map(function(item){ return item.candidate_rule_label + '=' + item.directional_when_expected_flat_count; }).join(', '),
+    'Market sensitivity filter diagnostics only. No prompt, scoring, or behavior change; not trading advice.'
+  ]);
+
+  for (var j = 0; j < summaryItems.length; j++) {
+    var item = summaryItems[j];
+    rowsOut.push([
+      item.generated_ts,
+      item.row_type,
+      item.candidate_key,
+      item.candidate_rule_label,
+      item.ai_name,
+      item.family,
+      item.indicator_name,
+      item.importance,
+      item.attention_primary_factor,
+      item.translation_focus_flag,
+      item.rows,
+      item.directional_when_expected_flat_count,
+      item.flat_market_failure_rate === '' ? '' : item.flat_market_failure_rate,
+      item.opposite_direction_count,
+      item.other_failure_count,
+      item.sample_status,
+      item.diagnostic_label,
+      item.recommendation_label,
+      item.candidate_note,
+      item.decision_support_note
+    ]);
+  }
+  return rowsOut;
+}
+
+function _marketSensitivityCandidateRuleLabel_(family, indicator, importance) {
+  if (family === 'inflation') return 'inflation_directional_to_flat_filter_candidate';
+  if (family === 'central_bank') return 'central_bank_under_specified_payload_filter_candidate';
+  if (family === 'growth') return 'growth_low_sensitivity_filter_candidate';
+  if (family === 'labor') return 'labor_translation_review_candidate';
+  return family + '_market_sensitivity_filter_candidate';
+}
+
+function _marketSensitivitySampleStatus_(rows) {
+  var n = Number(rows || 0);
+  if (n >= 40) return 'deep_sample';
+  if (n >= 20) return 'workable_sample';
+  if (n >= 10) return 'thin_sample';
+  return 'too_thin';
+}
+
+function _marketSensitivityDiagnosticLabel_(g, flatRate) {
+  var rate = _numOrNull_(flatRate);
+  if (g.rows < 10 || rate == null) return 'insufficient_flat_market_sample';
+  if (rate >= 0.75) return 'repeated_flat_market_overcall';
+  if (rate >= 0.55) return 'possible_flat_market_overcall';
+  if (g.opposite_direction_count > g.directional_when_expected_flat_count) return 'direction_logic_dominant';
+  return 'mixed_translation_failures';
+}
+
+function _marketSensitivityRecommendation_(g, flatRate, sampleStatus) {
+  var rate = _numOrNull_(flatRate);
+  if (sampleStatus === 'too_thin') return 'needs_more_rows';
+  if (g.family === 'labor' && g.opposite_direction_count > g.directional_when_expected_flat_count) return 'review_direction_mapping_first';
+  if (rate != null && rate >= 0.75 && (sampleStatus === 'deep_sample' || sampleStatus === 'workable_sample')) return 'shadow_no_signal_counterfactual_candidate';
+  if (rate != null && rate >= 0.55) return 'monitor_for_filter_design';
+  return 'diagnostic_only';
+}
+
+function _marketSensitivityCandidateNote_(g, flatRate) {
+  return (
+    'flat_failures=' + g.directional_when_expected_flat_count +
+    '/' + g.rows +
+    ', flat_rate=' + (flatRate === '' ? 'n/a' : flatRate) +
+    ', opposite=' + g.opposite_direction_count +
+    ', other=' + g.other_failure_count + '.'
+  );
+}
+
+function _marketSensitivityCandidateSort_(a, b) {
+  if (a.directional_when_expected_flat_count !== b.directional_when_expected_flat_count) {
+    return b.directional_when_expected_flat_count - a.directional_when_expected_flat_count;
+  }
+  var ar = a.flat_market_failure_rate == null ? -1 : a.flat_market_failure_rate;
+  var br = b.flat_market_failure_rate == null ? -1 : b.flat_market_failure_rate;
+  if (ar !== br) return br - ar;
+  return (a.candidate_key || '').localeCompare(b.candidate_key || '');
+}
+
+function _buildMarketSensitivityFilterSummaryRows_(generatedTs, source, warnings) {
+  var rowsOut = [];
+  if (!source || !source.rows.length) {
+    if (warnings) warnings.push('missing_source_rows:Market_Sensitivity_Filter_Candidates');
+    return rowsOut;
+  }
+
+  var candidateRows = [];
+  for (var i = 0; i < source.rows.length; i++) {
+    var row = source.rows[i];
+    if (String(_predValue_(row, source.idx, 'row_type') || '').trim() !== 'candidate') continue;
+    candidateRows.push(row);
+  }
+
+  var summaryRows = [];
+  summaryRows = summaryRows
+    .concat(_marketSensitivitySummaryScopeRows_(generatedTs, candidateRows, source.idx, 'family', function(r) {
+      return String(_predValue_(r, source.idx, 'family') || '').trim() || 'other';
+    }))
+    .concat(_marketSensitivitySummaryScopeRows_(generatedTs, candidateRows, source.idx, 'provider_family', function(r) {
+      var ai = String(_predValue_(r, source.idx, 'ai_name') || '').trim();
+      var family = String(_predValue_(r, source.idx, 'family') || '').trim() || 'other';
+      return ai + '|' + family;
+    }))
+    .concat(_marketSensitivitySummaryScopeRows_(generatedTs, candidateRows, source.idx, 'family_importance', function(r) {
+      var family = String(_predValue_(r, source.idx, 'family') || '').trim() || 'other';
+      var importance = String(_predValue_(r, source.idx, 'importance') || '').trim() || 'unknown';
+      return family + '|' + importance;
+    }));
+
+  rowsOut.push(_marketSensitivityGlobalSummaryRow_(generatedTs, summaryRows));
+  return rowsOut.concat(summaryRows);
+}
+
+function _marketSensitivitySummaryScopeRows_(generatedTs, rows, idx, scope, keyFn) {
+  var groups = {};
+  for (var i = 0; i < (rows || []).length; i++) {
+    var row = rows[i];
+    var key = keyFn(row);
+    if (!groups[key]) {
+      groups[key] = {
+        summary_scope: scope,
+        summary_key: key,
+        family: '',
+        ai_name: '',
+        importance: '',
+        rows: 0,
+        flat_failure_count: 0,
+        opposite_direction_count: 0,
+        other_failure_count: 0,
+        candidate_count: 0,
+        top_rule_counts: {}
+      };
+      var parts = key.split('|');
+      if (scope === 'family') {
+        groups[key].family = parts[0] || '';
+      } else if (scope === 'provider_family') {
+        groups[key].ai_name = parts[0] || '';
+        groups[key].family = parts[1] || '';
+      } else if (scope === 'family_importance') {
+        groups[key].family = parts[0] || '';
+        groups[key].importance = parts[1] || '';
+      }
+    }
+    var g = groups[key];
+    g.rows += Number(_predValue_(row, idx, 'rows') || 0);
+    g.flat_failure_count += Number(_predValue_(row, idx, 'directional_when_expected_flat_count') || 0);
+    g.opposite_direction_count += Number(_predValue_(row, idx, 'opposite_direction_count') || 0);
+    g.other_failure_count += Number(_predValue_(row, idx, 'other_failure_count') || 0);
+    g.candidate_count += 1;
+    var rule = String(_predValue_(row, idx, 'candidate_rule_label') || '').trim();
+    if (rule) g.top_rule_counts[rule] = (g.top_rule_counts[rule] || 0) + Number(_predValue_(row, idx, 'directional_when_expected_flat_count') || 0);
+  }
+
+  var out = [];
+  Object.keys(groups).sort().forEach(function(key) {
+    var g = groups[key];
+    var top = _topCountMapItems_(g.top_rule_counts, 1);
+    var topRule = top.length ? top[0].key : '';
+    var flatRate = g.rows ? _roundRate_(g.flat_failure_count / g.rows) : '';
+    var sampleStatus = _marketSensitivitySampleStatus_(g.rows);
+    out.push([
+      generatedTs,
+      'summary',
+      g.summary_scope,
+      g.summary_key,
+      g.family,
+      g.ai_name,
+      g.importance,
+      g.rows,
+      g.flat_failure_count,
+      flatRate === '' ? '' : flatRate,
+      g.opposite_direction_count,
+      g.other_failure_count,
+      g.candidate_count,
+      topRule,
+      sampleStatus,
+      _marketSensitivitySummaryDiagnosticLabel_(g, flatRate),
+      _marketSensitivitySummaryRecommendation_(g, flatRate, sampleStatus),
+      _marketSensitivitySummaryNote_(g, flatRate, topRule),
+      'Market sensitivity summary only. No prompt, scoring, or behavior change; not trading advice.'
+    ]);
+  });
+  return out;
+}
+
+function _marketSensitivitySummaryDiagnosticLabel_(g, flatRate) {
+  var rate = _numOrNull_(flatRate);
+  if (g.rows < 20 || rate == null) return 'insufficient_aggregate_sample';
+  if (rate >= 0.75) return 'repeated_flat_market_overcall';
+  if (rate >= 0.55) return 'possible_flat_market_overcall';
+  if (g.opposite_direction_count > g.flat_failure_count) return 'direction_logic_dominant';
+  return 'mixed_market_sensitivity_signal';
+}
+
+function _marketSensitivitySummaryRecommendation_(g, flatRate, sampleStatus) {
+  var rate = _numOrNull_(flatRate);
+  if (sampleStatus === 'too_thin') return 'needs_more_rows';
+  if (g.summary_scope === 'family' && g.family === 'labor' && g.opposite_direction_count > g.flat_failure_count) {
+    return 'review_direction_mapping_first';
+  }
+  if (rate != null && rate >= 0.75 && (sampleStatus === 'deep_sample' || sampleStatus === 'workable_sample')) {
+    return 'shadow_no_signal_counterfactual_candidate';
+  }
+  if (rate != null && rate >= 0.55) return 'monitor_for_filter_design';
+  return 'diagnostic_only';
+}
+
+function _marketSensitivitySummaryNote_(g, flatRate, topRule) {
+  return (
+    'flat_failures=' + g.flat_failure_count +
+    '/' + g.rows +
+    ', flat_rate=' + (flatRate === '' ? 'n/a' : flatRate) +
+    ', opposite=' + g.opposite_direction_count +
+    ', top_rule=' + (topRule || 'n/a') + '.'
+  );
+}
+
+function _marketSensitivityGlobalSummaryRow_(generatedTs, summaryRows) {
+  var familyRows = (summaryRows || []).filter(function(row) {
+    return String(row[2] || '') === 'family';
+  }).sort(function(a, b) {
+    var af = Number(a[8] || 0);
+    var bf = Number(b[8] || 0);
+    if (af !== bf) return bf - af;
+    return String(a[4] || '').localeCompare(String(b[4] || ''));
+  }).slice(0, 5);
+
+  return [
+    generatedTs,
+    'summary',
+    'global',
+    'all',
+    '',
+    '',
+    '',
+    summaryRows.length,
+    _sumNumbers_(summaryRows.map(function(row){ return Number(row[8] || 0); })),
+    '',
+    _sumNumbers_(summaryRows.map(function(row){ return Number(row[10] || 0); })),
+    _sumNumbers_(summaryRows.map(function(row){ return Number(row[11] || 0); })),
+    '',
+    '',
+    '',
+    '',
+    '',
+    'Top family-level flat-market summaries: ' + familyRows.map(function(row){ return String(row[4] || '') + '=' + String(row[8] || 0); }).join(', '),
+    'Market sensitivity summary only. No prompt, scoring, or behavior change; not trading advice.'
+  ];
+}
+
+function _buildMarketSensitivityNoSignalCounterfactualRows_(generatedTs, summary, economic, warnings) {
+  var rowsOut = [];
+  if (!summary || !summary.rows.length) {
+    if (warnings) warnings.push('missing_source_rows:Market_Sensitivity_Filter_Summary');
+    return rowsOut;
+  }
+  if (!economic || !economic.rows.length) {
+    if (warnings) warnings.push('missing_source_rows:Economic_Value_Accuracy');
+    return rowsOut;
+  }
+
+  var candidateScopes = _marketSensitivityNoSignalCandidateScopes_(summary);
+  var caseGroups = _marketSensitivityNoSignalCaseGroups_(economic);
+  var all = [];
+
+  Object.keys(candidateScopes).sort().forEach(function(key) {
+    var candidate = candidateScopes[key];
+    var cases = caseGroups[key] || [];
+    var row = _marketSensitivityNoSignalCounterfactualForGroup_(generatedTs, candidate, cases, economic.idx);
+    if (row) {
+      rowsOut.push(row);
+      all.push(row);
+    }
+  });
+
+  rowsOut.unshift(_marketSensitivityNoSignalGlobalRow_(generatedTs, all));
+  return rowsOut;
+}
+
+function _marketSensitivityNoSignalCandidateScopes_(summary) {
+  var out = {};
+  for (var i = 0; i < (summary.rows || []).length; i++) {
+    var row = summary.rows[i];
+    if (String(_predValue_(row, summary.idx, 'row_type') || '').trim() !== 'summary') continue;
+    var recommendation = String(_predValue_(row, summary.idx, 'recommendation_label') || '').trim();
+    if (recommendation !== 'shadow_no_signal_counterfactual_candidate') continue;
+    var scope = String(_predValue_(row, summary.idx, 'summary_scope') || '').trim();
+    var key = String(_predValue_(row, summary.idx, 'summary_key') || '').trim();
+    if (!scope || !key || scope === 'global') continue;
+    out[scope + '|' + key] = {
+      scope: scope,
+      scope_key: key,
+      family: String(_predValue_(row, summary.idx, 'family') || '').trim(),
+      ai_name: String(_predValue_(row, summary.idx, 'ai_name') || '').trim()
+    };
+  }
+  return out;
+}
+
+function _marketSensitivityNoSignalCaseGroups_(economic) {
+  var out = {};
+  for (var i = 0; i < (economic.rows || []).length; i++) {
+    var row = economic.rows[i];
+    if (String(_predValue_(row, economic.idx, 'row_type') || '').trim() !== 'case') continue;
+    var family = String(_predValue_(row, economic.idx, 'family') || '').trim() || 'other';
+    var aiName = String(_predValue_(row, economic.idx, 'ai_name') || '').trim();
+    var importance = String(_predValue_(row, economic.idx, 'importance') || '').trim() || 'unknown';
+
+    var keys = [
+      'family|' + family,
+      'provider_family|' + aiName + '|' + family,
+      'family_importance|' + family + '|' + importance
+    ];
+    for (var k = 0; k < keys.length; k++) {
+      if (!out[keys[k]]) out[keys[k]] = [];
+      out[keys[k]].push(row);
+    }
+  }
+  return out;
+}
+
+function _marketSensitivityNoSignalCounterfactualForGroup_(generatedTs, candidate, cases, idx) {
+  var baselineMiss = 0;
+  var baselineCorrect = 0;
+  var suppress = 0;
+  var missesAvoided = 0;
+  var correctLost = 0;
+
+  for (var i = 0; i < (cases || []).length; i++) {
+    var row = cases[i];
+    var mrDirOkCell = _predValue_(row, idx, 'mr_dir_ok');
+    var mrDirOk = mrDirOkCell === '' || mrDirOkCell == null ? '' : String(mrDirOkCell).trim().toUpperCase();
+    if (mrDirOk === 'FALSE') baselineMiss += 1;
+    if (mrDirOk === 'TRUE') baselineCorrect += 1;
+
+    var predDirCell = _predValue_(row, idx, 'mr_pred_dir');
+    var predDir = predDirCell === '' || predDirCell == null ? '' : String(predDirCell).trim().toLowerCase();
+    if (!predDir || predDir === 'flat') continue;
+    suppress += 1;
+    if (mrDirOk === 'FALSE') missesAvoided += 1;
+    if (mrDirOk === 'TRUE') correctLost += 1;
+  }
+
+  var delta = missesAvoided - correctLost;
+  var avoidRate = suppress ? _roundRate_(missesAvoided / suppress) : '';
+  var lossRate = suppress ? _roundRate_(correctLost / suppress) : '';
+  return [
+    generatedTs,
+    'counterfactual',
+    candidate.scope + '|' + candidate.scope_key,
+    candidate.scope,
+    candidate.scope_key,
+    candidate.family || '',
+    candidate.ai_name || '',
+    cases.length,
+    baselineMiss,
+    baselineCorrect,
+    suppress,
+    missesAvoided,
+    correctLost,
+    delta,
+    avoidRate === '' ? '' : avoidRate,
+    lossRate === '' ? '' : lossRate,
+    _marketSensitivityNoSignalLabel_(cases.length, suppress, missesAvoided, correctLost, delta),
+    'shadow_only',
+    _marketSensitivityNoSignalBlocker_(cases.length, suppress, delta),
+    'Shadow no-signal counterfactual over existing scored rows only. No prediction or scoring changes were made.',
+    'No-signal counterfactual only. Not trading advice and not subscriber-facing behavior.'
+  ];
+}
+
+function _marketSensitivityNoSignalLabel_(rows, suppress, missesAvoided, correctLost, delta) {
+  if (rows < 20 || suppress < 10) return 'insufficient_counterfactual_sample';
+  if (delta > 20 && correctLost <= missesAvoided * 0.25) return 'strong_shadow_no_signal_candidate';
+  if (delta > 0) return 'possible_shadow_no_signal_candidate';
+  if (delta === 0) return 'neutral_shadow_no_signal_result';
+  return 'counterfactual_would_over_suppress';
+}
+
+function _marketSensitivityNoSignalBlocker_(rows, suppress, delta) {
+  if (rows < 20 || suppress < 10) return 'insufficient_sample_size';
+  if (delta <= 0) return 'would_remove_too_many_correct_calls';
+  return 'needs_future_block_confirmation';
+}
+
+function _marketSensitivityNoSignalGlobalRow_(generatedTs, rows) {
+  return [
+    generatedTs,
+    'summary',
+    'all',
+    'global',
+    'all',
+    '',
+    '',
+    _sumNumbers_(rows.map(function(r){ return Number(r[7] || 0); })),
+    _sumNumbers_(rows.map(function(r){ return Number(r[8] || 0); })),
+    _sumNumbers_(rows.map(function(r){ return Number(r[9] || 0); })),
+    _sumNumbers_(rows.map(function(r){ return Number(r[10] || 0); })),
+    _sumNumbers_(rows.map(function(r){ return Number(r[11] || 0); })),
+    _sumNumbers_(rows.map(function(r){ return Number(r[12] || 0); })),
+    _sumNumbers_(rows.map(function(r){ return Number(r[13] || 0); })),
+    '',
+    '',
+    'Aggregate shadow no-signal counterfactual summary.',
+    'shadow_only',
+    'diagnostic_summary_only',
+    'Summarizes candidate no-signal suppression results across currently approved family-level market-sensitivity candidates.',
+    'No-signal counterfactual only. Not trading advice and not subscriber-facing behavior.'
+  ];
+}
+
+function _buildInflationNoSignalReviewRows_(generatedTs, counterfactuals, translation, warnings) {
+  var rowsOut = [];
+  if (!counterfactuals || !counterfactuals.rows.length) {
+    if (warnings) warnings.push('missing_source_rows:Market_Sensitivity_NoSignal_Counterfactuals');
+    return rowsOut;
+  }
+
+  var candidateRows = [];
+  for (var i = 0; i < (counterfactuals.rows || []).length; i++) {
+    var row = counterfactuals.rows[i];
+    if (String(_predValue_(row, counterfactuals.idx, 'row_type') || '').trim() !== 'counterfactual') continue;
+    if (String(_predValue_(row, counterfactuals.idx, 'family') || '').trim() !== 'inflation') continue;
+    candidateRows.push(row);
+  }
+
+  if (!candidateRows.length) {
+    if (warnings) warnings.push('missing_inflation_counterfactual_rows');
+    return rowsOut;
+  }
+
+  var totalSuppress = 0;
+  var totalAvoided = 0;
+  var totalLost = 0;
+  for (var c = 0; c < candidateRows.length; c++) {
+    totalSuppress += Number(_predValue_(candidateRows[c], counterfactuals.idx, 'would_suppress_count') || 0);
+    totalAvoided += Number(_predValue_(candidateRows[c], counterfactuals.idx, 'misses_avoided_count') || 0);
+    totalLost += Number(_predValue_(candidateRows[c], counterfactuals.idx, 'correct_calls_lost_count') || 0);
+  }
+
+  rowsOut.push([
+    generatedTs,
+    'summary',
+    'inflation_global_review',
+    'global',
+    'inflation',
+    'inflation',
+    '',
+    '',
+    '',
+    _sumNumbers_(candidateRows.map(function(row){ return Number(_predValue_(row, counterfactuals.idx, 'rows_considered') || 0); })),
+    _sumNumbers_(candidateRows.map(function(row){ return Number(_predValue_(row, counterfactuals.idx, 'baseline_miss_count') || 0); })),
+    _sumNumbers_(candidateRows.map(function(row){ return Number(_predValue_(row, counterfactuals.idx, 'baseline_correct_count') || 0); })),
+    totalSuppress,
+    totalAvoided,
+    totalLost,
+    totalAvoided - totalLost,
+    totalSuppress ? _roundRate_(totalAvoided / totalSuppress) : '',
+    totalSuppress ? _roundRate_(totalLost / totalSuppress) : '',
+    totalSuppress ? _roundRate_((totalAvoided - totalLost) / totalSuppress) : '',
+    totalAvoided > totalLost ? 'inflation_shadow_watchlist' : 'inflation_monitor_only',
+    'shadow_only',
+    'Review inflation slices before any future shadow extension. No activation.',
+    'Inflation remains the leading family for no-signal shadow review, but candidate quality varies by importance and provider slice.',
+    'Inflation review only. Derived from shadow reports; not trading advice and not subscriber-facing behavior.'
+  ]);
+
+  for (var j = 0; j < candidateRows.length; j++) {
+    var rowj = candidateRows[j];
+    var scope = String(_predValue_(rowj, counterfactuals.idx, 'scope') || '').trim();
+    var scopeKey = String(_predValue_(rowj, counterfactuals.idx, 'scope_key') || '').trim();
+    var importance = '';
+    if (scope === 'family_importance') {
+      var parts = scopeKey.split('|');
+      importance = parts.length > 1 ? parts[1] : '';
+    }
+    var suppress = Number(_predValue_(rowj, counterfactuals.idx, 'would_suppress_count') || 0);
+    var avoided = Number(_predValue_(rowj, counterfactuals.idx, 'misses_avoided_count') || 0);
+    var lost = Number(_predValue_(rowj, counterfactuals.idx, 'correct_calls_lost_count') || 0);
+    var delta = Number(_predValue_(rowj, counterfactuals.idx, 'net_miss_minus_loss_delta') || 0);
+    rowsOut.push([
+      generatedTs,
+      'counterfactual_slice',
+      String(_predValue_(rowj, counterfactuals.idx, 'counterfactual_key') || '').trim(),
+      scope,
+      scopeKey,
+      'inflation',
+      String(_predValue_(rowj, counterfactuals.idx, 'ai_name') || '').trim(),
+      importance,
+      '',
+      Number(_predValue_(rowj, counterfactuals.idx, 'rows_considered') || 0),
+      Number(_predValue_(rowj, counterfactuals.idx, 'baseline_miss_count') || 0),
+      Number(_predValue_(rowj, counterfactuals.idx, 'baseline_correct_count') || 0),
+      suppress,
+      avoided,
+      lost,
+      delta,
+      _predValue_(rowj, counterfactuals.idx, 'miss_avoid_rate'),
+      _predValue_(rowj, counterfactuals.idx, 'correct_loss_rate'),
+      suppress ? _roundRate_(delta / suppress) : '',
+      _inflationNoSignalCandidateLabel_(scope, suppress, avoided, lost, delta),
+      'shadow_only',
+      _inflationNoSignalStabilityNote_(Number(_predValue_(rowj, counterfactuals.idx, 'rows_considered') || 0), suppress, delta),
+      'Counterfactual slice review over inflation-only shadow candidates.',
+      'Inflation review only. Derived from shadow reports; not trading advice and not subscriber-facing behavior.'
+    ]);
+  }
+
+  if (!translation || !translation.rows.length) {
+    if (warnings) warnings.push('missing_source_rows:Economic_To_Market_Translation_Errors');
+    return rowsOut;
+  }
+
+  var tgroups = {};
+  for (var k = 0; k < (translation.rows || []).length; k++) {
+    var trow = translation.rows[k];
+    if (String(_predValue_(trow, translation.idx, 'row_type') || '').trim() !== 'case') continue;
+    if (String(_predValue_(trow, translation.idx, 'family') || '').trim() !== 'inflation') continue;
+    var aiName = String(_predValue_(trow, translation.idx, 'ai_name') || '').trim();
+    var importanceKey = String(_predValue_(trow, translation.idx, 'importance') || '').trim() || 'unknown';
+    var failureMode = String(_predValue_(trow, translation.idx, 'failure_mode') || '').trim() || 'unknown';
+    var gkey = aiName + '|' + importanceKey + '|' + failureMode;
+    if (!tgroups[gkey]) {
+      tgroups[gkey] = {
+        ai_name: aiName,
+        importance: importanceKey,
+        failure_mode: failureMode,
+        rows: 0
+      };
+    }
+    tgroups[gkey].rows += 1;
+  }
+
+  Object.keys(tgroups).sort().forEach(function(key) {
+    var g = tgroups[key];
+    rowsOut.push([
+      generatedTs,
+      'translation_pattern',
+      'translation|' + key,
+      'provider_importance_failure',
+      key,
+      'inflation',
+      g.ai_name,
+      g.importance,
+      g.failure_mode,
+      g.rows,
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      _inflationNoSignalTranslationLabel_(g.failure_mode, g.rows),
+      'diagnostic_only',
+      g.rows >= 20 ? 'repeated_pattern' : 'thin_pattern',
+      'Inflation translation pattern for rows where economic value was right but market direction was wrong.',
+      'Inflation review only. Translation pattern layer; not trading advice and not subscriber-facing behavior.'
+    ]);
+  });
+
+  return rowsOut;
+}
+
+function _inflationNoSignalCandidateLabel_(scope, suppress, avoided, lost, delta) {
+  if (scope === 'family_importance' && delta > 10 && lost <= avoided * 0.35) return 'inflation_importance_watchlist';
+  if (scope === 'provider_family' && delta > 5) return 'inflation_provider_watchlist';
+  if (delta > 0) return 'inflation_shadow_watchlist';
+  if (delta === 0) return 'inflation_neutral_monitor';
+  return 'inflation_over_suppression_risk';
+}
+
+function _inflationNoSignalStabilityNote_(rows, suppress, delta) {
+  if (rows < 100 || suppress < 20) return 'needs_more_repetition';
+  if (delta <= 0) return 'counterfactual_not_stable_enough';
+  if (delta >= 15) return 'best_current_shadow_slice';
+  return 'promising_but_not_stable';
+}
+
+function _inflationNoSignalTranslationLabel_(failureMode, rows) {
+  if (failureMode === 'flat_when_directional_expected' && rows >= 20) return 'inflation_flat_market_overcall_repeated';
+  if (failureMode === 'opposite_direction' && rows >= 10) return 'inflation_direction_mapping_review';
+  return rows >= 10 ? 'inflation_translation_monitor' : 'thin_translation_pattern';
+}
+
+function _sortInflationNoSignalReviewRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  var order = {
+    summary: 0,
+    counterfactual_slice: 1,
+    translation_pattern: 2
+  };
+  rows.sort(function(a, b) {
+    var at = String(a[idx.row_type] || '');
+    var bt = String(b[idx.row_type] || '');
+    var ao = order.hasOwnProperty(at) ? order[at] : 99;
+    var bo = order.hasOwnProperty(bt) ? order[bt] : 99;
+    if (ao !== bo) return ao - bo;
+    if (at === 'counterfactual_slice') {
+      var ad = Number(a[idx.net_miss_minus_loss_delta] || 0);
+      var bd = Number(b[idx.net_miss_minus_loss_delta] || 0);
+      if (ad !== bd) return bd - ad;
+    }
+    if (at === 'translation_pattern') {
+      var ar = Number(a[idx.rows_considered] || 0);
+      var br = Number(b[idx.rows_considered] || 0);
+      if (ar !== br) return br - ar;
+    }
+    return _cmpByColumns_(a, b, [idx.scope, idx.scope_key, idx.ai_name, idx.importance, idx.failure_mode]);
+  });
+}
+
 function _sortBatchSplitGroupCounterfactualRows_(headers, rows) {
   var idx = _headerIndexMap_(headers);
   rows.sort(function(a, b) {
@@ -8001,6 +10412,110 @@ function _sortBatchSplitGroupCounterfactualRows_(headers, rows) {
     var br = Number(b[idx.group_counterfactual_rank] || 0);
     if (ar !== br) return ar - br;
     return _cmpByColumns_(a, b, [idx.release_ts, idx.batch_id]);
+  });
+}
+
+function _sortEconomicValueAccuracyRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  var order = {
+    summary: 0,
+    provider_summary: 1,
+    family_summary: 2,
+    provider_family_summary: 3,
+    case: 4
+  };
+  rows.sort(function(a, b) {
+    var at = String(a[idx.row_type] || '');
+    var bt = String(b[idx.row_type] || '');
+    var ao = order.hasOwnProperty(at) ? order[at] : 99;
+    var bo = order.hasOwnProperty(bt) ? order[bt] : 99;
+    if (ao !== bo) return ao - bo;
+    if (at === 'case') {
+      return _cmpByColumns_(a, b, [
+        idx.release_ts,
+        idx.ai_name,
+        idx.type,
+        idx.batch_id,
+        idx.event_id
+      ]);
+    }
+    return _cmpByColumns_(a, b, [idx.summary_key, idx.ai_name, idx.family]);
+  });
+}
+
+function _sortProviderFamilyEconomicAccuracyRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    var at = String(a[idx.row_type] || '');
+    var bt = String(b[idx.row_type] || '');
+    if (at !== bt) return at === 'summary' ? -1 : (bt === 'summary' ? 1 : at.localeCompare(bt));
+    if (at === 'summary') return 0;
+    var ar = Number(a[idx.rank_within_provider] || 999999);
+    var br = Number(b[idx.rank_within_provider] || 999999);
+    if (ar !== br) return ar - br;
+    return _cmpByColumns_(a, b, [idx.ai_name, idx.family]);
+  });
+}
+
+function _sortEconomicToMarketTranslationErrorsRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    var at = String(a[idx.row_type] || '');
+    var bt = String(b[idx.row_type] || '');
+    if (at !== bt) return at === 'summary' ? -1 : 1;
+    if (at === 'summary') {
+      var aRows = Number(a[idx.market_wrong_rows] || 0);
+      var bRows = Number(b[idx.market_wrong_rows] || 0);
+      if (aRows !== bRows) return bRows - aRows;
+      return _cmpByColumns_(a, b, [idx.ai_name, idx.family]);
+    }
+    return _cmpByColumns_(a, b, [idx.ai_name, idx.family, idx.release_ts, idx.event_id]);
+  });
+}
+
+function _sortMarketSensitivityFilterCandidatesRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    var at = String(a[idx.row_type] || '');
+    var bt = String(b[idx.row_type] || '');
+    if (at !== bt) return at === 'summary' ? -1 : 1;
+    if (at === 'summary') return 0;
+    var ac = Number(a[idx.directional_when_expected_flat_count] || 0);
+    var bc = Number(b[idx.directional_when_expected_flat_count] || 0);
+    if (ac !== bc) return bc - ac;
+    return _cmpByColumns_(a, b, [idx.candidate_rule_label, idx.ai_name, idx.family, idx.indicator_name]);
+  });
+}
+
+function _sortMarketSensitivityFilterSummaryRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    var at = String(a[idx.row_type] || '');
+    var bt = String(b[idx.row_type] || '');
+    if (at !== bt) return at === 'summary' ? -1 : 1;
+    var ascope = String(a[idx.summary_scope] || '');
+    var bscope = String(b[idx.summary_scope] || '');
+    if (ascope !== bscope) {
+      var order = { global: 0, family: 1, provider_family: 2, family_importance: 3 };
+      return (order[ascope] == null ? 99 : order[ascope]) - (order[bscope] == null ? 99 : order[bscope]);
+    }
+    var af = Number(a[idx.flat_failure_count] || 0);
+    var bf = Number(b[idx.flat_failure_count] || 0);
+    if (af !== bf) return bf - af;
+    return _cmpByColumns_(a, b, [idx.summary_key]);
+  });
+}
+
+function _sortMarketSensitivityNoSignalCounterfactualRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    var at = String(a[idx.row_type] || '');
+    var bt = String(b[idx.row_type] || '');
+    if (at !== bt) return at === 'summary' ? -1 : 1;
+    var ad = Number(a[idx.net_miss_minus_loss_delta] || -999999);
+    var bd = Number(b[idx.net_miss_minus_loss_delta] || -999999);
+    if (ad !== bd) return bd - ad;
+    return _cmpByColumns_(a, b, [idx.scope, idx.scope_key]);
   });
 }
 
@@ -8274,4 +10789,8 @@ function _mostCommonFailureType_(g) {
 
 function _round2_(v) {
   return Math.round(v * 100) / 100;
+}
+
+function _round4_(v) {
+  return Math.round(v * 10000) / 10000;
 }

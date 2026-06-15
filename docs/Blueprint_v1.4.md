@@ -127,6 +127,7 @@ Batch_Splitting_Candidates
 Batch_Split_Counterfactuals
 Batch_Baseline_Coverage_Audit
 Batch_Split_Group_Counterfactuals
+Inflation_NoSignal_Review
 
 #### Optional / legacy / compatibility
 Config (optional): If present, the runner can read key-value configuration from it (best-effort; absence is allowed).
@@ -256,12 +257,66 @@ The system also supports rebuilt derived reporting tabs for outcome and attentio
 - `Batch_Split_Counterfactuals`
 - `Batch_Baseline_Coverage_Audit`
 - `Batch_Split_Group_Counterfactuals`
+- `Inflation_NoSignal_Review`
 
 These sheets are read-only over their source layers and rewrite only their own body rows. Missing headers are appended, existing header order is preserved, and the builders do not modify `Event`, `Predictions`, `Outcome_Ledger`, `MR_ProviderRuns`, or evaluation sheets.
 
 `Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Provider_Individuality`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Provider_Individuality` specifically separates provider individuality/explainability evidence from performance evidence. As of the Jan 31 2025 checkpoint, Attention Factor v1 is frozen as an explainability/provider-individuality layer. `Attention_Phase3_Candidates` is a conservative bridge layer for Phase 3 design review, and `Attention_Shadow_Experiments` and `Attention_Shadow_Summary` are Phase 3A counterfactual reporting layers, but Phase 3A v1 promotion is closed/frozen and Phase 3B is not approved. These sheets expose selected reasoning-factor evidence, provider-character evidence, case-level disagreement evidence, candidate-only experiment slices, and shadow experiment outcomes for review only. They do not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation. V1 attention factors are returned in the same provider response as prediction fields and must not be described as proven causal controls.
 
 `Family_Structure_Report` is the active post-Attention-v1 diagnostic layer for Family Structure Investigation v1. It is read-only over existing outcome, evaluation, and attention review sheets. It exists to decide whether future `Family Rule v1` or `Batch Splitting v1` work is justified by recurring structure evidence. It must not change prediction prompts, prediction semantics, batching rules, scoring, market reaction logic, provider weighting, calibration, routing, or subscriber-facing behavior.
+
+`Economic_Value_Accuracy` is a derived-only diagnostic report that separates economic release prediction accuracy from market reaction prediction accuracy. It reads existing `Predictions` rows and matched `Event` actuals where available, scores economic-value direction conservatively, and compares that value-direction result against existing market-reaction grading. It does not modify prompts, providers, Predictions rows, Event rows, market-reaction scoring, evaluation scoring, Attention Factor logic, Family Structure logic, batching behavior, routing, weighting, calibration, or subscriber-facing behavior.
+
+`Provider_Family_Economic_Accuracy` is a derived-only ranking/reporting layer over `Economic_Value_Accuracy`. It uses the existing `provider_family_summary` rows as its source of truth and highlights which provider-family slices may contain economic-value signal versus thin-sample noise. It does not create a second scoring path and does not change prompts, providers, Predictions rows, Event rows, market-reaction scoring, evaluation scoring, routing, weighting, calibration, or subscriber-facing behavior.
+
+`Economic_To_Market_Translation_Errors` is a derived-only diagnostic layer over `Economic_Value_Accuracy` and `Provider_Family_Economic_Accuracy`. It isolates rows where economic value direction was correct but market direction was wrong, then groups them by provider, family, and failure mode so the team can inspect whether the miss came from opposite-direction logic, muted/flat market behavior, or strength/sustain mismatch. It does not change prompts, providers, Predictions rows, Event rows, market-reaction scoring, evaluation scoring, routing, weighting, calibration, or subscriber-facing behavior.
+
+`Market_Sensitivity_Filter_Candidates` is a derived-only diagnostic layer over `Economic_To_Market_Translation_Errors` and `Provider_Family_Economic_Accuracy`. It ranks repeated flat-market translation failures into candidate low-confidence / no-signal filter rules so the team can inspect whether some families or indicators are being over-converted into directional market calls. It does not change prompts, providers, Predictions rows, Event rows, market-reaction scoring, evaluation scoring, routing, weighting, calibration, or subscriber-facing behavior.
+
+`Market_Sensitivity_Filter_Summary` is a derived-only summary layer over `Market_Sensitivity_Filter_Candidates`. It rolls the atomized candidate rows up into decision-friendly family, provider-family, and family-importance summaries so the team can judge whether any future shadow no-signal counterfactual is justified. It does not change prompts, providers, Predictions rows, Event rows, market-reaction scoring, evaluation scoring, routing, weighting, calibration, or subscriber-facing behavior.
+
+`Market_Sensitivity_NoSignal_Counterfactuals` is a derived-only shadow layer over `Market_Sensitivity_Filter_Summary` and `Economic_Value_Accuracy`. It tests whether suppressing directional market calls in candidate flat-market families would have avoided misses without throwing away too many correct calls. It does not change prompts, providers, Predictions rows, Event rows, market-reaction scoring, evaluation scoring, routing, weighting, calibration, or subscriber-facing behavior.
+
+`Inflation_NoSignal_Review` is a derived-only review layer over `Market_Sensitivity_NoSignal_Counterfactuals` and `Economic_To_Market_Translation_Errors`. It narrows the shadow no-signal investigation to inflation slices and ranks them by misses avoided, correct calls lost, net benefit, and recurring translation-error shape. It does not activate no-signal behavior, confidence changes, prompt changes, routing, weighting, calibration, or subscriber-facing behavior.
+
+### Active fast rebuild path
+
+`Build Active Decision Reports` / `apiBuildActiveDecisionReports()` is the current runtime-reduction rebuild path for active decision work. It rebuilds only:
+
+- `Evaluation_Rows`, `Evaluation_Summary`, `Evaluation_BatchCompare`, `Evaluation_Scenario`
+- `Outcome_Ledger`
+- `Outcome_Summary_ProviderFamily`, `Outcome_Summary_Convergence`, `Outcome_Summary_Bucket`
+- `Outcome_Diagnostics`
+- `Economic_Value_Accuracy`
+- `Provider_Family_Economic_Accuracy`
+- `Economic_To_Market_Translation_Errors`
+- `Market_Sensitivity_Filter_Candidates` as a dependency-only feeder layer
+- `Market_Sensitivity_Filter_Summary`
+- `Market_Sensitivity_NoSignal_Counterfactuals`
+- `Inflation_NoSignal_Review`
+
+This active fast rebuild path exists because the current decision stack is:
+
+`economic-value -> provider-family economic accuracy -> translation-error -> market-sensitivity -> inflation no-signal`
+
+Closed or frozen diagnostics remain preserved and manually rebuildable, but are not part of the active fast rebuild path. This includes Attention Phase 3A counterfactual reporting, Phase 3B promotion work, Family Structure Investigation, broad batch splitting diagnostics, and related archived counterfactual layers.
+
+### Inflation no-signal checkpoint
+
+Current status labels:
+
+- `inflation_no_signal_v1_status = shadow_monitor_only`
+- `inflation_no_signal_primary_slice = inflation_low_importance`
+- `inflation_no_signal_secondary_slice = family_inflation`
+- `inflation_no_signal_supporting_slices = Gemini_inflation, OpenAI_inflation`
+- `inflation_no_signal_broad_market_sensitivity_status = not_approved`
+- `inflation_no_signal_activation_status = not_approved`
+- `central_bank_no_signal_status = not_approved`
+- `next_decision = monitor_in_future_backtest_blocks`
+
+Checkpoint reference: `docs/Inflation_NoSignal_Checkpoint_2026-06-14.md`
+
+This checkpoint means the current inflation no-signal idea stays narrow and shadow-only. The leading slice is low-importance inflation. The family-wide inflation slice remains a monitor. Provider-specific inflation slices are supporting evidence, not primary control logic. Broad market-sensitivity no-signal behavior and central-bank no-signal behavior are not approved.
 
 `Batch_Splitting_Candidates` is a derived diagnostic ranking layer over `Family_Structure_Report`. It ranks mixed-family, low-signal, and best-member-outperformed batch cases for review. It does not split batches, change event construction, change scoring, change prediction prompts, or approve live `Batch Splitting v1`.
 
