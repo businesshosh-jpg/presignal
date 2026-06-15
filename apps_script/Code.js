@@ -95,6 +95,7 @@ function onOpen() {
       .addItem('Build Batch Baseline Coverage Audit', 'menuBuildBatchBaselineCoverageAudit_')
       .addItem('Build Batch Split Group Counterfactuals', 'menuBuildBatchSplitGroupCounterfactuals_')
       .addItem('Build Economic Value Accuracy', 'menuBuildEconomicValueAccuracy_')
+      .addItem('Build Attention Economic Value Report', 'menuBuildAttentionEconomicValueReport_')
       .addItem('Build Provider x Family Economic Accuracy', 'menuBuildProviderFamilyEconomicAccuracy_')
       .addItem('Build Economic to Market Translation Errors', 'menuBuildEconomicToMarketTranslationErrors_')
       .addItem('Build Market Sensitivity Filter Candidates', 'menuBuildMarketSensitivityFilterCandidates_')
@@ -104,6 +105,12 @@ function onOpen() {
       .addItem('Build Outcome Diagnostics', 'menuBuildOutcomeDiagnostics_')
       .addItem('Rebuild Logs / Diagnostics', 'menuMaintenanceDiagnostics_')
       .addItem('System Health Check', 'menuMaintenanceHealthCheck_')
+  );
+
+  menu.addSubMenu(
+    ui.createMenu('⑥ Governance')
+      .addItem('Build Project Status', 'menuBuildProjectStatus_')
+      .addItem('Build Decision Log', 'menuBuildDecisionLog_')
   );
 
   menu.addToUi();

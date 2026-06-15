@@ -196,6 +196,60 @@ function menuBuildActiveDecisionReports_() {
   }
 }
 
+function menuBuildProjectStatus_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildProjectStatus_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Governance -> Build Project Status', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Project status rows=' + (res.rows_written || 0), 'Project Status', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Governance -> Build Project Status failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
+function menuBuildDecisionLog_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildDecisionLog_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Governance -> Build Decision Log', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Decision log rows=' + (res.rows_written || 0), 'Decision Log', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Governance -> Build Decision Log failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function menuBuildAttentionFactorSummary_() {
   var ss = SpreadsheetApp.getActive();
   var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
@@ -804,6 +858,33 @@ function menuBuildInflationNoSignalReview_() {
   }
 }
 
+function menuBuildAttentionEconomicValueReport_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = buildAttentionEconomicValueReport_();
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Attention economic value report -> Build sheet', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Attention economic value rows=' + (res.rows_written || 0), 'Attention Economic Value Report', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Attention economic value report -> Build sheet failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
+}
+
 function buildEvaluationSheets_() {
   var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
   if (!predSheet) throw new Error('Predictions sheet missing');
@@ -834,17 +915,23 @@ function buildEvaluationSheets_() {
     var src = data[r];
     var evalTs = _predValue_(src, predIdx, 'eval_ts');
     var realDir = _predValue_(src, predIdx, 'mr_real_dir');
-    var rowType = String(_predValue_(src, predIdx, 'type') || '').trim().toLowerCase();
+    var typeCell = _predValue_(src, predIdx, 'type');
+    var rowType = String(typeCell || '').trim().toLowerCase();
     if (!evalTs && !realDir && rowType !== 'batch') continue;
-    rowsOut.push(_buildEvaluationRow_(src, predIdx, generatedTs));
+    rowsOut.push(_buildEvaluationRow_(src, predIdx, generatedTs, {
+      eval_ts: evalTs,
+      mr_real_dir: realDir,
+      type: typeCell
+    }));
   }
 
-  rowsOut = _dedupeEvaluationRowsByPredictionKey_(rowsOut);
-  rowsOut = _filterLegacySplitBatchRows_(rowsOut);
+  var ridx = _evaluationRowHeaderIndex_();
+  rowsOut = _dedupeEvaluationRowsByPredictionKey_(rowsOut, ridx);
+  rowsOut = _filterLegacySplitBatchRows_(rowsOut, ridx);
 
   var summaryOut = _buildEvaluationSummaryRows_(rowsOut, generatedTs);
-  var batchCompareOut = _buildEvaluationBatchCompareRows_(rowsOut, generatedTs);
-  var scenarioOut = _buildEvaluationScenarioRows_(rowsOut, generatedTs);
+  var batchCompareOut = _buildEvaluationBatchCompareRows_(rowsOut, generatedTs, ridx);
+  var scenarioOut = _buildEvaluationScenarioRows_(rowsOut, generatedTs, ridx);
 
   _sortEvaluationRows_(rowHeaders, rowsOut);
   _sortEvaluationSummaryRows_(summaryHeaders, summaryOut);
@@ -1088,6 +1175,18 @@ function getOrCreateInflationNoSignalReviewSheet_() {
   return _getOrCreateSheet_('Inflation_NoSignal_Review');
 }
 
+function getOrCreateAttentionEconomicValueReportSheet_() {
+  return _getOrCreateSheet_('Attention_Economic_Value_Report');
+}
+
+function getOrCreateProjectStatusSheet_() {
+  return _getOrCreateSheet_('Project_Status');
+}
+
+function getOrCreateDecisionLogSheet_() {
+  return _getOrCreateSheet_('Decision_Log');
+}
+
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, headers || []);
 }
@@ -1178,6 +1277,18 @@ function ensureMarketSensitivityNoSignalCounterfactualsHeaders_(sheet) {
 
 function ensureInflationNoSignalReviewHeaders_(sheet) {
   return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _inflationNoSignalReviewHeaders_());
+}
+
+function ensureAttentionEconomicValueReportHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _attentionEconomicValueReportHeaders_());
+}
+
+function ensureProjectStatusHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _projectStatusHeaders_());
+}
+
+function ensureDecisionLogHeaders_(sheet) {
+  return _ensureOutcomeLedgerHeadersAppendOnly_(sheet, _decisionLogHeaders_());
 }
 
 function buildOutcomeSummaries_() {
@@ -1902,6 +2013,90 @@ function buildInflationNoSignalReview_() {
   };
 }
 
+function buildAttentionEconomicValueReport_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var economic = _readFamilyStructureSource_('Economic_Value_Accuracy', warnings);
+  var predSheet = getSheet((CFG && CFG.SHEET_PRED) ? CFG.SHEET_PRED : 'Predictions');
+  var predictionSource = _attentionEconomicPredictionSource_(predSheet, warnings);
+  var headers = _attentionEconomicValueReportHeaders_();
+  var rowsOut = _buildAttentionEconomicValueReportRows_(generatedTs, economic, predictionSource, warnings);
+  _sortAttentionEconomicValueReportRows_(headers, rowsOut);
+  var target = getDiagnosticsSheet_('Attention_Economic_Value_Report', headers, warnings);
+  var sheet = target.sheet;
+  var actualHeaders = target.headers;
+  var remapped = _remapRowsToHeaders_(headers, actualHeaders, rowsOut);
+  var estimate = _assertWorkbookCellSafetyForReport_(
+    target.spreadsheet,
+    sheet,
+    sheet.getName(),
+    remapped.length,
+    actualHeaders.length
+  );
+  if (!target.used_external_diagnostics_workbook && estimate.estimated_total_cells_after_write > (_diagnosticsWorkbookSafetyThreshold_() * 0.9)) {
+    warnings.push(
+      'main_workbook_cell_risk:' +
+      estimate.estimated_total_cells_after_write +
+      '_of_' + _diagnosticsWorkbookSafetyThreshold_()
+    );
+  }
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    remapped
+  );
+  trimSheetToDataRange_(sheet, remapped.length + 1, actualHeaders.length);
+  return {
+    status: 'ok',
+    source_sheet: economic.name || 'Economic_Value_Accuracy',
+    source_workbook_type: economic.workbook_type || '',
+    source_spreadsheet_id: economic.spreadsheet_id || '',
+    target_spreadsheet_id: target.spreadsheet_id,
+    target_workbook_type: target.target_workbook_type || (target.used_external_diagnostics_workbook ? 'DIAGNOSTICS' : 'MAIN'),
+    target_sheet: sheet.getName(),
+    attention_economic_value_report_sheet: sheet.getName(),
+    rows_written: remapped.length,
+    columns_written: actualHeaders.length,
+    used_external_diagnostics_workbook: target.used_external_diagnostics_workbook,
+    estimated_total_cells_after_write: estimate.estimated_total_cells_after_write,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildProjectStatus_() {
+  var source = _governanceProjectRegistry_();
+  var headers = _projectStatusHeaders_();
+  var rowsOut = _buildProjectStatusRows_(source.items || []);
+  var sheet = getOrCreateProjectStatusSheet_();
+  var actualHeaders = ensureProjectStatusHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    project_status_sheet: sheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
+function buildDecisionLog_() {
+  var source = _governanceProjectRegistry_();
+  var headers = _decisionLogHeaders_();
+  var rowsOut = _buildDecisionLogRows_(source.decisions || []);
+  var sheet = getOrCreateDecisionLogSheet_();
+  var actualHeaders = ensureDecisionLogHeaders_(sheet);
+  _rewriteSheetRowsPreservingHeaders_(
+    sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowsOut)
+  );
+  return {
+    decision_log_sheet: sheet.getName(),
+    rows_written: rowsOut.length
+  };
+}
+
 function _outcomeDiagnosticsHeaders_() {
   return [
     'generated_ts',
@@ -2454,6 +2649,71 @@ function _inflationNoSignalReviewHeaders_() {
     'stability_note',
     'summary_note',
     'decision_support_note'
+  ];
+}
+
+function _attentionEconomicValueReportHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'report_section',
+    'scope',
+    'scope_key',
+    'provider',
+    'outcome_family',
+    'attention_factor',
+    'sample_count',
+    'factor_sample_count',
+    'economic_dir_ok_count',
+    'economic_dir_ok_rate',
+    'baseline_sample_count',
+    'baseline_ok_count',
+    'baseline_economic_dir_ok_rate',
+    'delta_vs_baseline',
+    'confidence_interval_low',
+    'confidence_interval_high',
+    'confidence_interval_text',
+    'coverage_pct',
+    'statistical_strength_score',
+    'statistical_strength_label',
+    'minimum_sample_threshold',
+    'sample_label',
+    'correlation_label',
+    'summary_note',
+    'evidence_note',
+    'disclaimer',
+    'decision_support_note'
+  ];
+}
+
+function _projectStatusHeaders_() {
+  return [
+    'work_id',
+    'work_name',
+    'category',
+    'phase',
+    'status',
+    'confidence',
+    'start_date',
+    'last_review_date',
+    'last_updated',
+    'next_review_target',
+    'owner',
+    'current_focus',
+    'next_action',
+    'staleness_status',
+    'evidence_summary',
+    'decision_summary'
+  ];
+}
+
+function _decisionLogHeaders_() {
+  return [
+    'decision_date',
+    'work_id',
+    'decision_type',
+    'result',
+    'summary'
   ];
 }
 
@@ -6112,72 +6372,121 @@ function _evaluationScenarioHeaders_() {
   ];
 }
 
-function _buildEvaluationRow_(src, idx, generatedTs) {
+function _buildEvaluationRow_(src, idx, generatedTs, cached) {
+  cached = cached || {};
   var releaseTs = _predValue_(src, idx, 'release_ts');
   var releaseDate = String(releaseTs || '').slice(0, 10);
   var eventId = _predValue_(src, idx, 'event_id');
   var aiName = _predValue_(src, idx, 'ai_name');
   var predictionId = _predValue_(src, idx, 'prediction_id');
-  var type = _predValue_(src, idx, 'type');
+  var type = cached.type !== undefined ? cached.type : _predValue_(src, idx, 'type');
+  var batchId = _predValue_(src, idx, 'batch_id');
+  var runId = _predValue_(src, idx, 'run_id');
+  var indicatorName = _predValue_(src, idx, 'indicator_name');
+  var country = _predValue_(src, idx, 'country');
+  var genre = _predValue_(src, idx, 'genre');
+  var importance = _predValue_(src, idx, 'importance');
+  var fxPair = _predValue_(src, idx, 'fx_pair');
+  var aiModel = _predValue_(src, idx, 'ai_model');
+  var schemaVersion = _predValue_(src, idx, 'schema_version');
+  var status = _predValue_(src, idx, 'status');
+  var qualitativeResult = _predValue_(src, idx, 'qualitative_result');
+  var consensusValue = _predValue_(src, idx, 'consensus_value');
+  var prevRevision = _predValue_(src, idx, 'prev_revision');
+  var aiForecastValue = _predValue_(src, idx, 'ai_forecast_value');
   var releasedValue = (String(type || '').toLowerCase() === 'batch') ? '' : _predValue_(src, idx, 'released_value');
+  var mrPredDir = _predValue_(src, idx, 'mr_pred_dir');
+  var mrPredNetPips = _predValue_(src, idx, 'mr_pred_net_pips');
+  var mrPredStrength = _predValue_(src, idx, 'mr_pred_strength');
+  var mrPredSustainMin = _predValue_(src, idx, 'mr_pred_sustain_min');
+  var mrRealDir = cached.mr_real_dir !== undefined ? cached.mr_real_dir : _predValue_(src, idx, 'mr_real_dir');
+  var mrRealStrength = _predValue_(src, idx, 'mr_real_strength');
+  var mrRealSustainMin = _predValue_(src, idx, 'mr_real_sustain_min');
+  var mrDirOk = _predValue_(src, idx, 'mr_dir_ok');
+  var mrStrengthOk = _predValue_(src, idx, 'mr_strength_ok');
+  var mrSustainOk = _predValue_(src, idx, 'mr_sustain_ok');
+  var overallOk = _predValue_(src, idx, 'overall_ok');
+  var realizedPips = _predValue_(src, idx, 'realized_pips');
+  var mrRealMaxUpPips = _predValue_(src, idx, 'mr_real_max_up_pips');
+  var mrRealMaxDownPips = _predValue_(src, idx, 'mr_real_max_down_pips');
+  var mrFinalProvider = _predValue_(src, idx, 'mr_final_provider');
+  var evalNote = _predValue_(src, idx, 'eval_note');
+  var mrCompareStatus = _predValue_(src, idx, 'mr_compare_status');
+  var mrCompareNote = _predValue_(src, idx, 'mr_compare_note');
+  var evalTs = cached.eval_ts !== undefined ? cached.eval_ts : _predValue_(src, idx, 'eval_ts');
+  var batchAnchorMode = _predValue_(src, idx, 'batch_anchor_mode');
+  var batchAnchorConfidence = _predValue_(src, idx, 'batch_anchor_confidence');
+  var batchAnchorEventId = _predValue_(src, idx, 'batch_anchor_event_id');
+  var batchAnchorIndicatorName = _predValue_(src, idx, 'batch_anchor_indicator_name');
+  var batchAnchorScore = _predValue_(src, idx, 'batch_anchor_score');
+  var batchAnchorMargin = _predValue_(src, idx, 'batch_anchor_margin');
+  var batchAnchorRunnerUpEventId = _predValue_(src, idx, 'batch_anchor_runner_up_event_id');
+  var batchAnchorRunnerUpIndicatorName = _predValue_(src, idx, 'batch_anchor_runner_up_indicator_name');
+  var batchAnchorReason = _predValue_(src, idx, 'batch_anchor_reason');
+  var preSignalMode = _predValue_(src, idx, 'pre_signal_mode');
+  var preRiskLevel = _predValue_(src, idx, 'pre_risk_level');
+  var preVolatilityLevel = _predValue_(src, idx, 'pre_volatility_level');
+  var watchMemberEventIds = _predValue_(src, idx, 'watch_member_event_ids');
+  var watchMemberIndicatorNames = _predValue_(src, idx, 'watch_member_indicator_names');
+  var scenarioConfidence = _predValue_(src, idx, 'scenario_confidence');
   return [
     generatedTs,
     releaseDate,
     releaseTs,
     eventId,
-    _predValue_(src, idx, 'batch_id'),
+    batchId,
     predictionId,
-    _predValue_(src, idx, 'run_id'),
+    runId,
     type,
-    _predValue_(src, idx, 'indicator_name'),
-    _predValue_(src, idx, 'country'),
-    _predValue_(src, idx, 'genre'),
-    _predValue_(src, idx, 'importance'),
-    _predValue_(src, idx, 'fx_pair'),
+    indicatorName,
+    country,
+    genre,
+    importance,
+    fxPair,
     aiName,
-    _predValue_(src, idx, 'ai_model'),
-    _predValue_(src, idx, 'schema_version'),
-    _predValue_(src, idx, 'status'),
-    _predValue_(src, idx, 'qualitative_result'),
-    _predValue_(src, idx, 'consensus_value'),
-    _predValue_(src, idx, 'prev_revision'),
-    _predValue_(src, idx, 'ai_forecast_value'),
+    aiModel,
+    schemaVersion,
+    status,
+    qualitativeResult,
+    consensusValue,
+    prevRevision,
+    aiForecastValue,
     releasedValue,
-    _predValue_(src, idx, 'mr_pred_dir'),
-    _predValue_(src, idx, 'mr_pred_net_pips'),
-    _predValue_(src, idx, 'mr_pred_strength'),
-    _predValue_(src, idx, 'mr_pred_sustain_min'),
-    _predValue_(src, idx, 'mr_real_dir'),
-    _predValue_(src, idx, 'mr_real_strength'),
-    _predValue_(src, idx, 'mr_real_sustain_min'),
-    _predValue_(src, idx, 'mr_dir_ok'),
-    _predValue_(src, idx, 'mr_strength_ok'),
-    _predValue_(src, idx, 'mr_sustain_ok'),
-    _predValue_(src, idx, 'overall_ok'),
-    _predValue_(src, idx, 'realized_pips'),
-    _predValue_(src, idx, 'mr_real_max_up_pips'),
-    _predValue_(src, idx, 'mr_real_max_down_pips'),
-    _predValue_(src, idx, 'mr_final_provider'),
-    _predValue_(src, idx, 'eval_note'),
-    _predValue_(src, idx, 'mr_compare_status'),
-    _predValue_(src, idx, 'mr_compare_note'),
-    _predValue_(src, idx, 'eval_ts'),
+    mrPredDir,
+    mrPredNetPips,
+    mrPredStrength,
+    mrPredSustainMin,
+    mrRealDir,
+    mrRealStrength,
+    mrRealSustainMin,
+    mrDirOk,
+    mrStrengthOk,
+    mrSustainOk,
+    overallOk,
+    realizedPips,
+    mrRealMaxUpPips,
+    mrRealMaxDownPips,
+    mrFinalProvider,
+    evalNote,
+    mrCompareStatus,
+    mrCompareNote,
+    evalTs,
     eventId + '|' + aiName + '|' + predictionId,
-    _predValue_(src, idx, 'batch_anchor_mode'),
-    _predValue_(src, idx, 'batch_anchor_confidence'),
-    _predValue_(src, idx, 'batch_anchor_event_id'),
-    _predValue_(src, idx, 'batch_anchor_indicator_name'),
-    _predValue_(src, idx, 'batch_anchor_score'),
-    _predValue_(src, idx, 'batch_anchor_margin'),
-    _predValue_(src, idx, 'batch_anchor_runner_up_event_id'),
-    _predValue_(src, idx, 'batch_anchor_runner_up_indicator_name'),
-    _predValue_(src, idx, 'batch_anchor_reason'),
-    _predValue_(src, idx, 'pre_signal_mode'),
-    _predValue_(src, idx, 'pre_risk_level'),
-    _predValue_(src, idx, 'pre_volatility_level'),
-    _predValue_(src, idx, 'watch_member_event_ids'),
-    _predValue_(src, idx, 'watch_member_indicator_names'),
-    _predValue_(src, idx, 'scenario_confidence')
+    batchAnchorMode,
+    batchAnchorConfidence,
+    batchAnchorEventId,
+    batchAnchorIndicatorName,
+    batchAnchorScore,
+    batchAnchorMargin,
+    batchAnchorRunnerUpEventId,
+    batchAnchorRunnerUpIndicatorName,
+    batchAnchorReason,
+    preSignalMode,
+    preRiskLevel,
+    preVolatilityLevel,
+    watchMemberEventIds,
+    watchMemberIndicatorNames,
+    scenarioConfidence
   ];
 }
 
@@ -6188,10 +6497,8 @@ function _evaluationRowHeaderIndex_() {
   return idx;
 }
 
-function _dedupeEvaluationRowsByPredictionKey_(rows) {
+function _dedupeEvaluationRowsByPredictionKey_(rows, ridx) {
   if (!rows || !rows.length) return [];
-
-  var ridx = _evaluationRowHeaderIndex_();
   var latestByKey = {};
   var order = [];
 
@@ -6236,10 +6543,8 @@ function _evaluationDateMs_(value) {
   return isFinite(ms) ? ms : -1;
 }
 
-function _filterLegacySplitBatchRows_(rows) {
+function _filterLegacySplitBatchRows_(rows, ridx) {
   if (!rows || !rows.length) return [];
-
-  var ridx = _evaluationRowHeaderIndex_();
   var splitBases = {};
 
   for (var i = 0; i < rows.length; i++) {
@@ -6269,6 +6574,9 @@ function _filterLegacySplitBatchRows_(rows) {
 }
 
 function _evaluationFindMemberByEventId_(members, eventId, ridx) {
+  if (members && members._eventIdMap) {
+    return members._eventIdMap[String(eventId || '').trim()] || null;
+  }
   var target = String(eventId || '').trim();
   if (!target) return null;
   for (var i = 0; i < (members || []).length; i++) {
@@ -6289,6 +6597,7 @@ function _evaluationRelevantMembers_(batchRow, members, ridx) {
 }
 
 function _evaluationBatchFamilyKey_(batchRow, members, ridx) {
+  if (batchRow && batchRow._evaluationFamilyKey !== undefined) return batchRow._evaluationFamilyKey;
   var authoritativeText = [
     batchRow ? batchRow[ridx.indicator_name] : '',
     batchRow ? batchRow[ridx.batch_anchor_indicator_name] : '',
@@ -6296,8 +6605,14 @@ function _evaluationBatchFamilyKey_(batchRow, members, ridx) {
     batchRow ? batchRow[ridx.watch_member_indicator_names] : ''
   ].join(' | ');
   var authoritativeKeys = _evaluationFamilyKeysFromText_(authoritativeText);
-  if (authoritativeKeys.length === 1) return authoritativeKeys[0];
-  if (authoritativeKeys.length > 1) return '';
+  if (authoritativeKeys.length === 1) {
+    if (batchRow) batchRow._evaluationFamilyKey = authoritativeKeys[0];
+    return authoritativeKeys[0];
+  }
+  if (authoritativeKeys.length > 1) {
+    if (batchRow) batchRow._evaluationFamilyKey = '';
+    return '';
+  }
 
   var seen = {};
   for (var i = 0; i < (members || []).length; i++) {
@@ -6305,11 +6620,13 @@ function _evaluationBatchFamilyKey_(batchRow, members, ridx) {
     for (var k = 0; k < memberKeys.length; k++) seen[memberKeys[k]] = true;
   }
   var keys = Object.keys(seen);
-  return keys.length === 1 ? keys[0] : '';
+  var resolved = keys.length === 1 ? keys[0] : '';
+  if (batchRow) batchRow._evaluationFamilyKey = resolved;
+  return resolved;
 }
 
 function _evaluationFamilyKeysFromText_(value) {
-  var text = _normalizeEvaluationName_(value);
+  var text = _normalizeEvaluationNameCached_(value);
   var out = [];
 
   if (/\b(non farm payrolls?|nfp|unemployment rate|u 6 unemployment|average hourly earnings|average weekly hours|participation rate|labor force participation|private payrolls?|manufacturing payrolls?|government payrolls?)\b/.test(text)) {
@@ -6346,8 +6663,8 @@ function _evaluationFamilyKeysFromText_(value) {
 }
 
 function _evaluationMemberRelevantForFamily_(member, familyKey, ridx) {
-  var name = _normalizeEvaluationName_(member ? member[ridx.indicator_name] : '');
-  var genre = _normalizeEvaluationName_(member ? member[ridx.genre] : '');
+  var name = _evaluationCachedMemberName_(member, ridx);
+  var genre = _evaluationCachedMemberGenre_(member, ridx);
 
   if (_evaluationIsSidePositioningMember_(name, genre)) return false;
 
@@ -6501,7 +6818,7 @@ function _buildEvaluationSummaryRows_(rows, generatedTs) {
 function _buildEvaluationBatchCompareRows_(rows, generatedTs) {
   var groups = {};
   var out = [];
-  var ridx = _evaluationRowHeaderIndex_();
+  var ridx = arguments.length > 2 && arguments[2] ? arguments[2] : _evaluationRowHeaderIndex_();
 
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
@@ -6522,6 +6839,8 @@ function _buildEvaluationBatchCompareRows_(rows, generatedTs) {
     if (type === 'member') groups[key].members.push(row);
   }
 
+  _evaluationPrepareGroupedMembers_(groups, ridx);
+
   var keys = Object.keys(groups).sort();
   for (var k = 0; k < keys.length; k++) {
     var g = groups[keys[k]];
@@ -6530,17 +6849,17 @@ function _buildEvaluationBatchCompareRows_(rows, generatedTs) {
 
     var comparisonMembers = _evaluationRelevantMembers_(g.batch, g.members, ridx);
     var best = comparisonMembers[0];
-    var bestScore = _evaluationCompareScore_(best);
+    var bestScore = _evaluationCompareScore_(best, ridx);
     for (var m = 1; m < comparisonMembers.length; m++) {
       var candidate = comparisonMembers[m];
-      var candidateScore = _evaluationCompareScore_(candidate);
+      var candidateScore = _evaluationCompareScore_(candidate, ridx);
       if (_isBetterEvaluationScore_(candidateScore, bestScore)) {
         best = candidate;
         bestScore = candidateScore;
       }
     }
 
-    var batchScore = _evaluationCompareScore_(g.batch);
+    var batchScore = _evaluationCompareScore_(g.batch, ridx);
     var winner = 'tie';
     var winnerReason = 'same_score';
     if (_isBetterEvaluationScore_(batchScore, bestScore)) {
@@ -6620,7 +6939,7 @@ function _buildEvaluationBatchCompareRows_(rows, generatedTs) {
 function _buildEvaluationScenarioRows_(rows, generatedTs) {
   var groups = {};
   var out = [];
-  var ridx = _evaluationRowHeaderIndex_();
+  var ridx = arguments.length > 2 && arguments[2] ? arguments[2] : _evaluationRowHeaderIndex_();
 
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
@@ -6636,6 +6955,8 @@ function _buildEvaluationScenarioRows_(rows, generatedTs) {
     if (type === 'member') groups[key].members.push(row);
   }
 
+  _evaluationPrepareGroupedMembers_(groups, ridx);
+
   var keys = Object.keys(groups).sort();
   for (var k = 0; k < keys.length; k++) {
     var g = groups[keys[k]];
@@ -6649,10 +6970,10 @@ function _buildEvaluationScenarioRows_(rows, generatedTs) {
     var scenarioMembers = _evaluationRelevantMembers_(g.batch, g.members, ridx);
     if (!_evaluationRowIsScored_(g.batch) && !_evaluationAnyScoredRows_(scenarioMembers)) continue;
     var best = scenarioMembers[0];
-    var bestScore = _evaluationCompareScore_(best);
+    var bestScore = _evaluationCompareScore_(best, ridx);
     for (var m = 1; m < scenarioMembers.length; m++) {
       var candidate = scenarioMembers[m];
-      var candidateScore = _evaluationCompareScore_(candidate);
+      var candidateScore = _evaluationCompareScore_(candidate, ridx);
       if (_isBetterEvaluationScore_(candidateScore, bestScore)) {
         best = candidate;
         bestScore = candidateScore;
@@ -6740,15 +7061,57 @@ function _normalizeEvaluationName_(value) {
   return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
-function _evaluationCompareScore_(row) {
-  return {
-    overall: _boolScore_(row[32]),
-    dir: _boolScore_(row[29]),
-    strength: _boolScore_(row[30]),
-    sustain: _boolScore_(row[31]),
-    pred_gap: Math.abs(Math.abs(_numOrZero_(row[23])) - Math.abs(_numOrZero_(row[33]))),
-    pred_abs: Math.abs(_numOrZero_(row[23]))
+function _normalizeEvaluationNameCached_(value) {
+  if (value && typeof value === 'object' && value._normalizedEvaluationName !== undefined) {
+    return value._normalizedEvaluationName;
+  }
+  var normalized = _normalizeEvaluationName_(value);
+  if (value && typeof value === 'object') value._normalizedEvaluationName = normalized;
+  return normalized;
+}
+
+function _evaluationCachedMemberName_(member, ridx) {
+  if (!member) return '';
+  if (member._normalizedIndicatorName !== undefined) return member._normalizedIndicatorName;
+  member._normalizedIndicatorName = _normalizeEvaluationName_(member[ridx.indicator_name]);
+  return member._normalizedIndicatorName;
+}
+
+function _evaluationCachedMemberGenre_(member, ridx) {
+  if (!member) return '';
+  if (member._normalizedGenre !== undefined) return member._normalizedGenre;
+  member._normalizedGenre = _normalizeEvaluationName_(member[ridx.genre]);
+  return member._normalizedGenre;
+}
+
+function _evaluationPrepareGroupedMembers_(groups, ridx) {
+  var keys = Object.keys(groups || {});
+  for (var i = 0; i < keys.length; i++) {
+    var g = groups[keys[i]];
+    if (!g || !g.members || g.members._eventIdMap) continue;
+    g.members._eventIdMap = {};
+    for (var j = 0; j < g.members.length; j++) {
+      var member = g.members[j];
+      g.members._eventIdMap[String(member[ridx.event_id] || '').trim()] = member;
+      _evaluationCachedMemberName_(member, ridx);
+      _evaluationCachedMemberGenre_(member, ridx);
+    }
+  }
+}
+
+function _evaluationCompareScore_(row, ridx) {
+  if (row && row._evaluationCompareScore) return row._evaluationCompareScore;
+  ridx = ridx || _evaluationRowHeaderIndex_();
+  var score = {
+    overall: _boolScore_(row[ridx.overall_ok]),
+    dir: _boolScore_(row[ridx.mr_dir_ok]),
+    strength: _boolScore_(row[ridx.mr_strength_ok]),
+    sustain: _boolScore_(row[ridx.mr_sustain_ok]),
+    pred_gap: Math.abs(Math.abs(_numOrZero_(row[ridx.mr_pred_net_pips])) - Math.abs(_numOrZero_(row[ridx.realized_pips]))),
+    pred_abs: Math.abs(_numOrZero_(row[ridx.mr_pred_net_pips]))
   };
+  if (row) row._evaluationCompareScore = score;
+  return score;
 }
 
 function _isBetterEvaluationScore_(a, b) {
@@ -6806,6 +7169,366 @@ function _getOrCreateSheet_(name) {
   return ss.getSheetByName(name) || ss.insertSheet(name);
 }
 
+function _getConfigValueMaybe_(key) {
+  var normalized = String(key || '').trim().toLowerCase();
+  if (!normalized) return '';
+  try {
+    var sheetMap = (typeof _readConfigSheetMap_ === 'function') ? _readConfigSheetMap_() : null;
+    if (sheetMap && sheetMap.hasOwnProperty(normalized)) {
+      return String(sheetMap[normalized] == null ? '' : sheetMap[normalized]).trim();
+    }
+  } catch (e) {}
+  try {
+    var propMap = (typeof _readScriptPropsMap_ === 'function') ? _readScriptPropsMap_() : {};
+    if (propMap && propMap.hasOwnProperty(normalized)) {
+      return String(propMap[normalized] == null ? '' : propMap[normalized]).trim();
+    }
+  } catch (e2) {}
+  return '';
+}
+
+function _diagnosticsWorkbookSafetyThreshold_() {
+  return 9500000;
+}
+
+function _sheetLocationRegistry_() {
+  return {
+    'Event': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
+    'Predictions': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
+    'log': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
+    'Config': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
+    'SeriesMap': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
+    'SeriesMap_Suggestions': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
+    'SeriesMap_Proposals': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
+    'MR_ProviderRuns': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
+    'Outcome_Ledger': { category: 'DERIVED', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: false, rebuildable: true },
+    'Economic_Value_Accuracy': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Family_Economic_Accuracy': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Economic_To_Market_Translation_Errors': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_Economic_Value_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Outcome_Summary_ProviderFamily': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Outcome_Summary_Bucket': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Outcome_Summary_Convergence': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Project_Status': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Decision_Log': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Prediction_Aggregates': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true }
+  };
+}
+
+function isDiagnosticsSheetName_(sheetName) {
+  var name = String(sheetName || '').trim();
+  var heavy = {
+    'Attention_Economic_Value_Report': true,
+    'Attention_Factor_Summary': true,
+    'Provider_Character_Diagnostics': true,
+    'Attention_Provider_Individuality': true,
+    'Attention_Evidence_Report': true,
+    'Attention_Disagreement_Review': true,
+    'Attention_Disagreement_Summary': true,
+    'Attention_Phase3_Candidates': true,
+    'Attention_Shadow_Experiments': true,
+    'Attention_Shadow_Summary': true,
+    'Outcome_Diagnostics': true,
+    'Family_Structure_Report': true,
+    'Batch_Splitting_Candidates': true,
+    'Batch_Split_Counterfactuals': true,
+    'Batch_Baseline_Coverage_Audit': true,
+    'Batch_Split_Group_Counterfactuals': true,
+    'Market_Sensitivity_Filter_Candidates': true,
+    'Market_Sensitivity_Filter_Summary': true,
+    'Market_Sensitivity_NoSignal_Counterfactuals': true,
+    'Inflation_NoSignal_Review': true,
+    'Economic_To_Market_Translation_Errors': true,
+    'Provider_Family_Economic_Accuracy': true
+  };
+  return !!heavy[name];
+}
+
+function getMainSpreadsheet_() {
+  return SpreadsheetApp.getActive();
+}
+
+function getDiagnosticsSpreadsheet_() {
+  var diagnosticsId = _getConfigValueMaybe_('DIAGNOSTICS_SPREADSHEET_ID');
+  if (!diagnosticsId) return null;
+  return SpreadsheetApp.openById(diagnosticsId);
+}
+
+function getArchiveSpreadsheet_() {
+  var archiveId = _getConfigValueMaybe_('ARCHIVE_SPREADSHEET_ID');
+  if (!archiveId) return null;
+  return SpreadsheetApp.openById(archiveId);
+}
+
+function getSheetLocation_(sheetName) {
+  var registry = _sheetLocationRegistry_();
+  var name = String(sheetName || '').trim();
+  if (registry[name]) {
+    var item = {};
+    for (var k in registry[name]) item[k] = registry[name][k];
+    item.sheet_name = name;
+    return item;
+  }
+  var workbookType = isDiagnosticsSheetName_(name) ? 'DIAGNOSTICS' : 'MAIN';
+  return {
+    sheet_name: name,
+    category: workbookType === 'DIAGNOSTICS' ? 'DIAGNOSTIC' : 'DERIVED',
+    workbook_type: workbookType,
+    read_policy: workbookType === 'DIAGNOSTICS' ? 'DIAGNOSTICS_FIRST' : 'MAIN_FIRST',
+    write_policy: workbookType,
+    canonical: false,
+    rebuildable: true
+  };
+}
+
+function describeSheetLocation_(sheetName) {
+  var loc = getSheetLocation_(sheetName);
+  return [
+    'sheet=' + loc.sheet_name,
+    'category=' + loc.category,
+    'workbook_type=' + loc.workbook_type,
+    'read_policy=' + loc.read_policy,
+    'write_policy=' + loc.write_policy,
+    'canonical=' + loc.canonical,
+    'rebuildable=' + loc.rebuildable
+  ].join(',');
+}
+
+function _knownWorkbookEntries_() {
+  return [
+    { type: 'MAIN', spreadsheet: getMainSpreadsheet_() },
+    { type: 'DIAGNOSTICS', spreadsheet: getDiagnosticsSpreadsheet_() },
+    { type: 'ARCHIVE', spreadsheet: getArchiveSpreadsheet_() }
+  ];
+}
+
+function findSheetAcrossKnownWorkbooks_(sheetName) {
+  var entries = _knownWorkbookEntries_();
+  var checked = [];
+  for (var i = 0; i < entries.length; i++) {
+    var entry = entries[i];
+    if (!entry.spreadsheet) continue;
+    checked.push(entry.type + ':' + entry.spreadsheet.getId());
+    var sheet = entry.spreadsheet.getSheetByName(sheetName);
+    if (sheet) {
+      return {
+        found: true,
+        sheet: sheet,
+        spreadsheet: entry.spreadsheet,
+        spreadsheet_id: entry.spreadsheet.getId(),
+        workbook_type: entry.type,
+        checked_workbooks: checked
+      };
+    }
+  }
+  return {
+    found: false,
+    sheet: null,
+    spreadsheet: null,
+    spreadsheet_id: '',
+    workbook_type: '',
+    checked_workbooks: checked
+  };
+}
+
+function getSheetForRead_(sheetName) {
+  var loc = getSheetLocation_(sheetName);
+  var name = String(sheetName || '').trim();
+
+  function resolved(entry) {
+    if (!entry || !entry.spreadsheet) return null;
+    var sh = entry.spreadsheet.getSheetByName(name);
+    if (!sh) return null;
+    return {
+      sheet: sh,
+      spreadsheet: entry.spreadsheet,
+      spreadsheet_id: entry.spreadsheet.getId(),
+      workbook_type: entry.type,
+      location: loc,
+      checked_workbooks: [entry.type + ':' + entry.spreadsheet.getId()]
+    };
+  }
+
+  var mainEntry = { type: 'MAIN', spreadsheet: getMainSpreadsheet_() };
+  var diagEntry = { type: 'DIAGNOSTICS', spreadsheet: getDiagnosticsSpreadsheet_() };
+  var archEntry = { type: 'ARCHIVE', spreadsheet: getArchiveSpreadsheet_() };
+
+  var order = [];
+  switch (String(loc.read_policy || 'REGISTRY_ROUTED')) {
+    case 'MAIN_ONLY': order = [mainEntry]; break;
+    case 'DIAGNOSTICS_ONLY': order = [diagEntry]; break;
+    case 'MAIN_FIRST': order = [mainEntry, diagEntry, archEntry]; break;
+    case 'DIAGNOSTICS_FIRST': order = [diagEntry, mainEntry, archEntry]; break;
+    case 'REGISTRY_ROUTED':
+    default:
+      if (loc.workbook_type === 'DIAGNOSTICS') order = [diagEntry, mainEntry, archEntry];
+      else if (loc.workbook_type === 'ARCHIVE') order = [archEntry, diagEntry, mainEntry];
+      else order = [mainEntry, diagEntry, archEntry];
+      break;
+  }
+
+  var checked = [];
+  for (var i = 0; i < order.length; i++) {
+    var entry = order[i];
+    if (!entry || !entry.spreadsheet) continue;
+    checked.push(entry.type + ':' + entry.spreadsheet.getId());
+    var sh = entry.spreadsheet.getSheetByName(name);
+    if (sh) {
+      return {
+        sheet: sh,
+        spreadsheet: entry.spreadsheet,
+        spreadsheet_id: entry.spreadsheet.getId(),
+        workbook_type: entry.type,
+        location: loc,
+        checked_workbooks: checked
+      };
+    }
+  }
+
+  throw new Error(
+    'Sheet not found for read: ' + name +
+    ' | registry=' + describeSheetLocation_(name) +
+    ' | checked=' + checked.join(';')
+  );
+}
+
+function getSheetForWrite_(sheetName) {
+  var loc = getSheetLocation_(sheetName);
+  var ss = null;
+  var workbookType = '';
+  if (loc.write_policy === 'DIAGNOSTICS') {
+    ss = getDiagnosticsSpreadsheet_();
+    workbookType = 'DIAGNOSTICS';
+  } else if (loc.write_policy === 'ARCHIVE') {
+    ss = getArchiveSpreadsheet_();
+    workbookType = 'ARCHIVE';
+  } else {
+    ss = getMainSpreadsheet_();
+    workbookType = 'MAIN';
+  }
+  if (!ss) {
+    throw new Error(
+      'Target workbook unavailable for write: ' + sheetName +
+      ' | registry=' + describeSheetLocation_(sheetName)
+    );
+  }
+  var sh = ss.getSheetByName(sheetName) || ss.insertSheet(sheetName);
+  return {
+    sheet: sh,
+    spreadsheet: ss,
+    spreadsheet_id: ss.getId(),
+    workbook_type: workbookType,
+    location: loc
+  };
+}
+
+function getReportOutputSpreadsheet_(sheetName, warnings) {
+  var target = getSheetForWrite_(sheetName);
+  var ss = target.spreadsheet;
+  return {
+    spreadsheet: ss,
+    spreadsheet_id: ss.getId(),
+    used_external_diagnostics_workbook: target.workbook_type === 'DIAGNOSTICS',
+    target_workbook_type: target.workbook_type,
+    location: target.location
+  };
+}
+
+function getDiagnosticsSheet_(sheetName, headers, warnings) {
+  var target = getReportOutputSpreadsheet_(sheetName, warnings);
+  var ss = target.spreadsheet;
+  var sheet = ss.getSheetByName(sheetName) || ss.insertSheet(sheetName);
+  var actualHeaders = _ensureHeadersAppendOnlyForSheet_(sheet, headers || []);
+  return {
+    spreadsheet: ss,
+    spreadsheet_id: target.spreadsheet_id,
+    used_external_diagnostics_workbook: target.used_external_diagnostics_workbook,
+    sheet: sheet,
+    headers: actualHeaders
+  };
+}
+
+function _ensureHeadersAppendOnlyForSheet_(sheet, requiredHeaders) {
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 1) {
+    sheet.getRange(1, 1, 1, requiredHeaders.length).setValues([requiredHeaders]);
+    sheet.setFrozenRows(1);
+    return requiredHeaders.slice();
+  }
+  var existing = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(function(h) {
+    return String(h || '').trim();
+  });
+  var seen = {};
+  existing.forEach(function(h) { if (h) seen[h] = true; });
+  var missing = [];
+  (requiredHeaders || []).forEach(function(h) {
+    if (!seen[h]) {
+      seen[h] = true;
+      missing.push(h);
+    }
+  });
+  if (missing.length) {
+    sheet.getRange(1, existing.length + 1, 1, missing.length).setValues([missing]);
+    existing = existing.concat(missing);
+  }
+  sheet.setFrozenRows(1);
+  return existing;
+}
+
+function _spreadsheetAllocatedCellCount_(ss) {
+  var total = 0;
+  var sheets = ss.getSheets();
+  for (var i = 0; i < sheets.length; i++) {
+    total += Number(sheets[i].getMaxRows() || 0) * Number(sheets[i].getMaxColumns() || 0);
+  }
+  return total;
+}
+
+function _estimateWorkbookCellsAfterWrite_(ss, sheet, usedRows, usedCols) {
+  var currentTotal = _spreadsheetAllocatedCellCount_(ss);
+  var currentSheetCells = sheet ? (Number(sheet.getMaxRows() || 0) * Number(sheet.getMaxColumns() || 0)) : 0;
+  var nextRows = Math.max(usedRows || 1, 1);
+  var nextCols = Math.max(usedCols || 1, 1);
+  var nextSheetCells = nextRows * nextCols;
+  return {
+    current_total_cells: currentTotal,
+    current_sheet_cells: currentSheetCells,
+    estimated_new_cells: nextSheetCells,
+    estimated_total_cells_after_write: currentTotal - currentSheetCells + nextSheetCells
+  };
+}
+
+function _assertWorkbookCellSafetyForReport_(ss, sheet, sheetName, rowsCount, colsCount) {
+  var estimate = _estimateWorkbookCellsAfterWrite_(ss, sheet, rowsCount + 1, colsCount);
+  var threshold = _diagnosticsWorkbookSafetyThreshold_();
+  if (estimate.estimated_total_cells_after_write > threshold) {
+    throw new Error(
+      'Workbook cell safety threshold exceeded for sheet=' + sheetName +
+      ' target_spreadsheet_id=' + ss.getId() +
+      ' estimated_rows=' + (rowsCount + 1) +
+      ' estimated_columns=' + colsCount +
+      ' estimated_new_cells=' + estimate.estimated_new_cells +
+      ' estimated_total_cells_after_write=' + estimate.estimated_total_cells_after_write +
+      ' threshold=' + threshold +
+      '. Archive or delete old diagnostics tabs, or configure DIAGNOSTICS_SPREADSHEET_ID.'
+    );
+  }
+  return estimate;
+}
+
+function trimSheetToDataRange_(sheet, usedRows, usedCols) {
+  usedRows = Math.max(Number(usedRows || 1), 1);
+  usedCols = Math.max(Number(usedCols || 1), 1);
+  var maxRows = Number(sheet.getMaxRows() || 0);
+  var maxCols = Number(sheet.getMaxColumns() || 0);
+  if (maxRows > usedRows) {
+    sheet.deleteRows(usedRows + 1, maxRows - usedRows);
+  }
+  if (maxCols > usedCols) {
+    sheet.deleteColumns(usedCols + 1, maxCols - usedCols);
+  }
+}
+
 function _rewriteSheet_(sheet, headers, rows) {
   sheet.clearContents();
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
@@ -6850,6 +7573,263 @@ function _cmpByColumns_(a, b, cols) {
     if (cmp !== 0) return cmp;
   }
   return 0;
+}
+
+function _governanceProjectRegistry_() {
+  return {
+    items: [
+      {
+        work_id: 'HistoricalContext_v1a',
+        work_name: 'Historical Context v1a',
+        category: 'foundation_context',
+        phase: 'completed',
+        status: 'active',
+        confidence: 'high',
+        start_date: '2026-05-03',
+        last_review_date: '2026-05-14',
+        last_updated: '2026-05-14',
+        next_review_target: '2026-09-01',
+        owner: 'Codex',
+        current_focus: 'Reference context only',
+        next_action: 'Use as historical context when reopening older roadmap questions.',
+        evidence_summary: 'Historical context and runtime notes were preserved for future reference.',
+        decision_summary: 'Keep active as project memory and context support.'
+      },
+      {
+        work_id: 'Outcome_Ledger_v1',
+        work_name: 'Outcome Ledger v1',
+        category: 'foundation_reporting',
+        phase: 'completed',
+        status: 'active',
+        confidence: 'high',
+        start_date: '2025-01-01',
+        last_review_date: '2026-06-14',
+        last_updated: '2026-06-14',
+        next_review_target: '2026-09-01',
+        owner: 'Codex',
+        current_focus: 'Base outcome ledger for all downstream diagnostics',
+        next_action: 'Keep rebuilding as part of the active decision stack.',
+        evidence_summary: 'Outcome_Ledger remains the canonical derived outcome layer for evaluation review.',
+        decision_summary: 'Keep active as foundational reporting infrastructure.'
+      },
+      {
+        work_id: 'Attention_Factor_v1_Goal1',
+        work_name: 'Attention Factor v1 Goal 1',
+        category: 'attention_explainability',
+        phase: 'completed',
+        status: 'success',
+        confidence: 'high',
+        start_date: '2025-01-01',
+        last_review_date: '2025-01-31',
+        last_updated: '2025-01-31',
+        next_review_target: 'on_demand',
+        owner: 'Codex',
+        current_focus: 'Preserved as explainability and provider-individuality evidence',
+        next_action: 'Keep reports rebuildable; do not convert into control behavior.',
+        evidence_summary: 'Provider individuality was confirmed through stable attention-factor divergence.',
+        decision_summary: 'Frozen as explainability/provider-individuality layer.'
+      },
+      {
+        work_id: 'Attention_Factor_v1_Goal2',
+        work_name: 'Attention Factor v1 Goal 2',
+        category: 'attention_routing',
+        phase: 'completed',
+        status: 'rejected',
+        confidence: 'high',
+        start_date: '2025-01-01',
+        last_review_date: '2025-01-31',
+        last_updated: '2025-01-31',
+        next_review_target: 'future_v2_only',
+        owner: 'Codex',
+        current_focus: 'Closed for v1 promotion work',
+        next_action: 'Revisit only under a future causal Attention Factor v2 experiment.',
+        evidence_summary: 'No watchlist or strong shadow candidate cleared Phase 3A promotion evidence.',
+        decision_summary: 'Rejected for Phase 3B routing/weighting promotion.'
+      },
+      {
+        work_id: 'Family_Structure_Investigation_v1',
+        work_name: 'Family Structure Investigation v1',
+        category: 'family_structure',
+        phase: 'completed',
+        status: 'archived',
+        confidence: 'high',
+        start_date: '2026-06-14',
+        last_review_date: '2026-06-14',
+        last_updated: '2026-06-14',
+        next_review_target: 'on_demand',
+        owner: 'Codex',
+        current_focus: 'Preserved diagnostics only',
+        next_action: 'Keep reports manually rebuildable; do not treat as active direction.',
+        evidence_summary: 'Structural signal was found, but broad family-structure changes were not justified.',
+        decision_summary: 'Closed as diagnostic and archived from the active roadmap.'
+      },
+      {
+        work_id: 'Batch_Splitting_v1',
+        work_name: 'Batch Splitting v1',
+        category: 'batch_structure',
+        phase: 'completed',
+        status: 'rejected',
+        confidence: 'high',
+        start_date: '2026-06-14',
+        last_review_date: '2026-06-14',
+        last_updated: '2026-06-14',
+        next_review_target: 'narrow_combo_only',
+        owner: 'Codex',
+        current_focus: 'Broad implementation closed',
+        next_action: 'Reopen only for narrow family-combo review if future evidence demands it.',
+        evidence_summary: 'Broad counterfactual testing produced mixed true group results and did not support general splitting.',
+        decision_summary: 'Rejected for broad implementation.'
+      },
+      {
+        work_id: 'Economic_Value_Accuracy_v1',
+        work_name: 'Economic Value Accuracy v1',
+        category: 'economic_accuracy',
+        phase: 'active',
+        status: 'active',
+        confidence: 'medium',
+        start_date: '2026-06-14',
+        last_review_date: '2026-06-14',
+        last_updated: '2026-06-14',
+        next_review_target: 'after_next_backtest_block',
+        owner: 'Codex',
+        current_focus: 'Separate economic release prediction quality from market reaction quality',
+        next_action: 'Refresh after new backtest blocks and compare against translation-error findings.',
+        evidence_summary: 'Economic-value direction is only slightly better than market-direction accuracy overall.',
+        decision_summary: 'Remain active as the base layer for current diagnostic work.'
+      },
+      {
+        work_id: 'Provider_Family_Economic_Accuracy_v1',
+        work_name: 'Provider Family Economic Accuracy v1',
+        category: 'economic_accuracy',
+        phase: 'active',
+        status: 'active',
+        confidence: 'medium',
+        start_date: '2026-06-14',
+        last_review_date: '2026-06-14',
+        last_updated: '2026-06-14',
+        next_review_target: 'after_next_backtest_block',
+        owner: 'Codex',
+        current_focus: 'Track family-specific economic-value pockets rather than provider-wide claims',
+        next_action: 'Monitor whether useful slices remain family-specific and repeat across future blocks.',
+        evidence_summary: 'Provider-family pockets, especially inflation and some Gemini slices, look more meaningful than provider-wide dominance.',
+        decision_summary: 'Keep active inside the current economic-value decision stack.'
+      },
+      {
+        work_id: 'Translation_Error_v1',
+        work_name: 'Translation Error v1',
+        category: 'market_translation',
+        phase: 'active',
+        status: 'active',
+        confidence: 'medium',
+        start_date: '2026-06-14',
+        last_review_date: '2026-06-14',
+        last_updated: '2026-06-14',
+        next_review_target: 'after_next_backtest_block',
+        owner: 'Codex',
+        current_focus: 'Diagnose economic-right / market-wrong cases by failure mode',
+        next_action: 'Continue monitoring flat-market overcalls versus opposite-direction misses by family.',
+        evidence_summary: 'Inflation mostly fails through directional overcalls into flat markets, while labor is more direction-logic sensitive.',
+        decision_summary: 'Remain active as the translation diagnostic layer.'
+      },
+      {
+        work_id: 'Inflation_NoSignal_v1',
+        work_name: 'Inflation No-Signal v1',
+        category: 'market_sensitivity',
+        phase: 'monitoring',
+        status: 'monitoring',
+        confidence: 'medium',
+        start_date: '2026-06-14',
+        last_review_date: '2026-06-14',
+        last_updated: '2026-06-14',
+        next_review_target: 'future_backtest_blocks',
+        owner: 'Codex',
+        current_focus: 'Low-importance inflation shadow slice',
+        next_action: 'Monitor `inflation|low importance` and supporting inflation slices in future backtest blocks.',
+        evidence_summary: 'Low-importance inflation shows positive shadow benefit with acceptable correct-call loss.',
+        decision_summary: 'Continue monitoring as shadow-only; not approved for activation.'
+      }
+    ],
+    decisions: [
+      ['2026-05-14', 'HistoricalContext_v1a', 'review', 'active', 'Historical context and runtime handover preserved as project memory.'],
+      ['2026-06-14', 'Outcome_Ledger_v1', 'review', 'active', 'Outcome ledger retained as a core derived foundation for all later diagnostics.'],
+      ['2025-01-31', 'Attention_Factor_v1_Goal1', 'review', 'success', 'Provider individuality confirmed; preserve as explainability layer.'],
+      ['2025-01-31', 'Attention_Factor_v1_Goal2', 'review', 'rejected', 'No Phase 3B promotion evidence; do not activate routing, weighting, or calibration.'],
+      ['2026-06-14', 'Family_Structure_Investigation_v1', 'review', 'archived', 'Family structure diagnostics closed and preserved for reference only.'],
+      ['2026-06-14', 'Batch_Splitting_v1', 'review', 'rejected', 'Broad batch splitting not supported by true group counterfactual evidence.'],
+      ['2026-06-14', 'Economic_Value_Accuracy_v1', 'review', 'active', 'Economic-value accuracy remains an active diagnostic base layer.'],
+      ['2026-06-14', 'Provider_Family_Economic_Accuracy_v1', 'review', 'active', 'Provider-family economic slices remain the current route to targeted signal review.'],
+      ['2026-06-14', 'Translation_Error_v1', 'review', 'active', 'Translation-error diagnostics remain active to explain economic-right / market-wrong failures.'],
+      ['2026-06-14', 'Inflation_NoSignal_v1', 'review', 'monitoring', 'Positive shadow evidence found for low-importance inflation, but activation is not approved.']
+    ]
+  };
+}
+
+function _buildProjectStatusRows_(items) {
+  var rowsOut = [];
+  for (var i = 0; i < (items || []).length; i++) {
+    var item = items[i];
+    rowsOut.push([
+      item.work_id || '',
+      item.work_name || '',
+      item.category || '',
+      item.phase || '',
+      item.status || '',
+      item.confidence || '',
+      item.start_date || '',
+      item.last_review_date || '',
+      item.last_updated || '',
+      item.next_review_target || '',
+      item.owner || '',
+      item.current_focus || '',
+      item.next_action || '',
+      _governanceStalenessStatus_(item.last_updated),
+      item.evidence_summary || '',
+      item.decision_summary || ''
+    ]);
+  }
+  rowsOut.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [0, 1]);
+  });
+  return rowsOut;
+}
+
+function _buildDecisionLogRows_(decisions) {
+  var rowsOut = [];
+  for (var i = 0; i < (decisions || []).length; i++) {
+    rowsOut.push([
+      decisions[i][0] || '',
+      decisions[i][1] || '',
+      decisions[i][2] || '',
+      decisions[i][3] || '',
+      decisions[i][4] || ''
+    ]);
+  }
+  rowsOut.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [0, 1, 2, 3]);
+  });
+  return rowsOut;
+}
+
+function _governanceStalenessStatus_(dateText) {
+  var dt = _parseIsoDateOrDay_(dateText);
+  if (!dt) return 'stale';
+  var now = new Date();
+  var ageMs = now.getTime() - dt.getTime();
+  if (isNaN(ageMs)) return 'stale';
+  var ageDays = Math.floor(ageMs / 86400000);
+  if (ageDays <= 30) return 'fresh';
+  if (ageDays <= 90) return 'aging';
+  return 'stale';
+}
+
+function _parseIsoDateOrDay_(value) {
+  var text = String(value || '').trim();
+  if (!text || text === 'on_demand' || text === 'future_v2_only' || text === 'future_backtest_blocks' || text === 'after_next_backtest_block' || text === 'narrow_combo_only') return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+    return new Date(text + 'T00:00:00Z');
+  }
+  var dt = new Date(text);
+  return isNaN(dt.getTime()) ? null : dt;
 }
 
 function _sortEvaluationRows_(headers, rows) {
@@ -7438,22 +8418,37 @@ function _attentionShadowSummaryBlocker_(readiness, blockers) {
 }
 
 function _readFamilyStructureSource_(sheetName, warnings) {
-  var ss = SpreadsheetApp.getActive();
-  var sheet = ss.getSheetByName(sheetName);
-  if (!sheet) {
-    warnings.push('missing_sheet:' + sheetName);
+  var resolved = null;
+  try {
+    resolved = getSheetForRead_(sheetName);
+  } catch (e) {
+    if (warnings) warnings.push('missing_sheet:' + sheetName + '|' + String(e && e.message || e));
     return { name: sheetName, headers: [], idx: {}, rows: [] };
   }
+  var sheet = resolved.sheet;
   var headers = getHeaderNames(sheet) || [];
   if (!headers.length) {
-    warnings.push('missing_headers:' + sheetName);
-    return { name: sheetName, headers: [], idx: {}, rows: [] };
+    if (warnings) warnings.push('missing_headers:' + sheetName + '|workbook_type=' + resolved.workbook_type + '|spreadsheet_id=' + resolved.spreadsheet_id);
+    return {
+      name: sheetName,
+      headers: [],
+      idx: {},
+      rows: [],
+      workbook_type: resolved.workbook_type,
+      spreadsheet_id: resolved.spreadsheet_id,
+      checked_workbooks: resolved.checked_workbooks || []
+    };
   }
   return {
     name: sheetName,
     headers: headers,
     idx: _headerIndexMap_(headers),
-    rows: _readDataRows_(sheet)
+    rows: _readDataRows_(sheet),
+    workbook_type: resolved.workbook_type,
+    spreadsheet_id: resolved.spreadsheet_id,
+    checked_workbooks: resolved.checked_workbooks || [],
+    read_policy: resolved.location ? resolved.location.read_policy : '',
+    registry_location: resolved.location || null
   };
 }
 
@@ -9418,6 +10413,543 @@ function _makeProviderFamilyEconomicAccuracyRow_(row) {
     row.evidence_note,
     row.decision_support_note
   ];
+}
+
+function _attentionEconomicValueMinimumSampleThreshold_() {
+  return 30;
+}
+
+function _attentionEconomicValueDisclaimer_() {
+  return 'Attention Factor v1 factors are provider-reported metadata returned alongside predictions. These results indicate correlation only and do not establish that the attention factor caused improved economic-value accuracy.';
+}
+
+function _attentionEconomicValueDecisionSupportNote_() {
+  return 'Correlation-only diagnostic layer over existing Economic_Value_Accuracy scoring. No routing, weighting, calibration, or behavior change; not trading advice.';
+}
+
+function _attentionEconomicPredictionSource_(predSheet, warnings) {
+  if (!predSheet) {
+    if (warnings) warnings.push('missing_sheet:Predictions');
+    return { headers: [], idx: {}, by_key: {} };
+  }
+  var predHeaders = (typeof _ensurePredHeaders_ === 'function') ? _ensurePredHeaders_(predSheet) : getHeaderNames(predSheet);
+  var predIdx = _headerIndexMap_(predHeaders);
+  var predLastRow = predSheet.getLastRow();
+  var predLastCol = predSheet.getLastColumn();
+  var predRows = (predLastRow >= 2 && predLastCol >= 1)
+    ? predSheet.getRange(2, 1, predLastRow - 1, predLastCol).getValues()
+    : [];
+  var deduped = _economicValueAccuracyDedupedPredictions_(predRows, predIdx, warnings);
+  var byKey = {};
+  for (var i = 0; i < (deduped || []).length; i++) {
+    var row = deduped[i];
+    var key = _attentionEconomicCasePredictionKey_(
+      String(_predValue_(row, predIdx, 'event_id') || '').trim(),
+      String(_predValue_(row, predIdx, 'ai_name') || '').trim()
+    );
+    if (!key) continue;
+    byKey[key] = row;
+  }
+  return {
+    headers: predHeaders,
+    idx: predIdx,
+    by_key: byKey
+  };
+}
+
+function _attentionEconomicCasePredictionKey_(eventId, aiName) {
+  eventId = String(eventId || '').trim();
+  aiName = String(aiName || '').trim();
+  if (!eventId || !aiName) return '';
+  return eventId + '|' + aiName;
+}
+
+function _buildAttentionEconomicValueReportRows_(generatedTs, economic, predictionSource, warnings) {
+  var headers = _attentionEconomicValueReportHeaders_();
+  var cases = _attentionEconomicValueFactorCases_(economic, predictionSource, warnings);
+  var threshold = _attentionEconomicValueMinimumSampleThreshold_();
+  var baselines = _attentionEconomicValueBaselines_(cases);
+  var detailRows = []
+    .concat(_attentionEconomicValueAggregateRows_(generatedTs, 'Global', 'global', cases, threshold, baselines))
+    .concat(_attentionEconomicValueAggregateRows_(generatedTs, 'Provider-Specific Correlations', 'provider', cases, threshold, baselines))
+    .concat(_attentionEconomicValueAggregateRows_(generatedTs, 'Family-Specific Correlations', 'family', cases, threshold, baselines))
+    .concat(_attentionEconomicValueAggregateRows_(generatedTs, 'Provider × Outcome Family', 'provider_family', cases, threshold, baselines));
+
+  var rowObjects = []
+    .concat(_attentionEconomicValueSummarySectionRows_(generatedTs, detailRows, threshold))
+    .concat(detailRows);
+
+  return _attentionEconomicValueRowsToArrays_(headers, rowObjects);
+}
+
+function _attentionEconomicValueFactorCases_(economic, predictionSource, warnings) {
+  var out = [];
+  if (!economic || !economic.rows.length) {
+    if (warnings) warnings.push('missing_source_rows:Economic_Value_Accuracy');
+    return out;
+  }
+  for (var i = 0; i < economic.rows.length; i++) {
+    var row = economic.rows[i];
+    if (String(_predValue_(row, economic.idx, 'row_type') || '').trim() !== 'case') continue;
+    if (String(_predValue_(row, economic.idx, 'value_scored_flag') || '').trim().toUpperCase() !== 'TRUE') continue;
+    var eventId = String(_predValue_(row, economic.idx, 'event_id') || '').trim();
+    var provider = String(_predValue_(row, economic.idx, 'ai_name') || '').trim() || 'unknown';
+    var family = String(_predValue_(row, economic.idx, 'family') || '').trim() || 'other';
+    var key = _attentionEconomicCasePredictionKey_(eventId, provider);
+    var predRow = predictionSource && predictionSource.by_key ? predictionSource.by_key[key] : null;
+    var factors = _attentionEconomicValueCaseFactors_(row, economic.idx, predRow, predictionSource ? predictionSource.idx : {});
+    if (!factors.length) {
+      if (warnings) warnings.push('missing_attention_factors:' + key);
+      continue;
+    }
+    var valueOk = String(_predValue_(row, economic.idx, 'value_dir_ok') || '').trim().toUpperCase() === 'TRUE';
+    for (var j = 0; j < factors.length; j++) {
+      out.push({
+        provider: provider,
+        family: family,
+        attention_factor: factors[j],
+        value_dir_ok: valueOk
+      });
+    }
+  }
+  return out;
+}
+
+function _attentionEconomicValueCaseFactors_(economicRow, economicIdx, predRow, predIdx) {
+  var factors = [];
+  var seen = {};
+
+  function addFactor(raw) {
+    var factor = String(raw || '').trim();
+    if (!factor || seen[factor]) return;
+    seen[factor] = true;
+    factors.push(factor);
+  }
+
+  for (var i = 1; i <= 3; i++) {
+    addFactor(_predValue_(predRow || [], predIdx || {}, 'attention_factor_' + i));
+  }
+
+  if (!factors.length) addFactor(_predValue_(economicRow || [], economicIdx || {}, 'attention_primary_factor'));
+  if (!factors.length) {
+    var packed = String(_predValue_(economicRow || [], economicIdx || {}, 'attention_factors') || '').trim();
+    _attentionEconomicFactorsFromPacked_(packed).forEach(addFactor);
+  }
+  return factors;
+}
+
+function _attentionEconomicFactorsFromPacked_(packed) {
+  var text = String(packed || '').trim();
+  if (!text) return [];
+  var out = [];
+  if (typeof JSON !== 'undefined') {
+    try {
+      var parsed = JSON.parse(text);
+      if (parsed && parsed.forEach) {
+        parsed.forEach(function(item) {
+          if (typeof item === 'string') out.push(String(item || '').trim());
+          else if (item && item.factor) out.push(String(item.factor || '').trim());
+          else if (item && item.name) out.push(String(item.name || '').trim());
+        });
+      }
+    } catch (e) {}
+  }
+  if (out.length) return out.filter(function(v){ return !!v; });
+  return text.split(/[|,;]/).map(function(part){ return String(part || '').trim(); }).filter(function(v){ return !!v; });
+}
+
+function _attentionEconomicValueBaselines_(cases) {
+  var baselines = {
+    global: _attentionEconomicValueStats_(cases),
+    provider: {},
+    family: {},
+    provider_family: {}
+  };
+  for (var i = 0; i < (cases || []).length; i++) {
+    var c = cases[i];
+    _attentionEconomicValuePushCase_(baselines.provider, c.provider, c);
+    _attentionEconomicValuePushCase_(baselines.family, c.family, c);
+    _attentionEconomicValuePushCase_(baselines.provider_family, c.provider + '|' + c.family, c);
+  }
+  Object.keys(baselines.provider).forEach(function(key) {
+    baselines.provider[key] = _attentionEconomicValueStats_(baselines.provider[key]);
+  });
+  Object.keys(baselines.family).forEach(function(key) {
+    baselines.family[key] = _attentionEconomicValueStats_(baselines.family[key]);
+  });
+  Object.keys(baselines.provider_family).forEach(function(key) {
+    baselines.provider_family[key] = _attentionEconomicValueStats_(baselines.provider_family[key]);
+  });
+  return baselines;
+}
+
+function _attentionEconomicValuePushCase_(bucket, key, c) {
+  if (!bucket[key]) bucket[key] = [];
+  bucket[key].push(c);
+}
+
+function _attentionEconomicValueStats_(cases) {
+  var stats = { sample_count: 0, economic_dir_ok_count: 0 };
+  for (var i = 0; i < (cases || []).length; i++) {
+    stats.sample_count += 1;
+    if (cases[i].value_dir_ok) stats.economic_dir_ok_count += 1;
+  }
+  stats.economic_dir_ok_rate = stats.sample_count ? _roundRate_(stats.economic_dir_ok_count / stats.sample_count) : '';
+  return stats;
+}
+
+function _attentionEconomicValueWilsonInterval_(okCount, sampleCount) {
+  var n = Number(sampleCount || 0);
+  var k = Number(okCount || 0);
+  if (!(n > 0)) return { low: '', high: '', text: '' };
+  var z = 1.96;
+  var phat = k / n;
+  var denom = 1 + (z * z) / n;
+  var center = (phat + (z * z) / (2 * n)) / denom;
+  var margin = (z * Math.sqrt((phat * (1 - phat) / n) + ((z * z) / (4 * n * n)))) / denom;
+  var low = Math.max(0, center - margin);
+  var high = Math.min(1, center + margin);
+  return {
+    low: _roundRate_(low),
+    high: _roundRate_(high),
+    text: '[' + _roundRate_(low) + ', ' + _roundRate_(high) + ']'
+  };
+}
+
+function _attentionEconomicValueCoveragePct_(sampleCount, baselineSampleCount) {
+  var s = Number(sampleCount || 0);
+  var b = Number(baselineSampleCount || 0);
+  if (!(b > 0)) return '';
+  return _roundRate_(s / b);
+}
+
+function _attentionEconomicValueStatisticalStrength_(okCount, sampleCount, baselineOkCount, baselineSampleCount) {
+  var n1 = Number(sampleCount || 0);
+  var n2 = Number(baselineSampleCount || 0);
+  var k1 = Number(okCount || 0);
+  var k2 = Number(baselineOkCount || 0);
+  if (!(n1 > 0) || !(n2 > 0)) return { score: '', label: 'insufficient_data' };
+  var p1 = k1 / n1;
+  var p2 = k2 / n2;
+  var pooled = (k1 + k2) / (n1 + n2);
+  var se = Math.sqrt(Math.max(0, pooled * (1 - pooled) * ((1 / n1) + (1 / n2))));
+  if (!(se > 0)) return { score: '', label: 'insufficient_variance' };
+  var z = (p1 - p2) / se;
+  var absz = Math.abs(z);
+  var label = 'weak_statistical_signal';
+  if (absz >= 3) label = z > 0 ? 'strong_positive_strength' : 'strong_negative_strength';
+  else if (absz >= 2) label = z > 0 ? 'moderate_positive_strength' : 'moderate_negative_strength';
+  else if (absz >= 1) label = z > 0 ? 'mild_positive_strength' : 'mild_negative_strength';
+  return {
+    score: _round4_(z),
+    label: label
+  };
+}
+
+function _attentionEconomicValueAggregateRows_(generatedTs, reportSection, scope, cases, threshold, baselines) {
+  var groups = {};
+  for (var i = 0; i < (cases || []).length; i++) {
+    var c = cases[i];
+    var key = _attentionEconomicValueGroupKey_(scope, c);
+    if (!key) continue;
+    if (!groups[key]) {
+      groups[key] = {
+        provider: scope === 'global' || scope === 'family' ? '' : c.provider,
+        outcome_family: scope === 'global' || scope === 'provider' ? '' : c.family,
+        attention_factor: c.attention_factor,
+        sample_count: 0,
+        economic_dir_ok_count: 0
+      };
+    }
+    groups[key].sample_count += 1;
+    if (c.value_dir_ok) groups[key].economic_dir_ok_count += 1;
+  }
+
+  var rows = [];
+  Object.keys(groups).sort().forEach(function(key) {
+    var g = groups[key];
+    if (scope === 'provider_family' && g.sample_count < threshold) return;
+    var baseline = _attentionEconomicValueBaselineForScope_(scope, g, baselines);
+    var sampleLabel = g.sample_count < threshold ? 'thin_sample' : 'meets_threshold';
+    var rate = g.sample_count ? _roundRate_(g.economic_dir_ok_count / g.sample_count) : '';
+    var baselineRate = baseline.economic_dir_ok_rate === '' ? '' : baseline.economic_dir_ok_rate;
+    var delta = (rate === '' || baselineRate === '') ? '' : _roundRate_(rate - baselineRate);
+    var interval = _attentionEconomicValueWilsonInterval_(g.economic_dir_ok_count, g.sample_count);
+    var coveragePct = _attentionEconomicValueCoveragePct_(g.sample_count, baseline.sample_count);
+    var strength = _attentionEconomicValueStatisticalStrength_(g.economic_dir_ok_count, g.sample_count, baseline.economic_dir_ok_count, baseline.sample_count);
+    rows.push(_attentionEconomicValueMakeRow_(generatedTs, {
+      row_type: 'detail',
+      report_section: reportSection,
+      scope: scope,
+      scope_key: key,
+      provider: g.provider,
+      outcome_family: g.outcome_family,
+      attention_factor: g.attention_factor,
+      sample_count: g.sample_count,
+      factor_sample_count: g.sample_count,
+      economic_dir_ok_count: g.economic_dir_ok_count,
+      economic_dir_ok_rate: rate,
+      baseline_sample_count: baseline.sample_count,
+      baseline_ok_count: baseline.economic_dir_ok_count,
+      baseline_economic_dir_ok_rate: baselineRate,
+      delta_vs_baseline: delta,
+      confidence_interval_low: interval.low,
+      confidence_interval_high: interval.high,
+      confidence_interval_text: interval.text,
+      coverage_pct: coveragePct,
+      statistical_strength_score: strength.score,
+      statistical_strength_label: strength.label,
+      minimum_sample_threshold: threshold,
+      sample_label: sampleLabel,
+      correlation_label: _attentionEconomicValueCorrelationLabel_(delta, g.sample_count, threshold, strength.score),
+      summary_note: _attentionEconomicValueSummaryNote_(scope),
+      evidence_note: _attentionEconomicValueEvidenceNote_(g.sample_count, g.economic_dir_ok_count, rate, baselineRate, delta, interval.text, coveragePct, strength.score)
+    }));
+  });
+  return rows;
+}
+
+function _attentionEconomicValueGroupKey_(scope, c) {
+  if (scope === 'global') return c.attention_factor;
+  if (scope === 'provider') return c.provider + '|' + c.attention_factor;
+  if (scope === 'family') return c.family + '|' + c.attention_factor;
+  if (scope === 'provider_family') return c.provider + '|' + c.family + '|' + c.attention_factor;
+  return '';
+}
+
+function _attentionEconomicValueBaselineForScope_(scope, group, baselines) {
+  if (scope === 'provider') return baselines.provider[group.provider] || { sample_count: 0, economic_dir_ok_rate: '' };
+  if (scope === 'family') return baselines.family[group.outcome_family] || { sample_count: 0, economic_dir_ok_rate: '' };
+  if (scope === 'provider_family') return baselines.provider_family[group.provider + '|' + group.outcome_family] || { sample_count: 0, economic_dir_ok_rate: '' };
+  return baselines.global || { sample_count: 0, economic_dir_ok_rate: '' };
+}
+
+function _attentionEconomicValueCorrelationLabel_(delta, sampleCount, threshold, strengthScore) {
+  if (sampleCount < threshold) return 'thin_sample';
+  if (delta === '' || delta == null || strengthScore === '' || strengthScore == null) return 'no_meaningful_correlation';
+  if (strengthScore >= 2) return 'positive_correlation';
+  if (strengthScore <= -2) return 'negative_correlation';
+  return 'no_meaningful_correlation';
+}
+
+function _attentionEconomicValueSummaryNote_(scope) {
+  if (scope === 'global') return 'Global attention-factor correlation versus overall economic-value baseline.';
+  if (scope === 'provider') return 'Provider-specific attention-factor correlation versus provider baseline.';
+  if (scope === 'family') return 'Family-specific attention-factor correlation versus family baseline.';
+  return 'Provider × outcome family correlation versus provider-family baseline. Rows below threshold are omitted here and surfaced in thin-sample findings only.';
+}
+
+function _attentionEconomicValueEvidenceNote_(sampleCount, okCount, rate, baselineRate, delta, ciText, coveragePct, strengthScore) {
+  return 'sample=' + sampleCount +
+    ', economic_dir_ok=' + okCount +
+    ', rate=' + (rate === '' ? 'n/a' : rate) +
+    ', baseline=' + (baselineRate === '' ? 'n/a' : baselineRate) +
+    ', delta=' + (delta === '' ? 'n/a' : delta) +
+    ', ci=' + (ciText || 'n/a') +
+    ', coverage=' + (coveragePct === '' ? 'n/a' : coveragePct) +
+    ', strength=' + (strengthScore === '' ? 'n/a' : strengthScore) + '.';
+}
+
+function _attentionEconomicValueSummarySectionRows_(generatedTs, detailRows, threshold) {
+  var out = [];
+  var eligible = (detailRows || []).filter(function(row) {
+    return row.sample_label === 'meets_threshold';
+  });
+  var positives = eligible.filter(function(row) {
+    return row.correlation_label === 'positive_correlation';
+  }).sort(_attentionEconomicValuePositiveStrengthSort_).slice(0, 10);
+  var negatives = eligible.filter(function(row) {
+    return row.correlation_label === 'negative_correlation';
+  }).sort(_attentionEconomicValueNegativeStrengthSort_).slice(0, 10);
+  var providerRows = (detailRows || []).filter(function(row) { return row.scope === 'provider' && row.sample_label === 'meets_threshold'; }).sort(_attentionEconomicValueStrengthAbsSort_);
+  var familyRows = (detailRows || []).filter(function(row) { return row.scope === 'family' && row.sample_label === 'meets_threshold'; }).sort(_attentionEconomicValueStrengthAbsSort_);
+  var thinRows = (detailRows || []).filter(function(row) { return row.sample_label === 'thin_sample'; }).sort(_attentionEconomicValueThinSort_).slice(0, 15);
+  var neutralRows = eligible.filter(function(row) {
+    return row.correlation_label === 'no_meaningful_correlation';
+  }).sort(_attentionEconomicValueNeutralSort_).slice(0, 10);
+
+  out.push(_attentionEconomicValueSectionSummaryRow_(generatedTs, 'Top Positive Correlations', positives.length, _attentionEconomicValueSectionSummaryText_(positives)));
+  out.push(_attentionEconomicValueSectionSummaryRow_(generatedTs, 'Top Negative Correlations', negatives.length, _attentionEconomicValueSectionSummaryText_(negatives)));
+  out.push(_attentionEconomicValueSectionSummaryRow_(generatedTs, 'Provider-Specific Correlations', providerRows.length, _attentionEconomicValueSectionSummaryText_(providerRows.slice(0, 10))));
+  out.push(_attentionEconomicValueSectionSummaryRow_(generatedTs, 'Family-Specific Correlations', familyRows.length, _attentionEconomicValueSectionSummaryText_(familyRows.slice(0, 10))));
+  out.push(_attentionEconomicValueSectionSummaryRow_(generatedTs, 'Thin-Sample Findings', thinRows.length, thinRows.length ? ('Below threshold=' + threshold + '. Leading thin slices: ' + _attentionEconomicValueSectionSummaryText_(thinRows)) : 'No thin-sample findings were produced.'));
+  out.push(_attentionEconomicValueSectionSummaryRow_(generatedTs, 'No Meaningful Correlation Findings', neutralRows.length, neutralRows.length ? _attentionEconomicValueSectionSummaryText_(neutralRows) : 'No threshold-clearing near-baseline slices were found.'));
+  return out;
+}
+
+function _attentionEconomicValueSectionSummaryRow_(generatedTs, reportSection, sampleCount, summary) {
+  return _attentionEconomicValueMakeRow_(generatedTs, {
+    row_type: 'section_summary',
+    report_section: reportSection,
+    scope: 'summary',
+    scope_key: reportSection,
+    provider: '',
+    outcome_family: '',
+    attention_factor: '',
+    sample_count: sampleCount,
+    economic_dir_ok_count: '',
+    economic_dir_ok_rate: '',
+    baseline_sample_count: '',
+    baseline_economic_dir_ok_rate: '',
+    delta_vs_baseline: '',
+    minimum_sample_threshold: _attentionEconomicValueMinimumSampleThreshold_(),
+    sample_label: '',
+    correlation_label: '',
+    summary_note: summary,
+    evidence_note: 'Rows in this report may count one scored prediction under multiple reported attention-factor labels.'
+  });
+}
+
+function _attentionEconomicValueSectionSummaryText_(rows) {
+  if (!(rows || []).length) return 'No qualifying slices.';
+  return rows.map(function(row) {
+    var prefix = [];
+    if (row.provider) prefix.push(row.provider);
+    if (row.outcome_family) prefix.push(row.outcome_family);
+    prefix.push(row.attention_factor);
+    return prefix.join('/') + '=' + (row.economic_dir_ok_rate === '' ? 'n/a' : row.economic_dir_ok_rate) +
+      ' (delta ' + (row.delta_vs_baseline === '' ? 'n/a' : row.delta_vs_baseline) +
+      ', z=' + (row.statistical_strength_score === '' ? 'n/a' : row.statistical_strength_score) +
+      ', n=' + row.sample_count + ')';
+  }).join('; ');
+}
+
+function _attentionEconomicValueMakeRow_(generatedTs, attrs) {
+  attrs = attrs || {};
+  return {
+    generated_ts: generatedTs,
+    row_type: attrs.row_type || 'detail',
+    report_section: attrs.report_section || '',
+    scope: attrs.scope || '',
+    scope_key: attrs.scope_key || '',
+    provider: attrs.provider || '',
+    outcome_family: attrs.outcome_family || '',
+    attention_factor: attrs.attention_factor || '',
+    sample_count: attrs.sample_count === undefined ? '' : attrs.sample_count,
+    factor_sample_count: attrs.factor_sample_count === undefined ? '' : attrs.factor_sample_count,
+    economic_dir_ok_count: attrs.economic_dir_ok_count === undefined ? '' : attrs.economic_dir_ok_count,
+    economic_dir_ok_rate: attrs.economic_dir_ok_rate === undefined ? '' : attrs.economic_dir_ok_rate,
+    baseline_sample_count: attrs.baseline_sample_count === undefined ? '' : attrs.baseline_sample_count,
+    baseline_ok_count: attrs.baseline_ok_count === undefined ? '' : attrs.baseline_ok_count,
+    baseline_economic_dir_ok_rate: attrs.baseline_economic_dir_ok_rate === undefined ? '' : attrs.baseline_economic_dir_ok_rate,
+    delta_vs_baseline: attrs.delta_vs_baseline === undefined ? '' : attrs.delta_vs_baseline,
+    confidence_interval_low: attrs.confidence_interval_low === undefined ? '' : attrs.confidence_interval_low,
+    confidence_interval_high: attrs.confidence_interval_high === undefined ? '' : attrs.confidence_interval_high,
+    confidence_interval_text: attrs.confidence_interval_text === undefined ? '' : attrs.confidence_interval_text,
+    coverage_pct: attrs.coverage_pct === undefined ? '' : attrs.coverage_pct,
+    statistical_strength_score: attrs.statistical_strength_score === undefined ? '' : attrs.statistical_strength_score,
+    statistical_strength_label: attrs.statistical_strength_label || '',
+    minimum_sample_threshold: attrs.minimum_sample_threshold === undefined ? '' : attrs.minimum_sample_threshold,
+    sample_label: attrs.sample_label || '',
+    correlation_label: attrs.correlation_label || '',
+    summary_note: attrs.summary_note || '',
+    evidence_note: attrs.evidence_note || '',
+    disclaimer: _attentionEconomicValueDisclaimer_(),
+    decision_support_note: _attentionEconomicValueDecisionSupportNote_()
+  };
+}
+
+function _attentionEconomicValueRowsToArrays_(headers, rows) {
+  return (rows || []).map(function(row) {
+    return headers.map(function(header) {
+      return row && row.hasOwnProperty(header) ? row[header] : '';
+    });
+  });
+}
+
+function _sortAttentionEconomicValueReportRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  var sectionOrder = {
+    'Top Positive Correlations': 0,
+    'Top Negative Correlations': 1,
+    'Provider-Specific Correlations': 2,
+    'Family-Specific Correlations': 3,
+    'Thin-Sample Findings': 4,
+    'No Meaningful Correlation Findings': 5,
+    'Global': 6,
+    'Provider-Specific Correlations_detail': 7,
+    'Family-Specific Correlations_detail': 8,
+    'Provider × Outcome Family': 9
+  };
+  rows.sort(function(a, b) {
+    var aType = String(a[idx.row_type] || '');
+    var bType = String(b[idx.row_type] || '');
+    if (aType !== bType) {
+      if (aType === 'section_summary') return -1;
+      if (bType === 'section_summary') return 1;
+    }
+    var aSection = String(a[idx.report_section] || '');
+    var bSection = String(b[idx.report_section] || '');
+    var aKey = aSection + (aType === 'detail' && aSection === 'Provider-Specific Correlations' ? '_detail' : '') + (aType === 'detail' && aSection === 'Family-Specific Correlations' ? '_detail' : '');
+    var bKey = bSection + (bType === 'detail' && bSection === 'Provider-Specific Correlations' ? '_detail' : '') + (bType === 'detail' && bSection === 'Family-Specific Correlations' ? '_detail' : '');
+    var ao = sectionOrder.hasOwnProperty(aKey) ? sectionOrder[aKey] : 999;
+    var bo = sectionOrder.hasOwnProperty(bKey) ? sectionOrder[bKey] : 999;
+    if (ao !== bo) return ao - bo;
+    var as = _numOrNull_(a[idx.statistical_strength_score]);
+    var bs = _numOrNull_(b[idx.statistical_strength_score]);
+    var aa = Math.abs(as == null ? 0 : as);
+    var ba = Math.abs(bs == null ? 0 : bs);
+    if (aa !== ba) return ba - aa;
+    if (as !== bs) return (bs == null ? -999 : bs) - (as == null ? -999 : as);
+    var ad = _numOrNull_(a[idx.delta_vs_baseline]);
+    var bd = _numOrNull_(b[idx.delta_vs_baseline]);
+    if (ad !== bd) return (bd == null ? -999 : bd) - (ad == null ? -999 : ad);
+    var an = Number(a[idx.sample_count] || 0);
+    var bn = Number(b[idx.sample_count] || 0);
+    if (an !== bn) return bn - an;
+    return _cmpByColumns_(a, b, [
+      idx.scope,
+      idx.provider,
+      idx.outcome_family,
+      idx.attention_factor
+    ]);
+  });
+}
+
+function _attentionEconomicValuePositiveStrengthSort_(a, b) {
+  var as = _numOrNull_(a.statistical_strength_score);
+  var bs = _numOrNull_(b.statistical_strength_score);
+  if (as !== bs) return (bs == null ? -999 : bs) - (as == null ? -999 : as);
+  if (a.sample_count !== b.sample_count) return b.sample_count - a.sample_count;
+  return (String(a.scope_key || '')).localeCompare(String(b.scope_key || ''));
+}
+
+function _attentionEconomicValueNegativeStrengthSort_(a, b) {
+  var as = _numOrNull_(a.statistical_strength_score);
+  var bs = _numOrNull_(b.statistical_strength_score);
+  if (as !== bs) return (as == null ? 999 : as) - (bs == null ? 999 : bs);
+  if (a.sample_count !== b.sample_count) return b.sample_count - a.sample_count;
+  return (String(a.scope_key || '')).localeCompare(String(b.scope_key || ''));
+}
+
+function _attentionEconomicValueStrengthAbsSort_(a, b) {
+  var as = Math.abs(Number(a.statistical_strength_score || 0));
+  var bs = Math.abs(Number(b.statistical_strength_score || 0));
+  if (as !== bs) return bs - as;
+  var ar = _numOrNull_(a.statistical_strength_score);
+  var br = _numOrNull_(b.statistical_strength_score);
+  if (ar !== br) return (br == null ? -999 : br) - (ar == null ? -999 : ar);
+  if (a.sample_count !== b.sample_count) return b.sample_count - a.sample_count;
+  return (String(a.scope_key || '')).localeCompare(String(b.scope_key || ''));
+}
+
+function _attentionEconomicValueThinSort_(a, b) {
+  var ac = _numOrNull_(a.coverage_pct);
+  var bc = _numOrNull_(b.coverage_pct);
+  if (ac !== bc) return (bc == null ? -999 : bc) - (ac == null ? -999 : ac);
+  if (a.sample_count !== b.sample_count) return b.sample_count - a.sample_count;
+  return _attentionEconomicValueStrengthAbsSort_(a, b);
+}
+
+function _attentionEconomicValueNeutralSort_(a, b) {
+  var as = Math.abs(Number(a.statistical_strength_score || 0));
+  var bs = Math.abs(Number(b.statistical_strength_score || 0));
+  if (as !== bs) return as - bs;
+  var ad = Math.abs(Number(a.delta_vs_baseline || 0));
+  var bd = Math.abs(Number(b.delta_vs_baseline || 0));
+  if (ad !== bd) return ad - bd;
+  if (a.sample_count !== b.sample_count) return b.sample_count - a.sample_count;
+  return (String(a.scope_key || '')).localeCompare(String(b.scope_key || ''));
 }
 
 function _buildEconomicToMarketTranslationErrorsRows_(generatedTs, economic, providerFamily, warnings) {

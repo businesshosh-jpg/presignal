@@ -136,6 +136,28 @@ function apiBuildActiveDecisionReports() {
   return apiBuildActiveDecisionReports_();
 }
 
+function apiBuildProjectStatus_() {
+  return {
+    status: 'ok',
+    project_status: buildProjectStatus_()
+  };
+}
+
+function apiBuildProjectStatus() {
+  return apiBuildProjectStatus_();
+}
+
+function apiBuildDecisionLog_() {
+  return {
+    status: 'ok',
+    decision_log: buildDecisionLog_()
+  };
+}
+
+function apiBuildDecisionLog() {
+  return apiBuildDecisionLog_();
+}
+
 function apiBuildAttentionFactorSummary_() {
   return {
     status: 'ok',
@@ -299,6 +321,17 @@ function apiBuildEconomicValueAccuracy_() {
 
 function apiBuildEconomicValueAccuracy() {
   return apiBuildEconomicValueAccuracy_();
+}
+
+function apiBuildAttentionEconomicValueReport_() {
+  return {
+    status: 'ok',
+    attention_economic_value_report: buildAttentionEconomicValueReport_()
+  };
+}
+
+function apiBuildAttentionEconomicValueReport() {
+  return apiBuildAttentionEconomicValueReport_();
 }
 
 function apiBuildProviderFamilyEconomicAccuracy_() {
