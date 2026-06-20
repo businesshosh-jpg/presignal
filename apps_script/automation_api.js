@@ -373,6 +373,17 @@ function apiBuildCharacterRecurrenceValidation() {
   return apiBuildCharacterRecurrenceValidation_();
 }
 
+function apiBuildProviderCharacterEconomicOutcomeLink_() {
+  return {
+    status: 'ok',
+    provider_character_economic_outcome_link: buildProviderCharacterEconomicOutcomeLink_()
+  };
+}
+
+function apiBuildProviderCharacterEconomicOutcomeLink(params) {
+  return apiBuildProviderCharacterEconomicOutcomeLink_();
+}
+
 function apiBuildCharacterOutcomeLink_() {
   return {
     status: 'ok',

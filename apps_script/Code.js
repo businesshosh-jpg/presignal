@@ -112,11 +112,7 @@ function onOpen() {
       .addItem('Build Outcome Diagnostics', 'menuBuildOutcomeDiagnostics_')
       .addItem('Build Character Residual Architecture', 'menuBuildCharacterResidualArchitecture_')
       .addItem('Build Character Recurrence Validation', 'menuBuildCharacterRecurrenceValidation_')
-      .addItem('Build Character Outcome Link', 'menuBuildCharacterOutcomeLink_')
-      .addItem('Build Character Outcome Falsification', 'menuBuildCharacterOutcomeFalsification_')
-      .addItem('Build Character Outcome Recurrence + Drift Validation', 'menuBuildCharacterOutcomeRecurrenceDriftValidation_')
-      .addItem('Build Character Signal Candidate Layer', 'menuBuildCharacterSignalCandidateLayer_')
-      .addItem('Build Character Signal Shadow Test', 'menuBuildCharacterSignalShadowTest_')
+      .addItem('Build Provider Character Economic Outcome Link', 'menuBuildProviderCharacterEconomicOutcomeLink_')
       .addItem('Build Provider Character Outcome-Layer Audit', 'menuBuildProviderCharacterOutcomeLayerAudit_')
   );
 
