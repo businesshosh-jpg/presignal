@@ -70,6 +70,13 @@ class _GoogleApiIPv4Only:
 
 
 def default_script_id() -> str:
+    override = (
+        os.environ.get("PRESIGNAL_SCRIPT_ID")
+        or os.environ.get("PRESIGNAL_DEPLOYMENT_ID")
+        or os.environ.get("PRESIGNAL_EXECUTION_ID")
+    )
+    if override:
+        return str(override).strip()
     data = json.loads(CLASP_PATH.read_text())
     return str(data["scriptId"])
 

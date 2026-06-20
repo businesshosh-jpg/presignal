@@ -41,6 +41,76 @@ function apiRunPredictionForEvent(params) {
   return apiRunPredictionForEvent_(params);
 }
 
+function apiRunMinimalDataAvailabilityAudit_() {
+  return {
+    status: 'ok',
+    data_availability_audit: runMinimalDataAvailabilityAudit_()
+  };
+}
+
+function apiRunMinimalDataAvailabilityAudit() {
+  return apiRunMinimalDataAvailabilityAudit_();
+}
+
+function apiBuildMarketContextProviderRepairReport_() {
+  return {
+    status: 'ok',
+    market_context_provider_repair_report: buildMarketContextProviderRepairReport_()
+  };
+}
+
+function apiBuildMarketContextProviderRepairReport() {
+  return apiBuildMarketContextProviderRepairReport_();
+}
+
+function apiBuildFeaturePackV2BCoreAudit_(params) {
+  params = params || {};
+  return {
+    status: 'ok',
+    feature_pack_v2b_core_audit: buildFeaturePackV2BCoreAudit_(params.event_ids || params.eventIds || null)
+  };
+}
+
+function apiBuildFeaturePackV2BCoreAudit(params) {
+  return apiBuildFeaturePackV2BCoreAudit_(params);
+}
+
+function apiBuildMarketContextDataSanityReport_() {
+  return {
+    status: 'ok',
+    market_context_data_sanity_report: buildMarketContextDataSanityReport_()
+  };
+}
+
+function apiBuildMarketContextDataSanityReport() {
+  return apiBuildMarketContextDataSanityReport_();
+}
+
+function apiBuildMarketContextSourceValidationReport_() {
+  return {
+    status: 'ok',
+    market_context_source_validation_report: buildMarketContextSourceValidationReport_()
+  };
+}
+
+function apiBuildMarketContextSourceValidationReport() {
+  return apiBuildMarketContextSourceValidationReport_();
+}
+
+function apiDebugFeaturePackForEvent_(params) {
+  params = params || {};
+  var eventId = String(params.event_id || params.eventId || '').trim();
+  if (!eventId) throw new Error('apiDebugFeaturePackForEvent requires event_id.');
+  return {
+    status: 'ok',
+    feature_pack: debugFeaturePackForEvent(eventId)
+  };
+}
+
+function apiDebugFeaturePackForEvent(params) {
+  return apiDebugFeaturePackForEvent_(params);
+}
+
 function apiFetchActualsWindow_(params) {
   params = params || {};
   var applied = _apiApplyWindowConfig_(params);
@@ -158,6 +228,107 @@ function apiBuildDecisionLog() {
   return apiBuildDecisionLog_();
 }
 
+function apiReadWorkbookRoutingConfig_() {
+  return {
+    status: 'ok',
+    workbook_routing_config: readWorkbookRoutingConfig_()
+  };
+}
+
+function apiReadWorkbookRoutingConfig() {
+  return apiReadWorkbookRoutingConfig_();
+}
+
+function apiRunControlledV2BReplayComparison_(params) {
+  return {
+    status: 'ok',
+    controlled_v2b_replay_comparison: runControlledV2BReplayComparison_(params || {})
+  };
+}
+
+function apiRunControlledV2BReplayComparison(params) {
+  return apiRunControlledV2BReplayComparison_(params);
+}
+
+function apiBuildControlledV2BReplaySummary_() {
+  return {
+    status: 'ok',
+    controlled_v2b_replay_summary: buildControlledV2BReplaySummary_()
+  };
+}
+
+function apiBuildControlledV2BReplaySummary() {
+  return apiBuildControlledV2BReplaySummary_();
+}
+
+function apiProbeMarketContextCrudeSymbols_() {
+  var warnings = [];
+  var out = {};
+  var eodKey = null;
+  try { eodKey = _getEodhdApiKey_(); } catch (e) {}
+  var fmpKey = (typeof CFG !== 'undefined' && CFG.FMP_API_KEY) ? CFG.FMP_API_KEY : _getScriptProp_('FMP_API_KEY');
+  var fmpBase = (typeof CFG !== 'undefined' && CFG.FMP_BASE) ? CFG.FMP_BASE : 'https://financialmodelingprep.com/api/v3';
+  if (eodKey && typeof _mcprSafeEodhdSearch_ === 'function') {
+    out.eodhd = _mcprSafeEodhdSearch_('crude oil', eodKey, warnings).symbols || [];
+  }
+  if (fmpKey && typeof _mcprSafeFmpSearch_ === 'function') {
+    out.fmp = _mcprSafeFmpSearch_('crude oil', fmpKey, fmpBase, warnings).symbols || [];
+  }
+  return { status: 'ok', crude_symbol_search: out, warnings: warnings };
+}
+
+function apiProbeMarketContextCrudeSymbols() {
+  return apiProbeMarketContextCrudeSymbols_();
+}
+
+function apiProbeHistoricalPrices_(params) {
+  params = params || {};
+  var symbols = Array.isArray(params.symbols) ? params.symbols : [];
+  var provider = String(params.provider || 'fmp').toLowerCase();
+  var fromDate = String(params.from_date || '2024-05-01');
+  var toDate = String(params.to_date || '2024-07-10');
+  var out = [];
+  for (var i = 0; i < symbols.length; i++) {
+    var symbol = String(symbols[i] || '').trim();
+    if (!symbol) continue;
+    try {
+      if (provider === 'fmp') {
+        var apiKey = (typeof CFG !== 'undefined' && CFG.FMP_API_KEY) ? CFG.FMP_API_KEY : _getScriptProp_('FMP_API_KEY');
+        var base = (typeof CFG !== 'undefined' && CFG.FMP_BASE) ? CFG.FMP_BASE : 'https://financialmodelingprep.com/api/v3';
+        var rows = _fmpFetchHistoricalWindow_(base, apiKey, symbol, fromDate, toDate) || [];
+        out.push({
+          symbol: symbol,
+          provider: 'fmp',
+          row_count: rows.length,
+          first_date: rows.length ? rows[rows.length - 1].date : '',
+          last_date: rows.length ? rows[0].date : '',
+          sample_first: rows.length ? rows[rows.length - 1] : null,
+          sample_last: rows.length ? rows[0] : null
+        });
+      } else {
+        var eodKey = _getEodhdApiKey_();
+        var rowsEod = _eodhdFetchEodWindow_(symbol, eodKey, fromDate, toDate, 'a') || [];
+        out.push({
+          symbol: symbol,
+          provider: 'eodhd',
+          row_count: rowsEod.length,
+          first_date: rowsEod.length ? rowsEod[0].date : '',
+          last_date: rowsEod.length ? rowsEod[rowsEod.length - 1].date : '',
+          sample_first: rowsEod.length ? rowsEod[0] : null,
+          sample_last: rowsEod.length ? rowsEod[rowsEod.length - 1] : null
+        });
+      }
+    } catch (e) {
+      out.push({ symbol: symbol, provider: provider, error: String(e) });
+    }
+  }
+  return { status: 'ok', provider: provider, from_date: fromDate, to_date: toDate, results: out };
+}
+
+function apiProbeHistoricalPrices(params) {
+  return apiProbeHistoricalPrices_(params);
+}
+
 function apiBuildAttentionFactorSummary_() {
   return {
     status: 'ok',
@@ -178,6 +349,83 @@ function apiBuildProviderCharacterDiagnostics_() {
 
 function apiBuildProviderCharacterDiagnostics() {
   return apiBuildProviderCharacterDiagnostics_();
+}
+
+function apiBuildCharacterResidualArchitecture_() {
+  return {
+    status: 'ok',
+    character_residual_architecture: buildCharacterResidualArchitecture_()
+  };
+}
+
+function apiBuildCharacterResidualArchitecture() {
+  return apiBuildCharacterResidualArchitecture_();
+}
+
+function apiBuildCharacterRecurrenceValidation_() {
+  return {
+    status: 'ok',
+    character_recurrence_validation: buildCharacterRecurrenceValidation_()
+  };
+}
+
+function apiBuildCharacterRecurrenceValidation() {
+  return apiBuildCharacterRecurrenceValidation_();
+}
+
+function apiBuildCharacterOutcomeLink_() {
+  return {
+    status: 'ok',
+    character_outcome_link: buildCharacterOutcomeLink_()
+  };
+}
+
+function apiBuildCharacterOutcomeLink(params) {
+  return apiBuildCharacterOutcomeLink_();
+}
+
+function apiBuildCharacterOutcomeFalsification_() {
+  return {
+    status: 'ok',
+    character_outcome_falsification: buildCharacterOutcomeFalsification_()
+  };
+}
+
+function apiBuildCharacterOutcomeFalsification(params) {
+  return apiBuildCharacterOutcomeFalsification_();
+}
+
+function apiBuildCharacterOutcomeRecurrenceDriftValidation_() {
+  return {
+    status: 'ok',
+    character_outcome_recurrence_drift_validation: buildCharacterOutcomeRecurrenceDriftValidation_()
+  };
+}
+
+function apiBuildCharacterOutcomeRecurrenceDriftValidation(params) {
+  return apiBuildCharacterOutcomeRecurrenceDriftValidation_();
+}
+
+function apiBuildCharacterSignalCandidateLayer_() {
+  return {
+    status: 'ok',
+    character_signal_candidate_layer: buildCharacterSignalCandidateLayer_()
+  };
+}
+
+function apiBuildCharacterSignalCandidateLayer(params) {
+  return apiBuildCharacterSignalCandidateLayer_();
+}
+
+function apiBuildCharacterSignalShadowTest_() {
+  return {
+    status: 'ok',
+    character_signal_shadow_test: buildCharacterSignalShadowTest_()
+  };
+}
+
+function apiBuildCharacterSignalShadowTest(params) {
+  return apiBuildCharacterSignalShadowTest_();
 }
 
 function apiBuildAttentionProviderIndividuality_() {
@@ -332,6 +580,28 @@ function apiBuildAttentionEconomicValueReport_() {
 
 function apiBuildAttentionEconomicValueReport() {
   return apiBuildAttentionEconomicValueReport_();
+}
+
+function apiRunAttentionV3ReplayExperiment_(params) {
+  return {
+    status: 'ok',
+    attention_v3_replay_experiment: runAttentionV3ReplayExperiment_(params || {})
+  };
+}
+
+function apiRunAttentionV3ReplayExperiment(params) {
+  return apiRunAttentionV3ReplayExperiment_(params);
+}
+
+function apiRunAttentionC0ReliabilityReplay_(params) {
+  return {
+    status: 'ok',
+    attention_c0_reliability_replay: runAttentionC0ReliabilityReplay_(params || {})
+  };
+}
+
+function apiRunAttentionC0ReliabilityReplay(params) {
+  return apiRunAttentionC0ReliabilityReplay_(params);
 }
 
 function apiBuildProviderFamilyEconomicAccuracy_() {

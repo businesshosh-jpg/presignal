@@ -1,4 +1,4 @@
-# Rule ver.1.4 — PreSignal Economic Event AI System (Oct 2025)
+# Rule ver.1.4 — PreSignal Economic Event AI System (current operational state, Jun 2026)
 
 (Supersedes Rule ver.1.2)
 
@@ -20,6 +20,8 @@ Generates AI predictions into the Predictions sheet using enabled providers (Gem
 Fetches released actuals using a deterministic hybrid resolver: direct FMP calendar resolution first, then selective SeriesMap fallback for indicators where direct FMP actuals are weak or unavailable.  
 Computes a USD/JPY market reaction move around event timestamps and writes best-effort evaluation fields back into the Predictions sheet, while also logging the result.  
 Builds derived evaluation/report tabs from scored Predictions rows for readable review and provider comparison.  
+Builds a derived-only character diagnostics stack from existing predictions/outcomes, including residual, recurrence, outcome-link, falsification, and recurrence/drift validation layers.
+After the outcome-layer audit completed, character work is now governed as a Provider Character Economic Validation Branch: Economic Outcome Link → Economic Falsification → Economic Recurrence → Economic Shadow Test. Market-reaction outcome linkage, reliability outcome linkage, and calibration-candidate promotion are retired from future active work unless a later document explicitly re-opens them.
 
 ### Explicit non-scope (not implemented).
 
@@ -28,6 +30,8 @@ The following are not guaranteed or persisted by ver.1.4 code and therefore are 
 A standalone scoring warehouse beyond the operational sheets and derived evaluation tabs.  
 Automated provider leaderboards beyond the derived reporting summaries built from Predictions.  
 Market reaction for FX pairs other than USD/JPY.  
+Character traits as routing, weighting, calibration, or production policy inputs. Character diagnostics are derived-only and must not be treated as approval for provider-role assignment or behavior steering.  
+Character → Market Reaction Outcome, Character → Reliability Outcome, and Character → Calibration Candidate promotion are retired branches; future active work should evaluate Character evidence against Economic Value outcomes only unless explicitly stated otherwise.
 
 ### Operational boundaries.
 
@@ -43,6 +47,37 @@ Within the repository, the current `ver.1.4` line may be labeled more precisely 
 
 This sub-labeling is for auditability and historical comparison. It does not imply a new major prediction-policy generation, and it does not by itself change core prediction outputs or scoring semantics.
 
+### June 2026 operational addendum.
+
+The current live state extends the original `v1.4` system with deterministic feature-pack and market-context layers used for diagnostics and replay analysis:
+
+- `HistoricalContext v1a` remains the baseline same-indicator history layer.
+- `Feature Pack v2A` adds deterministic same-event context packs:
+  - `surprise_pack`
+  - `revision_pack`
+  - `family_pack`
+  - `signal_quality_pack`
+- `Feature Pack v2B-Core` adds replay-safe market / rate context:
+  - FRED: `FEDFUNDS`, `DFF`, `DGS2`, `DGS10`, `IRLTLT01JPM156N`
+  - EODHD: `USDJPY.FOREX`, `GSPC.INDX`, `XAUUSD.FOREX`
+  - FMP: `DX-Y.NYB`, `CLUSD`
+- Market-context snapshots must use data available at or before `release_ts`, with explicit sorting of returned rows before selecting the latest prior snapshot.
+- VIX, NDX, JP2Y, BOJ policy rate, and US-JP 2Y spread remain out of scope unless a separate provider-repair task confirms exact replay-safe mappings.
+- Controlled replay and consumption audits are diagnostic-only. They may prove whether v2B reached the prompt or was referenced, but they do not authorize routing, weighting, calibration, or production policy changes.
+- Live Google Sheets / Apps Script runs should prefer outside-sandbox execution. The Codex sandbox has shown intermittent name-resolution failures against `oauth2.googleapis.com` and `sheets.googleapis.com`; those failures are environment noise, not prediction-logic regressions.
+- When surfaced by automation, network/name-resolution failures are classified separately (for example, `google_dns_resolution_failure`) so they can be distinguished from model, prompt, or family-rule failures.
+- The character-diagnostics stack is layered on top of the outcome ledger and residual diagnostics, but remains read-only and derived-only:
+  - `Character_Baseline_E`
+  - `Provider_Character_Residuals`
+  - `Provider_Character_Summary`
+  - `Provider_Character_Family_Summary`
+  - `Character_Disagreement_Report`
+  - `Character_Recurrence_Validation`
+  - `Character_Recurrence_Family_Validation`
+  - `Character_Drift_Assessment`
+  - Retired and intentionally removed legacy tabs from the old outcome / signal path: `Character_Outcome_Link`, `Character_Outcome_Summary`, `Character_Outcome_Family_Link`, `Character_Outcome_Provider_Controlled`, `Character_Outcome_Family_Controlled`, `Character_Outcome_Permutation_Test`, `Character_Outcome_Robust_Traits`, `Character_Good_Reasoning_Proxy_Test`, `Character_Outcome_Falsification_Report`, `Character_Outcome_Recurrence_Validation`, `Character_Outcome_Recurrence_Block_Detail`, `Character_Outcome_Recurrence_Interpretation`, `Character_Signal_Candidates`, `Character_Signal_Candidate_Summary`, `Character_Signal_Candidate_Family_Map`, `Character_Signal_Readiness_Report`, `Character_Signal_Shadow_Test`, `Character_Signal_Shadow_Family_Test`, `Character_Signal_Shadow_Summary`, and `Character_Signal_Shadow_Readiness`.
+  - These active sheets compare residual behavior, recurrence, and drift only; economic-value validation now belongs to the separate Provider Character Economic Validation Branch. The retired tabs above must not be recreated.
+
 For sheet-level analysis, `attention_schema_version` is the row-level marker for the attention-shadow era. Blank values indicate pre-attention `v1.4-baseline` rows, while `attention_schema_version = "1.0"` indicates `v1.4-attn-shadow` rows, including provider-error rows where attention parsing could not occur.
 
 ### Jan 31 2025 Attention Factor checkpoint.
@@ -54,7 +89,7 @@ Status labels:
 - `attention_factor_v1_goal_2_status = not_approved_for_routing_or_weighting`
 - `attention_phase_3a_v1_promotion_status = closed_frozen`
 - `attention_phase_3b_status = not_approved`
-- `next_active_track = family_rule_and_batch_splitting`
+- `next_active_track = feature_pack_v2b_replay_validation`
 - `future_item = attention_factor_v2_causal_attention_experiment`
 
 The Jan 31 2025 checkpoint preserves Attention Factor Selection v1 as an explainability/provider-individuality diagnostics layer. Goal 1 is considered successful enough for diagnostics. Goal 2 did not approve routing, weighting, calibration, behavior overrides, or Phase 3B promotion.
@@ -63,7 +98,7 @@ Attention Factor v1 is one-shot: providers return prediction fields and `attenti
 
 `Attention Factor v2 - Causal Attention Experiment` is a future experimental item only. It may later test a two-step design where a provider chooses 2-3 attention factors first, then generates a prediction using those selected factors as reasoning anchors. It is not production, not subscriber-facing, not a replacement for v1, and not approved as Phase 3B.
 
-The next active development track is investigation of recurring `family_rule` and `batch_splitting` findings.
+The next active development track is validation of `HistoricalContext v1a` / `Feature Pack v2A` on repeat-indicator slices, with cautious extension toward same-family memory only if those runs remain stable and materially improve outcomes. Recurring `family_rule` and `batch_splitting` findings remain diagnostics/reporting issues, not approved live behavior changes.
 
 #### Next Track: Family Rule / Batch Splitting Investigation.
 
@@ -139,6 +174,15 @@ Outcome_Summary_ProviderFamily
 Outcome_Summary_Convergence
 Outcome_Summary_Bucket
 Outcome_Diagnostics
+Character_Baseline_E
+Provider_Character_Residuals
+Provider_Character_Summary
+Provider_Character_Family_Summary
+Character_Disagreement_Report
+Character_Recurrence_Validation
+Character_Recurrence_Family_Validation
+Character_Drift_Assessment
+Retired legacy tabs from the old outcome / signal path are intentionally excluded and must not be recreated.
 Attention_Factor_Summary
 Provider_Character_Diagnostics
 Attention_Provider_Individuality
@@ -232,7 +276,7 @@ pre_signal_mode, pre_risk_level, pre_volatility_level, watch_member_event_ids, w
 
 The `pre_*` / `scenario_*` fields are advisory pre-release planning metadata. They do not replace the legacy directional fields and do not change the core directional/pips math in `Evaluation_Summary`; scenario-watchlist coverage is reported separately in `Evaluation_Scenario`.
 
-The runner also attaches a compact deterministic same-indicator feature pack in memory before provider calls. Current live behavior is `HistoricalContext v1a`, normalized as `feature_pack_version = "v1_historical_context"`. This context is not persisted as new sheet columns and does not change the `(event_id, ai_name)` upsert rule.
+The runner also attaches a compact deterministic same-indicator feature pack in memory before provider calls. Current live behavior is `HistoricalContext v1a`, surfaced in code as `feature_pack_version = "v2a_core_context"` and upgraded to `feature_pack_version = "v2b_core_market_context"` when market context is enabled. This context is not persisted as new sheet columns and does not change the `(event_id, ai_name)` upsert rule.
 
 For recurring low-signal families, the planner uses these same fields to make the conservative posture visible without adding new sheet columns. Current code-level low-signal families include `cftc_positions`, `treasury_auctions`, `fed_speeches`, and `statement_report_text`. These families bias toward scenario mode, low risk/volatility/confidence, and representative watchlists rather than forceful single-driver precision. This family handling applies at row level as well as batch level, so member/single rows such as speeches, minutes, or report-text events do not need a batch-family wrapper to switch into conservative scenario framing.
 
@@ -375,6 +419,15 @@ The following reporting tabs are derived-only rebuilds and are not canonical sou
 - `Outcome_Summary_Convergence`
 - `Outcome_Summary_Bucket`
 - `Outcome_Diagnostics`
+- `Character_Baseline_E`
+- `Provider_Character_Residuals`
+- `Provider_Character_Summary`
+- `Provider_Character_Family_Summary`
+- `Character_Disagreement_Report`
+- `Character_Recurrence_Validation`
+- `Character_Recurrence_Family_Validation`
+- `Character_Drift_Assessment`
+- Retired and intentionally removed legacy tabs from the old outcome / signal path: `Character_Outcome_Link`, `Character_Outcome_Summary`, `Character_Outcome_Family_Link`, `Character_Outcome_Provider_Controlled`, `Character_Outcome_Family_Controlled`, `Character_Outcome_Permutation_Test`, `Character_Outcome_Robust_Traits`, `Character_Good_Reasoning_Proxy_Test`, `Character_Outcome_Falsification_Report`, `Character_Outcome_Recurrence_Validation`, `Character_Outcome_Recurrence_Block_Detail`, `Character_Outcome_Recurrence_Interpretation`, `Character_Signal_Candidates`, `Character_Signal_Candidate_Summary`, `Character_Signal_Candidate_Family_Map`, `Character_Signal_Readiness_Report`, `Character_Signal_Shadow_Test`, `Character_Signal_Shadow_Family_Test`, `Character_Signal_Shadow_Summary`, and `Character_Signal_Shadow_Readiness`.
 - `Attention_Factor_Summary`
 - `Provider_Character_Diagnostics`
 - `Attention_Provider_Individuality`
@@ -395,6 +448,8 @@ They may be created if missing, may append missing headers, and may clear/rewrit
 
 `Attention_Factor_Summary`, `Provider_Character_Diagnostics`, `Attention_Provider_Individuality`, `Attention_Evidence_Report`, `Attention_Disagreement_Review`, and `Attention_Disagreement_Summary` are Phase 2 shadow-mode analysis layers. `Attention_Provider_Individuality` specifically separates provider individuality/explainability evidence from performance evidence. As of the Jan 31 2025 checkpoint, Attention Factor v1 is frozen as an explainability/provider-individuality layer. `Attention_Phase3_Candidates` is a candidate-only bridge layer for later Phase 3 design review, and `Attention_Shadow_Experiments` and `Attention_Shadow_Summary` are Phase 3A counterfactual reporting layers, but Phase 3A v1 promotion is closed/frozen and Phase 3B is not approved. These sheets may summarize attention-era rows, provider-character evidence, provider individuality evidence, case-level disagreement evidence, repeated candidate slices, and shadow experiment outcomes, but they must not control prompts, provider roles, provider weighting, calibration, Market Reaction Memory, scoring, or signal generation. V1 attention factors are returned in the same provider response as prediction fields and must not be described as proven causal controls.
 
+`Feature_Pack_Audit`, `Surprise_Pack_Coverage_Report`, `Market_Context_Provider_Repair_Report`, `Market_Context_Data_Sanity_Report`, `Market_Context_Source_Validation_Report`, `Feature_Pack_v2B_Core_Audit`, `Production_vs_V2B_Replay`, `V2B_Context_Utilization_Report`, `V2B_Prediction_Stability`, `Production_vs_V2B_Summary`, `Production_vs_V2B_Family_Summary`, `Production_vs_V2B_Provider_Summary`, and `V2B_Context_Consumption_Audit` are diagnostics layers for feature-pack and replay validation. They are read-only over their source layers, may be rebuilt deterministically, and must not change provider prompts, routing, weighting, calibration, scoring logic, or canonical prediction semantics.
+
 `Family_Structure_Report` is the active Family Structure Investigation v1 reporting sheet after the Attention Factor v1 checkpoint. It may summarize family performance, batch composition, batch-vs-member comparisons, family-mixing risk, recurring `family_rule` findings, and recurring `batch_splitting` findings. It is diagnostic-only and must not implement or imply live family-rule behavior, batch splitting, prediction prompt changes, scoring changes, provider weighting, routing, calibration, market reaction changes, or subscriber-facing behavior changes.
 
 `Economic_Value_Accuracy` is a derived-only diagnostic report. It may compare predicted economic-value direction versus actual released-value surprise direction using existing `Predictions` fields and matched `Event` actuals, and it may compare those value results against existing Market Reaction grading for analysis only. It must not modify `Predictions`, `Event`, prediction prompts, provider behavior, market reaction scoring, evaluation scoring, Attention Factor logic, Family Structure logic, batching behavior, routing, weighting, calibration, or subscriber-facing behavior. It exists only to answer whether the system is weak at economic-value forecasting, market-reaction forecasting, or both.
@@ -405,7 +460,26 @@ They may be created if missing, may append missing headers, and may clear/rewrit
 
 `Attention_Economic_Value_Report` is a derived-only report built from existing `Economic_Value_Accuracy` scoring plus already-saved Attention Factor v1 labels from `Predictions`. It may measure whether specific attention-factor labels correlate with stronger or weaker economic-value accuracy globally, by provider, by family, and by provider-family slice, using conservative thin-sample guardrails and baseline deltas. It must remain correlation-only: Attention Factor v1 labels are provider-reported metadata returned alongside predictions, and the report must not claim that those labels caused improved or worsened outcomes. It must not modify `Predictions`, `Event`, prompts, provider behavior, market reaction scoring, evaluation scoring, routing, weighting, calibration, or subscriber-facing behavior.
 
-Heavy derived diagnostics may write to an external workbook when `DIAGNOSTICS_SPREADSHEET_ID` is configured through the `Config` sheet or Script Properties. The main workbook remains canonical and operational; the diagnostics workbook is derived-only and not a source of truth. Externalizing diagnostics is an output-location architecture change only and must not alter prompts, providers, predictions, scoring, evaluation semantics, routing, weighting, calibration, or subscriber-facing behavior.
+`Attention_V3_Replay`, `Attention_V3_Replay_Evaluation`, and `Attention_V3_Replay_Reliability` are experimental replay-only sheets. They may run a narrow sampled Attention-First plus Reflection workflow on historical rows to test whether post-prediction reflection appears to preserve or replace reliability information previously observed in Attention Factor v1. They must write only to dedicated replay sheets, must not overwrite `Predictions`, `Evaluation_*`, `Outcome_Ledger`, or existing Attention sheets, and must not be treated as production approval, routing approval, weighting approval, calibration approval, or prompt-policy replacement.
+
+Heavy derived diagnostics may write to an external workbook when `DIAGNOSTICS_SPREADSHEET_ID` is configured through the `Config` sheet or Script Properties. `MAIN_SPREADSHEET_ID` may be used to pin the canonical operational workbook in API execution contexts so source-sheet routing does not depend on whichever workbook is currently “active.” `OVERVIEW_SPREADSHEET_ID` may be used to pin the project-overview workbook (`project_overviews.xls`) for governance/project-memory sheets. The main workbook remains canonical and operational; the diagnostics workbook and overview workbook are derived-only / governance-only and are not sources of truth. Externalizing these outputs is an output-location architecture change only and must not alter prompts, providers, predictions, scoring, evaluation semantics, routing, weighting, calibration, or subscriber-facing behavior.
+
+#### Project overview / governance workbook
+`project_overviews.xls` is the governance and project-memory workbook. It stores project progression, status, governance, roadmaps, research chronology, methodology corrections, and decision history.
+
+Canonical tabs in the overview workbook:
+
+- `Current_Roadmap`
+- `Research_Journey`
+- `PreSignal_Layer_Map`
+- `Experiment_Register`
+- `Interpretation_Corrections`
+- `Decision_Log_v2`
+
+Compatibility / derived governance helpers, if present, also resolve to the overview workbook:
+
+- `Project_Status`
+- `Decision_Log`
 
 Builders must not assume that migrated derived sheets live in the active workbook. Source-sheet discovery for report builders should flow through a central sheet-location registry and workbook resolver so sheets can move between `MAIN`, `DIAGNOSTICS`, and future archive workbooks without changing report semantics. Missing-sheet errors must identify the requested sheet, its registry location, and the workbooks checked.
 
@@ -417,9 +491,11 @@ Builders must not assume that migrated derived sheets live in the active workboo
 
 `Inflation_NoSignal_Review` is a derived-only report built from `Market_Sensitivity_NoSignal_Counterfactuals` and `Economic_To_Market_Translation_Errors`. It narrows the shadow no-signal review to inflation slices, ranking misses avoided against correct calls lost and surfacing the dominant inflation translation-error shapes. It must not activate no-signal behavior, change prompts, change market-reaction scoring, alter `Predictions`, alter `Event`, or change subscriber-facing behavior.
 
-`Project_Status` is the governance current-state sheet for major initiatives. It may summarize current phase, status, confidence, current focus, next action, next review target, evidence summary, decision summary, and derived staleness for active, monitoring, successful, frozen, rejected, and archived work. It is project memory only and must not affect predictions, prompts, provider behavior, evaluation scoring, market-reaction scoring, routing, weighting, calibration, learning, or subscriber-facing behavior.
+`Project_Status` is the governance current-state sheet for major initiatives in `project_overviews.xls`. It may summarize current phase, status, confidence, current focus, next action, next review target, evidence summary, decision summary, and derived staleness for active, monitoring, successful, frozen, rejected, and archived work. It is project memory only and must not affect predictions, prompts, provider behavior, evaluation scoring, market-reaction scoring, routing, weighting, calibration, learning, or subscriber-facing behavior.
 
-`Decision_Log` is the governance historical-memory sheet for major roadmap decisions. It may record dated review outcomes such as success, rejection, freezing, activation into monitoring, or direction changes. It is historical memory only, even when rebuilt deterministically from the current governance registry, and must not affect predictions, prompts, provider behavior, evaluation scoring, market-reaction scoring, routing, weighting, calibration, learning, or subscriber-facing behavior.
+`Decision_Log_v2` is the governance historical-memory sheet for major roadmap decisions in `project_overviews.xls`. It may record dated review outcomes such as success, rejection, freezing, activation into monitoring, or direction changes. It is historical memory only, even when rebuilt deterministically from the current governance registry, and must not affect predictions, prompts, provider behavior, evaluation scoring, market-reaction scoring, routing, weighting, calibration, learning, or subscriber-facing behavior. The legacy `Decision_Log` name is retained only for backward compatibility if older workbooks or scripts still reference it.
+
+The functional roadmap and architecture compass are documented in `docs/PreSignal_Compass_v1.md`. This roadmap is descriptive only. If the roadmap and this RuleBook ever conflict, the RuleBook wins.
 
 ### Active fast rebuild path
 
@@ -1070,7 +1146,7 @@ Current live scope:
 
 Normalized shape:
 
-- `feature_pack_version = "v1_historical_context"`
+- `feature_pack_version = "v2a_core_context"`
 - `historical_context.same_indicator.events_seen`
 - `historical_context.same_indicator.history_quality`
 - `historical_context.same_indicator.last_3_actuals`
@@ -1094,6 +1170,24 @@ Supported `surprise_pattern` values:
 - `mixed`
 - `flat`
 - `unknown`
+
+Current live feature stack also includes deterministic v2A and v2B layers:
+
+- `feature_pack_version = "v2a_core_context"` for same-event context enrichment
+- `surprise_pack` for historical consensus-surprise memory
+- `revision_pack` for revision instability / placeholder-safe revision risk
+- `family_pack` for deterministic family-level memory and translation-noise descriptors
+- `signal_quality_pack` for reproducible quality / forecastability proxy signals
+- `feature_pack_version = "v2b_core_market_context"` for replay-safe market / rate context
+- `market_context_pack` for FRED / EODHD / FMP snapshots at or before `release_ts`
+
+Feature-pack rules:
+
+- fields must be deterministic, reproducible, timestamped where relevant, versioned, and rebuildable
+- no free-form qualitative opinion or AI-generated narrative may be introduced into the feature pack
+- market-context snapshots must sort provider rows explicitly and select the latest row `<= release_ts`
+- proxy symbols for VIX, NDX, JP2Y, BOJ policy rate, and US-JP 2Y spread remain excluded unless separately repaired and validated
+- feature-pack replay audits are diagnostic-only and must not imply routing, weighting, calibration, or prompt-policy approval
 
 Public debug wrapper:
 

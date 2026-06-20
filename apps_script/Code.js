@@ -12,6 +12,7 @@ var CFG = {
   SHEET_LOG: 'log',
   FMP_API_KEY: '',
   FMP_BASE: 'https://financialmodelingprep.com/api/v3',
+  FEATURE_PACK_V2B_ENABLED: false,
 
   // ↓ NEW: country scoping
   FMP_COUNTRY: 'US',             // attempt server-side filter if the endpoint supports it
@@ -72,9 +73,9 @@ function onOpen() {
       .addItem('Debug Timestamp Sample', 'debugEventTimestampSample_')
   );
 
-  // ⑤ Maintenance (must be last)
+  // ⑤ Maintenance (split so important items stay visible)
   menu.addSubMenu(
-    ui.createMenu('⑤ Maintenance')
+    ui.createMenu('⑤ Maintenance 1')
       .addItem('Backfill Missing Actuals', 'menuMaintenanceBackfillActuals_')
       .addItem('Backfill Market Reaction', 'menuMaintenanceBackfillMarketReaction_')
       .addItem('Build Active Decision Reports', 'menuBuildActiveDecisionReports_')
@@ -93,9 +94,15 @@ function onOpen() {
       .addItem('Build Batch Splitting Candidates', 'menuBuildBatchSplittingCandidates_')
       .addItem('Build Batch Split Counterfactuals', 'menuBuildBatchSplitCounterfactuals_')
       .addItem('Build Batch Baseline Coverage Audit', 'menuBuildBatchBaselineCoverageAudit_')
+  );
+
+  menu.addSubMenu(
+    ui.createMenu('⑤ Maintenance 2')
       .addItem('Build Batch Split Group Counterfactuals', 'menuBuildBatchSplitGroupCounterfactuals_')
       .addItem('Build Economic Value Accuracy', 'menuBuildEconomicValueAccuracy_')
       .addItem('Build Attention Economic Value Report', 'menuBuildAttentionEconomicValueReport_')
+      .addItem('Run Attention V3 Replay Experiment', 'menuRunAttentionV3ReplayExperiment_')
+      .addItem('Run Attention C0 Reliability Replay', 'menuRunAttentionC0ReliabilityReplay_')
       .addItem('Build Provider x Family Economic Accuracy', 'menuBuildProviderFamilyEconomicAccuracy_')
       .addItem('Build Economic to Market Translation Errors', 'menuBuildEconomicToMarketTranslationErrors_')
       .addItem('Build Market Sensitivity Filter Candidates', 'menuBuildMarketSensitivityFilterCandidates_')
@@ -103,6 +110,18 @@ function onOpen() {
       .addItem('Build Market Sensitivity No-Signal Counterfactuals', 'menuBuildMarketSensitivityNoSignalCounterfactuals_')
       .addItem('Build Inflation No-Signal Review', 'menuBuildInflationNoSignalReview_')
       .addItem('Build Outcome Diagnostics', 'menuBuildOutcomeDiagnostics_')
+      .addItem('Build Character Residual Architecture', 'menuBuildCharacterResidualArchitecture_')
+      .addItem('Build Character Recurrence Validation', 'menuBuildCharacterRecurrenceValidation_')
+      .addItem('Build Character Outcome Link', 'menuBuildCharacterOutcomeLink_')
+      .addItem('Build Character Outcome Falsification', 'menuBuildCharacterOutcomeFalsification_')
+      .addItem('Build Character Outcome Recurrence + Drift Validation', 'menuBuildCharacterOutcomeRecurrenceDriftValidation_')
+      .addItem('Build Character Signal Candidate Layer', 'menuBuildCharacterSignalCandidateLayer_')
+      .addItem('Build Character Signal Shadow Test', 'menuBuildCharacterSignalShadowTest_')
+      .addItem('Build Provider Character Outcome-Layer Audit', 'menuBuildProviderCharacterOutcomeLayerAudit_')
+  );
+
+  menu.addSubMenu(
+    ui.createMenu('⑤ Maintenance 3')
       .addItem('Rebuild Logs / Diagnostics', 'menuMaintenanceDiagnostics_')
       .addItem('System Health Check', 'menuMaintenanceHealthCheck_')
   );

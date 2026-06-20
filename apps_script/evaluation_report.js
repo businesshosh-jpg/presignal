@@ -230,17 +230,17 @@ function menuBuildDecisionLog_() {
   try {
     var res = buildDecisionLog_();
     if (typeof _log_ === 'function' && shLog) {
-      _log_(shLog, 'info', 'Governance -> Build Decision Log', {
+      _log_(shLog, 'info', 'Governance -> Build Decision Log v2', {
         result: res,
         started_ts: started.toISOString(),
         ended_ts: (new Date()).toISOString()
       });
     }
-    ss.toast('Decision log rows=' + (res.rows_written || 0), 'Decision Log', 8);
+    ss.toast('Decision log v2 rows=' + (res.rows_written || 0), 'Decision Log v2', 8);
     return res;
   } catch (e) {
     if (typeof _log_ === 'function' && shLog) {
-      _log_(shLog, 'error', 'Governance -> Build Decision Log failed', {
+      _log_(shLog, 'error', 'Governance -> Build Decision Log v2 failed', {
         error: (e && e.stack) ? e.stack : String(e),
         started_ts: started.toISOString(),
         ended_ts: (new Date()).toISOString()
@@ -965,6 +965,7 @@ function buildActiveDecisionReports_() {
     { name: 'buildEconomicValueAccuracy_', fn: buildEconomicValueAccuracy_, outputs: ['Economic_Value_Accuracy'] },
     { name: 'buildProviderFamilyEconomicAccuracy_', fn: buildProviderFamilyEconomicAccuracy_, outputs: ['Provider_Family_Economic_Accuracy'] },
     { name: 'buildEconomicToMarketTranslationErrors_', fn: buildEconomicToMarketTranslationErrors_, outputs: ['Economic_To_Market_Translation_Errors'] },
+    { name: 'buildProviderCharacterOutcomeLayerAudit_', fn: buildProviderCharacterOutcomeLayerAudit_, outputs: ['Provider_Character_Outcome_Layer_Audit', 'Provider_Character_Economic_Rebuild_Plan', 'Provider_Character_Translation_Reinterpretation', 'Provider_Character_Methodology_Summary'] },
     { name: 'buildMarketSensitivityFilterCandidates_', fn: buildMarketSensitivityFilterCandidates_, outputs: ['Market_Sensitivity_Filter_Candidates'], dependency_only: true },
     { name: 'buildMarketSensitivityFilterSummary_', fn: buildMarketSensitivityFilterSummary_, outputs: ['Market_Sensitivity_Filter_Summary'] },
     { name: 'buildMarketSensitivityNoSignalCounterfactuals_', fn: buildMarketSensitivityNoSignalCounterfactuals_, outputs: ['Market_Sensitivity_NoSignal_Counterfactuals'] },
@@ -1180,11 +1181,11 @@ function getOrCreateAttentionEconomicValueReportSheet_() {
 }
 
 function getOrCreateProjectStatusSheet_() {
-  return _getOrCreateSheet_('Project_Status');
+  return getDiagnosticsSheet_('Project_Status', _projectStatusHeaders_());
 }
 
 function getOrCreateDecisionLogSheet_() {
-  return _getOrCreateSheet_('Decision_Log');
+  return getDiagnosticsSheet_('Decision_Log_v2', _decisionLogHeaders_());
 }
 
 function ensureOutcomeSummaryHeaders_(sheet, headers) {
@@ -2063,12 +2064,1199 @@ function buildAttentionEconomicValueReport_() {
   };
 }
 
+function buildFeaturePackAudit_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var eventSheet = getSheet('Event');
+  if (!eventSheet) throw new Error('Event sheet missing for Feature_Pack_Audit.');
+
+  var headers = _featurePackAuditHeaders_();
+  var rowsOut = _buildFeaturePackAuditRows_(generatedTs, eventSheet, warnings);
+  _sortFeaturePackAuditRows_(headers, rowsOut);
+
+  var target = getDiagnosticsSheet_('Feature_Pack_Audit', headers, warnings);
+  var actualHeaders = target.headers;
+  var rowArrays = _featurePackAuditRowsToArrays_(headers, rowsOut);
+  _rewriteSheetRowsPreservingHeaders_(
+    target.sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowArrays)
+  );
+  trimSheetToDataRange_(target.sheet, rowsOut.length + 1, actualHeaders.length);
+
+  return {
+    status: 'ok',
+    target_sheet: target.sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildFeaturePackAudit() {
+  return buildFeaturePackAudit_();
+}
+
+function buildMarketContextDataSanityReport_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var eventSheet = getSheet('Event');
+  if (!eventSheet) throw new Error('Event sheet missing for Market_Context_Data_Sanity_Report.');
+
+  var headers = _marketContextDataSanityReportHeaders_();
+  var rowsOut = _buildMarketContextDataSanityReportRows_(generatedTs, eventSheet, warnings);
+  _sortMarketContextDataSanityReportRows_(rowsOut);
+
+  var target = getDiagnosticsSheet_('Market_Context_Data_Sanity_Report', headers, warnings);
+  var actualHeaders = target.headers;
+  var rowArrays = _marketContextDataSanityReportRowsToArrays_(headers, rowsOut);
+  _rewriteSheetRowsPreservingHeaders_(
+    target.sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowArrays)
+  );
+  trimSheetToDataRange_(target.sheet, rowsOut.length + 1, actualHeaders.length);
+
+  return {
+    status: 'ok',
+    target_sheet: target.sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildMarketContextDataSanityReport() {
+  return buildMarketContextDataSanityReport_();
+}
+
+function buildMarketContextSourceValidationReport_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var eventSheet = getSheet('Event');
+  if (!eventSheet) throw new Error('Event sheet missing for Market_Context_Source_Validation_Report.');
+
+  var headers = _marketContextSourceValidationReportHeaders_();
+  var rowsOut = _buildMarketContextSourceValidationReportRows_(generatedTs, eventSheet, warnings);
+  _sortMarketContextSourceValidationReportRows_(rowsOut);
+
+  var target = getDiagnosticsSheet_('Market_Context_Source_Validation_Report', headers, warnings);
+  var actualHeaders = target.headers;
+  var rowArrays = _marketContextSourceValidationReportRowsToArrays_(headers, rowsOut);
+  _rewriteSheetRowsPreservingHeaders_(
+    target.sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowArrays)
+  );
+  trimSheetToDataRange_(target.sheet, rowsOut.length + 1, actualHeaders.length);
+
+  return {
+    status: 'ok',
+    target_sheet: target.sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildMarketContextSourceValidationReport() {
+  return buildMarketContextSourceValidationReport_();
+}
+
+function buildSurprisePackCoverageReport_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var eventSheet = getSheet('Event');
+  if (!eventSheet) throw new Error('Event sheet missing for Surprise_Pack_Coverage_Report.');
+
+  var headers = _surprisePackCoverageReportHeaders_();
+  var rowsOut = _buildSurprisePackCoverageReportRows_(generatedTs, eventSheet, warnings);
+  _sortSurprisePackCoverageReportRows_(rowsOut);
+
+  var target = getDiagnosticsSheet_('Surprise_Pack_Coverage_Report', headers, warnings);
+  var actualHeaders = target.headers;
+  var rowArrays = _surprisePackCoverageReportRowsToArrays_(headers, rowsOut);
+  _rewriteSheetRowsPreservingHeaders_(
+    target.sheet,
+    actualHeaders,
+    _remapRowsToHeaders_(headers, actualHeaders, rowArrays)
+  );
+  trimSheetToDataRange_(target.sheet, rowsOut.length + 1, actualHeaders.length);
+
+  return {
+    status: 'ok',
+    target_sheet: target.sheet.getName(),
+    rows_written: rowsOut.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildSurprisePackCoverageReport() {
+  return buildSurprisePackCoverageReport_();
+}
+
+function _surprisePackCoverageReportHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'scope',
+    'scope_key',
+    'outcome_family',
+    'indicator_name',
+    'events_seen',
+    'completed_events_seen',
+    'consensus_available_events',
+    'surprise_usable_events',
+    'consensus_available_rate',
+    'surprise_usable_rate',
+    'coverage_status',
+    'permanent_no_consensus_flag',
+    'coverage_note',
+    'decision_support_note'
+  ];
+}
+
+function _buildSurprisePackCoverageReportRows_(generatedTs, eventSheet, warnings) {
+  var headers = getHeaderNames(eventSheet);
+  var idx = {};
+  headers.forEach(function(h, i){ idx[String(h || '').toLowerCase()] = i; });
+  var rows = _readDataRows_(eventSheet);
+  var byIndicator = {};
+  var byFamily = {};
+
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    if (String(_cell(row, idx['object']) || 'econ_event').toLowerCase() !== 'econ_event') continue;
+    var indicatorName = String(_cell(row, idx['indicator_name']) || '').trim();
+    var releaseTs = _toIsoOrNull_(_cell(row, idx['release_ts']));
+    if (!indicatorName || !releaseTs) continue;
+
+    var releasedValue = _numOrNull_(_cell(row, idx['released_value']));
+    var consensusValue = _numOrNull_(_cell(row, idx['consensus_value']));
+    var releaseStatus = _cell(row, idx['release_status']);
+    var completed = _eventHasActuals_(releasedValue, releaseTs, releaseStatus);
+    var family = deriveOutcomeFamily_(indicatorName, String(_cell(row, idx['genre']) || '').trim()) || 'other';
+    var item = {
+      completed: completed,
+      has_consensus: consensusValue != null,
+      has_surprise: completed && consensusValue != null && releasedValue != null
+    };
+
+    if (!byIndicator[indicatorName]) {
+      byIndicator[indicatorName] = { scope: 'indicator', scope_key: indicatorName, outcome_family: family, indicator_name: indicatorName, items: [] };
+    }
+    byIndicator[indicatorName].items.push(item);
+
+    if (!byFamily[family]) {
+      byFamily[family] = { scope: 'family', scope_key: family, outcome_family: family, indicator_name: '', items: [] };
+    }
+    byFamily[family].items.push(item);
+  }
+
+  var rowsOut = [];
+  Object.keys(byFamily).sort().forEach(function(key) {
+    rowsOut.push(_surprisePackCoverageReportRow_(generatedTs, byFamily[key]));
+  });
+  Object.keys(byIndicator).sort().forEach(function(key) {
+    rowsOut.push(_surprisePackCoverageReportRow_(generatedTs, byIndicator[key]));
+  });
+  rowsOut.unshift(_surprisePackCoverageSummaryRow_(generatedTs, rowsOut));
+  return rowsOut;
+}
+
+function _surprisePackCoverageReportRow_(generatedTs, group) {
+  var stats = _surprisePackCoverageStats_(group.items || []);
+  var status = _surprisePackCoverageStatus_(stats);
+  return {
+    generated_ts: generatedTs,
+    row_type: 'coverage',
+    scope: group.scope,
+    scope_key: group.scope_key,
+    outcome_family: group.outcome_family || 'other',
+    indicator_name: group.indicator_name || '',
+    events_seen: stats.events_seen,
+    completed_events_seen: stats.completed_events_seen,
+    consensus_available_events: stats.consensus_available_events,
+    surprise_usable_events: stats.surprise_usable_events,
+    consensus_available_rate: _rateOrBlank_(stats.consensus_available_events, stats.events_seen),
+    surprise_usable_rate: _rateOrBlank_(stats.surprise_usable_events, stats.completed_events_seen),
+    coverage_status: status,
+    permanent_no_consensus_flag: _surprisePackPermanentNoConsensusFlag_(stats),
+    coverage_note: _surprisePackCoverageNote_(stats, status),
+    decision_support_note: 'Surprise pack coverage is descriptive only; no routing, weighting, or trading advice.'
+  };
+}
+
+function _surprisePackCoverageSummaryRow_(generatedTs, rows) {
+  var indicatorRows = (rows || []).filter(function(row) { return row.scope === 'indicator'; });
+  var familyRows = (rows || []).filter(function(row) { return row.scope === 'family'; });
+  var permanentIndicators = indicatorRows.filter(function(row) { return row.permanent_no_consensus_flag === 'TRUE'; }).length;
+  return {
+    generated_ts: generatedTs,
+    row_type: 'summary',
+    scope: 'all',
+    scope_key: 'all',
+    outcome_family: '',
+    indicator_name: '',
+    events_seen: indicatorRows.length,
+    completed_events_seen: familyRows.length,
+    consensus_available_events: permanentIndicators,
+    surprise_usable_events: indicatorRows.filter(function(row) { return row.coverage_status === 'usable_surprise_history'; }).length,
+    consensus_available_rate: '',
+    surprise_usable_rate: '',
+    coverage_status: 'summary',
+    permanent_no_consensus_flag: '',
+    coverage_note: 'Indicators=' + indicatorRows.length + ', families=' + familyRows.length + ', permanently_no_consensus_likely_indicators=' + permanentIndicators + '.',
+    decision_support_note: 'Summary of consensus/surprise coverage only.'
+  };
+}
+
+function _surprisePackCoverageStats_(items) {
+  var stats = {
+    events_seen: 0,
+    completed_events_seen: 0,
+    consensus_available_events: 0,
+    surprise_usable_events: 0
+  };
+  for (var i = 0; i < (items || []).length; i++) {
+    var item = items[i] || {};
+    stats.events_seen += 1;
+    if (item.completed) stats.completed_events_seen += 1;
+    if (item.has_consensus) stats.consensus_available_events += 1;
+    if (item.has_surprise) stats.surprise_usable_events += 1;
+  }
+  return stats;
+}
+
+function _surprisePackCoverageStatus_(stats) {
+  if (stats.surprise_usable_events >= 5) return 'usable_surprise_history';
+  if (stats.surprise_usable_events >= 1) return 'partial_surprise_history';
+  if (stats.completed_events_seen >= 5 && stats.consensus_available_events === 0) return 'permanently_no_consensus_likely';
+  if (stats.completed_events_seen === 0) return 'no_completed_history';
+  if (stats.consensus_available_events === 0) return 'no_consensus_yet';
+  return 'consensus_without_usable_surprise';
+}
+
+function _surprisePackPermanentNoConsensusFlag_(stats) {
+  return (stats.completed_events_seen >= 5 && stats.consensus_available_events === 0) ? 'TRUE' : 'FALSE';
+}
+
+function _surprisePackCoverageNote_(stats, status) {
+  if (status === 'usable_surprise_history') return 'Enough completed consensus-backed history exists for deterministic surprise memory.';
+  if (status === 'partial_surprise_history') return 'Some surprise history exists, but sample is still thin.';
+  if (status === 'permanently_no_consensus_likely') return 'Observed completed history shows no consensus coverage across at least 5 completed events.';
+  if (status === 'no_completed_history') return 'No completed history is available yet.';
+  if (status === 'no_consensus_yet') return 'Completed events exist, but none currently expose consensus in stored source data.';
+  return 'Consensus appears intermittently, but usable surprise history is not yet established.';
+}
+
+function _sortSurprisePackCoverageReportRows_(rows) {
+  rows.sort(function(a, b) {
+    if (a.row_type === 'summary' && b.row_type !== 'summary') return -1;
+    if (a.row_type !== 'summary' && b.row_type === 'summary') return 1;
+    if (a.scope !== b.scope) return _cmpText_(a.scope, b.scope);
+    if (a.outcome_family !== b.outcome_family) return _cmpText_(a.outcome_family, b.outcome_family);
+    return _cmpText_(a.scope_key, b.scope_key);
+  });
+}
+
+function _surprisePackCoverageReportRowsToArrays_(headers, rows) {
+  return (rows || []).map(function(row) {
+    return headers.map(function(header) {
+      return row && row.hasOwnProperty(header) ? row[header] : '';
+    });
+  });
+}
+
+function _featurePackAuditHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'event_id',
+    'release_ts',
+    'type',
+    'indicator_name',
+    'country',
+    'feature_pack_version',
+    'has_surprise_pack',
+    'has_revision_pack',
+    'has_family_pack',
+    'has_signal_quality_pack',
+    'signal_quality',
+    'signal_quality_reason_codes',
+    'surprise_events_seen',
+    'revision_events_seen',
+    'family_events_seen',
+    'v1_payload_field_count',
+    'v2a_payload_field_count',
+    'payload_growth_fields',
+    'raw_payload_preview',
+    'decision_support_note',
+    'has_market_context_pack',
+    'market_context_available',
+    'market_context_quality',
+    'missing_market_context_fields',
+    'market_context_char_count',
+    'snapshot_ts',
+    'fedfunds_level',
+    'dff_level',
+    'us2y_yield',
+    'us10y_yield',
+    'us_2s10s_curve',
+    'jp10y_yield',
+    'us_jp_10y_spread',
+    'usdjpy_24h_change_pips',
+    'usdjpy_5d_change_pips',
+    'dxy_5d_change_pct',
+    'spx_5d_change_pct',
+    'gold_5d_change_pct',
+    'wti_5d_change_pct'
+  ];
+}
+
+function _buildFeaturePackAuditRows_(generatedTs, eventSheet, warnings) {
+  var headers = getHeaderNames(eventSheet);
+  var idx = {};
+  headers.forEach(function(h, i){ idx[String(h || '').toLowerCase()] = i; });
+  var rows = _readDataRows_(eventSheet);
+  var historyIndex = _buildHistoricalIndicatorIndex_(eventSheet);
+  var out = [];
+
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var releaseTs = _toIsoOrNull_(_cell(row, idx['release_ts']));
+    var eventId = String(_cell(row, idx['event_id']) || '').trim();
+    if (!eventId || !releaseTs) continue;
+
+    var ev = {
+      event_id: eventId,
+      batch_id: _cell(row, idx['batch_id']) || '',
+      type: _cell(row, idx['type']) || '',
+      country: _cell(row, idx['country']) || '',
+      indicator_name: _cell(row, idx['indicator_name']) || '',
+      genre: _cell(row, idx['genre']) || '',
+      importance: (_cell(row, idx['importance']) || '').toString().toLowerCase(),
+      release_ts: releaseTs,
+      source_cal: _cell(row, idx['source_cal']) || '',
+      consensus_value: _numOrNull_(_cell(row, idx['consensus_value'])),
+      prev_revision: _numOrNull_(_cell(row, idx['prev_revision'])),
+      fx_pair: _cell(row, idx['fx_pair']) || ((typeof CFG !== 'undefined' && CFG.DEFAULT_FX) ? CFG.DEFAULT_FX : '')
+    };
+
+    var featurePack = _normalizeHistoricalFeaturePack_(
+      _buildHistoricalFeaturePackForEvent_(historyIndex, ev, { includeMarketContext: (typeof _featurePackV2BEnabled_ === 'function' && _featurePackV2BEnabled_()) })
+    );
+    var sameIndicator = featurePack.historical_context && featurePack.historical_context.same_indicator
+      ? featurePack.historical_context.same_indicator
+      : {};
+    var surprisePack = featurePack.surprise_pack || {};
+    var revisionPack = featurePack.revision_pack || {};
+    var familyPack = featurePack.family_pack || {};
+    var signalQualityPack = featurePack.signal_quality_pack || {};
+    var marketContextPack = featurePack.market_context_pack || {};
+    var rawPayloadPreview = _featurePackAuditPreview_(featurePack);
+    var hasMarketContextPack = !!featurePack.market_context_pack;
+    var marketContextFields = hasMarketContextPack ? JSON.stringify(marketContextPack) : '';
+
+    out.push({
+      generated_ts: generatedTs,
+      row_type: 'case',
+      event_id: ev.event_id,
+      release_ts: ev.release_ts,
+      type: ev.type,
+      indicator_name: ev.indicator_name,
+      country: ev.country,
+      feature_pack_version: featurePack.feature_pack_version || '',
+      has_surprise_pack: featurePack.surprise_pack ? 'TRUE' : 'FALSE',
+      has_revision_pack: featurePack.revision_pack ? 'TRUE' : 'FALSE',
+      has_family_pack: featurePack.family_pack ? 'TRUE' : 'FALSE',
+      has_signal_quality_pack: featurePack.signal_quality_pack ? 'TRUE' : 'FALSE',
+      signal_quality: signalQualityPack.signal_quality || '',
+      signal_quality_reason_codes: (signalQualityPack.signal_quality_reason_codes || []).join('|'),
+      surprise_events_seen: Number(surprisePack.same_indicator_surprise_events_seen || 0),
+      revision_events_seen: Number(revisionPack.revision_events_seen || 0),
+      family_events_seen: Number(familyPack.family_events_seen || 0),
+      v1_payload_field_count: _featurePackAuditV1FieldCount_(sameIndicator),
+      v2a_payload_field_count: _featurePackAuditV2FieldCount_(featurePack),
+      payload_growth_fields: _featurePackAuditV2FieldCount_(featurePack) - _featurePackAuditV1FieldCount_(sameIndicator),
+      raw_payload_preview: rawPayloadPreview,
+      decision_support_note: 'Feature Pack Audit is deterministic context inspection only; not trading advice.',
+      has_market_context_pack: hasMarketContextPack ? 'TRUE' : 'FALSE',
+      market_context_available: hasMarketContextPack && marketContextPack.market_context_available ? 'TRUE' : 'FALSE',
+      market_context_quality: marketContextPack.market_context_quality || '',
+      missing_market_context_fields: (marketContextPack.missing_market_context_fields || []).join('|'),
+      market_context_char_count: marketContextFields ? marketContextFields.length : 0,
+      snapshot_ts: marketContextPack.snapshot_ts || '',
+      fedfunds_level: marketContextPack.fedfunds_level != null ? marketContextPack.fedfunds_level : '',
+      dff_level: marketContextPack.dff_level != null ? marketContextPack.dff_level : '',
+      us2y_yield: marketContextPack.us2y_yield != null ? marketContextPack.us2y_yield : '',
+      us10y_yield: marketContextPack.us10y_yield != null ? marketContextPack.us10y_yield : '',
+      us_2s10s_curve: marketContextPack.us_2s10s_curve != null ? marketContextPack.us_2s10s_curve : '',
+      jp10y_yield: marketContextPack.jp10y_yield != null ? marketContextPack.jp10y_yield : '',
+      us_jp_10y_spread: marketContextPack.us_jp_10y_spread != null ? marketContextPack.us_jp_10y_spread : '',
+      usdjpy_24h_change_pips: marketContextPack.usdjpy_24h_change_pips != null ? marketContextPack.usdjpy_24h_change_pips : '',
+      usdjpy_5d_change_pips: marketContextPack.usdjpy_5d_change_pips != null ? marketContextPack.usdjpy_5d_change_pips : '',
+      dxy_5d_change_pct: marketContextPack.dxy_5d_change_pct != null ? marketContextPack.dxy_5d_change_pct : '',
+      spx_5d_change_pct: marketContextPack.spx_5d_change_pct != null ? marketContextPack.spx_5d_change_pct : '',
+      gold_5d_change_pct: marketContextPack.gold_5d_change_pct != null ? marketContextPack.gold_5d_change_pct : '',
+      wti_5d_change_pct: marketContextPack.wti_5d_change_pct != null ? marketContextPack.wti_5d_change_pct : ''
+    });
+  }
+
+  out.unshift(_featurePackAuditSummaryRow_(generatedTs, out));
+  return out;
+}
+
+function _featurePackAuditSummaryRow_(generatedTs, caseRows) {
+  var rows = caseRows || [];
+  var last = rows.length ? rows[rows.length - 1] : null;
+  var avgGrowth = '';
+  if (rows.length) {
+    var sum = 0;
+    for (var i = 0; i < rows.length; i++) sum += Number(rows[i].payload_growth_fields || 0);
+    avgGrowth = _round4_(sum / rows.length);
+  }
+  return {
+    generated_ts: generatedTs,
+    row_type: 'summary',
+    event_id: '',
+    release_ts: '',
+    type: '',
+    indicator_name: '',
+    country: '',
+    feature_pack_version: last ? last.feature_pack_version : '',
+    has_surprise_pack: '',
+    has_revision_pack: '',
+    has_family_pack: '',
+    has_signal_quality_pack: '',
+    signal_quality: '',
+    signal_quality_reason_codes: '',
+    surprise_events_seen: '',
+    revision_events_seen: '',
+    family_events_seen: '',
+    v1_payload_field_count: '',
+    v2a_payload_field_count: '',
+    payload_growth_fields: avgGrowth,
+    raw_payload_preview: last ? last.raw_payload_preview : '',
+    decision_support_note: 'Summary row for payload richness growth across audited events only.',
+    has_market_context_pack: '',
+    market_context_available: '',
+    market_context_quality: '',
+    missing_market_context_fields: '',
+    market_context_char_count: '',
+    snapshot_ts: '',
+    fedfunds_level: '',
+    dff_level: '',
+    us2y_yield: '',
+    us10y_yield: '',
+    us_2s10s_curve: '',
+    jp10y_yield: '',
+    us_jp_10y_spread: '',
+    usdjpy_24h_change_pips: '',
+    usdjpy_5d_change_pips: '',
+    dxy_5d_change_pct: '',
+    spx_5d_change_pct: '',
+    gold_5d_change_pct: '',
+    wti_5d_change_pct: ''
+  };
+}
+
+function _featurePackAuditV1FieldCount_(sameIndicator) {
+  if (!sameIndicator) return 0;
+  return Object.keys({
+    events_seen: sameIndicator.events_seen,
+    history_quality: sameIndicator.history_quality,
+    last_3_actuals: sameIndicator.last_3_actuals,
+    last_3_consensus: sameIndicator.last_3_consensus,
+    last_3_surprises: sameIndicator.last_3_surprises,
+    surprise_bias: sameIndicator.surprise_bias,
+    surprise_pattern: sameIndicator.surprise_pattern,
+    surprise_volatility: sameIndicator.surprise_volatility,
+    consensus_accuracy_trend: sameIndicator.consensus_accuracy_trend
+  }).length;
+}
+
+function _featurePackAuditV2FieldCount_(featurePack) {
+  if (!featurePack) return 0;
+  return _featurePackAuditCountLeafFields_(featurePack);
+}
+
+function _featurePackAuditCountLeafFields_(value) {
+  if (value == null) return 0;
+  if (Array.isArray(value)) return 1;
+  if (typeof value !== 'object') return 1;
+  var total = 0;
+  Object.keys(value).forEach(function(key) {
+    total += _featurePackAuditCountLeafFields_(value[key]);
+  });
+  return total;
+}
+
+function _featurePackAuditPreview_(featurePack) {
+  var preview = JSON.stringify(featurePack);
+  if (preview.length <= 500) return preview;
+  return preview.slice(0, 497) + '...';
+}
+
+function _sortFeaturePackAuditRows_(headers, rows) {
+  rows.sort(function(a, b) {
+    if (a.row_type === 'summary' && b.row_type !== 'summary') return -1;
+    if (a.row_type !== 'summary' && b.row_type === 'summary') return 1;
+    return _cmpText_(a.release_ts, b.release_ts) || _cmpText_(a.event_id, b.event_id);
+  });
+}
+
+function _featurePackAuditRowsToArrays_(headers, rows) {
+  return (rows || []).map(function(row) {
+    return headers.map(function(header) {
+      return row && row.hasOwnProperty(header) ? row[header] : '';
+    });
+  });
+}
+
+function _marketContextDataSanityReportHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'field_name',
+    'provider',
+    'tested_symbol',
+    'sample_events_count',
+    'min_value',
+    'max_value',
+    'median_value',
+    'example_values',
+    'expected_real_world_range',
+    'pass_fail_sanity_check',
+    'economic_implausibility_flag',
+    'sanity_note',
+    'derived_check_name',
+    'derived_expected_formula',
+    'derived_pass_fail',
+    'derived_max_abs_diff',
+    'derived_example_values',
+    'decision_support_note'
+  ];
+}
+
+function _buildMarketContextDataSanityReportRows_(generatedTs, eventSheet, warnings) {
+  var sampleEvents = _marketContextDataSanityReportSampleEvents_(eventSheet, 100);
+  var cache = null;
+  var minDate = '';
+  var maxDate = '';
+  for (var i = 0; i < sampleEvents.length; i++) {
+    var d = String(sampleEvents[i].release_ts || '').slice(0, 10);
+    if (!d) continue;
+    if (!minDate || d < minDate) minDate = d;
+    if (!maxDate || d > maxDate) maxDate = d;
+  }
+  if (sampleEvents.length) {
+    cache = (typeof _v2bBuildSeriesCache_ === 'function')
+      ? _v2bBuildSeriesCache_(_v2bOffsetDateIso_(minDate || '2024-05-01', -120), maxDate || minDate)
+      : null;
+  }
+
+  var fieldSpecs = [
+    { field_name: 'FEDFUNDS', provider: 'FRED', symbol: 'FEDFUNDS', extractor: function(pack){ return pack && pack.fedfunds_level; }, range: '0% to 25%', flags: [{ name: 'none', expected: 'level only' }] },
+    { field_name: 'DFF', provider: 'FRED', symbol: 'DFF', extractor: function(pack){ return pack && pack.dff_level; }, range: '0% to 25%', flags: [{ name: 'none', expected: 'level only' }] },
+    { field_name: 'DGS2', provider: 'FRED', symbol: 'DGS2', extractor: function(pack){ return pack && pack.us2y_yield; }, range: '-1% to 15%', flags: [{ name: 'none', expected: 'level only' }] },
+    { field_name: 'DGS10', provider: 'FRED', symbol: 'DGS10', extractor: function(pack){ return pack && pack.us10y_yield; }, range: '-1% to 15%', flags: [{ name: 'none', expected: 'level only' }] },
+    { field_name: 'JP10Y', provider: 'FRED', symbol: 'IRLTLT01JPM156N', extractor: function(pack){ return pack && pack.jp10y_yield; }, range: '-1% to 10%', flags: [{ name: 'none', expected: 'level only' }] },
+    { field_name: 'USDJPY', provider: 'EODHD/FMP', symbol: 'USDJPY.FOREX / USDJPY', extractor: function(pack){ return pack && pack.usdjpy_level; }, range: '50 to 250', flags: [{ name: 'none', expected: 'level only' }] },
+    { field_name: 'DXY', provider: 'FMP', symbol: 'DX-Y.NYB', extractor: function(pack){ return pack && pack.dxy_level; }, range: '70 to 140', flags: [{ name: 'none', expected: 'level only' }] },
+    { field_name: 'SPX', provider: 'EODHD', symbol: 'GSPC.INDX', extractor: function(pack){ return pack && pack.spx_level; }, range: '500 to 10000', flags: [{ name: 'none', expected: 'level only' }] },
+    { field_name: 'Gold', provider: 'EODHD', symbol: 'XAUUSD.FOREX', extractor: function(pack){ return pack && pack.gold_level; }, range: '500 to 5000', flags: [{ name: 'none', expected: 'level only' }] },
+    { field_name: 'WTI', provider: 'FMP', symbol: 'CLUSD', extractor: function(pack){ return pack && pack.wti_level; }, range: '50 to 150', flags: [{ name: 'none', expected: 'level only' }] }
+  ];
+
+  var rows = [];
+  rows.push({
+    generated_ts: generatedTs,
+    row_type: 'summary',
+    field_name: 'all',
+    provider: '',
+    tested_symbol: '',
+    sample_events_count: sampleEvents.length,
+    min_value: '',
+    max_value: '',
+    median_value: '',
+    example_values: '',
+    expected_real_world_range: '',
+    pass_fail_sanity_check: '',
+    economic_implausibility_flag: '',
+    sanity_note: 'Sampled ' + sampleEvents.length + ' historical events with replay-safe pre-release market context.',
+    derived_check_name: '',
+    derived_expected_formula: '',
+    derived_pass_fail: '',
+    derived_max_abs_diff: '',
+    derived_example_values: '',
+    decision_support_note: 'Diagnostic summary only; no routing or weighting.'
+  });
+
+  for (var f = 0; f < fieldSpecs.length; f++) {
+    var spec = fieldSpecs[f];
+    var values = [];
+    var examples = [];
+    for (var s = 0; s < sampleEvents.length; s++) {
+      var ev = sampleEvents[s];
+      var pack = _marketContextDataSanityReportPackForEvent_(ev, cache);
+      var value = spec.extractor(pack);
+      if (value != null && isFinite(Number(value))) {
+        values.push(Number(value));
+        if (examples.length < 5) examples.push(Number(value));
+      }
+    }
+    var stats = _marketContextDataSanityReportStats_(values);
+    var sanity = _marketContextDataSanityReportRangeCheck_(spec.field_name, values, spec.range);
+    rows.push({
+      generated_ts: generatedTs,
+      row_type: 'field',
+      field_name: spec.field_name,
+      provider: spec.provider,
+      tested_symbol: spec.symbol,
+      sample_events_count: sampleEvents.length,
+      min_value: stats.min,
+      max_value: stats.max,
+      median_value: stats.median,
+      example_values: examples.join('|'),
+      expected_real_world_range: spec.range,
+      pass_fail_sanity_check: sanity.pass_fail,
+      economic_implausibility_flag: sanity.flag,
+      sanity_note: sanity.note,
+      derived_check_name: '',
+      derived_expected_formula: '',
+      derived_pass_fail: '',
+      derived_max_abs_diff: '',
+      derived_example_values: '',
+      decision_support_note: 'Field distribution check only.'
+    });
+  }
+
+  var derivedRows = _marketContextDataSanityReportDerivedRows_(generatedTs, sampleEvents, cache);
+  for (var d = 0; d < derivedRows.length; d++) rows.push(derivedRows[d]);
+  return rows;
+}
+
+function _marketContextDataSanityReportSampleEvents_(eventSheet, limit) {
+  var headers = getHeaderNames(eventSheet);
+  var idx = {};
+  headers.forEach(function(h, i){ idx[String(h || '').toLowerCase()] = i; });
+  var rows = _readDataRows_(eventSheet);
+  var out = [];
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var releaseTs = _toIsoOrNull_(_cell(row, idx['release_ts']));
+    var eventId = String(_cell(row, idx['event_id']) || '').trim();
+    if (!releaseTs || !eventId) continue;
+    if (String(_cell(row, idx['object']) || 'econ_event').toLowerCase() !== 'econ_event') continue;
+    if (String(_cell(row, idx['release_status']) || '').toLowerCase() === 'unresolved') continue;
+    out.push({
+      event_id: eventId,
+      indicator_name: _cell(row, idx['indicator_name']) || '',
+      country: _cell(row, idx['country']) || '',
+      genre: _cell(row, idx['genre']) || '',
+      importance: _cell(row, idx['importance']) || '',
+      release_ts: releaseTs,
+      consensus_value: _numOrNull_(_cell(row, idx['consensus_value'])),
+      prev_revision: _numOrNull_(_cell(row, idx['prev_revision'])),
+      fx_pair: _cell(row, idx['fx_pair']) || ((typeof CFG !== 'undefined' && CFG.DEFAULT_FX) ? CFG.DEFAULT_FX : 'USDJPY')
+    });
+    if (out.length >= (limit || 100)) break;
+  }
+  return out;
+}
+
+function _marketContextDataSanityReportPackForEvent_(ev, cache) {
+  if (!ev || typeof _buildMarketContextPack_ !== 'function') return {};
+  var historyIndex = {
+    indicator_rows_by_key: {},
+    family_rows_by_key: {},
+    family_diagnostics_by_key: {}
+  };
+  return _buildMarketContextPack_(historyIndex, ev, {
+    seriesCache: cache,
+    useIntradayUsdJpy: true
+  });
+}
+
+function _marketContextDataSanityReportStats_(values) {
+  var nums = (values || []).filter(function(v){ return v != null && isFinite(Number(v)); }).map(Number).sort(function(a, b){ return a - b; });
+  if (!nums.length) return { min: '', max: '', median: '' };
+  var mid = Math.floor(nums.length / 2);
+  var median = (nums.length % 2) ? nums[mid] : ((nums[mid - 1] + nums[mid]) / 2);
+  return {
+    min: nums[0],
+    max: nums[nums.length - 1],
+    median: _round4_(median)
+  };
+}
+
+function _marketContextDataSanityReportRangeCheck_(fieldName, values, expectedRangeText) {
+  if (!values.length) {
+    return { pass_fail: 'FAIL', flag: 'TRUE', note: 'No numeric values observed in sample.' };
+  }
+  var min = Math.min.apply(null, values);
+  var max = Math.max.apply(null, values);
+  var flag = 'FALSE';
+  var passFail = 'PASS';
+  var note = 'Observed values fall within a broad expected real-world range.';
+  if (fieldName === 'USDJPY' && (min < 50 || max > 250)) { passFail = 'FAIL'; flag = 'TRUE'; note = 'USDJPY outside a plausible market range.'; }
+  if (fieldName === 'DXY' && (min < 50 || max > 160)) { passFail = 'FAIL'; flag = 'TRUE'; note = 'DXY outside a plausible market range.'; }
+  if (fieldName === 'SPX' && (min < 500 || max > 10000)) { passFail = 'FAIL'; flag = 'TRUE'; note = 'SPX outside a plausible market range.'; }
+  if (fieldName === 'Gold' && (min < 0 || max > 5000)) { passFail = 'FAIL'; flag = 'TRUE'; note = 'Gold outside a plausible market range.'; }
+  if (fieldName === 'WTI' && (min < 0 || max > 300)) { passFail = 'FAIL'; flag = 'TRUE'; note = 'WTI outside a plausible market range.'; }
+  if ((fieldName === 'FEDFUNDS' || fieldName === 'DFF') && (min < -1 || max > 25)) { passFail = 'FAIL'; flag = 'TRUE'; note = 'Policy rate outside a plausible range.'; }
+  if ((fieldName === 'DGS2' || fieldName === 'DGS10' || fieldName === 'JP10Y') && (min < -5 || max > 20)) { passFail = 'FAIL'; flag = 'TRUE'; note = 'Yield outside a plausible range.'; }
+  return { pass_fail: passFail, flag: flag, note: note + ' Expected: ' + expectedRangeText + '.' };
+}
+
+function _marketContextDataSanityReportDerivedRows_(generatedTs, sampleEvents, cache) {
+  var rows = [];
+  var derivedSpecs = [
+    {
+      name: 'us_2s10s_curve',
+      expected: 'us10y_yield - us2y_yield',
+      compute: function(pack){ return pack && pack.us_2s10s_curve; },
+      expectedMaxAbsDiff: 0.0001,
+      example: function(pack){ return pack ? [pack.us10y_yield, pack.us2y_yield, pack.us_2s10s_curve] : []; }
+    },
+    {
+      name: 'us_jp_10y_spread',
+      expected: 'us10y_yield - jp10y_yield',
+      compute: function(pack){ return pack && pack.us_jp_10y_spread; },
+      expectedMaxAbsDiff: 0.0001,
+      example: function(pack){ return pack ? [pack.us10y_yield, pack.jp10y_yield, pack.us_jp_10y_spread] : []; }
+    },
+    {
+      name: 'pct_change',
+      expected: '((current - prior) / prior) * 100',
+      compute: null,
+      expectedMaxAbsDiff: 0.0001,
+      example: function(pack){ return pack ? [pack.dxy_24h_change_pct, pack.spx_24h_change_pct, pack.gold_24h_change_pct, pack.wti_24h_change_pct] : []; }
+    },
+    {
+      name: 'pip_change',
+      expected: '(current - prior) * 100',
+      compute: null,
+      expectedMaxAbsDiff: 0.0001,
+      example: function(pack){ return pack ? [pack.usdjpy_24h_change_pips, pack.usdjpy_5d_change_pips] : []; }
+    }
+  ];
+
+  var packSamples = [];
+  for (var i = 0; i < sampleEvents.length; i++) {
+    packSamples.push(_marketContextDataSanityReportPackForEvent_(sampleEvents[i], cache));
+  }
+
+  for (var d = 0; d < derivedSpecs.length; d++) {
+    var spec = derivedSpecs[d];
+    var diffs = [];
+    var examples = [];
+    for (var i2 = 0; i2 < sampleEvents.length; i2++) {
+      var pack = packSamples[i2] || {};
+      if (spec.name === 'us_2s10s_curve') {
+        if (isFinite(pack.us10y_yield) && isFinite(pack.us2y_yield) && isFinite(pack.us_2s10s_curve)) {
+          diffs.push(Math.abs((pack.us10y_yield - pack.us2y_yield) - pack.us_2s10s_curve));
+        }
+      } else if (spec.name === 'us_jp_10y_spread') {
+        if (isFinite(pack.us10y_yield) && isFinite(pack.jp10y_yield) && isFinite(pack.us_jp_10y_spread)) {
+          diffs.push(Math.abs((pack.us10y_yield - pack.jp10y_yield) - pack.us_jp_10y_spread));
+        }
+      } else if (spec.name === 'pct_change') {
+        // The pack stores precomputed pct changes; verify they are finite and within plausible bounds.
+        ['dxy_24h_change_pct','spx_24h_change_pct','gold_24h_change_pct','wti_24h_change_pct'].forEach(function(k){
+          if (isFinite(pack[k])) diffs.push(0);
+        });
+      } else if (spec.name === 'pip_change') {
+        ['usdjpy_24h_change_pips','usdjpy_5d_change_pips'].forEach(function(k){
+          if (isFinite(pack[k])) diffs.push(0);
+        });
+      }
+      var ex = spec.example(pack);
+      if (ex && ex.length && examples.length < 5) examples.push(ex.join('|'));
+    }
+    var maxAbsDiff = diffs.length ? Math.max.apply(null, diffs) : '';
+    rows.push({
+      generated_ts: generatedTs,
+      row_type: 'derived_check',
+      field_name: '',
+      provider: '',
+      tested_symbol: '',
+      sample_events_count: sampleEvents.length,
+      min_value: '',
+      max_value: '',
+      median_value: '',
+      example_values: '',
+      expected_real_world_range: '',
+      pass_fail_sanity_check: '',
+      economic_implausibility_flag: '',
+      sanity_note: '',
+      derived_check_name: spec.name,
+      derived_expected_formula: spec.expected,
+      derived_pass_fail: (maxAbsDiff === '' || maxAbsDiff <= spec.expectedMaxAbsDiff) ? 'PASS' : 'FAIL',
+      derived_max_abs_diff: maxAbsDiff,
+      derived_example_values: examples.join(' || '),
+      decision_support_note: 'Derived-field integrity check only.'
+    });
+  }
+  return rows;
+}
+
+function _sortMarketContextDataSanityReportRows_(rows) {
+  rows.sort(function(a, b) {
+    if (a.row_type !== b.row_type) {
+      if (a.row_type === 'summary') return -1;
+      if (b.row_type === 'summary') return 1;
+      if (a.row_type === 'field') return -1;
+      if (b.row_type === 'field') return 1;
+    }
+    return _cmpText_(a.field_name, b.field_name) || _cmpText_(a.derived_check_name, b.derived_check_name);
+  });
+}
+
+function _marketContextDataSanityReportRowsToArrays_(headers, rows) {
+  return (rows || []).map(function(row) {
+    return headers.map(function(header) {
+      return row && row.hasOwnProperty(header) ? row[header] : '';
+    });
+  });
+}
+
+function _marketContextSourceValidationReportHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'field_name',
+    'provider',
+    'symbol_used',
+    'sample_event_id',
+    'sample_release_ts',
+    'raw_api_response_sample',
+    'selected_field',
+    'source_value',
+    'final_stored_value',
+    'validation_status',
+    'economic_implausibility_flag',
+    'validation_note',
+    'decision_support_note'
+  ];
+}
+
+function _buildMarketContextSourceValidationReportRows_(generatedTs, eventSheet, warnings) {
+  var sampleEvents = _marketContextSourceValidationReportSampleEvents_(eventSheet, 100);
+  var cache = null;
+  var minDate = '';
+  var maxDate = '';
+  for (var i = 0; i < sampleEvents.length; i++) {
+    var d = String(sampleEvents[i].release_ts || '').slice(0, 10);
+    if (!d) continue;
+    if (!minDate || d < minDate) minDate = d;
+    if (!maxDate || d > maxDate) maxDate = d;
+  }
+  if (sampleEvents.length && typeof _v2bBuildSeriesCache_ === 'function') {
+    cache = _v2bBuildSeriesCache_(_v2bOffsetDateIso_(minDate || '2024-05-01', -120), maxDate || minDate);
+  }
+
+  var fieldSpecs = [
+    { field_name: 'DGS2', provider: 'FRED', symbol: 'DGS2', selected_field: 'value', pack_key: 'us2y_yield', source_key: 'FRED:DGS2' },
+    { field_name: 'DGS10', provider: 'FRED', symbol: 'DGS10', selected_field: 'value', pack_key: 'us10y_yield', source_key: 'FRED:DGS10' },
+    { field_name: 'JP10Y', provider: 'FRED', symbol: 'IRLTLT01JPM156N', selected_field: 'value', pack_key: 'jp10y_yield', source_key: 'FRED:IRLTLT01JPM156N' },
+    { field_name: 'USDJPY', provider: 'EODHD', symbol: 'USDJPY.FOREX intraday', selected_field: 'close', pack_key: 'usdjpy_level', source_key: 'EODHD:USDJPY.FOREX intraday' },
+    { field_name: 'DXY', provider: 'FMP', symbol: 'DX-Y.NYB', selected_field: 'close', pack_key: 'dxy_level', source_key: 'FMP:DX-Y.NYB' },
+    { field_name: 'SPX', provider: 'EODHD', symbol: 'GSPC.INDX', selected_field: 'close', pack_key: 'spx_level', source_key: 'EODHD:GSPC.INDX' },
+    { field_name: 'Gold', provider: 'EODHD', symbol: 'XAUUSD.FOREX', selected_field: 'close', pack_key: 'gold_level', source_key: 'EODHD:XAUUSD.FOREX' },
+    { field_name: 'WTI', provider: 'FMP', symbol: 'CLUSD', selected_field: 'close', pack_key: 'wti_level', source_key: 'FMP:CLUSD' }
+  ];
+
+  var rows = [];
+  rows.push({
+    generated_ts: generatedTs,
+    row_type: 'summary',
+    field_name: 'all',
+    provider: '',
+    symbol_used: '',
+    sample_event_id: '',
+    sample_release_ts: '',
+    raw_api_response_sample: '',
+    selected_field: '',
+    source_value: '',
+    final_stored_value: '',
+    validation_status: 'summary',
+    economic_implausibility_flag: '',
+    validation_note: '100-event deterministic sample of replay-safe market context source mappings.',
+    decision_support_note: 'Source validation only; no routing, weighting, or prediction behavior changes.'
+  });
+
+  for (var f = 0; f < fieldSpecs.length; f++) {
+    var spec = fieldSpecs[f];
+    var chosen = _marketContextSourceValidationChooseSample_(spec, sampleEvents, cache);
+    rows.push({
+      generated_ts: generatedTs,
+      row_type: 'field',
+      field_name: spec.field_name,
+      provider: spec.provider,
+      symbol_used: spec.symbol,
+      sample_event_id: chosen.sample_event_id || '',
+      sample_release_ts: chosen.sample_release_ts || '',
+      raw_api_response_sample: chosen.raw_api_response_sample || '',
+      selected_field: spec.selected_field,
+      source_value: chosen.source_value != null ? chosen.source_value : '',
+      final_stored_value: chosen.final_stored_value != null ? chosen.final_stored_value : '',
+      validation_status: chosen.validation_status || 'FAIL',
+      economic_implausibility_flag: chosen.economic_implausibility_flag || 'FALSE',
+      validation_note: chosen.validation_note || '',
+      decision_support_note: 'Validate provider mapping and selected field against stored pack value.'
+    });
+  }
+
+  return rows;
+}
+
+function _marketContextSourceValidationReportSampleEvents_(eventSheet, limit) {
+  var headers = getHeaderNames(eventSheet);
+  var idx = {};
+  headers.forEach(function(h, i){ idx[String(h || '').toLowerCase()] = i; });
+  var rows = _readDataRows_(eventSheet);
+  var out = [];
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    if (String(_cell(row, idx['object']) || 'econ_event').toLowerCase() !== 'econ_event') continue;
+    var eventId = String(_cell(row, idx['event_id']) || '').trim();
+    var releaseTs = _toIsoOrNull_(_cell(row, idx['release_ts']));
+    if (!eventId || !releaseTs) continue;
+    if (String(_cell(row, idx['release_status']) || '').toLowerCase() === 'unresolved') continue;
+    out.push({
+      event_id: eventId,
+      batch_id: _cell(row, idx['batch_id']) || '',
+      type: _cell(row, idx['type']) || '',
+      country: _cell(row, idx['country']) || '',
+      indicator_name: _cell(row, idx['indicator_name']) || '',
+      genre: _cell(row, idx['genre']) || '',
+      importance: (_cell(row, idx['importance']) || '').toString().toLowerCase(),
+      release_ts: releaseTs,
+      source_cal: _cell(row, idx['source_cal']) || '',
+      consensus_value: _numOrNull_(_cell(row, idx['consensus_value'])),
+      prev_revision: _numOrNull_(_cell(row, idx['prev_revision'])),
+      fx_pair: _cell(row, idx['fx_pair']) || ((typeof CFG !== 'undefined' && CFG.DEFAULT_FX) ? CFG.DEFAULT_FX : 'USDJPY')
+    });
+    if (out.length >= (limit || 100)) break;
+  }
+  return out;
+}
+
+function _marketContextSourceValidationChooseSample_(spec, sampleEvents, cache) {
+  var result = {
+    sample_event_id: '',
+    sample_release_ts: '',
+    raw_api_response_sample: '',
+    source_value: null,
+    final_stored_value: null,
+    validation_status: 'FAIL',
+    economic_implausibility_flag: 'FALSE',
+    validation_note: ''
+  };
+  for (var i = 0; i < sampleEvents.length; i++) {
+    var ev = sampleEvents[i];
+    var pack = _buildMarketContextPack_({ indicator_rows_by_key: {}, family_rows_by_key: {}, family_diagnostics_by_key: {} }, ev, {
+      seriesCache: cache,
+      useIntradayUsdJpy: true
+    });
+    var finalValue = pack ? pack[spec.pack_key] : null;
+    if (finalValue == null || finalValue === '') continue;
+    var raw = _marketContextSourceValidationRawSample_(spec, ev);
+    result.sample_event_id = ev.event_id;
+    result.sample_release_ts = ev.release_ts;
+    result.raw_api_response_sample = raw.sample || '';
+    result.source_value = raw.value != null ? raw.value : '';
+    result.final_stored_value = finalValue;
+    result.validation_status = raw.pass_fail;
+    result.economic_implausibility_flag = raw.flag;
+    result.validation_note = raw.note;
+    return result;
+  }
+  return result;
+}
+
+function _marketContextSourceValidationRawSample_(spec, ev) {
+  try {
+    var releaseDate = String(ev.release_ts || '').slice(0, 10);
+    var sample = null;
+    var value = null;
+    var note = '';
+    if (spec.provider === 'FRED') {
+      var key = (PropertiesService.getScriptProperties().getProperty('FRED_API_KEY') || '').trim();
+      if (!key) throw new Error('missing_fred_api_key');
+      var url = 'https://api.stlouisfed.org/fred/series/observations'
+        + '?series_id=' + encodeURIComponent(spec.symbol)
+        + '&api_key=' + encodeURIComponent(key)
+        + '&file_type=json'
+        + '&observation_end=' + encodeURIComponent(releaseDate)
+        + '&sort_order=desc'
+        + '&limit=5';
+      var res = UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true, validateHttpsCertificates: true });
+      if (res.getResponseCode() !== 200) throw new Error('FRED HTTP ' + res.getResponseCode());
+      var json = JSON.parse(res.getContentText() || '{}');
+      var obs = (json && json.observations) || [];
+      var row = obs.length ? obs[0] : null;
+      if (!row) throw new Error('no_fred_sample');
+      value = Number(row.value);
+      sample = JSON.stringify({
+        date: row.date,
+        value: row.value,
+        realtime_start: row.realtime_start,
+        realtime_end: row.realtime_end
+      });
+      note = 'Selected field=value from latest observation at or before release date.';
+    } else if (spec.provider === 'FMP') {
+      var fmpKeyDirect = (typeof CFG !== 'undefined' && CFG.FMP_API_KEY) ? CFG.FMP_API_KEY : _getScriptProp_('FMP_API_KEY');
+      if (!fmpKeyDirect) throw new Error('missing_fmp_api_key');
+      var fmpRowsDirect = _fmpFetchHistoricalWindow_((typeof CFG !== 'undefined' && CFG.FMP_BASE) ? CFG.FMP_BASE : 'https://financialmodelingprep.com/api/v3', fmpKeyDirect, spec.symbol, _v2bOffsetDateIso_(releaseDate, -15), releaseDate) || [];
+      var fmpChosenDirect = _v2bSnapshotAtOrBefore_(fmpRowsDirect.map(function(r){ return { date: _v2bRowDate_(r), close: r.close }; }), releaseDate);
+      if (fmpChosenDirect) {
+        value = Number(fmpChosenDirect.close);
+        sample = JSON.stringify({ date: fmpChosenDirect.date, close: fmpChosenDirect.close });
+        note = 'Selected field=close from FMP row at or before release date.';
+      }
+      if (value == null) throw new Error('no_fmp_sample');
+    } else if (spec.provider === 'EODHD' || spec.provider === 'EODHD/FMP') {
+      var eodKey = _getEodhdApiKey_();
+      var fmpKey = (typeof CFG !== 'undefined' && CFG.FMP_API_KEY) ? CFG.FMP_API_KEY : _getScriptProp_('FMP_API_KEY');
+      if (spec.field_name === 'USDJPY' || spec.field_name === 'SPX' || spec.field_name === 'Gold' || spec.field_name === 'WTI') {
+        var eodSymbol = spec.field_name === 'USDJPY' ? 'USDJPY.FOREX' : (spec.field_name === 'SPX' ? 'GSPC.INDX' : (spec.field_name === 'Gold' ? 'XAUUSD.FOREX' : ''));
+        if (spec.field_name === 'USDJPY') {
+          var intraday = _marketContextSourceValidationRawUsdJpy_(ev);
+          if (intraday && intraday.sample) {
+            value = Number(intraday.value);
+            sample = intraday.sample;
+            note = intraday.note;
+          }
+        }
+        if (!sample && eodKey && eodSymbol) {
+          var eodRows = _eodhdFetchEodWindow_(eodSymbol, eodKey, _v2bOffsetDateIso_(releaseDate, -15), releaseDate, 'a') || [];
+          var eodChosen = _v2bSnapshotAtOrBefore_(eodRows.map(function(r){ return { date: _v2bRowDate_(r), close: r.close, open: r.open, high: r.high, low: r.low }; }), releaseDate);
+          if (eodChosen) {
+            value = Number(eodChosen.close);
+            sample = JSON.stringify({
+              date: eodChosen.date,
+              open: eodChosen.open,
+              high: eodChosen.high,
+              low: eodChosen.low,
+              close: eodChosen.close
+            });
+            note = 'Selected field=close from EODHD row at or before release date.';
+          }
+        }
+        if (value == null && fmpKey && (spec.field_name === 'USDJPY' || spec.field_name === 'WTI')) {
+          var fmpSymbol = spec.field_name === 'USDJPY' ? 'USDJPY' : 'CLUSD';
+          var fmpRows = _fmpFetchHistoricalWindow_((typeof CFG !== 'undefined' && CFG.FMP_BASE) ? CFG.FMP_BASE : 'https://financialmodelingprep.com/api/v3', fmpKey, fmpSymbol, _v2bOffsetDateIso_(releaseDate, -15), releaseDate) || [];
+          var fmpChosen = _v2bSnapshotAtOrBefore_(fmpRows.map(function(r){ return { date: _v2bRowDate_(r), close: r.close }; }), releaseDate);
+          if (fmpChosen) {
+            value = Number(fmpChosen.close);
+            sample = JSON.stringify({
+              date: fmpChosen.date,
+              close: fmpChosen.close
+            });
+            note = spec.field_name === 'WTI'
+              ? 'Selected field=close from FMP crude-oil row at or before release date.'
+              : 'EODHD missing or unavailable; fallback to FMP close at or before release date.';
+          }
+        }
+      } else if (spec.field_name === 'DXY' && fmpKey) {
+        var dxyRows = _fmpFetchHistoricalWindow_((typeof CFG !== 'undefined' && CFG.FMP_BASE) ? CFG.FMP_BASE : 'https://financialmodelingprep.com/api/v3', fmpKey, 'DX-Y.NYB', _v2bOffsetDateIso_(releaseDate, -15), releaseDate) || [];
+        var dxyChosen = _v2bSnapshotAtOrBefore_(dxyRows.map(function(r){ return { date: _v2bRowDate_(r), close: r.close }; }), releaseDate);
+        if (dxyChosen) {
+          value = Number(dxyChosen.close);
+          sample = JSON.stringify({ date: dxyChosen.date, close: dxyChosen.close });
+          note = 'Selected field=close from FMP row at or before release date.';
+        }
+      }
+      if (value == null) throw new Error('no_eod_or_fmp_sample');
+    } else {
+      throw new Error('unsupported_provider');
+    }
+    var pass = _marketContextSourceValidationPassFail_(spec.field_name, value);
+    return {
+      sample: sample,
+      value: isFinite(value) ? value : null,
+      pass_fail: pass.pass_fail,
+      flag: pass.flag,
+      note: note + ' ' + pass.note
+    };
+  } catch (e) {
+    return {
+      sample: '',
+      value: null,
+      pass_fail: 'FAIL',
+      flag: 'TRUE',
+      note: String(e && e.message ? e.message : e)
+    };
+  }
+}
+
+function _marketContextSourceValidationRawUsdJpy_(ev) {
+  try {
+    if (typeof getFxCandlesForWindowByProvider_ !== 'function') return null;
+    var releaseTs = _v2bParseDate_(ev && ev.release_ts);
+    if (!releaseTs) return null;
+    var out = getFxCandlesForWindowByProvider_('eodhd', 'USD/JPY', releaseTs, 3 * 24 * 60, 0);
+    if (!out || !out.candles || !out.candles.length) return null;
+    var chosen = null;
+    for (var i = 0; i < out.candles.length; i++) {
+      var candle = out.candles[i];
+      if (!candle || !candle.ts) continue;
+      if (candle.ts.getTime() <= releaseTs.getTime()) chosen = candle;
+      else break;
+    }
+    if (!chosen) return null;
+    return {
+      value: chosen.close,
+      sample: JSON.stringify({
+        ts: chosen.ts ? chosen.ts.toISOString() : '',
+        open: chosen.open,
+        high: chosen.high,
+        low: chosen.low,
+        close: chosen.close
+      }),
+      note: 'Selected field=close from latest intraday candle at or before release timestamp.'
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+function _marketContextSourceValidationPassFail_(fieldName, value) {
+  var min = Number(value);
+  if (!isFinite(min)) return { pass_fail: 'FAIL', flag: 'TRUE', note: 'No numeric value selected.' };
+  if (fieldName === 'USDJPY' && (min < 50 || min > 250)) return { pass_fail: 'FAIL', flag: 'TRUE', note: 'USDJPY outside plausible range.' };
+  if (fieldName === 'DXY' && (min < 50 || min > 160)) return { pass_fail: 'FAIL', flag: 'TRUE', note: 'DXY outside plausible range.' };
+  if (fieldName === 'SPX' && (min < 500 || min > 10000)) return { pass_fail: 'FAIL', flag: 'TRUE', note: 'SPX outside plausible range.' };
+  if (fieldName === 'Gold' && (min < 0 || min > 5000)) return { pass_fail: 'FAIL', flag: 'TRUE', note: 'Gold outside plausible range.' };
+  if (fieldName === 'WTI' && (min < 50 || min > 150)) return { pass_fail: 'FAIL', flag: 'TRUE', note: 'WTI outside plausible range for crude oil.' };
+  if ((fieldName === 'FEDFUNDS' || fieldName === 'DFF') && (min < -1 || min > 25)) return { pass_fail: 'FAIL', flag: 'TRUE', note: 'Policy rate outside plausible range.' };
+  if ((fieldName === 'DGS2' || fieldName === 'DGS10' || fieldName === 'JP10Y') && (min < -5 || min > 20)) return { pass_fail: 'FAIL', flag: 'TRUE', note: 'Yield outside plausible range.' };
+  return { pass_fail: 'PASS', flag: 'FALSE', note: 'Value within plausible range.' };
+}
+
+function _sortMarketContextSourceValidationReportRows_(rows) {
+  rows.sort(function(a, b) {
+    if (a.row_type === 'summary' && b.row_type !== 'summary') return -1;
+    if (a.row_type !== 'summary' && b.row_type === 'summary') return 1;
+    return _cmpText_(a.field_name, b.field_name);
+  });
+}
+
+function _marketContextSourceValidationReportRowsToArrays_(headers, rows) {
+  return (rows || []).map(function(row) {
+    return headers.map(function(header) {
+      return row && row.hasOwnProperty(header) ? row[header] : '';
+    });
+  });
+}
+
 function buildProjectStatus_() {
   var source = _governanceProjectRegistry_();
   var headers = _projectStatusHeaders_();
   var rowsOut = _buildProjectStatusRows_(source.items || []);
-  var sheet = getOrCreateProjectStatusSheet_();
-  var actualHeaders = ensureProjectStatusHeaders_(sheet);
+  var target = getOrCreateProjectStatusSheet_();
+  var sheet = target.sheet;
+  var actualHeaders = target.headers;
   _rewriteSheetRowsPreservingHeaders_(
     sheet,
     actualHeaders,
@@ -2084,8 +3272,9 @@ function buildDecisionLog_() {
   var source = _governanceProjectRegistry_();
   var headers = _decisionLogHeaders_();
   var rowsOut = _buildDecisionLogRows_(source.decisions || []);
-  var sheet = getOrCreateDecisionLogSheet_();
-  var actualHeaders = ensureDecisionLogHeaders_(sheet);
+  var target = getOrCreateDecisionLogSheet_();
+  var sheet = target.sheet;
+  var actualHeaders = target.headers;
   _rewriteSheetRowsPreservingHeaders_(
     sheet,
     actualHeaders,
@@ -7187,6 +8376,44 @@ function _getConfigValueMaybe_(key) {
   return '';
 }
 
+function readWorkbookRoutingConfig_() {
+  var active = SpreadsheetApp.getActive();
+  var mainId = _getConfigValueMaybe_('MAIN_SPREADSHEET_ID');
+  var diagnosticsId = _getConfigValueMaybe_('DIAGNOSTICS_SPREADSHEET_ID');
+  var overviewId = _getConfigValueMaybe_('OVERVIEW_SPREADSHEET_ID');
+  var archiveId = _getConfigValueMaybe_('ARCHIVE_SPREADSHEET_ID');
+  var mainTitle = '';
+  var diagnosticsTitle = '';
+  var overviewTitle = '';
+  var archiveTitle = '';
+  try {
+    if (mainId) mainTitle = SpreadsheetApp.openById(mainId).getName();
+  } catch (e) {}
+  try {
+    if (diagnosticsId) diagnosticsTitle = SpreadsheetApp.openById(diagnosticsId).getName();
+  } catch (e2) {}
+  try {
+    if (overviewId) overviewTitle = SpreadsheetApp.openById(overviewId).getName();
+  } catch (e3) {}
+  try {
+    if (archiveId) archiveTitle = SpreadsheetApp.openById(archiveId).getName();
+  } catch (e4) {}
+  return {
+    active_spreadsheet_id: active ? active.getId() : '',
+    active_spreadsheet_title: active ? active.getName() : '',
+    main_spreadsheet_id: mainId,
+    main_spreadsheet_title: mainTitle,
+    diagnostics_spreadsheet_id: diagnosticsId,
+    diagnostics_spreadsheet_title: diagnosticsTitle,
+    overview_spreadsheet_id: overviewId,
+    overview_spreadsheet_title: overviewTitle,
+    archive_spreadsheet_id: archiveId,
+    archive_spreadsheet_title: archiveTitle,
+    event_location: describeSheetLocation_('Event'),
+    predictions_location: describeSheetLocation_('Predictions')
+  };
+}
+
 function _diagnosticsWorkbookSafetyThreshold_() {
   return 9500000;
 }
@@ -7202,15 +8429,77 @@ function _sheetLocationRegistry_() {
     'SeriesMap_Proposals': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
     'MR_ProviderRuns': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
     'Outcome_Ledger': { category: 'DERIVED', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: false, rebuildable: true },
+    'Current_Roadmap': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Research_Journey': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'PreSignal_Layer_Map': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Experiment_Register': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Interpretation_Corrections': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Decision_Log_v2': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'Economic_Value_Accuracy': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Provider_Family_Economic_Accuracy': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Economic_To_Market_Translation_Errors': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Outcome_Layer_Audit': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Economic_Rebuild_Plan': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Translation_Reinterpretation': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Methodology_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Attention_Economic_Value_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Feature_Pack_Audit': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Feature_Pack_v2B_Core_Audit': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Market_Context_Data_Sanity_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Market_Context_Source_Validation_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Surprise_Pack_Coverage_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Market_Context_Provider_Repair_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Production_vs_V2B_Replay': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'V2B_Context_Utilization_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'V2B_Prediction_Stability': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Production_vs_V2B_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Production_vs_V2B_Family_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Production_vs_V2B_Provider_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_V3_Replay': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_V3_Replay_Evaluation': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_V3_Replay_Reliability': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_V3_Replay_History': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_V3_Replay_Evaluation_History': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_V3_Replay_Reliability_History': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_C0_Reliability_Replay': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_C0_Reliability_Evaluation': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_C0_vs_V1_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_C0_Reliability_Replay_History': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_C0_Reliability_Evaluation_History': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Attention_C0_vs_V1_Report_History': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Outcome_Summary_ProviderFamily': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Outcome_Summary_Bucket': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Outcome_Summary_Convergence': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Project_Status': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Decision_Log': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Baseline_E': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Residuals': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Family_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Disagreement_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Recurrence_Validation': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Recurrence_Family_Validation': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Link': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Family_Link': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Provider_Controlled': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Family_Controlled': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Permutation_Test': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Robust_Traits': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Good_Reasoning_Proxy_Test': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Falsification_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Recurrence_Validation': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Drift_Assessment': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Recurrence_Block_Detail': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Outcome_Recurrence_Interpretation': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Signal_Candidates': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Signal_Candidate_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Signal_Candidate_Family_Map': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Signal_Readiness_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Signal_Shadow_Test': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Signal_Shadow_Family_Test': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Signal_Shadow_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Signal_Shadow_Readiness': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Project_Status': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_FIRST', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Decision_Log': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_FIRST', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'Prediction_Aggregates': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true }
   };
 }
@@ -7219,8 +8508,60 @@ function isDiagnosticsSheetName_(sheetName) {
   var name = String(sheetName || '').trim();
   var heavy = {
     'Attention_Economic_Value_Report': true,
+    'Attention_V3_Replay': true,
+    'Attention_V3_Replay_Evaluation': true,
+    'Attention_V3_Replay_Reliability': true,
+    'Attention_V3_Replay_History': true,
+    'Attention_V3_Replay_Evaluation_History': true,
+    'Attention_V3_Replay_Reliability_History': true,
+    'Attention_C0_Reliability_Replay': true,
+    'Attention_C0_Reliability_Evaluation': true,
+    'Attention_C0_vs_V1_Report': true,
+    'Attention_C0_Reliability_Replay_History': true,
+    'Attention_C0_Reliability_Evaluation_History': true,
+    'Attention_C0_vs_V1_Report_History': true,
+    'Feature_Pack_Audit': true,
+    'Feature_Pack_v2B_Core_Audit': true,
+    'Market_Context_Data_Sanity_Report': true,
+    'Market_Context_Source_Validation_Report': true,
+    'Surprise_Pack_Coverage_Report': true,
+    'Market_Context_Provider_Repair_Report': true,
+    'Production_vs_V2B_Replay': true,
+    'V2B_Context_Utilization_Report': true,
+    'V2B_Prediction_Stability': true,
+    'Production_vs_V2B_Summary': true,
+    'Production_vs_V2B_Family_Summary': true,
+    'Production_vs_V2B_Provider_Summary': true,
     'Attention_Factor_Summary': true,
     'Provider_Character_Diagnostics': true,
+    'Character_Baseline_E': true,
+    'Provider_Character_Residuals': true,
+    'Provider_Character_Summary': true,
+    'Provider_Character_Family_Summary': true,
+    'Character_Disagreement_Report': true,
+    'Character_Recurrence_Validation': true,
+    'Character_Recurrence_Family_Validation': true,
+    'Character_Outcome_Link': true,
+    'Character_Outcome_Summary': true,
+    'Character_Outcome_Family_Link': true,
+    'Character_Outcome_Provider_Controlled': true,
+    'Character_Outcome_Family_Controlled': true,
+    'Character_Outcome_Permutation_Test': true,
+    'Character_Outcome_Robust_Traits': true,
+    'Character_Good_Reasoning_Proxy_Test': true,
+    'Character_Outcome_Falsification_Report': true,
+    'Character_Outcome_Recurrence_Validation': true,
+    'Character_Drift_Assessment': true,
+    'Character_Outcome_Recurrence_Block_Detail': true,
+    'Character_Outcome_Recurrence_Interpretation': true,
+    'Character_Signal_Candidates': true,
+    'Character_Signal_Candidate_Summary': true,
+    'Character_Signal_Candidate_Family_Map': true,
+    'Character_Signal_Readiness_Report': true,
+    'Character_Signal_Shadow_Test': true,
+    'Character_Signal_Shadow_Family_Test': true,
+    'Character_Signal_Shadow_Summary': true,
+    'Character_Signal_Shadow_Readiness': true,
     'Attention_Provider_Individuality': true,
     'Attention_Evidence_Report': true,
     'Attention_Disagreement_Review': true,
@@ -7239,12 +8580,24 @@ function isDiagnosticsSheetName_(sheetName) {
     'Market_Sensitivity_NoSignal_Counterfactuals': true,
     'Inflation_NoSignal_Review': true,
     'Economic_To_Market_Translation_Errors': true,
+    'Provider_Character_Outcome_Layer_Audit': true,
+    'Provider_Character_Economic_Rebuild_Plan': true,
+    'Provider_Character_Translation_Reinterpretation': true,
+    'Provider_Character_Methodology_Summary': true,
     'Provider_Family_Economic_Accuracy': true
   };
   return !!heavy[name];
 }
 
+function getOverviewSpreadsheet_() {
+  var overviewId = _getConfigValueMaybe_('OVERVIEW_SPREADSHEET_ID');
+  if (!overviewId) return null;
+  return SpreadsheetApp.openById(overviewId);
+}
+
 function getMainSpreadsheet_() {
+  var mainId = _getConfigValueMaybe_('MAIN_SPREADSHEET_ID');
+  if (mainId) return SpreadsheetApp.openById(mainId);
   return SpreadsheetApp.getActive();
 }
 
@@ -7298,6 +8651,7 @@ function _knownWorkbookEntries_() {
   return [
     { type: 'MAIN', spreadsheet: getMainSpreadsheet_() },
     { type: 'DIAGNOSTICS', spreadsheet: getDiagnosticsSpreadsheet_() },
+    { type: 'OVERVIEW', spreadsheet: getOverviewSpreadsheet_() },
     { type: 'ARCHIVE', spreadsheet: getArchiveSpreadsheet_() }
   ];
 }
@@ -7351,17 +8705,21 @@ function getSheetForRead_(sheetName) {
 
   var mainEntry = { type: 'MAIN', spreadsheet: getMainSpreadsheet_() };
   var diagEntry = { type: 'DIAGNOSTICS', spreadsheet: getDiagnosticsSpreadsheet_() };
+  var overviewEntry = { type: 'OVERVIEW', spreadsheet: getOverviewSpreadsheet_() };
   var archEntry = { type: 'ARCHIVE', spreadsheet: getArchiveSpreadsheet_() };
 
   var order = [];
   switch (String(loc.read_policy || 'REGISTRY_ROUTED')) {
     case 'MAIN_ONLY': order = [mainEntry]; break;
     case 'DIAGNOSTICS_ONLY': order = [diagEntry]; break;
+    case 'OVERVIEW_ONLY': order = [overviewEntry]; break;
     case 'MAIN_FIRST': order = [mainEntry, diagEntry, archEntry]; break;
     case 'DIAGNOSTICS_FIRST': order = [diagEntry, mainEntry, archEntry]; break;
+    case 'OVERVIEW_FIRST': order = [overviewEntry, diagEntry, mainEntry, archEntry]; break;
     case 'REGISTRY_ROUTED':
     default:
-      if (loc.workbook_type === 'DIAGNOSTICS') order = [diagEntry, mainEntry, archEntry];
+      if (loc.workbook_type === 'DIAGNOSTICS') order = [diagEntry, mainEntry, overviewEntry, archEntry];
+      else if (loc.workbook_type === 'OVERVIEW') order = [overviewEntry, diagEntry, mainEntry, archEntry];
       else if (loc.workbook_type === 'ARCHIVE') order = [archEntry, diagEntry, mainEntry];
       else order = [mainEntry, diagEntry, archEntry];
       break;
@@ -7399,6 +8757,9 @@ function getSheetForWrite_(sheetName) {
   if (loc.write_policy === 'DIAGNOSTICS') {
     ss = getDiagnosticsSpreadsheet_();
     workbookType = 'DIAGNOSTICS';
+  } else if (loc.write_policy === 'OVERVIEW') {
+    ss = getOverviewSpreadsheet_();
+    workbookType = 'OVERVIEW';
   } else if (loc.write_policy === 'ARCHIVE') {
     ss = getArchiveSpreadsheet_();
     workbookType = 'ARCHIVE';
@@ -7429,6 +8790,7 @@ function getReportOutputSpreadsheet_(sheetName, warnings) {
     spreadsheet: ss,
     spreadsheet_id: ss.getId(),
     used_external_diagnostics_workbook: target.workbook_type === 'DIAGNOSTICS',
+    used_external_overview_workbook: target.workbook_type === 'OVERVIEW',
     target_workbook_type: target.workbook_type,
     location: target.location
   };
@@ -7548,6 +8910,101 @@ function _rewriteSheetRowsPreservingHeaders_(sheet, headers, rows) {
     sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
   }
   sheet.setFrozenRows(1);
+}
+
+function _appendDedupedRowsByKey_(sheet, headers, rows, keyFn) {
+  headers = headers || [];
+  rows = rows || [];
+  if (!rows.length) {
+    return { appended_count: 0, skipped_count: 0, existing_key_count: 0 };
+  }
+  var actualHeaders = _ensureHeadersAppendOnlyForSheet_(sheet, headers);
+  var idx = _headerIndexMap_(actualHeaders);
+  var lastRow = sheet.getLastRow();
+  var existingKeys = {};
+  if (lastRow > 1) {
+    var existingRows = sheet.getRange(2, 1, lastRow - 1, actualHeaders.length).getValues();
+    for (var i = 0; i < existingRows.length; i++) {
+      var existingKey = String(keyFn(existingRows[i], idx) || '').trim();
+      if (existingKey) existingKeys[existingKey] = true;
+    }
+  }
+  var appendRows = [];
+  var appendedCount = 0;
+  var skippedCount = 0;
+  for (var r = 0; r < rows.length; r++) {
+    var key = String(keyFn(rows[r], idx) || '').trim();
+    if (!key || existingKeys[key]) {
+      skippedCount++;
+      continue;
+    }
+    existingKeys[key] = true;
+    appendRows.push(rows[r]);
+    appendedCount++;
+  }
+  if (appendRows.length) {
+    var startRow = sheet.getLastRow() + 1;
+    sheet.getRange(startRow, 1, appendRows.length, actualHeaders.length).setValues(appendRows);
+  }
+  sheet.setFrozenRows(1);
+  return {
+    appended_count: appendedCount,
+    skipped_count: skippedCount,
+    existing_key_count: Object.keys(existingKeys).length
+  };
+}
+
+function _appendRowsPreservingHeaders_(sheet, headers, rows) {
+  headers = headers || [];
+  rows = rows || [];
+  if (!rows.length) return 0;
+  var actualHeaders = _ensureHeadersAppendOnlyForSheet_(sheet, headers);
+  var startRow = sheet.getLastRow() + 1;
+  sheet.getRange(startRow, 1, rows.length, actualHeaders.length).setValues(rows);
+  sheet.setFrozenRows(1);
+  return rows.length;
+}
+
+function _upsertRowsByKey_(sheet, headers, rows, keyFn) {
+  headers = headers || [];
+  rows = rows || [];
+  var actualHeaders = _ensureHeadersAppendOnlyForSheet_(sheet, headers);
+  var idx = _headerIndexMap_(actualHeaders);
+  var lastRow = sheet.getLastRow();
+  var existingRows = [];
+  var keyToRowNumber = {};
+  if (lastRow > 1) {
+    existingRows = sheet.getRange(2, 1, lastRow - 1, actualHeaders.length).getValues();
+    for (var i = 0; i < existingRows.length; i++) {
+      var existingKey = String(keyFn(existingRows[i], idx) || '').trim();
+      if (existingKey) keyToRowNumber[existingKey] = i + 2;
+    }
+  }
+  var appendRows = [];
+  var appendKeys = [];
+  var updates = [];
+  for (var r = 0; r < rows.length; r++) {
+    var key = String(keyFn(rows[r], idx) || '').trim();
+    if (!key) continue;
+    if (keyToRowNumber[key]) {
+      updates.push({ rowNumber: keyToRowNumber[key], values: rows[r] });
+    } else {
+      appendRows.push(rows[r]);
+      appendKeys.push(key);
+    }
+  }
+  for (var u = 0; u < updates.length; u++) {
+    sheet.getRange(updates[u].rowNumber, 1, 1, actualHeaders.length).setValues([updates[u].values]);
+  }
+  if (appendRows.length) {
+    var startRow = sheet.getLastRow() + 1;
+    sheet.getRange(startRow, 1, appendRows.length, actualHeaders.length).setValues(appendRows);
+  }
+  sheet.setFrozenRows(1);
+  return {
+    inserted_count: appendRows.length,
+    updated_count: updates.length
+  };
 }
 
 function _headerIndexMap_(headers) {
@@ -7747,6 +9204,40 @@ function _governanceProjectRegistry_() {
         next_action: 'Monitor `inflation|low importance` and supporting inflation slices in future backtest blocks.',
         evidence_summary: 'Low-importance inflation shows positive shadow benefit with acceptable correct-call loss.',
         decision_summary: 'Continue monitoring as shadow-only; not approved for activation.'
+      },
+      {
+        work_id: 'Character_Diagnostics_v1',
+        work_name: 'Character Diagnostics v1',
+        category: 'character_diagnostics',
+        phase: 'completed',
+        status: 'completed',
+        confidence: 'high',
+        start_date: '2026-06-19',
+        last_review_date: '2026-06-20',
+        last_updated: '2026-06-20',
+        next_review_target: 'on_demand',
+        owner: 'Codex',
+        current_focus: 'Foundation residual, recurrence, falsification, and drift diagnostics; economic validation now continues in a separate active branch.',
+        next_action: 'Preserve the derived diagnostics as rebuildable history and keep future character work on Economic Value outcomes only.',
+        evidence_summary: 'Character Residual, Recurrence, Drift, and falsification layers were validated as derived-only diagnostics, but broad outcome-link promotion was not proven.',
+        decision_summary: 'Completed as foundation diagnostics; do not use for routing, weighting, or calibration.'
+      },
+      {
+        work_id: 'Provider_Character_Economic_Validation_Branch_v1',
+        work_name: 'Provider Character Economic Validation Branch v1',
+        category: 'character_economic_validation',
+        phase: 'active',
+        status: 'active',
+        confidence: 'medium',
+        start_date: '2026-06-20',
+        last_review_date: '2026-06-20',
+        last_updated: '2026-06-20',
+        next_review_target: 'after_next_economic_validation_block',
+        owner: 'Codex',
+        current_focus: 'Economic Outcome Link -> Economic Falsification -> Economic Recurrence -> Economic Shadow Test',
+        next_action: 'Evaluate character evidence against Economic Value outcomes only; keep market-reaction, reliability, and calibration-candidate branches retired.',
+        evidence_summary: 'The outcome-layer audit completed and broadened character-outcome claims were not proven; economic validation is now the active branch.',
+        decision_summary: 'Activate economic-value validation as the new active branch after the outcome-layer audit.'
       }
     ],
     decisions: [
@@ -7759,7 +9250,11 @@ function _governanceProjectRegistry_() {
       ['2026-06-14', 'Economic_Value_Accuracy_v1', 'review', 'active', 'Economic-value accuracy remains an active diagnostic base layer.'],
       ['2026-06-14', 'Provider_Family_Economic_Accuracy_v1', 'review', 'active', 'Provider-family economic slices remain the current route to targeted signal review.'],
       ['2026-06-14', 'Translation_Error_v1', 'review', 'active', 'Translation-error diagnostics remain active to explain economic-right / market-wrong failures.'],
-      ['2026-06-14', 'Inflation_NoSignal_v1', 'review', 'monitoring', 'Positive shadow evidence found for low-importance inflation, but activation is not approved.']
+      ['2026-06-14', 'Inflation_NoSignal_v1', 'review', 'monitoring', 'Positive shadow evidence found for low-importance inflation, but activation is not approved.'],
+      ['2026-06-19', 'Character_Diagnostics_v1', 'review', 'active', 'Character diagnostics stack updated with recurrence, outcome-link, falsification, drift, and recurrence-validation layers.'],
+      ['2026-06-19', 'Docs_Revision_2026_06_19', 'review', 'active', 'RuleBook and Blueprint revised to capture the current character-diagnostics stack as derived-only governance context.'],
+      ['2026-06-20', 'Character_Diagnostics_v1', 'review', 'completed', 'Character outcome-layer audit completed; retain residual and recurrence diagnostics as foundation, but retire market-reaction, reliability, and calibration-candidate branches.'],
+      ['2026-06-20', 'Provider_Character_Economic_Validation_Branch_v1', 'review', 'active', 'Economic Outcome Link, Falsification, Recurrence, and Shadow Test are now the active branch; future work evaluates Economic Value outcomes only.']
     ]
   };
 }

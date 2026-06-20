@@ -40,6 +40,7 @@ var CFG = (typeof CFG !== 'undefined') ? CFG : {
   ANTHROPIC_PROMPT_CACHE_ENABLED: true,
   ANTHROPIC_PROMPT_CACHE_TTL: '5m',
   DRY_RUN_PREDICT: false,
+  FEATURE_PACK_V2B_ENABLED: false,
   PIPS_BY_IMPORTANCE: { low:[3,10], medium:[8,25], high:[15,45], critical:[25,80] },
   SCHEMA_VERSION: '1.4',
   RULE_VERSION: '1.4'
@@ -66,6 +67,7 @@ function _ensureCfgDefaults_() {
     ANTHROPIC_PROMPT_CACHE_ENABLED: true,
     ANTHROPIC_PROMPT_CACHE_TTL: '5m',
     DRY_RUN_PREDICT: false,
+    FEATURE_PACK_V2B_ENABLED: false,
     PIPS_BY_IMPORTANCE: { low:[3,10], medium:[8,25], high:[15,45], critical:[25,80] },
     SCHEMA_VERSION: '1.4',
     RULE_VERSION: '1.4'
@@ -153,6 +155,9 @@ function _applyConfigOverridesFromSheet_() {
   }
   if (map.DEFAULT_FX != null) CFG.DEFAULT_FX = String(map.DEFAULT_FX).trim();
   if (map.DRY_RUN_PREDICT != null) CFG.DRY_RUN_PREDICT = _cfgBoolean_(map.DRY_RUN_PREDICT, CFG.DRY_RUN_PREDICT);
+  if (map.FEATURE_PACK_V2B_ENABLED != null) {
+    CFG.FEATURE_PACK_V2B_ENABLED = _cfgBoolean_(map.FEATURE_PACK_V2B_ENABLED, CFG.FEATURE_PACK_V2B_ENABLED);
+  }
 
   // Pips bands
   var p = CFG.PIPS_BY_IMPORTANCE || { low:[3,10], medium:[8,25], high:[15,45], critical:[25,80] };
@@ -255,6 +260,9 @@ function runPredictionsUsingWindow_() {
 function menuRunPredictionsGemini_()  { return runPredictionsCore_({ windowMinBeforeMin: 24*60, windowMaxAfterMin: 36*60, providers: ['Gemini'] }); }
 function menuRunPredictionsOpenAI_()  { return runPredictionsCore_({ windowMinBeforeMin: 24*60, windowMaxAfterMin: 36*60, providers: ['OpenAI'] }); }
 function menuRunPredictionsClaude_()  { return runPredictionsCore_({ windowMinBeforeMin: 24*60, windowMaxAfterMin: 36*60, providers: ['Anthropic'] }); }
+function runPredictionForEventId(eventId, providers) { return runPredictionForEventId_(eventId, providers); }
+function runAttentionV3ReplayExperiment(params) { return runAttentionV3ReplayExperiment_(params); }
+function runAttentionC0ReliabilityReplay(params) { return runAttentionC0ReliabilityReplay_(params); }
 function menuClearPredictionCheckpoint_() {
   _clearPredictionCheckpoint_();
   _clearPredictionContinuationTriggers_();
@@ -264,6 +272,44 @@ function menuClearPredictionCheckpoint_() {
   });
   _flushPredictionLogs_();
   return { status: 'checkpoint_cleared' };
+}
+
+function menuRunAttentionC0ReliabilityReplay_() {
+  try {
+    var res = runAttentionC0ReliabilityReplay_({});
+    SpreadsheetApp.getUi().alert('Attention C0 Reliability Replay complete: ' + JSON.stringify(res));
+    return res;
+  } catch (e) {
+    SpreadsheetApp.getUi().alert('Attention C0 Reliability Replay failed: ' + e);
+    throw e;
+  }
+}
+
+function menuRunAttentionV3ReplayExperiment_() {
+  var ss = SpreadsheetApp.getActive();
+  var shLog = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_LOG) ? CFG.SHEET_LOG : 'log');
+  var started = new Date();
+  try {
+    var res = runAttentionV3ReplayExperiment_({});
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'info', 'Attention V3 replay experiment -> Run', {
+        result: res,
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    ss.toast('Attention V3 replay rows=' + (res.replay_rows_written || 0), 'Attention V3 Replay', 8);
+    return res;
+  } catch (e) {
+    if (typeof _log_ === 'function' && shLog) {
+      _log_(shLog, 'error', 'Attention V3 replay experiment -> Run failed', {
+        error: (e && e.stack) ? e.stack : String(e),
+        started_ts: started.toISOString(),
+        ended_ts: (new Date()).toISOString()
+      });
+    }
+    throw e;
+  }
 }
 
 /** =========================
@@ -453,6 +499,1693 @@ function runPredictionsCore_(opts) {
   appendLog('info', summaryMessage, Object.assign({}, context, summary));
   _flushPredictionLogs_();
   return summary;
+}
+
+function runPredictionForEventId_(eventId, providers) {
+  _applyConfigOverridesFromSheet_();
+  _ensureCfgDefaults_();
+  CFG.PREDICTION_MODE = _normalizePredictionMode_(CFG.PREDICTION_MODE);
+
+  var eventSheet = getSheet('Event');
+  var predSheet = getSheet('Predictions');
+  getSheet('log');
+
+  var predHeaders = _ensurePredHeaders_(predSheet);
+  var predIdx = _getPredHeaderIndex_(predHeaders);
+  var runId = _uuidFromString_('predict-single:' + String(eventId || '') + ':' + new Date().toISOString());
+  var context = {
+    module: 'prediction_runner',
+    rule_version: CFG.RULE_VERSION,
+    run_id: runId,
+    prediction_mode: CFG.PREDICTION_MODE,
+    prediction_temperature: CFG.PREDICTION_TEMPERATURE,
+    prediction_seed: CFG.PREDICTION_SEED,
+    single_event_recovery: true
+  };
+
+  var providerOverride = (Array.isArray(providers) && providers.length > 0)
+    ? providers.map(_normalizeProviderName_)
+    : null;
+  var resolvedAll = _resolveProviders_(CFG.PROVIDERS);
+  var enabledProviders = providerOverride
+    ? resolvedAll.filter(function(p) { return providerOverride.indexOf(p.name) >= 0; })
+    : resolvedAll;
+  if (!enabledProviders.length) {
+    appendLog('error', 'No providers enabled for single event recovery', {
+      module: 'prediction_runner',
+      event_id: String(eventId || ''),
+      requested: providerOverride || CFG.PROVIDERS
+    });
+    _flushPredictionLogs_();
+    return { status: 'validation_error', message: 'No providers enabled' };
+  }
+
+  var ev = _getPredictionEventById_(eventSheet, eventId);
+  _attachHistoricalContextToEvents_(eventSheet, [ev]);
+  var results = { inspected: 0, created: 0, updated: 0, duplicates: 0, errors: 0 };
+  _runPredictionEvent_(ev, enabledProviders, predSheet, predIdx, runId, context, results, {
+    isBatchMember: String(ev.type || '') === 'member'
+  });
+  _sortPredictionsSheet_(predSheet);
+  _flushPredictionLogs_();
+  return Object.assign({ status: results.errors ? 'partial' : 'ok', event_id: ev.event_id }, results);
+}
+
+function runAttentionV3ReplayExperiment_(params) {
+  params = params || {};
+  _applyConfigOverridesFromSheet_();
+  _ensureCfgDefaults_();
+  CFG.PREDICTION_MODE = _normalizePredictionMode_(CFG.PREDICTION_MODE);
+
+  var warnings = [];
+  var generatedTs = new Date().toISOString();
+  var replayId = _uuidFromString_('attention_v3_replay:' + generatedTs);
+  var providersWanted = (Array.isArray(params.providers) && params.providers.length)
+    ? params.providers.map(_normalizeProviderName_)
+    : ['Gemini', 'OpenAI', 'Anthropic'];
+  var perGroupTarget = Math.max(1, Number(params.per_group_target || 25));
+  var providers = _resolveProviders_(providersWanted);
+  var providerMap = {};
+  for (var p = 0; p < providers.length; p++) providerMap[providers[p].name] = providers[p];
+  if (!providers.length) throw new Error('Attention V3 replay requires at least one enabled provider.');
+
+  var economicSourceRef = getSheetForRead_('Economic_Value_Accuracy');
+  var predictionsRef = getSheetForRead_('Predictions');
+  var eventSheet = getSheet('Event');
+  if (!eventSheet) throw new Error('Event sheet missing for Attention V3 replay experiment.');
+
+  var economicHeaders = getHeaderNames(economicSourceRef.sheet);
+  var economicIdx = _headerIndexMap_(economicHeaders);
+  var economicRows = _sheetBodyValues_(economicSourceRef.sheet, economicHeaders.length);
+
+  var predHeaders = getHeaderNames(predictionsRef.sheet);
+  var predIdx = _getPredHeaderIndex_(predHeaders);
+  var predRows = _sheetBodyValues_(predictionsRef.sheet, predHeaders.length);
+  var predDeduped = (typeof _economicValueAccuracyDedupedPredictions_ === 'function')
+    ? _economicValueAccuracyDedupedPredictions_(predRows, predIdx, warnings)
+    : predRows;
+  var predictionByKey = {};
+  for (var i = 0; i < predDeduped.length; i++) {
+    var prow = predDeduped[i];
+    var pkey = _attentionV3PredictionKey_(_cell(prow, predIdx['event_id']), _cell(prow, predIdx['ai_name']));
+    if (pkey) predictionByKey[pkey] = prow;
+  }
+
+  var sample = _buildAttentionV3ReplaySample_(economicRows, economicIdx, predictionByKey, predIdx, providerMap, perGroupTarget, warnings);
+  var eventMap = _attentionV3EventMap_(eventSheet);
+  var historyIndex = _buildHistoricalIndicatorIndex_(eventSheet);
+  var replayRows = [];
+  var evalRows = [];
+
+  var replaySheetRef = getSheetForWrite_('Attention_V3_Replay');
+  var replayHeaders = _ensureHeadersAppendOnlyForSheet_(replaySheetRef.sheet, _attentionV3ReplayHeaders_());
+  _rewriteSheetRowsPreservingHeaders_(replaySheetRef.sheet, replayHeaders, []);
+
+  var evalSheetRef = getSheetForWrite_('Attention_V3_Replay_Evaluation');
+  var evalHeaders = _ensureHeadersAppendOnlyForSheet_(evalSheetRef.sheet, _attentionV3ReplayEvaluationHeaders_());
+  _rewriteSheetRowsPreservingHeaders_(evalSheetRef.sheet, evalHeaders, []);
+
+  var relSheetRef = getSheetForWrite_('Attention_V3_Replay_Reliability');
+  var relHeaders = _ensureHeadersAppendOnlyForSheet_(relSheetRef.sheet, _attentionV3ReplayReliabilityHeaders_());
+  _rewriteSheetRowsPreservingHeaders_(relSheetRef.sheet, relHeaders, []);
+
+  var replayHistorySheetRef = getSheetForWrite_('Attention_V3_Replay_History');
+  var replayHistoryHeaders = _ensureHeadersAppendOnlyForSheet_(replayHistorySheetRef.sheet, _attentionV3ReplayHeaders_());
+
+  var evalHistorySheetRef = getSheetForWrite_('Attention_V3_Replay_Evaluation_History');
+  var evalHistoryHeaders = _ensureHeadersAppendOnlyForSheet_(evalHistorySheetRef.sheet, _attentionV3ReplayEvaluationHeaders_());
+
+  var relHistorySheetRef = getSheetForWrite_('Attention_V3_Replay_Reliability_History');
+  var relHistoryHeaders = _ensureHeadersAppendOnlyForSheet_(relHistorySheetRef.sheet, _attentionV3ReplayReliabilityHeaders_());
+  var relHistoryInserted = 0;
+  var relHistoryUpdated = 0;
+
+  var replayHistoryAppended = 0;
+  var replayHistorySkipped = 0;
+  var evalHistoryAppended = 0;
+  var evalHistorySkipped = 0;
+
+  for (var s = 0; s < sample.rows.length; s++) {
+    var source = sample.rows[s];
+    var replayCase;
+    var evalCase;
+    var eventPayload = eventMap[source.event_id];
+    if (!eventPayload) {
+      warnings.push('missing_event_payload:' + source.event_id);
+      replayCase = _attentionV3ReplayErrorRow_(generatedTs, replayId, source, 'missing_event_payload');
+      evalCase = _attentionV3EvaluationRow_(generatedTs, replayId, source, replayCase, null);
+    } else {
+      eventPayload.feature_pack = _buildHistoricalFeaturePackForEvent_(historyIndex, eventPayload);
+      eventPayload.pre_signal_plan = _buildPreSignalPlan_(eventPayload);
+      var prov = providerMap[source.source_ai_name];
+      if (!prov) {
+      warnings.push('provider_not_enabled:' + source.source_ai_name);
+        replayCase = _attentionV3ReplayErrorRow_(generatedTs, replayId, source, 'provider_not_enabled');
+        evalCase = _attentionV3EvaluationRow_(generatedTs, replayId, source, replayCase, eventPayload);
+      } else {
+        replayCase = _runAttentionV3ReplayCase_(generatedTs, replayId, source, eventPayload, prov, warnings);
+        evalCase = _attentionV3EvaluationRow_(generatedTs, replayId, source, replayCase, eventPayload);
+      }
+    }
+    replayRows.push(replayCase);
+    evalRows.push(evalCase);
+
+    var replayCaseArray = _rowsToArraysByHeaders_(replayHeaders, [replayCase]);
+    var evalCaseArray = _rowsToArraysByHeaders_(evalHeaders, [evalCase]);
+    _appendRowsPreservingHeaders_(replaySheetRef.sheet, replayHeaders, replayCaseArray);
+    _appendRowsPreservingHeaders_(evalSheetRef.sheet, evalHeaders, evalCaseArray);
+
+    var replayHistoryOne = _rowsToArraysByHeaders_(replayHistoryHeaders, [replayCase]);
+    var replayHistoryWrite = _appendDedupedRowsByKey_(replayHistorySheetRef.sheet, replayHistoryHeaders, replayHistoryOne, _attentionV3ReplayHistoryKey_);
+    replayHistoryAppended += replayHistoryWrite.appended_count;
+    replayHistorySkipped += replayHistoryWrite.skipped_count;
+
+    var evalHistoryOne = _rowsToArraysByHeaders_(evalHistoryHeaders, [evalCase]);
+    var evalHistoryWrite = _appendDedupedRowsByKey_(evalHistorySheetRef.sheet, evalHistoryHeaders, evalHistoryOne, _attentionV3ReplayEvaluationHistoryKey_);
+    evalHistoryAppended += evalHistoryWrite.appended_count;
+    evalHistorySkipped += evalHistoryWrite.skipped_count;
+
+    var partialReliabilityRows = _buildAttentionV3ReliabilityRows_(generatedTs, replayId, sample, evalRows);
+    var partialRelArrays = _rowsToArraysByHeaders_(relHeaders, partialReliabilityRows);
+    _sortAttentionV3ReplayReliabilityRows_(relHeaders, partialRelArrays);
+    _rewriteSheet_(relSheetRef.sheet, relHeaders, partialRelArrays);
+    trimSheetToDataRange_(relSheetRef.sheet, partialRelArrays.length + 1, relHeaders.length);
+
+    var partialRelHistoryArrays = _rowsToArraysByHeaders_(relHistoryHeaders, partialReliabilityRows);
+    _sortAttentionV3ReplayReliabilityRows_(relHistoryHeaders, partialRelHistoryArrays);
+    var partialRelHistoryWrite = _upsertRowsByKey_(relHistorySheetRef.sheet, relHistoryHeaders, partialRelHistoryArrays, _attentionV3ReplayReliabilityHistoryKey_);
+    relHistoryInserted += partialRelHistoryWrite.inserted_count;
+    relHistoryUpdated += partialRelHistoryWrite.updated_count;
+  }
+
+  var reliabilityRows = _buildAttentionV3ReliabilityRows_(generatedTs, replayId, sample, evalRows);
+  var replayArrays = _rowsToArraysByHeaders_(replayHeaders, replayRows);
+  _sortAttentionV3ReplayRows_(replayHeaders, replayArrays);
+  _rewriteSheet_(replaySheetRef.sheet, replayHeaders, replayArrays);
+  trimSheetToDataRange_(replaySheetRef.sheet, replayArrays.length + 1, replayHeaders.length);
+
+  var evalArrays = _rowsToArraysByHeaders_(evalHeaders, evalRows);
+  _sortAttentionV3ReplayEvaluationRows_(evalHeaders, evalArrays);
+  _rewriteSheet_(evalSheetRef.sheet, evalHeaders, evalArrays);
+  trimSheetToDataRange_(evalSheetRef.sheet, evalArrays.length + 1, evalHeaders.length);
+
+  var relArrays = _rowsToArraysByHeaders_(relHeaders, reliabilityRows);
+  _sortAttentionV3ReplayReliabilityRows_(relHeaders, relArrays);
+  _rewriteSheet_(relSheetRef.sheet, relHeaders, relArrays);
+  trimSheetToDataRange_(relSheetRef.sheet, relArrays.length + 1, relHeaders.length);
+
+  var replayHistoryArrays = _rowsToArraysByHeaders_(replayHistoryHeaders, replayRows);
+  _sortAttentionV3ReplayRows_(replayHistoryHeaders, replayHistoryArrays);
+  var replayHistoryAppend = _appendDedupedRowsByKey_(replayHistorySheetRef.sheet, replayHistoryHeaders, replayHistoryArrays, _attentionV3ReplayHistoryKey_);
+
+  var evalHistoryArrays = _rowsToArraysByHeaders_(evalHistoryHeaders, evalRows);
+  _sortAttentionV3ReplayEvaluationRows_(evalHistoryHeaders, evalHistoryArrays);
+  var evalHistoryAppend = _appendDedupedRowsByKey_(evalHistorySheetRef.sheet, evalHistoryHeaders, evalHistoryArrays, _attentionV3ReplayEvaluationHistoryKey_);
+
+  var relHistoryArrays = _rowsToArraysByHeaders_(relHistoryHeaders, reliabilityRows);
+  _sortAttentionV3ReplayReliabilityRows_(relHistoryHeaders, relHistoryArrays);
+  var relHistoryAppend = _upsertRowsByKey_(relHistorySheetRef.sheet, relHistoryHeaders, relHistoryArrays, _attentionV3ReplayReliabilityHistoryKey_);
+
+  _flushPredictionLogs_();
+  return {
+    status: 'ok',
+    replay_id: replayId,
+    sample_target_per_group: perGroupTarget,
+    actual_group_target: sample.group_target,
+    sample_counts: sample.counts,
+    provider_counts: sample.provider_counts,
+    source_sheet: 'Economic_Value_Accuracy',
+    source_workbook_type: economicSourceRef.workbook_type,
+    source_spreadsheet_id: economicSourceRef.spreadsheet_id,
+    replay_sheet: replaySheetRef.sheet.getName(),
+    replay_workbook_type: replaySheetRef.workbook_type,
+    replay_spreadsheet_id: replaySheetRef.spreadsheet_id,
+    replay_rows_written: replayRows.length,
+    evaluation_rows_written: evalRows.length,
+    reliability_rows_written: reliabilityRows.length,
+    replay_history_rows_appended: replayHistoryAppended + replayHistoryAppend.appended_count,
+    replay_history_rows_skipped: replayHistorySkipped + replayHistoryAppend.skipped_count,
+    evaluation_history_rows_appended: evalHistoryAppended + evalHistoryAppend.appended_count,
+    evaluation_history_rows_skipped: evalHistorySkipped + evalHistoryAppend.skipped_count,
+    reliability_history_rows_appended: relHistoryInserted + relHistoryAppend.inserted_count,
+    reliability_history_rows_updated: relHistoryUpdated + relHistoryAppend.updated_count,
+    warnings: warnings
+  };
+}
+
+function runAttentionC0ReliabilityReplay_(params) {
+  params = params || {};
+  _applyConfigOverridesFromSheet_();
+  _ensureCfgDefaults_();
+
+  var warnings = [];
+  var generatedTs = new Date().toISOString();
+  var replayId = _uuidFromString_('attention_c0_reliability:' + generatedTs);
+  var providersWanted = (Array.isArray(params.providers) && params.providers.length)
+    ? params.providers.map(_normalizeProviderName_)
+    : ['Gemini', 'OpenAI', 'Anthropic'];
+  var perGroupTarget = Math.max(1, Number(params.per_group_target || 25));
+  var providers = _resolveProviders_(providersWanted);
+  var providerMap = {};
+  for (var p = 0; p < providers.length; p++) providerMap[providers[p].name] = providers[p];
+  if (!providers.length) throw new Error('Attention C0 reliability replay requires at least one enabled provider.');
+
+  var economicSourceRef = getSheetForRead_('Economic_Value_Accuracy');
+  var predictionsRef = getSheetForRead_('Predictions');
+  var eventSheet = getSheet('Event');
+  if (!eventSheet) throw new Error('Event sheet missing for Attention C0 reliability replay.');
+
+  var economicHeaders = getHeaderNames(economicSourceRef.sheet);
+  var economicIdx = _headerIndexMap_(economicHeaders);
+  var economicRows = _sheetBodyValues_(economicSourceRef.sheet, economicHeaders.length);
+
+  var predHeaders = getHeaderNames(predictionsRef.sheet);
+  var predIdx = _getPredHeaderIndex_(predHeaders);
+  var predRows = _sheetBodyValues_(predictionsRef.sheet, predHeaders.length);
+  var predDeduped = (typeof _economicValueAccuracyDedupedPredictions_ === 'function')
+    ? _economicValueAccuracyDedupedPredictions_(predRows, predIdx, warnings)
+    : predRows;
+  var predictionByKey = {};
+  for (var i = 0; i < predDeduped.length; i++) {
+    var prow = predDeduped[i];
+    var pkey = _attentionV3PredictionKey_(_cell(prow, predIdx['event_id']), _cell(prow, predIdx['ai_name']));
+    if (pkey) predictionByKey[pkey] = prow;
+  }
+
+  var sample = _buildAttentionV3ReplaySample_(economicRows, economicIdx, predictionByKey, predIdx, providerMap, perGroupTarget, warnings);
+  var eventMap = _attentionV3EventMap_(eventSheet);
+
+  var replayRows = [];
+  var evalRows = [];
+
+  var replaySheetRef = getSheetForWrite_('Attention_C0_Reliability_Replay');
+  var replayHeaders = _ensureHeadersAppendOnlyForSheet_(replaySheetRef.sheet, _attentionC0ReplayHeaders_());
+  _rewriteSheetRowsPreservingHeaders_(replaySheetRef.sheet, replayHeaders, []);
+
+  var evalSheetRef = getSheetForWrite_('Attention_C0_Reliability_Evaluation');
+  var evalHeaders = _ensureHeadersAppendOnlyForSheet_(evalSheetRef.sheet, _attentionC0EvaluationHeaders_());
+  _rewriteSheetRowsPreservingHeaders_(evalSheetRef.sheet, evalHeaders, []);
+
+  var reportSheetRef = getSheetForWrite_('Attention_C0_vs_V1_Report');
+  var reportHeaders = _ensureHeadersAppendOnlyForSheet_(reportSheetRef.sheet, _attentionC0VsV1ReportHeaders_());
+  _rewriteSheetRowsPreservingHeaders_(reportSheetRef.sheet, reportHeaders, []);
+
+  var replayHistorySheetRef = getSheetForWrite_('Attention_C0_Reliability_Replay_History');
+  var replayHistoryHeaders = _ensureHeadersAppendOnlyForSheet_(replayHistorySheetRef.sheet, _attentionC0ReplayHeaders_());
+
+  var evalHistorySheetRef = getSheetForWrite_('Attention_C0_Reliability_Evaluation_History');
+  var evalHistoryHeaders = _ensureHeadersAppendOnlyForSheet_(evalHistorySheetRef.sheet, _attentionC0EvaluationHeaders_());
+
+  var reportHistorySheetRef = getSheetForWrite_('Attention_C0_vs_V1_Report_History');
+  var reportHistoryHeaders = _ensureHeadersAppendOnlyForSheet_(reportHistorySheetRef.sheet, _attentionC0VsV1ReportHeaders_());
+
+  var replayHistoryAppended = 0;
+  var replayHistorySkipped = 0;
+  var evalHistoryAppended = 0;
+  var evalHistorySkipped = 0;
+  var reportHistoryInserted = 0;
+  var reportHistoryUpdated = 0;
+
+  for (var s = 0; s < sample.rows.length; s++) {
+    var source = sample.rows[s];
+    var eventPayload = eventMap[source.event_id];
+    var replayCase;
+    var evalCase;
+    if (!eventPayload) {
+      warnings.push('missing_event_payload:' + source.event_id);
+      replayCase = _attentionC0ReplayErrorRow_(generatedTs, replayId, source, 'missing_event_payload');
+      evalCase = _attentionC0EvaluationRow_(generatedTs, replayId, source, replayCase, null, null, null);
+    } else {
+      var prov = providerMap[source.source_ai_name];
+      if (!prov) {
+        warnings.push('provider_not_enabled:' + source.source_ai_name);
+        replayCase = _attentionC0ReplayErrorRow_(generatedTs, replayId, source, 'provider_not_enabled');
+        evalCase = _attentionC0EvaluationRow_(generatedTs, replayId, source, replayCase, eventPayload, null, null);
+      } else {
+        replayCase = _runAttentionC0ReplayCase_(generatedTs, replayId, source, eventPayload, prov, warnings);
+        evalCase = _attentionC0EvaluationRow_(generatedTs, replayId, source, replayCase, eventPayload, economicSourceRef, warnings);
+      }
+    }
+    replayRows.push(replayCase);
+    evalRows.push(evalCase);
+
+    _appendRowsPreservingHeaders_(replaySheetRef.sheet, replayHeaders, _rowsToArraysByHeaders_(replayHeaders, [replayCase]));
+    _appendRowsPreservingHeaders_(evalSheetRef.sheet, evalHeaders, _rowsToArraysByHeaders_(evalHeaders, [evalCase]));
+
+    var replayHistoryOne = _rowsToArraysByHeaders_(replayHistoryHeaders, [replayCase]);
+    var replayHistoryWrite = _appendDedupedRowsByKey_(replayHistorySheetRef.sheet, replayHistoryHeaders, replayHistoryOne, _attentionC0ReplayHistoryKey_);
+    replayHistoryAppended += replayHistoryWrite.appended_count;
+    replayHistorySkipped += replayHistoryWrite.skipped_count;
+
+    var evalHistoryOne = _rowsToArraysByHeaders_(evalHistoryHeaders, [evalCase]);
+    var evalHistoryWrite = _appendDedupedRowsByKey_(evalHistorySheetRef.sheet, evalHistoryHeaders, evalHistoryOne, _attentionC0EvaluationHistoryKey_);
+    evalHistoryAppended += evalHistoryWrite.appended_count;
+    evalHistorySkipped += evalHistoryWrite.skipped_count;
+
+    var partialReportRows = _buildAttentionC0VsV1ReportRows_(generatedTs, replayId, sample, evalRows, warnings);
+    var partialReportArrays = _rowsToArraysByHeaders_(reportHeaders, partialReportRows);
+    _sortAttentionC0ReportRows_(reportHeaders, partialReportArrays);
+    _rewriteSheet_(reportSheetRef.sheet, reportHeaders, partialReportArrays);
+    trimSheetToDataRange_(reportSheetRef.sheet, partialReportArrays.length + 1, reportHeaders.length);
+
+    var partialReportHistoryArrays = _rowsToArraysByHeaders_(reportHistoryHeaders, partialReportRows);
+    _sortAttentionC0ReportRows_(reportHistoryHeaders, partialReportHistoryArrays);
+    var partialReportHistoryWrite = _upsertRowsByKey_(reportHistorySheetRef.sheet, reportHistoryHeaders, partialReportHistoryArrays, _attentionC0ReportHistoryKey_);
+    reportHistoryInserted += partialReportHistoryWrite.inserted_count;
+    reportHistoryUpdated += partialReportHistoryWrite.updated_count;
+  }
+
+  var replayArrays = _rowsToArraysByHeaders_(replayHeaders, replayRows);
+  _sortAttentionC0ReplayRows_(replayHeaders, replayArrays);
+  _rewriteSheet_(replaySheetRef.sheet, replayHeaders, replayArrays);
+  trimSheetToDataRange_(replaySheetRef.sheet, replayArrays.length + 1, replayHeaders.length);
+
+  var evalArrays = _rowsToArraysByHeaders_(evalHeaders, evalRows);
+  _sortAttentionC0EvaluationRows_(evalHeaders, evalArrays);
+  _rewriteSheet_(evalSheetRef.sheet, evalHeaders, evalArrays);
+  trimSheetToDataRange_(evalSheetRef.sheet, evalArrays.length + 1, evalHeaders.length);
+
+  var reportRows = _buildAttentionC0VsV1ReportRows_(generatedTs, replayId, sample, evalRows, warnings);
+  var reportArrays = _rowsToArraysByHeaders_(reportHeaders, reportRows);
+  _sortAttentionC0ReportRows_(reportHeaders, reportArrays);
+  _rewriteSheet_(reportSheetRef.sheet, reportHeaders, reportArrays);
+  trimSheetToDataRange_(reportSheetRef.sheet, reportArrays.length + 1, reportHeaders.length);
+
+  var replayHistoryArrays = _rowsToArraysByHeaders_(replayHistoryHeaders, replayRows);
+  _sortAttentionC0ReplayRows_(replayHistoryHeaders, replayHistoryArrays);
+  var replayHistoryAppend = _appendDedupedRowsByKey_(replayHistorySheetRef.sheet, replayHistoryHeaders, replayHistoryArrays, _attentionC0ReplayHistoryKey_);
+
+  var evalHistoryArrays = _rowsToArraysByHeaders_(evalHistoryHeaders, evalRows);
+  _sortAttentionC0EvaluationRows_(evalHistoryHeaders, evalHistoryArrays);
+  var evalHistoryAppend = _appendDedupedRowsByKey_(evalHistorySheetRef.sheet, evalHistoryHeaders, evalHistoryArrays, _attentionC0EvaluationHistoryKey_);
+
+  var reportHistoryArrays = _rowsToArraysByHeaders_(reportHistoryHeaders, reportRows);
+  _sortAttentionC0ReportRows_(reportHistoryHeaders, reportHistoryArrays);
+  var reportHistoryWrite = _upsertRowsByKey_(reportHistorySheetRef.sheet, reportHistoryHeaders, reportHistoryArrays, _attentionC0ReportHistoryKey_);
+
+  _flushPredictionLogs_();
+  return {
+    status: 'ok',
+    replay_id: replayId,
+    sample_target_per_group: perGroupTarget,
+    actual_group_target: sample.group_target,
+    sample_counts: sample.counts,
+    provider_counts: sample.provider_counts,
+    target_workbook: replaySheetRef.spreadsheet_id,
+    target_sheets: [
+      replaySheetRef.sheet.getName(),
+      evalSheetRef.sheet.getName(),
+      reportSheetRef.sheet.getName()
+    ],
+    replay_rows_written: replayRows.length,
+    evaluation_rows_written: evalRows.length,
+    report_rows_written: reportRows.length,
+    replay_history_rows_appended: replayHistoryAppended + replayHistoryAppend.appended_count,
+    replay_history_rows_skipped: replayHistorySkipped + replayHistoryAppend.skipped_count,
+    evaluation_history_rows_appended: evalHistoryAppended + evalHistoryAppend.appended_count,
+    evaluation_history_rows_skipped: evalHistorySkipped + evalHistoryAppend.skipped_count,
+    report_history_rows_appended: reportHistoryInserted + reportHistoryWrite.inserted_count,
+    report_history_rows_updated: reportHistoryUpdated + reportHistoryWrite.updated_count,
+    warnings: warnings
+  };
+}
+
+function _attentionC0ReplayHistoryKey_(row, idx) {
+  return [
+    _cell(row, idx['replay_id']),
+    _cell(row, idx['source_event_id']),
+    _cell(row, idx['source_ai_name'])
+  ].join('|');
+}
+
+function _attentionC0EvaluationHistoryKey_(row, idx) {
+  return [
+    _cell(row, idx['replay_id']),
+    _cell(row, idx['source_event_id']),
+    _cell(row, idx['source_ai_name'])
+  ].join('|');
+}
+
+function _attentionC0ReportHistoryKey_(row, idx) {
+  return [
+    _cell(row, idx['replay_id']),
+    _cell(row, idx['row_type']),
+    _cell(row, idx['scope']),
+    _cell(row, idx['provider']),
+    _cell(row, idx['source_group']),
+    _cell(row, idx['bucket'])
+  ].join('|');
+}
+
+function _runAttentionC0ReplayCase_(generatedTs, replayId, source, eventPayload, prov, warnings) {
+  var prompt = _buildAttentionC0ReliabilityPrompt_(source, eventPayload);
+  try {
+    var resp = _callProviderJsonObject_(prov, prompt, 'c0_reliability_assessment');
+    var normalized = _normalizeAttentionC0Reliability_(resp.parsed, source, prov);
+    return _attentionC0ReplayRow_(generatedTs, replayId, source, prov, normalized, resp);
+  } catch (e) {
+    warnings.push('c0_replay_case_error:' + source.source_key + ':' + prov.name);
+    return _attentionC0ReplayErrorRow_(generatedTs, replayId, source, String(e));
+  }
+}
+
+function _buildAttentionC0ReliabilityPrompt_(source, ev) {
+  var payload = {
+    object: 'econ_event',
+    event_id: ev.event_id,
+    type: ev.type,
+    indicator_name: ev.indicator_name,
+    country: ev.country,
+    genre: ev.genre,
+    importance: ev.importance,
+    release_ts: ev.release_ts,
+    consensus_value: ev.consensus_value,
+    prev_revision: ev.prev_revision,
+    fx_pair: ev.fx_pair || CFG.DEFAULT_FX,
+    source_group: source.source_group,
+    source_attention_v1_labels: source.source_attention_v1_labels
+  };
+  return {
+    system: 'You are a macroeconomic reliability assessor. Output must be strict JSON and safe for parsing.',
+    user: JSON.stringify(payload),
+    instruction:
+      'Return ONLY strict JSON with object=c0_reliability_assessment, source_event_id, source_prediction_id, ai_name, reliability_confidence, signal_quality, forecastability, fragility, main_uncertainty, likely_failure_mode, reliability_summary. ' +
+      'Do NOT forecast the actual value. Do NOT forecast direction. Do NOT forecast market reaction. ' +
+      'Only assess whether the event is forecastable with the available information and why. ' +
+      'Use enums only: reliability_confidence=(low|medium|high), signal_quality=(weak|mixed|strong), forecastability=(poor|moderate|good), fragility=(low|medium|high).'
+  };
+}
+
+function _normalizeAttentionC0Reliability_(parsed, source, prov) {
+  parsed = parsed || {};
+  return {
+    object: 'c0_reliability_assessment',
+    source_event_id: String(parsed.source_event_id || source.event_id || '').trim(),
+    source_prediction_id: String(parsed.source_prediction_id || source.source_prediction_id || '').trim(),
+    ai_name: String(parsed.ai_name || prov.name || source.source_ai_name || '').trim(),
+    reliability_confidence: _oneOf_(String(parsed.reliability_confidence || '').toLowerCase(), ['low', 'medium', 'high']) || 'medium',
+    signal_quality: _oneOf_(String(parsed.signal_quality || '').toLowerCase(), ['weak', 'mixed', 'strong']) || 'mixed',
+    forecastability: _oneOf_(String(parsed.forecastability || '').toLowerCase(), ['poor', 'moderate', 'good']) || 'moderate',
+    fragility: _oneOf_(String(parsed.fragility || '').toLowerCase(), ['low', 'medium', 'high']) || 'medium',
+    main_uncertainty: _truncateAttentionText_(parsed.main_uncertainty, 240),
+    likely_failure_mode: _truncateAttentionText_(parsed.likely_failure_mode, 160),
+    reliability_summary: _truncateAttentionText_(parsed.reliability_summary, 400)
+  };
+}
+
+function _attentionC0ReplayRow_(generatedTs, replayId, source, prov, c0, resp) {
+  return {
+    generated_ts: generatedTs,
+    replay_id: replayId,
+    source_group: source.source_group,
+    source_event_id: source.event_id,
+    source_prediction_id: source.source_prediction_id || '',
+    source_ai_name: source.source_ai_name,
+    source_ai_model: source.source_ai_model || '',
+    source_outcome_family: source.source_outcome_family || '',
+    source_release_ts: source.source_release_ts || '',
+    source_indicator_name: source.source_indicator_name || '',
+    source_attention_v1_labels: source.source_attention_v1_labels || '',
+    replay_provider: prov.name,
+    replay_model: prov.model,
+    reliability_confidence: c0.reliability_confidence,
+    signal_quality: c0.signal_quality,
+    forecastability: c0.forecastability,
+    fragility: c0.fragility,
+    main_uncertainty: c0.main_uncertainty,
+    likely_failure_mode: c0.likely_failure_mode,
+    reliability_summary: c0.reliability_summary,
+    prompt_tokens: resp.prompt_tokens == null ? '' : resp.prompt_tokens,
+    completion_tokens: resp.completion_tokens == null ? '' : resp.completion_tokens,
+    status: 'ok',
+    error_message: '',
+    decision_support_note: 'Attention C0 reliability replay is experimental, derived-only, and not production or trading advice.'
+  };
+}
+
+function _attentionC0ReplayErrorRow_(generatedTs, replayId, source, message) {
+  return {
+    generated_ts: generatedTs,
+    replay_id: replayId,
+    source_group: source.source_group,
+    source_event_id: source.event_id,
+    source_prediction_id: source.source_prediction_id || '',
+    source_ai_name: source.source_ai_name,
+    source_ai_model: source.source_ai_model || '',
+    source_outcome_family: source.source_outcome_family || '',
+    source_release_ts: source.source_release_ts || '',
+    source_indicator_name: source.source_indicator_name || '',
+    source_attention_v1_labels: source.source_attention_v1_labels || '',
+    replay_provider: source.source_ai_name,
+    replay_model: '',
+    reliability_confidence: '',
+    signal_quality: '',
+    forecastability: '',
+    fragility: '',
+    main_uncertainty: '',
+    likely_failure_mode: '',
+    reliability_summary: '',
+    prompt_tokens: '',
+    completion_tokens: '',
+    status: 'error',
+    error_message: String(message || ''),
+    decision_support_note: 'Attention C0 reliability replay is experimental, derived-only, and not production or trading advice.'
+  };
+}
+
+function _attentionC0EvaluationRow_(generatedTs, replayId, source, replayRow, eventPayload, economicSourceRef, warnings) {
+  var econEval = _attentionC0EconomicEvalForSource_(source.event_id, source.source_ai_name);
+  var v3Eval = _findAttentionV3EvalForSource_(source.event_id, source.source_ai_name);
+  return {
+    generated_ts: generatedTs,
+    replay_id: replayId,
+    source_group: source.source_group,
+    source_event_id: source.event_id,
+    source_prediction_id: source.source_prediction_id || '',
+    source_ai_name: source.source_ai_name,
+    source_outcome_family: source.source_outcome_family || '',
+    source_attention_v1_labels: source.source_attention_v1_labels || '',
+    reliability_confidence: replayRow.reliability_confidence || '',
+    signal_quality: replayRow.signal_quality || '',
+    forecastability: replayRow.forecastability || '',
+    fragility: replayRow.fragility || '',
+    likely_failure_mode: replayRow.likely_failure_mode || '',
+    actual_surprise_dir: econEval ? String(econEval.actual_surprise_dir || '') : _attentionC0ActualSurpriseDir_(eventPayload),
+    economic_value_correct_flag: econEval ? String(econEval.value_dir_ok || '') : String(source.source_value_dir_ok || '').trim().toUpperCase(),
+    v3_reflection_confidence: v3Eval ? String(v3Eval.reflection_confidence || '') : '',
+    v3_signal_quality: v3Eval ? String(v3Eval.reflection_signal_quality || '') : '',
+    v3_fragility: v3Eval ? String(v3Eval.reflection_fragility || '') : '',
+    v3_value_dir_ok: v3Eval ? String(v3Eval.replay_value_dir_ok || '') : '',
+    status: replayRow.status || '',
+    error_message: replayRow.error_message || '',
+    decision_support_note: 'Attention C0 reliability evaluation is experimental, diagnostic-only, and not trading advice.'
+  };
+}
+
+function _attentionC0EconomicEvalForSource_(eventId, aiName) {
+  var cache = _attentionC0EconomicEvalCache_();
+  var key = _attentionV3PredictionKey_(eventId, aiName);
+  return key ? (cache[key] || null) : null;
+}
+
+function _attentionC0EconomicEvalCache_() {
+  if (typeof __attentionC0EconomicEvalCache !== 'undefined' && __attentionC0EconomicEvalCache) return __attentionC0EconomicEvalCache;
+  var cache = {};
+  try {
+    var ref = getSheetForRead_('Economic_Value_Accuracy');
+    var headers = getHeaderNames(ref.sheet);
+    var idx = _headerIndexMap_(headers);
+    var rows = _sheetBodyValues_(ref.sheet, headers.length);
+    for (var i = 0; i < rows.length; i++) {
+      if (String(_cell(rows[i], idx['row_type']) || '').trim() !== 'case') continue;
+      var eventId = String(_cell(rows[i], idx['event_id']) || '').trim();
+      var aiName = String(_cell(rows[i], idx['ai_name']) || '').trim();
+      var key = _attentionV3PredictionKey_(eventId, aiName);
+      if (!key) continue;
+      cache[key] = {
+        value_dir_ok: String(_cell(rows[i], idx['value_dir_ok']) || '').trim().toUpperCase(),
+        actual_surprise_dir: String(_cell(rows[i], idx['actual_surprise_dir']) || '').trim()
+      };
+    }
+  } catch (e) {}
+  __attentionC0EconomicEvalCache = cache;
+  return cache;
+}
+
+function _attentionC0ActualSurpriseDir_(eventPayload) {
+  if (!eventPayload) return '';
+  var actual = _numOrNull_(eventPayload.released_value);
+  var consensus = _numOrNull_(eventPayload.consensus_value);
+  var prev = _numOrNull_(eventPayload.prev_revision);
+  var out = (typeof _economicValueAccuracyDirection_ === 'function')
+    ? _economicValueAccuracyDirection_(actual, consensus, prev)
+    : { dir: '' };
+  return out.dir || '';
+}
+
+function _findAttentionV3EvalForSource_(eventId, aiName) {
+  var cache = _attentionC0V3EvalCache_();
+  var key = _attentionV3PredictionKey_(eventId, aiName);
+  return key ? (cache[key] || null) : null;
+}
+
+function _attentionC0V3EvalCache_() {
+  if (typeof __attentionC0V3EvalCache !== 'undefined' && __attentionC0V3EvalCache) return __attentionC0V3EvalCache;
+  var cache = {};
+  try {
+    var ref = getSheetForRead_('Attention_V3_Replay_Evaluation_History');
+    var headers = getHeaderNames(ref.sheet);
+    var idx = _headerIndexMap_(headers);
+    var rows = _sheetBodyValues_(ref.sheet, headers.length);
+    for (var i = 0; i < rows.length; i++) {
+      var eventId = String(_cell(rows[i], idx['source_event_id']) || '').trim();
+      var aiName = String(_cell(rows[i], idx['source_ai_name']) || '').trim();
+      var key = _attentionV3PredictionKey_(eventId, aiName);
+      if (!key) continue;
+      cache[key] = {
+        reflection_confidence: _cell(rows[i], idx['reflection_confidence']),
+        reflection_signal_quality: _cell(rows[i], idx['reflection_signal_quality']),
+        reflection_fragility: _cell(rows[i], idx['reflection_fragility']),
+        replay_value_dir_ok: _cell(rows[i], idx['replay_value_dir_ok'])
+      };
+    }
+  } catch (e) {}
+  __attentionC0V3EvalCache = cache;
+  return cache;
+}
+
+function _buildAttentionC0VsV1ReportRows_(generatedTs, replayId, sample, evalRows, warnings) {
+  var rows = [];
+  rows.push(_attentionC0ReportRow_(generatedTs, replayId, 'sample_counts', 'all', '', '', '', {
+    sample_count: sample.counts.total,
+    correct_count: '',
+    accuracy_rate: '',
+    baseline_accuracy_rate: '',
+    delta_vs_baseline: '',
+    note: 'A=' + sample.counts.A + ', B=' + sample.counts.B + ', C=' + sample.counts.C + ', D=' + sample.counts.D
+  }));
+
+  rows = rows.concat(_attentionC0BucketRows_(generatedTs, replayId, evalRows, 'reliability_confidence'));
+  rows = rows.concat(_attentionC0BucketRows_(generatedTs, replayId, evalRows, 'signal_quality'));
+  rows = rows.concat(_attentionC0BucketRows_(generatedTs, replayId, evalRows, 'forecastability'));
+  rows = rows.concat(_attentionC0BucketRows_(generatedTs, replayId, evalRows, 'fragility'));
+  rows = rows.concat(_attentionC0GroupRows_(generatedTs, replayId, evalRows));
+  rows = rows.concat(_attentionC0VsV3Rows_(generatedTs, replayId, evalRows));
+  rows.push(_attentionC0FinalAssessmentRow_(generatedTs, replayId, evalRows));
+  return rows;
+}
+
+function _attentionC0BucketRows_(generatedTs, replayId, evalRows, field) {
+  var total = 0;
+  var totalOk = 0;
+  var buckets = {};
+  for (var i = 0; i < (evalRows || []).length; i++) {
+    var row = evalRows[i];
+    if (String(row.status || '').toLowerCase() !== 'ok') continue;
+    var bucket = String(row[field] || '').trim() || 'unknown';
+    if (!buckets[bucket]) buckets[bucket] = { n: 0, ok: 0 };
+    buckets[bucket].n += 1;
+    total += 1;
+    if (String(row.economic_value_correct_flag || '').toUpperCase() === 'TRUE') {
+      buckets[bucket].ok += 1;
+      totalOk += 1;
+    }
+  }
+  var baseline = total ? (totalOk / total) : null;
+  return Object.keys(buckets).sort().map(function(bucket) {
+    var b = buckets[bucket];
+    var rate = b.n ? (b.ok / b.n) : null;
+    return _attentionC0ReportRow_(generatedTs, replayId, field, 'bucket', '', '', bucket, {
+      sample_count: b.n,
+      correct_count: b.ok,
+      accuracy_rate: rate == null ? '' : _roundRate_(rate),
+      baseline_accuracy_rate: baseline == null ? '' : _roundRate_(baseline),
+      delta_vs_baseline: (rate == null || baseline == null) ? '' : _roundRate_(rate - baseline),
+      note: 'C0 bucket vs historical economic accuracy'
+    });
+  });
+}
+
+function _attentionC0GroupRows_(generatedTs, replayId, evalRows) {
+  var byGroup = {};
+  for (var i = 0; i < (evalRows || []).length; i++) {
+    var row = evalRows[i];
+    var group = String(row.source_group || '').trim() || 'unknown';
+    if (!byGroup[group]) byGroup[group] = { n: 0, ok: 0 };
+    byGroup[group].n += 1;
+    if (String(row.economic_value_correct_flag || '').toUpperCase() === 'TRUE') byGroup[group].ok += 1;
+  }
+  return Object.keys(byGroup).sort().map(function(group) {
+    var g = byGroup[group];
+    return _attentionC0ReportRow_(generatedTs, replayId, 'group_anchor', 'source_group', '', group, '', {
+      sample_count: g.n,
+      correct_count: g.ok,
+      accuracy_rate: g.n ? _roundRate_(g.ok / g.n) : '',
+      baseline_accuracy_rate: '',
+      delta_vs_baseline: '',
+      note: 'V1 anchor group comparison (' + group + ')'
+    });
+  });
+}
+
+function _attentionC0VsV3Rows_(generatedTs, replayId, evalRows) {
+  var pairs = [
+    ['reliability_confidence', 'v3_reflection_confidence'],
+    ['signal_quality', 'v3_signal_quality'],
+    ['fragility', 'v3_fragility']
+  ];
+  var rows = [];
+  for (var p = 0; p < pairs.length; p++) {
+    var c0Field = pairs[p][0];
+    var v3Field = pairs[p][1];
+    var matched = 0;
+    var same = 0;
+    for (var i = 0; i < (evalRows || []).length; i++) {
+      var row = evalRows[i];
+      var c0 = String(row[c0Field] || '').trim();
+      var v3 = String(row[v3Field] || '').trim();
+      if (!c0 || !v3) continue;
+      matched += 1;
+      if (c0 === v3) same += 1;
+    }
+    rows.push(_attentionC0ReportRow_(generatedTs, replayId, 'c0_vs_v3', 'field_compare', '', '', c0Field, {
+      sample_count: matched,
+      correct_count: same,
+      accuracy_rate: matched ? _roundRate_(same / matched) : '',
+      baseline_accuracy_rate: '',
+      delta_vs_baseline: '',
+      note: 'Agreement rate between C0 ' + c0Field + ' and V3 ' + v3Field
+    }));
+  }
+  return rows;
+}
+
+function _attentionC0FinalAssessmentRow_(generatedTs, replayId, evalRows) {
+  var weakN = 0, weakOk = 0, strongN = 0, strongOk = 0;
+  for (var i = 0; i < (evalRows || []).length; i++) {
+    var row = evalRows[i];
+    if (String(row.status || '').toLowerCase() !== 'ok') continue;
+    var ok = String(row.economic_value_correct_flag || '').toUpperCase() === 'TRUE';
+    var qual = String(row.signal_quality || '').toLowerCase();
+    if (qual === 'weak') {
+      weakN += 1;
+      if (ok) weakOk += 1;
+    }
+    if (qual === 'strong') {
+      strongN += 1;
+      if (ok) strongOk += 1;
+    }
+  }
+  var weakRate = weakN ? (weakOk / weakN) : null;
+  var strongRate = strongN ? (strongOk / strongN) : null;
+  var conclusion = 'insufficient_signal';
+  if (weakRate != null && strongRate != null) {
+    if (strongRate - weakRate >= 0.20) conclusion = 'strong_success';
+    else if (strongRate - weakRate >= 0.10) conclusion = 'moderate_success';
+    else conclusion = 'weak_or_no_clear_separation';
+  }
+  return _attentionC0ReportRow_(generatedTs, replayId, 'final_assessment', 'all', '', '', '', {
+    sample_count: weakN + strongN,
+    correct_count: '',
+    accuracy_rate: '',
+    baseline_accuracy_rate: '',
+    delta_vs_baseline: '',
+    note: 'Strong signal_quality accuracy=' + (strongRate == null ? 'n/a' : _roundRate_(strongRate)) +
+      ', weak signal_quality accuracy=' + (weakRate == null ? 'n/a' : _roundRate_(weakRate)) +
+      ', conclusion=' + conclusion + '.'
+  });
+}
+
+function _attentionC0ReportRow_(generatedTs, replayId, rowType, scope, provider, sourceGroup, bucket, attrs) {
+  attrs = attrs || {};
+  return {
+    generated_ts: generatedTs,
+    replay_id: replayId,
+    row_type: rowType,
+    scope: scope,
+    provider: provider || '',
+    source_group: sourceGroup || '',
+    bucket: bucket || '',
+    sample_count: attrs.sample_count === undefined ? '' : attrs.sample_count,
+    correct_count: attrs.correct_count === undefined ? '' : attrs.correct_count,
+    accuracy_rate: attrs.accuracy_rate === undefined ? '' : attrs.accuracy_rate,
+    baseline_accuracy_rate: attrs.baseline_accuracy_rate === undefined ? '' : attrs.baseline_accuracy_rate,
+    delta_vs_baseline: attrs.delta_vs_baseline === undefined ? '' : attrs.delta_vs_baseline,
+    note: attrs.note || '',
+    decision_support_note: 'Attention C0 reliability replay is experimental, diagnostic-only, and not production or trading advice.'
+  };
+}
+
+function _attentionV3ReplayHistoryKey_(row, idx) {
+  return [
+    _cell(row, idx['replay_id']),
+    _cell(row, idx['source_event_id']),
+    _cell(row, idx['source_ai_name'])
+  ].join('|');
+}
+
+function _attentionV3ReplayEvaluationHistoryKey_(row, idx) {
+  return [
+    _cell(row, idx['replay_id']),
+    _cell(row, idx['source_event_id']),
+    _cell(row, idx['source_ai_name'])
+  ].join('|');
+}
+
+function _attentionV3ReplayReliabilityHistoryKey_(row, idx) {
+  return [
+    _cell(row, idx['replay_id']),
+    _cell(row, idx['row_type']),
+    _cell(row, idx['scope']),
+    _cell(row, idx['provider']),
+    _cell(row, idx['source_group']),
+    _cell(row, idx['bucket'])
+  ].join('|');
+}
+
+function _getPredictionEventById_(eventSheet, eventId) {
+  var headers = getHeaderNames(eventSheet);
+  var idx = {};
+  headers.forEach(function(h, i){ idx[String(h || '').toLowerCase()] = i; });
+  if (idx['event_id'] == null) throw new Error('Event headers missing event_id');
+
+  var lastRow = eventSheet.getLastRow();
+  if (lastRow < 2) throw new Error('Event sheet has no event rows');
+  var values = eventSheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+  var targetRow = null;
+  for (var r = 0; r < values.length; r++) {
+    if (String(_cell(values[r], idx['event_id']) || '').trim() !== String(eventId || '').trim()) continue;
+    targetRow = values[r];
+    break;
+  }
+  if (!targetRow) throw new Error('Event not found for event_id: ' + eventId);
+
+  return {
+    event_id: _cell(targetRow, idx['event_id']) || '',
+    batch_id: _cell(targetRow, idx['batch_id']) || '',
+    type: _cell(targetRow, idx['type']) || '',
+    country: _cell(targetRow, idx['country']) || '',
+    indicator_name: _cell(targetRow, idx['indicator_name']) || '',
+    genre: _cell(targetRow, idx['genre']) || '',
+    importance: (_cell(targetRow, idx['importance']) || '').toString(),
+    release_ts: _toIsoOrNull_(_cell(targetRow, idx['release_ts'])),
+    source_cal: _cell(targetRow, idx['source_cal']) || '',
+    consensus_value: _numOrNull_(_cell(targetRow, idx['consensus_value'])),
+    prev_revision: _numOrNull_(_cell(targetRow, idx['prev_revision'])),
+    fx_pair: _cell(targetRow, idx['fx_pair']) || CFG.DEFAULT_FX
+  };
+}
+
+function _attentionV3ReplayGroups_() {
+  return [
+    { code: 'A', label: 'low_signal_event', factor: 'low_signal_event' },
+    { code: 'B', label: 'importance', factor: 'importance' },
+    { code: 'C', label: 'direct_fx_transmission', factor: 'direct_fx_transmission' },
+    { code: 'D', label: 'control', factor: '' }
+  ];
+}
+
+function _attentionV3PredictionKey_(eventId, aiName) {
+  var e = String(eventId || '').trim();
+  var a = String(aiName || '').trim();
+  return e && a ? (e + '|' + a) : '';
+}
+
+function _sheetBodyValues_(sheet, headerCount) {
+  var lastRow = sheet.getLastRow();
+  var lastCol = Math.max(headerCount || 0, sheet.getLastColumn());
+  return (lastRow >= 2 && lastCol >= 1)
+    ? sheet.getRange(2, 1, lastRow - 1, lastCol).getValues()
+    : [];
+}
+
+function _buildAttentionV3ReplaySample_(economicRows, economicIdx, predictionByKey, predIdx, providerMap, perGroupTarget, warnings) {
+  var groups = { A: [], B: [], C: [], D: [] };
+  var providerCounts = {};
+  var seenSourceKeys = {};
+  for (var i = 0; i < (economicRows || []).length; i++) {
+    var row = economicRows[i];
+    if (String(_predValue_(row, economicIdx, 'row_type') || '').trim() !== 'case') continue;
+    if (String(_predValue_(row, economicIdx, 'value_scored_flag') || '').trim().toUpperCase() !== 'TRUE') continue;
+    var eventId = String(_predValue_(row, economicIdx, 'event_id') || '').trim();
+    var aiName = String(_predValue_(row, economicIdx, 'ai_name') || '').trim();
+    if (!eventId || !aiName || !providerMap[aiName]) continue;
+    var key = _attentionV3PredictionKey_(eventId, aiName);
+    if (!key || seenSourceKeys[key]) continue;
+    var predRow = predictionByKey[key];
+    if (!predRow) {
+      warnings.push('missing_prediction_row_for_replay:' + key);
+      continue;
+    }
+    var factors = _attentionV3SourceFactors_(row, economicIdx, predRow, predIdx);
+    var assigned = _attentionV3AssignedGroup_(factors);
+    groups[assigned].push({
+      source_key: key,
+      event_id: eventId,
+      source_prediction_id: String(_predValue_(predRow, predIdx, 'prediction_id') || '').trim(),
+      source_ai_name: aiName,
+      source_ai_model: String(_predValue_(row, economicIdx, 'ai_model') || _predValue_(predRow, predIdx, 'ai_model') || '').trim(),
+      source_group: assigned,
+      source_outcome_family: String(_predValue_(row, economicIdx, 'family') || '').trim() || 'other',
+      source_release_ts: String(_predValue_(row, economicIdx, 'release_ts') || '').trim(),
+      source_indicator_name: String(_predValue_(row, economicIdx, 'indicator_name') || '').trim(),
+      source_value_dir_ok: String(_predValue_(row, economicIdx, 'value_dir_ok') || '').trim(),
+      source_attention_v1_labels: factors.join('|')
+    });
+    seenSourceKeys[key] = true;
+  }
+  Object.keys(groups).forEach(function(code) {
+    groups[code].sort(function(a, b) {
+      var at = Date.parse(String(a.source_release_ts || '')) || 0;
+      var bt = Date.parse(String(b.source_release_ts || '')) || 0;
+      if (at !== bt) return at - bt;
+      return (a.source_key || '').localeCompare(b.source_key || '');
+    });
+  });
+
+  var availableCounts = _attentionV3ReplayGroups_().map(function(g) { return groups[g.code].length; });
+  var viableTarget = Math.min.apply(null, availableCounts.concat([perGroupTarget]));
+  if (!(viableTarget > 0)) viableTarget = 0;
+  if (viableTarget < perGroupTarget) warnings.push('reduced_group_target:' + viableTarget);
+
+  var sampled = [];
+  for (var g = 0; g < _attentionV3ReplayGroups_().length; g++) {
+    var group = _attentionV3ReplayGroups_()[g];
+    sampled = sampled.concat(_attentionV3ProviderBalancedTake_(groups[group.code], viableTarget, providerCounts));
+  }
+
+  var counts = { A: 0, B: 0, C: 0, D: 0, total: sampled.length };
+  providerCounts = {};
+  for (var s = 0; s < sampled.length; s++) {
+    counts[sampled[s].source_group] += 1;
+    providerCounts[sampled[s].source_ai_name] = (providerCounts[sampled[s].source_ai_name] || 0) + 1;
+  }
+  return {
+    rows: sampled,
+    counts: counts,
+    provider_counts: providerCounts,
+    group_target: viableTarget
+  };
+}
+
+function _attentionV3ProviderBalancedTake_(rows, limit, providerCounts) {
+  if (!(limit > 0)) return [];
+  var byProvider = {};
+  for (var i = 0; i < (rows || []).length; i++) {
+    var provider = rows[i].source_ai_name || 'unknown';
+    if (!byProvider[provider]) byProvider[provider] = [];
+    byProvider[provider].push(rows[i]);
+  }
+  var providerOrder = Object.keys(byProvider).sort();
+  var out = [];
+  var guard = 0;
+  while (out.length < limit && guard < 10000) {
+    guard += 1;
+    var progressed = false;
+    providerOrder.sort(function(a, b) {
+      return Number(providerCounts[a] || 0) - Number(providerCounts[b] || 0);
+    });
+    for (var p = 0; p < providerOrder.length && out.length < limit; p++) {
+      var name = providerOrder[p];
+      if (!byProvider[name].length) continue;
+      out.push(byProvider[name].shift());
+      providerCounts[name] = Number(providerCounts[name] || 0) + 1;
+      progressed = true;
+    }
+    if (!progressed) break;
+  }
+  return out;
+}
+
+function _attentionV3SourceFactors_(economicRow, economicIdx, predRow, predIdx) {
+  var factors = [];
+  var seen = {};
+  function addFactor(raw) {
+    var factor = String(raw || '').trim();
+    if (!factor || seen[factor]) return;
+    seen[factor] = true;
+    factors.push(factor);
+  }
+  for (var i = 1; i <= 3; i++) addFactor(_predValue_(predRow || [], predIdx || {}, 'attention_factor_' + i));
+  if (!factors.length) addFactor(_predValue_(economicRow || [], economicIdx || {}, 'attention_primary_factor'));
+  if (!factors.length) {
+    var packed = String(_predValue_(economicRow || [], economicIdx || {}, 'attention_factors') || '').trim();
+    var parts = (typeof _attentionEconomicFactorsFromPacked_ === 'function')
+      ? _attentionEconomicFactorsFromPacked_(packed)
+      : packed.split(/[|,;]/).map(function(part){ return String(part || '').trim(); }).filter(Boolean);
+    for (var j = 0; j < parts.length; j++) addFactor(parts[j]);
+  }
+  return factors;
+}
+
+function _attentionV3AssignedGroup_(factors) {
+  var f = {};
+  for (var i = 0; i < (factors || []).length; i++) f[String(factors[i] || '').trim()] = true;
+  if (f.low_signal_event) return 'A';
+  if (f.importance) return 'B';
+  if (f.direct_fx_transmission) return 'C';
+  return 'D';
+}
+
+function _attentionV3EventMap_(eventSheet) {
+  var headers = getHeaderNames(eventSheet);
+  var idx = {};
+  headers.forEach(function(h, i){ idx[String(h || '').toLowerCase()] = i; });
+  var rows = _sheetBodyValues_(eventSheet, headers.length);
+  var map = {};
+  for (var r = 0; r < rows.length; r++) {
+    var row = rows[r];
+    var eventId = String(_cell(row, idx['event_id']) || '').trim();
+    if (!eventId) continue;
+    map[eventId] = {
+      event_id: _cell(row, idx['event_id']) || '',
+      batch_id: _cell(row, idx['batch_id']) || '',
+      type: _cell(row, idx['type']) || '',
+      country: _cell(row, idx['country']) || '',
+      indicator_name: _cell(row, idx['indicator_name']) || '',
+      genre: _cell(row, idx['genre']) || '',
+      importance: (_cell(row, idx['importance']) || '').toString(),
+      release_ts: _toIsoOrNull_(_cell(row, idx['release_ts'])),
+      source_cal: _cell(row, idx['source_cal']) || '',
+      consensus_value: _numOrNull_(_cell(row, idx['consensus_value'])),
+      prev_revision: _numOrNull_(_cell(row, idx['prev_revision'])),
+      released_value: _numOrNull_(_cell(row, idx['released_value'])),
+      release_status: _cell(row, idx['release_status']) || '',
+      fx_pair: _cell(row, idx['fx_pair']) || CFG.DEFAULT_FX
+    };
+  }
+  return map;
+}
+
+function _runAttentionV3ReplayCase_(generatedTs, replayId, source, eventPayload, prov, warnings) {
+  var selectionPrompt = _buildAttentionV3SelectionPrompt_(eventPayload);
+  try {
+    var selectionResp = _callProviderJsonObject_(prov, selectionPrompt, 'attention_selection');
+    var selected = _normalizeAttentionV3Selection_(selectionResp.parsed, eventPayload);
+    var predictionPrompt = _buildAttentionV3PredictionPrompt_(eventPayload, selected);
+    var predictionResp = prov.fn(prov, predictionPrompt);
+    var qualOnly = _isQualitativeOnly_(eventPayload);
+    var normalizedPrediction = _normalizePrediction_(eventPayload, predictionResp, { qualOnly: qualOnly });
+    var reflectionPrompt = _buildAttentionV3ReflectionPrompt_(eventPayload, selected, normalizedPrediction);
+    var reflectionResp = _callProviderJsonObject_(prov, reflectionPrompt, 'prediction_reflection');
+    var reflection = _normalizeAttentionV3Reflection_(reflectionResp.parsed);
+    return _attentionV3ReplayRow_(generatedTs, replayId, source, prov, selected, normalizedPrediction, reflection, selectionResp, predictionResp, reflectionResp);
+  } catch (e) {
+    warnings.push('replay_case_error:' + source.source_key + ':' + prov.name);
+    return _attentionV3ReplayErrorRow_(generatedTs, replayId, source, String(e));
+  }
+}
+
+function _buildAttentionV3SelectionPrompt_(ev) {
+  var payload = {
+    object: 'econ_event',
+    event_id: ev.event_id,
+    type: ev.type,
+    indicator_name: ev.indicator_name,
+    country: ev.country,
+    genre: ev.genre,
+    importance: ev.importance,
+    release_ts: ev.release_ts,
+    consensus_value: ev.consensus_value,
+    prev_revision: ev.prev_revision,
+    fx_pair: ev.fx_pair || CFG.DEFAULT_FX,
+    feature_pack: _predictionFeaturePackPromptView_(ev.feature_pack)
+  };
+  return {
+    system: 'You are a macroeconomic forecasting model. Output must be strict JSON and safe for parsing.',
+    user: JSON.stringify(payload),
+    instruction:
+      'Return ONLY strict JSON with object=attention_selection, event_id, type, selected_attention_factors, attention_summary. ' +
+      'Choose exactly 2 or 3 reasoning factors from this allowed list: ' + getAllowedAttentionFactorsV1_().join(', ') + '. ' +
+      'Use only payload-visible information. Do not predict the outcome yet. selected_attention_factors must be an array of objects with factor, weight, and reason. Keep reasons concise.'
+  };
+}
+
+function _buildAttentionV3PredictionPrompt_(ev, selected) {
+  var prompt = _buildPredictionJsonPrompt_(ev, {
+    qualOnly: _isQualitativeOnly_(ev),
+    fxPair: ev.fx_pair || CFG.DEFAULT_FX
+  });
+  prompt.instruction +=
+    ' Attention-first replay mode: before forecasting, use these preselected reasoning anchors as the primary frame: ' +
+    _attentionV3SelectedFactorsText_(selected) +
+    '. Keep the forecast grounded in those anchors rather than selecting a fresh attention frame first.';
+  return prompt;
+}
+
+function _buildAttentionV3ReflectionPrompt_(ev, selected, prediction) {
+  var payload = {
+    object: 'attention_v3_reflection_input',
+    event_id: ev.event_id,
+    type: ev.type,
+    indicator_name: ev.indicator_name,
+    importance: ev.importance,
+    consensus_value: ev.consensus_value,
+    prev_revision: ev.prev_revision,
+    selected_attention_factors: selected.factors,
+    selected_attention_summary: selected.attention_summary,
+    replay_prediction: {
+      ai_forecast_value: prediction.ai_forecast_value,
+      qualitative_result: prediction.qualitative_result,
+      mr_pred_dir: prediction.mr_pred_dir,
+      mr_pred_net_pips: prediction.mr_pred_net_pips,
+      mr_pred_strength: prediction.mr_pred_strength,
+      rationale_short: prediction.rationale_short,
+      rationale: prediction.rationale
+    }
+  };
+  return {
+    system: 'You are a macroeconomic forecasting model. Output must be strict JSON and safe for parsing.',
+    user: JSON.stringify(payload),
+    instruction:
+      'Return ONLY strict JSON with object=prediction_reflection, event_id, reflection_confidence, reflection_signal_quality, reflection_fragility, reflection_main_risk, reflection_invalidating_condition, reflection_summary. ' +
+      'Use enums only: reflection_confidence=(high|medium|low), reflection_signal_quality=(strong|mixed|weak), reflection_fragility=(low|medium|high). ' +
+      'This is a post-prediction reliability reflection only.'
+  };
+}
+
+function _callProviderJsonObject_(prov, prompt, expectedObject) {
+  if (!prov || !prov.name) throw new Error('Provider metadata missing');
+  if (prov.name === 'OpenAI') return _callOpenAiJsonObject_(prov, prompt, expectedObject);
+  if (prov.name === 'Gemini') return _callGeminiJsonObject_(prov, prompt, expectedObject);
+  if (prov.name === 'Anthropic') return _callClaudeJsonObject_(prov, prompt, expectedObject);
+  throw new Error('Unsupported provider for generic JSON object call: ' + prov.name);
+}
+
+function _callOpenAiJsonObject_(prov, prompt, expectedObject) {
+  var url = 'https://api.openai.com/v1/chat/completions';
+  var body = {
+    model: prov.model,
+    temperature: CFG.PREDICTION_TEMPERATURE,
+    seed: CFG.PREDICTION_SEED,
+    response_format: { type: 'json_object' },
+    messages: [
+      { role: 'system', content: prompt.system },
+      { role: 'user', content: prompt.user + '\n\n' + prompt.instruction }
+    ]
+  };
+  return _withRetries_(function() {
+    var resp = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { 'Authorization': 'Bearer ' + prov.key },
+      muteHttpExceptions: true,
+      payload: JSON.stringify(body)
+    });
+    var code = resp.getResponseCode();
+    if (code === 429) throw _quotaErr_('OpenAI 429');
+    if (code >= 500) throw _providerErr_('OpenAI ' + code);
+    if (code < 200 || code > 299) throw _providerErr_('OpenAI ' + code + ': ' + resp.getContentText());
+    var j = JSON.parse(resp.getContentText());
+    var c = j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+    if (!c) throw _providerErr_('OpenAI: empty content');
+    return {
+      parsed: _strictParseJsonObject_(c, expectedObject),
+      raw_output: c,
+      prompt_tokens: (j.usage || {}).prompt_tokens || null,
+      completion_tokens: (j.usage || {}).completion_tokens || null
+    };
+  }, { provider: prov.name });
+}
+
+function _callGeminiJsonObject_(prov, prompt, expectedObject) {
+  var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(prov.model) + ':generateContent?key=' + encodeURIComponent(prov.key);
+  var body = {
+    contents: [{ role: 'user', parts: [{ text: prompt.system + '\n\n' + prompt.user + '\n\n' + prompt.instruction }] }],
+    generationConfig: {
+      response_mime_type: 'application/json',
+      temperature: CFG.PREDICTION_TEMPERATURE,
+      seed: CFG.PREDICTION_SEED
+    }
+  };
+  return _withRetries_(function() {
+    var resp = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      muteHttpExceptions: true,
+      payload: JSON.stringify(body)
+    });
+    var code = resp.getResponseCode();
+    var txt = resp.getContentText();
+    if (code === 429) throw _quotaErr_('Gemini 429: ' + txt);
+    if (code >= 500) throw _providerErr_('Gemini ' + code);
+    if (code < 200 || code > 299) throw _providerErr_('Gemini ' + code + ': ' + txt);
+    var j = JSON.parse(txt);
+    var c = (j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts && j.candidates[0].content.parts[0] && j.candidates[0].content.parts[0].text) || '';
+    if (!c) throw _providerErr_('Gemini: empty content');
+    return {
+      parsed: _strictParseJsonObject_(c, expectedObject),
+      raw_output: c,
+      prompt_tokens: (j.usageMetadata || {}).promptTokenCount || null,
+      completion_tokens: (j.usageMetadata || {}).candidatesTokenCount || null
+    };
+  }, { provider: prov.name });
+}
+
+function _callClaudeJsonObject_(prov, prompt, expectedObject) {
+  var url = 'https://api.anthropic.com/v1/messages';
+  var body = {
+    model: prov.model,
+    max_tokens: 1024,
+    temperature: CFG.PREDICTION_TEMPERATURE,
+    system: prompt.system,
+    messages: [{ role: 'user', content: prompt.user + '\n\n' + prompt.instruction }]
+  };
+  return _withRetries_(function() {
+    var resp = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { 'x-api-key': prov.key, 'anthropic-version': '2023-06-01' },
+      muteHttpExceptions: true,
+      payload: JSON.stringify(body)
+    });
+    var code = resp.getResponseCode();
+    var txt = resp.getContentText();
+    if (code === 429) throw _quotaErr_('Anthropic 429: ' + txt);
+    if (code >= 500) throw _providerErr_('Anthropic ' + code);
+    if (code < 200 || code > 299) throw _providerErr_('Anthropic ' + code + ': ' + txt);
+    var j = JSON.parse(txt);
+    var c = (j.content && j.content[0] && j.content[0].text) || '';
+    if (!c) throw _providerErr_('Anthropic: empty content');
+    return {
+      parsed: _strictParseJsonObject_(c, expectedObject),
+      raw_output: c,
+      prompt_tokens: (j.usage || {}).input_tokens || null,
+      completion_tokens: (j.usage || {}).output_tokens || null
+    };
+  }, { provider: prov.name });
+}
+
+function _strictParseJsonObject_(rawText, expectedObject) {
+  var cleaned = _stripCodeFences_(rawText);
+  var jsonText = _extractFirstJsonObject_(cleaned) || cleaned;
+  var obj = JSON.parse(jsonText);
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) throw new Error('json_not_object');
+  if (expectedObject) {
+    var got = String(obj.object || '').trim().toLowerCase();
+    if (got !== String(expectedObject || '').trim().toLowerCase()) throw new Error('unexpected_object:' + got);
+  }
+  return obj;
+}
+
+function _normalizeAttentionV3Selection_(parsed, eventPayload) {
+  var normalized = normalizeAttentionFactors_({
+    attention_factors: parsed && parsed.selected_attention_factors,
+    attention_summary: parsed && parsed.attention_summary
+  }, eventPayload);
+  return {
+    factors: normalized.factors || [],
+    attention_summary: normalized.attention_summary || '',
+    attention_validity_flag: normalized.validity_flag || '',
+    attention_validation_note: normalized.validation_note || ''
+  };
+}
+
+function _normalizeAttentionV3Reflection_(parsed) {
+  parsed = parsed || {};
+  return {
+    reflection_confidence: _oneOf_(String(parsed.reflection_confidence || '').toLowerCase(), ['high', 'medium', 'low']) || 'medium',
+    reflection_signal_quality: _oneOf_(String(parsed.reflection_signal_quality || '').toLowerCase(), ['strong', 'mixed', 'weak']) || 'mixed',
+    reflection_fragility: _oneOf_(String(parsed.reflection_fragility || '').toLowerCase(), ['low', 'medium', 'high']) || 'medium',
+    reflection_main_risk: _truncateAttentionText_(parsed.reflection_main_risk, 240),
+    reflection_invalidating_condition: _truncateAttentionText_(parsed.reflection_invalidating_condition, 240),
+    reflection_summary: _truncateAttentionText_(parsed.reflection_summary, 400)
+  };
+}
+
+function _attentionV3SelectedFactorsText_(selected) {
+  var parts = [];
+  var factors = (selected && selected.factors) || [];
+  for (var i = 0; i < factors.length; i++) {
+    var item = factors[i] || {};
+    parts.push(String(item.factor || '') + ' (weight=' + (item.weight == null ? '' : item.weight) + ', reason=' + String(item.reason || '') + ')');
+  }
+  return parts.join('; ');
+}
+
+function _attentionV3ReplayRow_(generatedTs, replayId, source, prov, selected, prediction, reflection, selectionResp, predictionResp, reflectionResp) {
+  return {
+    generated_ts: generatedTs,
+    replay_id: replayId,
+    source_group: source.source_group,
+    source_event_id: source.event_id,
+    source_batch_id: '',
+    source_ai_name: source.source_ai_name,
+    source_ai_model: source.source_ai_model,
+    source_outcome_family: source.source_outcome_family,
+    source_release_ts: source.source_release_ts,
+    source_indicator_name: source.source_indicator_name,
+    source_attention_v1_labels: source.source_attention_v1_labels,
+    selected_attention_v3_labels: selected.factors.map(function(f){ return f.factor; }).join('|'),
+    selected_attention_v3_summary: selected.attention_summary || '',
+    replay_provider: prov.name,
+    replay_model: prov.model,
+    replay_ai_forecast_value: prediction.ai_forecast_value == null ? '' : prediction.ai_forecast_value,
+    replay_qualitative_result: prediction.qualitative_result || '',
+    replay_mr_pred_dir: prediction.mr_pred_dir || '',
+    replay_mr_pred_net_pips: prediction.mr_pred_net_pips == null ? '' : prediction.mr_pred_net_pips,
+    replay_mr_pred_strength: prediction.mr_pred_strength || '',
+    replay_rationale_short: prediction.rationale_short || '',
+    replay_rationale: prediction.rationale || '',
+    reflection_confidence: reflection.reflection_confidence,
+    reflection_signal_quality: reflection.reflection_signal_quality,
+    reflection_fragility: reflection.reflection_fragility,
+    reflection_main_risk: reflection.reflection_main_risk,
+    reflection_invalidating_condition: reflection.reflection_invalidating_condition,
+    reflection_summary: reflection.reflection_summary,
+    selected_attention_validity_flag: selected.attention_validity_flag || '',
+    selected_attention_validation_note: selected.attention_validation_note || '',
+    selection_prompt_tokens: selectionResp.prompt_tokens == null ? '' : selectionResp.prompt_tokens,
+    selection_completion_tokens: selectionResp.completion_tokens == null ? '' : selectionResp.completion_tokens,
+    prediction_prompt_tokens: predictionResp.prompt_tokens == null ? '' : predictionResp.prompt_tokens,
+    prediction_completion_tokens: predictionResp.completion_tokens == null ? '' : predictionResp.completion_tokens,
+    reflection_prompt_tokens: reflectionResp.prompt_tokens == null ? '' : reflectionResp.prompt_tokens,
+    reflection_completion_tokens: reflectionResp.completion_tokens == null ? '' : reflectionResp.completion_tokens,
+    status: 'ok',
+    error_message: '',
+    decision_support_note: 'Attention Factor v3 replay is experimental, derived-only, and not production or trading advice.'
+  };
+}
+
+function _attentionV3ReplayErrorRow_(generatedTs, replayId, source, message) {
+  return {
+    generated_ts: generatedTs,
+    replay_id: replayId,
+    source_group: source.source_group,
+    source_event_id: source.event_id,
+    source_batch_id: '',
+    source_ai_name: source.source_ai_name,
+    source_ai_model: source.source_ai_model || '',
+    source_outcome_family: source.source_outcome_family || '',
+    source_release_ts: source.source_release_ts || '',
+    source_indicator_name: source.source_indicator_name || '',
+    source_attention_v1_labels: source.source_attention_v1_labels || '',
+    selected_attention_v3_labels: '',
+    selected_attention_v3_summary: '',
+    replay_provider: source.source_ai_name,
+    replay_model: '',
+    replay_ai_forecast_value: '',
+    replay_qualitative_result: '',
+    replay_mr_pred_dir: '',
+    replay_mr_pred_net_pips: '',
+    replay_mr_pred_strength: '',
+    replay_rationale_short: '',
+    replay_rationale: '',
+    reflection_confidence: '',
+    reflection_signal_quality: '',
+    reflection_fragility: '',
+    reflection_main_risk: '',
+    reflection_invalidating_condition: '',
+    reflection_summary: '',
+    selected_attention_validity_flag: '',
+    selected_attention_validation_note: '',
+    selection_prompt_tokens: '',
+    selection_completion_tokens: '',
+    prediction_prompt_tokens: '',
+    prediction_completion_tokens: '',
+    reflection_prompt_tokens: '',
+    reflection_completion_tokens: '',
+    status: 'error',
+    error_message: String(message || ''),
+    decision_support_note: 'Attention Factor v3 replay is experimental, derived-only, and not production or trading advice.'
+  };
+}
+
+function _attentionV3EvaluationRow_(generatedTs, replayId, source, replayRow, eventPayload) {
+  var releasedValue = eventPayload ? _numOrNull_(eventPayload.released_value) : null;
+  var consensusValue = eventPayload ? _numOrNull_(eventPayload.consensus_value) : null;
+  var prevRevision = eventPayload ? _numOrNull_(eventPayload.prev_revision) : null;
+  var actualSurprise = (typeof _economicValueAccuracyDirection_ === 'function')
+    ? _economicValueAccuracyDirection_(releasedValue, consensusValue, prevRevision)
+    : { dir: 'unknown', ref_value: null };
+  var aiForecastValue = _numOrNull_(replayRow.replay_ai_forecast_value);
+  var qualMapRow = [String(replayRow.replay_qualitative_result || '')];
+  var aiValueDir = (typeof _economicValueAccuracyAiDirection_ === 'function')
+    ? _economicValueAccuracyAiDirection_(qualMapRow, { qualitative_result: 0 }, aiForecastValue, consensusValue, prevRevision, aiForecastValue == null)
+    : { dir: 'unknown' };
+  var valueScore = (typeof _economicValueAccuracyValueScore_ === 'function')
+    ? _economicValueAccuracyValueScore_(eventPayload ? eventPayload.type : '', aiForecastValue == null, releasedValue, aiForecastValue, actualSurprise, aiValueDir)
+    : { value_dir_ok: '', value_scored_flag: 'FALSE', note: 'scoring_unavailable' };
+  var originalOk = String(source.source_value_dir_ok || '').trim().toUpperCase();
+  var replayOk = String(valueScore.value_dir_ok || '').trim().toUpperCase();
+  return {
+    generated_ts: generatedTs,
+    replay_id: replayId,
+    source_group: source.source_group,
+    source_event_id: source.event_id,
+    source_ai_name: source.source_ai_name,
+    source_outcome_family: source.source_outcome_family,
+    source_attention_v1_labels: source.source_attention_v1_labels,
+    selected_attention_v3_labels: replayRow.selected_attention_v3_labels || '',
+    reflection_confidence: replayRow.reflection_confidence || '',
+    reflection_signal_quality: replayRow.reflection_signal_quality || '',
+    reflection_fragility: replayRow.reflection_fragility || '',
+    actual_surprise_dir: actualSurprise.dir || '',
+    replay_value_dir: aiValueDir.dir || '',
+    replay_value_dir_ok: valueScore.value_dir_ok || '',
+    replay_value_scored_flag: valueScore.value_scored_flag || '',
+    original_v1_value_dir_ok: originalOk,
+    changed_from_v1_flag: _attentionV3ChangedFlag_(originalOk, replayOk),
+    improved_vs_v1_flag: originalOk === 'FALSE' && replayOk === 'TRUE' ? 'TRUE' : 'FALSE',
+    worsened_vs_v1_flag: originalOk === 'TRUE' && replayOk === 'FALSE' ? 'TRUE' : 'FALSE',
+    same_as_v1_flag: originalOk && replayOk && originalOk === replayOk ? 'TRUE' : 'FALSE',
+    reliability_alignment_label: _attentionV3ReliabilityAlignmentLabel_(replayRow, replayOk),
+    status: replayRow.status || '',
+    error_message: replayRow.error_message || '',
+    decision_support_note: 'Attention V3 replay evaluation is experimental, diagnostic-only, and not trading advice.'
+  };
+}
+
+function _attentionV3ChangedFlag_(originalOk, replayOk) {
+  if (!originalOk || !replayOk) return '';
+  return originalOk === replayOk ? 'FALSE' : 'TRUE';
+}
+
+function _attentionV3ReliabilityAlignmentLabel_(replayRow, replayOk) {
+  var conf = String(replayRow.reflection_confidence || '').toLowerCase();
+  var qual = String(replayRow.reflection_signal_quality || '').toLowerCase();
+  var frag = String(replayRow.reflection_fragility || '').toLowerCase();
+  if (replayOk === 'TRUE' && conf === 'high' && qual === 'strong' && frag === 'low') return 'high_confidence_aligned_correct';
+  if (replayOk === 'FALSE' && (conf === 'low' || qual === 'weak' || frag === 'high')) return 'low_reliability_aligned_incorrect';
+  if (replayOk === 'TRUE') return 'correct_but_reflection_mixed';
+  if (replayOk === 'FALSE') return 'incorrect_but_reflection_mixed';
+  return 'unscored';
+}
+
+function _buildAttentionV3ReliabilityRows_(generatedTs, replayId, sample, evalRows) {
+  var rows = [];
+  rows.push(_attentionV3ReliabilitySummaryRow_(generatedTs, replayId, 'sample_counts', 'all', '', '', '', {
+    sample_count: sample.counts.total,
+    correct_count: '',
+    accuracy_rate: '',
+    note: 'A=' + sample.counts.A + ', B=' + sample.counts.B + ', C=' + sample.counts.C + ', D=' + sample.counts.D
+  }));
+  var providers = Object.keys(sample.provider_counts || {}).sort();
+  for (var p = 0; p < providers.length; p++) {
+    rows.push(_attentionV3ReliabilitySummaryRow_(generatedTs, replayId, 'provider_counts', 'provider', providers[p], '', '', {
+      sample_count: sample.provider_counts[providers[p]],
+      correct_count: '',
+      accuracy_rate: '',
+      note: 'Provider coverage count'
+    }));
+  }
+  rows = rows.concat(_attentionV3BucketSummaryRows_(generatedTs, replayId, evalRows, 'reflection_confidence'));
+  rows = rows.concat(_attentionV3BucketSummaryRows_(generatedTs, replayId, evalRows, 'reflection_signal_quality'));
+  rows = rows.concat(_attentionV3BucketSummaryRows_(generatedTs, replayId, evalRows, 'reflection_fragility'));
+  rows = rows.concat(_attentionV3GroupComparisonRows_(generatedTs, replayId, evalRows));
+  rows.push(_attentionV3FinalAssessmentRow_(generatedTs, replayId, evalRows));
+  return rows;
+}
+
+function _attentionV3BucketSummaryRows_(generatedTs, replayId, evalRows, field) {
+  var buckets = {};
+  for (var i = 0; i < (evalRows || []).length; i++) {
+    var row = evalRows[i];
+    if (String(row.status || '').toLowerCase() !== 'ok') continue;
+    var bucket = String(row[field] || '').trim() || 'unknown';
+    if (!buckets[bucket]) buckets[bucket] = { sample_count: 0, correct_count: 0 };
+    buckets[bucket].sample_count += 1;
+    if (String(row.replay_value_dir_ok || '').toUpperCase() === 'TRUE') buckets[bucket].correct_count += 1;
+  }
+  return Object.keys(buckets).sort().map(function(bucket) {
+    var b = buckets[bucket];
+    return _attentionV3ReliabilitySummaryRow_(generatedTs, replayId, field, 'bucket', '', '', bucket, {
+      sample_count: b.sample_count,
+      correct_count: b.correct_count,
+      accuracy_rate: b.sample_count ? _roundRate_(b.correct_count / b.sample_count) : '',
+      note: 'Accuracy by ' + field
+    });
+  });
+}
+
+function _attentionV3GroupComparisonRows_(generatedTs, replayId, evalRows) {
+  var byGroup = {};
+  for (var i = 0; i < (evalRows || []).length; i++) {
+    var row = evalRows[i];
+    var group = String(row.source_group || '').trim() || 'unknown';
+    if (!byGroup[group]) byGroup[group] = { sample_count: 0, correct_count: 0 };
+    byGroup[group].sample_count += 1;
+    if (String(row.replay_value_dir_ok || '').toUpperCase() === 'TRUE') byGroup[group].correct_count += 1;
+  }
+  return Object.keys(byGroup).sort().map(function(group) {
+    var g = byGroup[group];
+    return _attentionV3ReliabilitySummaryRow_(generatedTs, replayId, 'group_comparison', 'source_group', '', group, '', {
+      sample_count: g.sample_count,
+      correct_count: g.correct_count,
+      accuracy_rate: g.sample_count ? _roundRate_(g.correct_count / g.sample_count) : '',
+      note: 'Group comparison against Attention Factor v1 signal bucket'
+    });
+  });
+}
+
+function _attentionV3FinalAssessmentRow_(generatedTs, replayId, evalRows) {
+  var highCorrect = 0, highTotal = 0, lowCorrect = 0, lowTotal = 0;
+  for (var i = 0; i < (evalRows || []).length; i++) {
+    var row = evalRows[i];
+    if (String(row.status || '').toLowerCase() !== 'ok') continue;
+    var ok = String(row.replay_value_dir_ok || '').toUpperCase() === 'TRUE';
+    if (String(row.reflection_confidence || '').toLowerCase() === 'high') {
+      highTotal += 1;
+      if (ok) highCorrect += 1;
+    }
+    if (String(row.reflection_confidence || '').toLowerCase() === 'low') {
+      lowTotal += 1;
+      if (ok) lowCorrect += 1;
+    }
+  }
+  var highRate = highTotal ? (highCorrect / highTotal) : null;
+  var lowRate = lowTotal ? (lowCorrect / lowTotal) : null;
+  var conclusion = 'insufficient_signal';
+  if (highRate != null && lowRate != null) {
+    if (highRate - lowRate >= 0.25) conclusion = 'strong_success';
+    else if (highRate - lowRate >= 0.15) conclusion = 'moderate_success';
+    else if (highRate - lowRate <= 0.05) conclusion = 'failure_or_no_clear_separation';
+  }
+  return _attentionV3ReliabilitySummaryRow_(generatedTs, replayId, 'final_assessment', 'all', '', '', '', {
+    sample_count: highTotal + lowTotal,
+    correct_count: '',
+    accuracy_rate: '',
+    note: 'High confidence accuracy=' + (highRate == null ? 'n/a' : _roundRate_(highRate)) +
+      ', low confidence accuracy=' + (lowRate == null ? 'n/a' : _roundRate_(lowRate)) +
+      ', conclusion=' + conclusion + '.'
+  });
+}
+
+function _attentionV3ReliabilitySummaryRow_(generatedTs, replayId, rowType, scope, provider, sourceGroup, bucket, attrs) {
+  attrs = attrs || {};
+  return {
+    generated_ts: generatedTs,
+    replay_id: replayId,
+    row_type: rowType,
+    scope: scope,
+    provider: provider || '',
+    source_group: sourceGroup || '',
+    bucket: bucket || '',
+    sample_count: attrs.sample_count === undefined ? '' : attrs.sample_count,
+    correct_count: attrs.correct_count === undefined ? '' : attrs.correct_count,
+    accuracy_rate: attrs.accuracy_rate === undefined ? '' : attrs.accuracy_rate,
+    note: attrs.note || '',
+    decision_support_note: 'Attention V3 replay reliability analysis is experimental, diagnostic-only, and not trading advice.'
+  };
+}
+
+function _rowsToArraysByHeaders_(headers, rows) {
+  return (rows || []).map(function(row) {
+    return headers.map(function(header) {
+      return row && row.hasOwnProperty(header) ? row[header] : '';
+    });
+  });
+}
+
+function _attentionV3ReplayHeaders_() {
+  return [
+    'generated_ts','replay_id','source_group','source_event_id','source_batch_id','source_ai_name','source_ai_model',
+    'source_outcome_family','source_release_ts','source_indicator_name','source_attention_v1_labels',
+    'selected_attention_v3_labels','selected_attention_v3_summary','replay_provider','replay_model',
+    'replay_ai_forecast_value','replay_qualitative_result','replay_mr_pred_dir','replay_mr_pred_net_pips',
+    'replay_mr_pred_strength','replay_rationale_short','replay_rationale',
+    'reflection_confidence','reflection_signal_quality','reflection_fragility',
+    'reflection_main_risk','reflection_invalidating_condition','reflection_summary',
+    'selected_attention_validity_flag','selected_attention_validation_note',
+    'selection_prompt_tokens','selection_completion_tokens','prediction_prompt_tokens',
+    'prediction_completion_tokens','reflection_prompt_tokens','reflection_completion_tokens',
+    'status','error_message','decision_support_note'
+  ];
+}
+
+function _attentionV3ReplayEvaluationHeaders_() {
+  return [
+    'generated_ts','replay_id','source_group','source_event_id','source_ai_name','source_outcome_family',
+    'source_attention_v1_labels','selected_attention_v3_labels',
+    'reflection_confidence','reflection_signal_quality','reflection_fragility',
+    'actual_surprise_dir','replay_value_dir','replay_value_dir_ok','replay_value_scored_flag',
+    'original_v1_value_dir_ok','changed_from_v1_flag','improved_vs_v1_flag',
+    'worsened_vs_v1_flag','same_as_v1_flag','reliability_alignment_label',
+    'status','error_message','decision_support_note'
+  ];
+}
+
+function _attentionV3ReplayReliabilityHeaders_() {
+  return [
+    'generated_ts','replay_id','row_type','scope','provider','source_group','bucket',
+    'sample_count','correct_count','accuracy_rate','note','decision_support_note'
+  ];
+}
+
+function _attentionC0ReplayHeaders_() {
+  return [
+    'generated_ts','replay_id','source_group','source_event_id','source_prediction_id','source_ai_name','source_ai_model',
+    'source_outcome_family','source_release_ts','source_indicator_name','source_attention_v1_labels',
+    'replay_provider','replay_model','reliability_confidence','signal_quality','forecastability','fragility',
+    'main_uncertainty','likely_failure_mode','reliability_summary',
+    'prompt_tokens','completion_tokens','status','error_message','decision_support_note'
+  ];
+}
+
+function _attentionC0EvaluationHeaders_() {
+  return [
+    'generated_ts','replay_id','source_group','source_event_id','source_prediction_id','source_ai_name','source_outcome_family',
+    'source_attention_v1_labels','reliability_confidence','signal_quality','forecastability','fragility','likely_failure_mode',
+    'actual_surprise_dir','economic_value_correct_flag',
+    'v3_reflection_confidence','v3_signal_quality','v3_fragility','v3_value_dir_ok',
+    'status','error_message','decision_support_note'
+  ];
+}
+
+function _attentionC0VsV1ReportHeaders_() {
+  return [
+    'generated_ts','replay_id','row_type','scope','provider','source_group','bucket',
+    'sample_count','correct_count','accuracy_rate','baseline_accuracy_rate','delta_vs_baseline',
+    'note','decision_support_note'
+  ];
+}
+
+function _sortAttentionC0ReplayRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx['source_group'], idx['source_release_ts'], idx['source_indicator_name'], idx['source_ai_name']
+    ]);
+  });
+}
+
+function _sortAttentionC0EvaluationRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx['source_group'], idx['source_event_id'], idx['source_ai_name']
+    ]);
+  });
+}
+
+function _sortAttentionC0ReportRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [
+      idx['row_type'], idx['scope'], idx['source_group'], idx['bucket'], idx['provider']
+    ]);
+  });
+}
+
+function _sortAttentionV3ReplayRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [idx.source_group, idx.source_ai_name, idx.source_release_ts, idx.source_event_id]);
+  });
+}
+
+function _sortAttentionV3ReplayEvaluationRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [idx.source_group, idx.source_ai_name, idx.source_event_id]);
+  });
+}
+
+function _sortAttentionV3ReplayReliabilityRows_(headers, rows) {
+  var idx = _headerIndexMap_(headers);
+  rows.sort(function(a, b) {
+    return _cmpByColumns_(a, b, [idx.row_type, idx.scope, idx.provider, idx.source_group, idx.bucket]);
+  });
 }
 
 function _flushPredictionLogs_() {
@@ -1225,14 +2958,28 @@ function _attachHistoricalContextToEvents_(sheet, events) {
   });
 }
 
-function _buildHistoricalFeaturePackForEvent_(historyRowsByKey, ev) {
+function _buildHistoricalFeaturePackForEvent_(historyRowsByKey, ev, options) {
+  options = options || {};
   var sameIndicator = _buildSameIndicatorHistoricalContext_(historyRowsByKey, ev);
-  return {
-    feature_pack_version: 'v1_historical_context',
+  var surprisePack = _buildSurprisePack_(historyRowsByKey, ev);
+  var revisionPack = _buildRevisionPack_(historyRowsByKey, ev);
+  var familyPack = _buildFamilyPack_(historyRowsByKey, ev);
+  var signalQualityPack = _buildSignalQualityPack_(ev, sameIndicator, surprisePack, revisionPack, familyPack);
+  var includeMarketContext = !!options.includeMarketContext || (typeof _featurePackV2BEnabled_ === 'function' && _featurePackV2BEnabled_());
+  var pack = {
+    feature_pack_version: includeMarketContext ? 'v2b_core_market_context' : 'v2a_core_context',
     historical_context: {
       same_indicator: sameIndicator
-    }
+    },
+    surprise_pack: surprisePack,
+    revision_pack: revisionPack,
+    family_pack: familyPack,
+    signal_quality_pack: signalQualityPack
   };
+  if (includeMarketContext && typeof _buildMarketContextPack_ === 'function') {
+    pack.market_context_pack = _buildMarketContextPack_(historyRowsByKey, ev, options.marketContextOptions || {});
+  }
+  return pack;
 }
 
 function _buildHistoricalIndicatorIndex_(sheet) {
@@ -1240,7 +2987,8 @@ function _buildHistoricalIndicatorIndex_(sheet) {
   var idx = {};
   headers.forEach(function(h, i){ idx[String(h || '').toLowerCase()] = i; });
   var values = sheet.getRange(2, 1, Math.max(sheet.getLastRow() - 1, 0), headers.length).getValues();
-  var byKey = {};
+  var indicatorRowsByKey = {};
+  var familyRowsByKey = {};
 
   for (var r = 0; r < values.length; r++) {
     var row = values[r];
@@ -1258,30 +3006,48 @@ function _buildHistoricalIndicatorIndex_(sheet) {
     var consensusValue = _numOrNull_(_cell(row, idx['consensus_value']));
     var surpriseValue = (releasedValue != null && consensusValue != null) ? (releasedValue - consensusValue) : null;
     var eventId = _cell(row, idx['event_id']);
-
-    if (!byKey[indicatorKey]) byKey[indicatorKey] = [];
-    byKey[indicatorKey].push({
+    var genre = _cell(row, idx['genre']);
+    var familyKey = (typeof deriveOutcomeFamily_ === 'function')
+      ? deriveOutcomeFamily_(indicatorName, genre)
+      : 'other';
+    var eventRecord = {
       event_id: eventId || '',
       indicator_name: indicatorName || '',
+      genre: genre || '',
+      family_key: familyKey || 'other',
       release_ts: releaseIso,
       release_ms: Date.parse(releaseIso),
       actual_value: releasedValue,
       consensus_value: consensusValue,
       surprise_value: surpriseValue
-    });
+    };
+
+    if (!indicatorRowsByKey[indicatorKey]) indicatorRowsByKey[indicatorKey] = [];
+    indicatorRowsByKey[indicatorKey].push(eventRecord);
+    if (!familyRowsByKey[familyKey]) familyRowsByKey[familyKey] = [];
+    familyRowsByKey[familyKey].push(eventRecord);
   }
 
-  Object.keys(byKey).forEach(function(key){
-    byKey[key].sort(function(a, b){
+  Object.keys(indicatorRowsByKey).forEach(function(key){
+    indicatorRowsByKey[key].sort(function(a, b){
+      return (a.release_ms || 0) - (b.release_ms || 0);
+    });
+  });
+  Object.keys(familyRowsByKey).forEach(function(key){
+    familyRowsByKey[key].sort(function(a, b){
       return (a.release_ms || 0) - (b.release_ms || 0);
     });
   });
 
-  return byKey;
+  return {
+    indicator_rows_by_key: indicatorRowsByKey,
+    family_rows_by_key: familyRowsByKey,
+    family_diagnostics_by_key: _buildFeaturePackFamilyDiagnostics_()
+  };
 }
 
 function _buildSameIndicatorHistoricalContext_(historyRowsByKey, ev) {
-  var rows = (historyRowsByKey && historyRowsByKey[_historicalIndicatorKey_(ev && ev.indicator_name)]) || [];
+  var rows = _featurePackIndicatorRows_(historyRowsByKey, ev);
   var currentMs = Date.parse(String(ev && ev.release_ts || ''));
   var currentEventId = String(ev && ev.event_id || '');
   var prior = rows.filter(function(row){
@@ -1307,6 +3073,232 @@ function _buildSameIndicatorHistoricalContext_(historyRowsByKey, ev) {
     surprise_volatility: _historicalSurpriseVolatility_(usable),
     consensus_accuracy_trend: _historicalConsensusAccuracyTrend_(usable)
   };
+}
+
+function _featurePackIndicatorRows_(historyIndex, ev) {
+  var key = _historicalIndicatorKey_(ev && ev.indicator_name);
+  if (!historyIndex || !key) return [];
+  if (historyIndex.indicator_rows_by_key) return historyIndex.indicator_rows_by_key[key] || [];
+  return historyIndex[key] || [];
+}
+
+function _featurePackFamilyKey_(ev) {
+  return (typeof deriveOutcomeFamily_ === 'function')
+    ? deriveOutcomeFamily_(ev && ev.indicator_name, ev && ev.genre)
+    : 'other';
+}
+
+function _featurePackFamilyRows_(historyIndex, ev) {
+  var familyKey = _featurePackFamilyKey_(ev);
+  if (!historyIndex || !historyIndex.family_rows_by_key) return [];
+  return historyIndex.family_rows_by_key[familyKey] || [];
+}
+
+function _featurePackPriorRows_(rows, ev) {
+  rows = rows || [];
+  var currentMs = Date.parse(String(ev && ev.release_ts || ''));
+  var currentEventId = String(ev && ev.event_id || '');
+  return rows.filter(function(row) {
+    if (!row) return false;
+    if (currentEventId && String(row.event_id || '') === currentEventId) return false;
+    return !!row.release_ms && row.release_ms < currentMs;
+  });
+}
+
+function _buildSurprisePack_(historyIndex, ev) {
+  var prior = _featurePackPriorRows_(_featurePackIndicatorRows_(historyIndex, ev), ev);
+  var usable = prior.filter(function(row) {
+    return row && row.surprise_value != null;
+  });
+  var lastFive = usable.slice(Math.max(0, usable.length - 5)).map(function(row) {
+    return row.surprise_value;
+  });
+  var counts = _featurePackSignedCounts_(usable, 'surprise_value');
+  return {
+    surprise_pack_version: 'v2a_surprise_pack',
+    same_indicator_surprise_events_seen: usable.length,
+    last_5_surprises: lastFive,
+    surprise_bias: _featurePackSignedBias_(counts, usable.length),
+    surprise_volatility: _featurePackStdDev_(lastFive.length ? usable.map(function(row) { return row.surprise_value; }) : []),
+    positive_surprise_count: counts.positive,
+    negative_surprise_count: counts.negative,
+    inline_surprise_count: counts.inline,
+    consensus_available_rate: _featurePackRateOrUnknown_(usable.length, prior.length)
+  };
+}
+
+function _buildRevisionPack_(historyIndex, ev) {
+  return {
+    revision_pack_version: 'v2a_revision_pack',
+    revision_events_seen: 0,
+    last_5_revision_deltas: [],
+    revision_bias: 'unknown',
+    revision_volatility: 'unknown',
+    revision_frequency: 'unknown',
+    revision_risk: 'unknown',
+    notes: 'insufficient_revision_source'
+  };
+}
+
+function _buildFamilyPack_(historyIndex, ev) {
+  var familyKey = _featurePackFamilyKey_(ev);
+  var prior = _featurePackPriorRows_(_featurePackFamilyRows_(historyIndex, ev), ev);
+  var usable = prior.filter(function(row) {
+    return row && row.surprise_value != null;
+  });
+  var counts = _featurePackSignedCounts_(usable, 'surprise_value');
+  var diagnostics = historyIndex && historyIndex.family_diagnostics_by_key
+    ? historyIndex.family_diagnostics_by_key[familyKey]
+    : null;
+  return {
+    family_pack_version: 'v2a_family_pack',
+    outcome_family: familyKey,
+    family_events_seen: prior.length,
+    family_surprise_bias: _featurePackSignedBias_(counts, usable.length),
+    family_surprise_volatility: _featurePackVolatilityLevel_(usable.map(function(row) { return row.surprise_value; })),
+    family_forecastability_proxy: diagnostics ? diagnostics.family_forecastability_proxy : 'unknown',
+    family_market_translation_noise: diagnostics ? diagnostics.family_market_translation_noise : 'unknown',
+    family_notes: diagnostics ? diagnostics.family_notes : 'insufficient_family_diagnostics'
+  };
+}
+
+function _buildSignalQualityPack_(ev, sameIndicator, surprisePack, revisionPack, familyPack) {
+  var reasonCodes = [];
+  var historyQuality = String(sameIndicator && sameIndicator.history_quality || 'cold_start');
+  var hasConsensus = _hasNumericValue_(ev && ev.consensus_value);
+  var surpriseVolatilityLevel = _featurePackVolatilityLevelFromPack_(surprisePack);
+  var revisionRisk = String(revisionPack && revisionPack.revision_risk || 'unknown');
+  var familyNoiseLevel = _featurePackNoiseLevel_(familyPack);
+
+  if (historyQuality === 'cold_start') reasonCodes.push('cold_start');
+  else if (historyQuality === 'partial') reasonCodes.push('partial_history');
+  if (!hasConsensus) reasonCodes.push('missing_consensus');
+  if (surpriseVolatilityLevel === 'high') reasonCodes.push('high_surprise_volatility');
+  if (revisionRisk === 'high') reasonCodes.push('high_revision_risk');
+  if (familyNoiseLevel === 'high') reasonCodes.push('high_family_noise');
+
+  var score = 100;
+  if (historyQuality === 'cold_start') score -= 40;
+  else if (historyQuality === 'partial') score -= 20;
+  if (!hasConsensus) score -= 20;
+  if (surpriseVolatilityLevel === 'high') score -= 15;
+  if (revisionRisk === 'high') score -= 15;
+  if (familyNoiseLevel === 'high') score -= 10;
+  score = Math.max(0, score);
+
+  return {
+    signal_quality_pack_version: 'v2a_signal_quality_pack',
+    signal_quality: _featurePackSignalQualityLabel_(score),
+    signal_quality_score: score,
+    signal_quality_reason_codes: reasonCodes,
+    has_consensus: hasConsensus,
+    history_quality: historyQuality,
+    surprise_volatility_level: surpriseVolatilityLevel,
+    revision_risk: revisionRisk,
+    family_noise_level: familyNoiseLevel
+  };
+}
+
+function _buildFeaturePackFamilyDiagnostics_() {
+  var diagnostics = {};
+  if (typeof getSheetForRead_ !== 'function') return diagnostics;
+  try {
+    var source = getSheetForRead_('Economic_Value_Accuracy');
+    var headers = getHeaderNames(source.sheet);
+    var idx = {};
+    headers.forEach(function(h, i){ idx[String(h || '').trim()] = i; });
+    var rows = _sheetBodyValues_(source.sheet, headers.length);
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      if (String(_cell(row, idx['row_type']) || '').trim() !== 'family_summary') continue;
+      var familyKey = String(_cell(row, idx['family']) || '').trim() || 'other';
+      var valueScoredRows = Number(_cell(row, idx['value_scored_rows']) || 0);
+      var valueDirOkRate = _numOrNull_(_cell(row, idx['value_dir_ok_rate']));
+      var gap = _numOrNull_(_cell(row, idx['economic_vs_market_gap']));
+      diagnostics[familyKey] = {
+        family_forecastability_proxy: _featurePackForecastabilityProxy_(valueDirOkRate, valueScoredRows),
+        family_market_translation_noise: _featurePackMarketTranslationNoise_(gap, valueScoredRows),
+        family_notes: 'economic_value_accuracy|value_scored_rows=' + valueScoredRows
+      };
+    }
+  } catch (e) {}
+  return diagnostics;
+}
+
+function _featurePackSignedCounts_(rows, field) {
+  var counts = { positive: 0, negative: 0, inline: 0 };
+  (rows || []).forEach(function(row) {
+    var value = row ? row[field] : null;
+    if (value == null) return;
+    if (value > 0) counts.positive++;
+    else if (value < 0) counts.negative++;
+    else counts.inline++;
+  });
+  return counts;
+}
+
+function _featurePackSignedBias_(counts, total) {
+  counts = counts || { positive: 0, negative: 0, inline: 0 };
+  if (!(total > 0)) return 'unknown';
+  if (counts.positive > counts.negative && counts.positive > counts.inline) return 'positive';
+  if (counts.negative > counts.positive && counts.negative > counts.inline) return 'negative';
+  if (counts.inline > counts.positive && counts.inline > counts.negative) return 'inline';
+  return 'mixed';
+}
+
+function _featurePackStdDev_(values) {
+  var nums = (values || []).filter(function(v) { return v != null && isFinite(Number(v)); }).map(Number);
+  if (!nums.length) return 'unknown';
+  var mean = nums.reduce(function(sum, v) { return sum + v; }, 0) / nums.length;
+  var variance = nums.reduce(function(sum, v) {
+    var delta = v - mean;
+    return sum + (delta * delta);
+  }, 0) / nums.length;
+  return _round4_(Math.sqrt(variance));
+}
+
+function _featurePackVolatilityLevel_(values) {
+  var stdev = _featurePackStdDev_(values);
+  if (stdev === 'unknown') return 'unknown';
+  if (stdev < 0.1) return 'low';
+  if (stdev < 1) return 'medium';
+  return 'high';
+}
+
+function _featurePackRateOrUnknown_(num, den) {
+  if (!(den > 0)) return 'unknown';
+  return _round4_(num / den);
+}
+
+function _featurePackForecastabilityProxy_(rate, sampleSize) {
+  if (rate == null || sampleSize < 20) return 'unknown';
+  if (rate >= 0.55) return 'high';
+  if (rate >= 0.40) return 'medium';
+  return 'low';
+}
+
+function _featurePackMarketTranslationNoise_(gap, sampleSize) {
+  if (gap == null || sampleSize < 20) return 'unknown';
+  if (gap >= 0.15) return 'high';
+  if (gap >= 0.05) return 'medium';
+  return 'low';
+}
+
+function _featurePackVolatilityLevelFromPack_(surprisePack) {
+  if (!surprisePack) return 'unknown';
+  return _featurePackVolatilityLevel_(
+    Array.isArray(surprisePack.last_5_surprises) ? surprisePack.last_5_surprises : []
+  );
+}
+
+function _featurePackNoiseLevel_(familyPack) {
+  return String(familyPack && familyPack.family_market_translation_noise || 'unknown');
+}
+
+function _featurePackSignalQualityLabel_(score) {
+  if (score >= 80) return 'strong';
+  if (score >= 55) return 'mixed';
+  return 'weak';
 }
 
 function _historicalContextQuality_(rows) {
@@ -1480,7 +3472,8 @@ function _buildBatchPredictionJsonPrompt_(batchEv, opt) {
       importance: m.importance || 'medium',
       consensus_value: (typeof m.consensus_value === 'number') ? m.consensus_value : null,
       prev_revision: (typeof m.prev_revision === 'number') ? m.prev_revision : null,
-      historical_context_same_indicator: _predictionSameIndicatorPromptView_(m.feature_pack)
+      historical_context_same_indicator: _predictionSameIndicatorPromptView_(m.feature_pack),
+      feature_pack_context: _predictionFeaturePackPromptView_(m.feature_pack)
     };
   });
   var anchorMember = String(batchEv.batch_anchor_mode || '') === 'clear_anchor'
@@ -1517,6 +3510,7 @@ function _buildBatchPredictionJsonPrompt_(batchEv, opt) {
       consensus_value: (typeof anchorMember.consensus_value === 'number') ? anchorMember.consensus_value : null,
       prev_revision: (typeof anchorMember.prev_revision === 'number') ? anchorMember.prev_revision : null,
       historical_context_same_indicator: _predictionSameIndicatorPromptView_(anchorMember.feature_pack),
+      feature_pack_context: _predictionFeaturePackPromptView_(anchorMember.feature_pack),
       anchor_score: batchEv.anchor_score,
       anchor_reason: batchEv.anchor_reason || ''
     } : null,
@@ -1538,7 +3532,7 @@ function _buildBatchPredictionJsonPrompt_(batchEv, opt) {
         dominance_rule: 'Acknowledge when one member is likely to dominate the cluster reaction, but do not invent hidden details not present in the payload.',
         offset_rule: 'If member effects offset or no direct member clearly dominates, prefer flat or weak.',
         hidden_detail_rule: 'If the true surprise usually depends on subcomponents or post-release internals not present here, default to conservative flat/weak behavior.',
-        historical_context_rule: 'Member-level historical_context_same_indicator is compact deterministic memory. Use it as context only, and reduce reliance when history_quality is partial or cold_start.',
+        historical_context_rule: 'Member-level historical_context_same_indicator and feature_pack_context are compact deterministic memory. Use them as context only, and reduce reliance when history_quality is partial or cold_start.',
         consistency: 'qualitative_result, mr_pred_dir, mr_pred_net_pips, mr_pred_strength, and rationale must describe the same combined batch view.'
       },
       market_reaction: {
@@ -1572,7 +3566,7 @@ function _buildBatchPredictionJsonPrompt_(batchEv, opt) {
     "Frame the answer as aggregate release view plus market reaction scenario only; never give trade instructions or use buy, sell, enter, exit, stop loss, take profit, guaranteed, risk-free, or final signal wording. " +
     "If anchor_selection.mode is no_clear_anchor, do not force a dominant member. " +
     "If anchor_selection.mode is weak_anchor, treat the anchor as a watchlist clue, not the answer. " +
-    "Use member-level historical_context_same_indicator only as compact background memory; do not mechanically extrapolate from it, and reduce reliance if history_quality is partial or cold_start. " +
+    "Use member-level historical_context_same_indicator and feature_pack_context only as compact background memory; do not mechanically extrapolate from them, and reduce reliance if history_quality is partial or cold_start. " +
     "Treat pre_release_signal as operator planning guidance. If pre_release_signal.mode is scenario, keep blind directional claims conservative and let the rationale explain what would imply up, down, or flat. " +
     "Use anchor_member as the default market focus only when anchor_selection.mode is clear_anchor and anchor_member is present; otherwise compare the watched members as a cluster. " +
     "Assess the combined release cluster, not each member separately. " +
@@ -1593,12 +3587,20 @@ function _predictionFeaturePackPromptView_(featurePack) {
   featurePack = _normalizeHistoricalFeaturePack_(featurePack);
   var sameIndicator = _predictionSameIndicatorPromptView_(featurePack);
   if (!sameIndicator) return null;
-  return {
-    feature_pack_version: featurePack.feature_pack_version || 'v1_historical_context',
+  var view = {
+    feature_pack_version: featurePack.feature_pack_version || 'v2a_core_context',
     historical_context: {
       same_indicator: sameIndicator
-    }
+    },
+    surprise_pack: featurePack.surprise_pack || null,
+    revision_pack: featurePack.revision_pack || null,
+    family_pack: featurePack.family_pack || null,
+    signal_quality_pack: featurePack.signal_quality_pack || null
   };
+  if (featurePack.market_context_pack) {
+    view.market_context_pack = featurePack.market_context_pack;
+  }
+  return view;
 }
 
 function _predictionSameIndicatorPromptView_(featurePack) {
@@ -1622,8 +3624,8 @@ function _normalizeHistoricalFeaturePack_(featurePack) {
   featurePack = featurePack || {};
   var sameIndicator = featurePack.historical_context && featurePack.historical_context.same_indicator;
   if (!sameIndicator) return featurePack;
-  return {
-    feature_pack_version: 'v1_historical_context',
+  var normalized = {
+    feature_pack_version: featurePack.feature_pack_version || 'v2a_core_context',
     historical_context: {
       same_indicator: {
         events_seen: sameIndicator.events_seen || 0,
@@ -1636,8 +3638,16 @@ function _normalizeHistoricalFeaturePack_(featurePack) {
         surprise_volatility: sameIndicator.surprise_volatility || 'unknown',
         consensus_accuracy_trend: sameIndicator.consensus_accuracy_trend || 'unknown'
       }
-    }
+    },
+    surprise_pack: featurePack.surprise_pack || null,
+    revision_pack: featurePack.revision_pack || null,
+    family_pack: featurePack.family_pack || null,
+    signal_quality_pack: featurePack.signal_quality_pack || null
   };
+  if (featurePack.market_context_pack) {
+    normalized.market_context_pack = featurePack.market_context_pack;
+  }
+  return normalized;
 }
 
 function debugHistoricalContextForEvent_(eventId) {
@@ -1691,6 +3701,719 @@ function debugHistoricalContextForEvent_(eventId) {
 
 function debugHistoricalContextForEvent(eventId) {
   return debugHistoricalContextForEvent_(eventId);
+}
+
+function runControlledV2BReplayComparison_(params) {
+  params = params || {};
+  _applyConfigOverridesFromSheet_();
+  _ensureCfgDefaults_();
+
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var headers = _controlledV2BReplayHeaders_();
+  var eventIds = _v2bNormalizeEventIdList_(params.event_ids || params.eventIds || []);
+  var clearExisting = params.clear_existing !== false;
+  var providersWanted = (Array.isArray(params.providers) && params.providers.length)
+    ? params.providers.map(_normalizeProviderName_)
+    : ['Gemini', 'OpenAI', 'Anthropic'];
+  var providers = _resolveProviders_(providersWanted);
+  var providerMap = {};
+  for (var p = 0; p < providers.length; p++) providerMap[providers[p].name] = providers[p];
+  if (!providers.length) throw new Error('Controlled V2B replay requires at least one enabled provider.');
+  if (!eventIds.length) throw new Error('Controlled V2B replay requires event_ids.');
+
+  var eventSheet = getSheet('Event');
+  var econRef = getSheetForRead_('Economic_Value_Accuracy');
+  var econHeaders = getHeaderNames(econRef.sheet);
+  var econIdx = _headerIndexMap_(econHeaders);
+  var econRows = _sheetBodyValues_(econRef.sheet, econHeaders.length);
+  var eventIndex = _buildHistoricalIndicatorIndex_(eventSheet);
+
+  var eventWanted = {};
+  for (var i = 0; i < eventIds.length; i++) eventWanted[String(eventIds[i]).trim()] = true;
+
+  var sourceRowsByKey = {};
+  for (var r = 0; r < econRows.length; r++) {
+    var row = econRows[r];
+    if (String(_predValue_(row, econIdx, 'row_type') || '').trim() !== 'case') continue;
+    if (String(_predValue_(row, econIdx, 'type') || '').toLowerCase() === 'batch') continue;
+    if (_numOrNull_(_predValue_(row, econIdx, 'ai_forecast_value')) == null) continue;
+    if (_numOrNull_(_predValue_(row, econIdx, 'released_value')) == null) continue;
+    var eventId = String(_predValue_(row, econIdx, 'event_id') || '').trim();
+    var aiName = String(_predValue_(row, econIdx, 'ai_name') || '').trim();
+    if (!eventWanted[eventId] || !eventId || !aiName) continue;
+    var key = _attentionV3PredictionKey_(eventId, aiName);
+    if (!key) continue;
+    var createdTs = String(_predValue_(row, econIdx, 'created_ts') || '').trim();
+    if (!sourceRowsByKey[key] || String(sourceRowsByKey[key].created_ts || '') < createdTs) {
+      sourceRowsByKey[key] = {
+        row: row,
+        created_ts: createdTs
+      };
+    }
+  }
+
+  var selectedKeys = Object.keys(sourceRowsByKey).sort(function(a, b) {
+    var ar = sourceRowsByKey[a].row;
+    var br = sourceRowsByKey[b].row;
+    var ad = String(_predValue_(ar, econIdx, 'release_ts') || '');
+    var bd = String(_predValue_(br, econIdx, 'release_ts') || '');
+    if (ad !== bd) return ad < bd ? -1 : 1;
+    return a < b ? -1 : (a > b ? 1 : 0);
+  });
+
+  var rawRows = [];
+  for (var s = 0; s < selectedKeys.length; s++) {
+    var sourceRow = sourceRowsByKey[selectedKeys[s]].row;
+    var sourceEventId = String(_predValue_(sourceRow, econIdx, 'event_id') || '').trim();
+    var provName = String(_predValue_(sourceRow, econIdx, 'ai_name') || '').trim();
+    var prov = providerMap[provName];
+    if (!prov) {
+      warnings.push('provider_not_enabled:' + provName);
+      rawRows.push(_controlledV2BReplayErrorRow_(generatedTs, { row: sourceRow, idx: econIdx }, provName, 'provider_not_enabled'));
+      continue;
+    }
+    var ev = _controlledV2BReplayEventFromEconomicRow_(sourceRow, econIdx);
+    if (!ev.release_ts) {
+      warnings.push('missing_release_ts:' + sourceEventId + ':' + provName);
+      rawRows.push(_controlledV2BReplayErrorRow_(generatedTs, { row: sourceRow, idx: econIdx }, provName, 'missing_release_ts'));
+      continue;
+    }
+    var featurePack = _buildHistoricalFeaturePackForEvent_(eventIndex, ev, {
+      includeMarketContext: true,
+      marketContextOptions: { useIntradayUsdJpy: true }
+    });
+    ev.feature_pack = featurePack;
+    var qualOnly = _isQualitativeOnly_(ev);
+    var prompt = _buildPredictionJsonPrompt_(ev, {
+      qualOnly: qualOnly,
+      fxPair: ev.fx_pair || CFG.DEFAULT_FX
+    });
+    var replayStartedMs = Date.now();
+    try {
+      var providerResp = prov.fn(prov, prompt);
+      providerResp.latency_ms = Date.now() - replayStartedMs;
+      var normalized = _normalizePrediction_(ev, providerResp, { qualOnly: qualOnly });
+      rawRows.push(_controlledV2BReplayResultRow_(generatedTs, ev, sourceRow, econIdx, prov, normalized, providerResp, featurePack));
+    } catch (e) {
+      warnings.push('controlled_v2b_replay_error:' + sourceEventId + ':' + provName + ':' + String(e));
+      rawRows.push(_controlledV2BReplayErrorRow_(generatedTs, { row: sourceRow, idx: econIdx }, provName, String(e)));
+    }
+  }
+
+  var sheetRef = getDiagnosticsSheet_('Production_vs_V2B_Replay', headers, warnings);
+  var actualHeaders = sheetRef.headers;
+  if (clearExisting) {
+    _rewriteSheetRowsPreservingHeaders_(sheetRef.sheet, actualHeaders, []);
+  }
+  var rows = _remapRowsToHeaders_(headers, actualHeaders, _controlledV2BReplayRowsToArrays_(headers, rawRows));
+  _appendRowsPreservingHeaders_(sheetRef.sheet, actualHeaders, rows);
+  _flushPredictionLogs_();
+
+  return {
+    status: 'ok',
+    generated_ts: generatedTs,
+    event_ids_requested: eventIds,
+    providers_requested: providersWanted,
+    rows_written: rawRows.length,
+    warnings: warnings
+  };
+}
+
+function runControlledV2BReplayComparison(params) {
+  return runControlledV2BReplayComparison_(params);
+}
+
+function buildControlledV2BReplaySummary_() {
+  var generatedTs = new Date().toISOString();
+  var warnings = [];
+  var rawRef = getSheetForRead_('Production_vs_V2B_Replay');
+  if (!rawRef || !rawRef.sheet) throw new Error('Production_vs_V2B_Replay sheet missing.');
+  var headers = getHeaderNames(rawRef.sheet);
+  var idx = _headerIndexMap_(headers);
+  var rows = _sheetBodyValues_(rawRef.sheet, headers.length);
+  var cases = [];
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    if (!String(_cell(row, idx['event_id']) || '').trim()) continue;
+    cases.push(_controlledV2BReplayCaseFromRow_(row, idx));
+  }
+
+  var summaryRows = _controlledV2BReplaySummaryRows_(generatedTs, cases);
+  var utilizationRows = _controlledV2BReplayContextUtilizationRows_(generatedTs, cases);
+  var stabilityRows = _controlledV2BReplayStabilityRows_(generatedTs, cases);
+  var familyRows = _controlledV2BReplayFamilySummaryRows_(generatedTs, cases);
+  var providerRows = _controlledV2BReplayProviderSummaryRows_(generatedTs, cases);
+
+  _controlledV2BReplayWriteSheet_('Production_vs_V2B_Summary', _controlledV2BReplaySummaryHeaders_(), summaryRows, warnings);
+  _controlledV2BReplayWriteSheet_('V2B_Context_Utilization_Report', _controlledV2BReplayContextHeaders_(), utilizationRows, warnings);
+  _controlledV2BReplayWriteSheet_('V2B_Prediction_Stability', _controlledV2BReplayStabilityHeaders_(), stabilityRows, warnings);
+  _controlledV2BReplayWriteSheet_('Production_vs_V2B_Family_Summary', _controlledV2BReplayFamilyHeaders_(), familyRows, warnings);
+  _controlledV2BReplayWriteSheet_('Production_vs_V2B_Provider_Summary', _controlledV2BReplayProviderHeaders_(), providerRows, warnings);
+
+  return {
+    status: 'ok',
+    generated_ts: generatedTs,
+    sample_rows: cases.length,
+    summary_rows: summaryRows.length,
+    utilization_rows: utilizationRows.length,
+    stability_rows: stabilityRows.length,
+    family_rows: familyRows.length,
+    provider_rows: providerRows.length,
+    warnings: _uniqueSortedStrings_(warnings)
+  };
+}
+
+function buildControlledV2BReplaySummary() {
+  return buildControlledV2BReplaySummary_();
+}
+
+function _controlledV2BReplayHeaders_() {
+  return [
+    'generated_ts',
+    'event_id',
+    'indicator_name',
+    'outcome_family',
+    'provider',
+    'release_ts',
+    'production_prediction_timestamp',
+    'production_forecast_value',
+    'production_qualitative_result',
+    'v2b_prediction_timestamp',
+    'v2b_forecast_value',
+    'v2b_qualitative_result',
+    'actual_value',
+    'consensus_value',
+    'prev_revision',
+    'forecast_changed_flag',
+    'qualitative_changed_flag',
+    'forecast_delta',
+    'production_abs_error',
+    'v2b_abs_error',
+    'improved_flag',
+    'worsened_flag',
+    'unchanged_flag',
+    'production_value_dir_ok',
+    'v2b_value_dir_ok',
+    'context_fields_referenced_count',
+    'context_fields_referenced_list',
+    'stability_bucket',
+    'v2b_provider_model',
+    'replay_status',
+    'v2b_rationale_short',
+    'v2b_rationale',
+    'v2b_attention_summary',
+    'v2b_attention_factors'
+  ];
+}
+
+function _controlledV2BReplayRowsToArrays_(headers, rows) {
+  return (rows || []).map(function(row) {
+    return headers.map(function(header) {
+      return row && row.hasOwnProperty(header) ? row[header] : '';
+    });
+  });
+}
+
+function _controlledV2BReplayEventFromEconomicRow_(row, idx) {
+  return {
+    event_id: String(_predValue_(row, idx, 'event_id') || '').trim(),
+    batch_id: String(_predValue_(row, idx, 'batch_id') || '').trim(),
+    type: String(_predValue_(row, idx, 'type') || '').trim(),
+    country: String(_predValue_(row, idx, 'country') || '').trim(),
+    indicator_name: String(_predValue_(row, idx, 'indicator_name') || '').trim(),
+    genre: String(_predValue_(row, idx, 'genre') || '').trim(),
+    importance: String(_predValue_(row, idx, 'importance') || '').trim(),
+    release_ts: String(_predValue_(row, idx, 'release_ts') || '').trim(),
+    source_cal: String(_predValue_(row, idx, 'source_cal') || '').trim(),
+    consensus_value: _numOrNull_(_predValue_(row, idx, 'consensus_value')),
+    prev_revision: _numOrNull_(_predValue_(row, idx, 'prev_revision')),
+    fx_pair: String(_predValue_(row, idx, 'fx_pair') || CFG.DEFAULT_FX).trim()
+  };
+}
+
+function _controlledV2BReplayResultRow_(generatedTs, ev, sourceRow, idx, prov, normalized, providerResp, featurePack) {
+  var productionForecast = _numOrNull_(_predValue_(sourceRow, idx, 'ai_forecast_value'));
+  var productionQualitative = String(_predValue_(sourceRow, idx, 'qualitative_result') || '').trim();
+  var actualValue = _numOrNull_(_predValue_(sourceRow, idx, 'released_value'));
+  var consensusValue = _numOrNull_(_predValue_(sourceRow, idx, 'consensus_value'));
+  var prevRevision = _numOrNull_(_predValue_(sourceRow, idx, 'prev_revision'));
+  var productionTs = String(_predValue_(sourceRow, idx, 'created_ts') || '').trim();
+  var replayForecast = _numOrNull_(normalized.ai_forecast_value);
+  var replayQualitative = String(normalized.qualitative_result || '').trim();
+  var replayTs = generatedTs;
+  var forecastChanged = (productionForecast == null || replayForecast == null)
+    ? ''
+    : (Math.abs(Number(productionForecast) - Number(replayForecast)) > 1e-9 ? 'TRUE' : 'FALSE');
+  var qualitativeChanged = productionQualitative || replayQualitative
+    ? (String(productionQualitative).trim() !== String(replayQualitative).trim() ? 'TRUE' : 'FALSE')
+    : '';
+  var forecastDelta = (productionForecast != null && replayForecast != null) ? _round4_(Number(replayForecast) - Number(productionForecast)) : '';
+  var productionAbsError = (productionForecast != null && actualValue != null) ? _round4_(Math.abs(Number(productionForecast) - Number(actualValue))) : '';
+  var v2bAbsError = (replayForecast != null && actualValue != null) ? _round4_(Math.abs(Number(replayForecast) - Number(actualValue))) : '';
+  var improved = '';
+  var worsened = '';
+  var unchanged = '';
+  if (productionAbsError !== '' && v2bAbsError !== '') {
+    var diff = Number(v2bAbsError) - Number(productionAbsError);
+    if (Math.abs(diff) <= 1e-9) unchanged = 'TRUE';
+    else if (diff < 0) improved = 'TRUE';
+    else worsened = 'TRUE';
+  }
+  var productionValueDir = _controlledV2BReplayValueDirOk_(productionForecast, actualValue, consensusValue, prevRevision, productionQualitative);
+  var v2bValueDir = _controlledV2BReplayValueDirOk_(replayForecast, actualValue, consensusValue, prevRevision, replayQualitative, normalized.qualitative_only);
+  var contextFields = _controlledV2BReplayContextFields_(normalized);
+  return {
+    generated_ts: generatedTs,
+    event_id: ev.event_id,
+    indicator_name: ev.indicator_name,
+    outcome_family: _featurePackFamilyKey_(ev),
+    provider: prov.name,
+    release_ts: ev.release_ts,
+    production_prediction_timestamp: productionTs,
+    production_forecast_value: productionForecast == null ? '' : productionForecast,
+    production_qualitative_result: productionQualitative,
+    v2b_prediction_timestamp: replayTs,
+    v2b_forecast_value: replayForecast == null ? '' : replayForecast,
+    v2b_qualitative_result: replayQualitative,
+    actual_value: actualValue == null ? '' : actualValue,
+    consensus_value: consensusValue == null ? '' : consensusValue,
+    prev_revision: prevRevision == null ? '' : prevRevision,
+    forecast_changed_flag: forecastChanged,
+    qualitative_changed_flag: qualitativeChanged,
+    forecast_delta: forecastDelta,
+    production_abs_error: productionAbsError,
+    v2b_abs_error: v2bAbsError,
+    improved_flag: improved,
+    worsened_flag: worsened,
+    unchanged_flag: unchanged,
+    production_value_dir_ok: productionValueDir.value_dir_ok,
+    v2b_value_dir_ok: v2bValueDir.value_dir_ok,
+    context_fields_referenced_count: contextFields.count,
+    context_fields_referenced_list: contextFields.list.join('|'),
+    stability_bucket: _controlledV2BReplayStabilityBucket_(productionForecast, replayForecast),
+    v2b_provider_model: prov.model,
+    replay_status: 'ok',
+    v2b_rationale_short: String(normalized.rationale_short || '').trim(),
+    v2b_rationale: String(normalized.rationale || '').trim(),
+    v2b_attention_summary: String(normalized.attention_summary || '').trim(),
+    v2b_attention_factors: String(normalized.attention_factors || '').trim()
+  };
+}
+
+function _controlledV2BReplayErrorRow_(generatedTs, sourceRow, providerName, message) {
+  return {
+    generated_ts: generatedTs,
+    event_id: String(sourceRow && _predValue_(sourceRow.row || sourceRow, sourceRow.idx || {}, 'event_id') || '').trim(),
+    indicator_name: String(sourceRow && _predValue_(sourceRow.row || sourceRow, sourceRow.idx || {}, 'indicator_name') || '').trim(),
+    outcome_family: String(sourceRow && _predValue_(sourceRow.row || sourceRow, sourceRow.idx || {}, 'family') || '').trim() || 'other',
+    provider: providerName,
+    release_ts: String(sourceRow && _predValue_(sourceRow.row || sourceRow, sourceRow.idx || {}, 'release_ts') || '').trim(),
+    production_prediction_timestamp: String(sourceRow && _predValue_(sourceRow.row || sourceRow, sourceRow.idx || {}, 'created_ts') || '').trim(),
+    production_forecast_value: _numOrNull_(sourceRow && _predValue_(sourceRow.row || sourceRow, sourceRow.idx || {}, 'ai_forecast_value')),
+    production_qualitative_result: String(sourceRow && _predValue_(sourceRow.row || sourceRow, sourceRow.idx || {}, 'qualitative_result') || '').trim(),
+    v2b_prediction_timestamp: generatedTs,
+    v2b_forecast_value: '',
+    v2b_qualitative_result: '',
+    actual_value: _numOrNull_(sourceRow && _predValue_(sourceRow.row || sourceRow, sourceRow.idx || {}, 'released_value')),
+    consensus_value: _numOrNull_(sourceRow && _predValue_(sourceRow.row || sourceRow, sourceRow.idx || {}, 'consensus_value')),
+    prev_revision: _numOrNull_(sourceRow && _predValue_(sourceRow.row || sourceRow, sourceRow.idx || {}, 'prev_revision')),
+    forecast_changed_flag: '',
+    qualitative_changed_flag: '',
+    forecast_delta: '',
+    production_abs_error: '',
+    v2b_abs_error: '',
+    improved_flag: '',
+    worsened_flag: '',
+    unchanged_flag: '',
+    production_value_dir_ok: '',
+    v2b_value_dir_ok: '',
+    context_fields_referenced_count: 0,
+    context_fields_referenced_list: '',
+    stability_bucket: 'error',
+    v2b_provider_model: '',
+    replay_status: 'error',
+    v2b_rationale_short: '',
+    v2b_rationale: '',
+    v2b_attention_summary: '',
+    v2b_attention_factors: String(message || '')
+  };
+}
+
+function _controlledV2BReplayValueDirOk_(forecastValue, actualValue, consensusValue, prevRevision, qualitativeResult, qualitativeOnly) {
+  var actualSurprise = _economicValueAccuracyDirection_(actualValue, consensusValue, prevRevision);
+  var ref = actualSurprise.ref_value;
+  if (actualValue == null || ref == null || actualSurprise.dir === 'unknown') {
+    return { value_dir_ok: '', note: 'unscored' };
+  }
+  var aiDir = null;
+  if (forecastValue != null) {
+    aiDir = { dir: _economicValueAccuracyInlineDir_(Number(forecastValue) - Number(ref), ref, forecastValue), method: 'numeric_forecast' };
+  } else if (qualitativeOnly) {
+    var q = String(qualitativeResult || '').trim().toLowerCase();
+    if (q === 'stronger') aiDir = { dir: 'above', method: 'qualitative_result' };
+    else if (q === 'weaker') aiDir = { dir: 'below', method: 'qualitative_result' };
+    else if (q === 'inline') aiDir = { dir: 'inline', method: 'qualitative_result' };
+  }
+  if (!aiDir || aiDir.dir === 'unknown') return { value_dir_ok: '', note: 'unscored' };
+  return {
+    value_dir_ok: aiDir.dir === actualSurprise.dir ? 'TRUE' : 'FALSE',
+    note: 'scored'
+  };
+}
+
+function _controlledV2BReplayContextFields_(normalized) {
+  var text = [
+    normalized && normalized.rationale_short,
+    normalized && normalized.rationale,
+    normalized && normalized.attention_summary,
+    normalized && normalized.attention_factors
+  ].join(' ').toLowerCase();
+  var fields = [];
+  function add(name, patterns) {
+    for (var i = 0; i < patterns.length; i++) {
+      if (text.indexOf(patterns[i]) >= 0) {
+        fields.push(name);
+        return;
+      }
+    }
+  }
+  add('rates', ['fedfunds', 'dff', 'dgs2', 'dgs10', 'rate', 'yields']);
+  add('yield curve', ['2s10s', 'yield curve', 'curve']);
+  add('usdjpy', ['usdjpy', 'usd/jpy', 'yen', 'jpy']);
+  add('dxy', ['dxy', 'dollar index', 'dollar']);
+  add('spx', ['spx', 's&p 500', 's and p', 'equities', 'stocks']);
+  add('gold', ['gold', 'xau']);
+  add('wti', ['wti', 'crude', 'oil', 'energy']);
+  add('jp10y', ['jp10y', 'japan 10', 'long-term government bond']);
+  add('us-jp spread', ['us-jp', 'spread', 'jp spread']);
+  return {
+    count: fields.length,
+    list: _uniqueSortedStrings_(fields)
+  };
+}
+
+function _controlledV2BReplayStabilityBucket_(productionForecast, replayForecast) {
+  if (productionForecast == null || replayForecast == null) return 'missing';
+  var base = Math.max(Math.abs(Number(productionForecast)), 1e-9);
+  var pct = Math.abs(Number(replayForecast) - Number(productionForecast)) / base * 100;
+  if (pct <= 5) return 'minor';
+  if (pct <= 20) return 'moderate';
+  return 'major';
+}
+
+function _controlledV2BReplaySummaryHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'sample_rows',
+    'sample_events',
+    'forecast_changed_pct',
+    'qualitative_changed_pct',
+    'improved_pct',
+    'worsened_pct',
+    'unchanged_pct',
+    'production_mae',
+    'v2b_mae',
+    'production_directional_accuracy',
+    'v2b_directional_accuracy',
+    'note'
+  ];
+}
+
+function _controlledV2BReplayContextHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'provider',
+    'sample_rows',
+    'context_fields_referenced_count',
+    'context_fields_referenced_list',
+    'field_reference_counts',
+    'note'
+  ];
+}
+
+function _controlledV2BReplayStabilityHeaders_() {
+  return [
+    'generated_ts',
+    'row_type',
+    'provider',
+    'family',
+    'sample_rows',
+    'unchanged_count',
+    'changed_count',
+    'minor_count',
+    'moderate_count',
+    'major_count',
+    'unchanged_pct',
+    'changed_pct',
+    'minor_pct',
+    'moderate_pct',
+    'major_pct',
+    'note'
+  ];
+}
+
+function _controlledV2BReplayFamilyHeaders_() {
+  return [
+    'generated_ts',
+    'family',
+    'event_count',
+    'row_count',
+    'production_mae',
+    'v2b_mae',
+    'improvement_pct',
+    'worsening_pct',
+    'forecast_changed_pct',
+    'production_directional_accuracy',
+    'v2b_directional_accuracy',
+    'best_worst_note'
+  ];
+}
+
+function _controlledV2BReplayProviderHeaders_() {
+  return [
+    'generated_ts',
+    'provider',
+    'row_count',
+    'forecast_changed_pct',
+    'improvement_pct',
+    'worsening_pct',
+    'production_mae',
+    'v2b_mae',
+    'production_directional_accuracy',
+    'v2b_directional_accuracy',
+    'best_worst_note'
+  ];
+}
+
+function _controlledV2BReplayWriteSheet_(sheetName, headers, rows, warnings) {
+  var ref = getDiagnosticsSheet_(sheetName, headers, warnings);
+  var actualHeaders = ref.headers;
+  _rewriteSheetRowsPreservingHeaders_(ref.sheet, actualHeaders, _remapRowsToHeaders_(headers, actualHeaders, _controlledV2BReplayRowsToArrays_(headers, rows)));
+}
+
+function _controlledV2BReplayCaseFromRow_(row, idx) {
+  return {
+    generated_ts: _cell(row, idx['generated_ts']) || '',
+    event_id: _cell(row, idx['event_id']) || '',
+    indicator_name: _cell(row, idx['indicator_name']) || '',
+    outcome_family: _cell(row, idx['outcome_family']) || '',
+    provider: _cell(row, idx['provider']) || '',
+    release_ts: _cell(row, idx['release_ts']) || '',
+    production_prediction_timestamp: _cell(row, idx['production_prediction_timestamp']) || '',
+    production_forecast_value: _numOrNull_(_cell(row, idx['production_forecast_value'])),
+    production_qualitative_result: _cell(row, idx['production_qualitative_result']) || '',
+    v2b_prediction_timestamp: _cell(row, idx['v2b_prediction_timestamp']) || '',
+    v2b_forecast_value: _numOrNull_(_cell(row, idx['v2b_forecast_value'])),
+    v2b_qualitative_result: _cell(row, idx['v2b_qualitative_result']) || '',
+    actual_value: _numOrNull_(_cell(row, idx['actual_value'])),
+    consensus_value: _numOrNull_(_cell(row, idx['consensus_value'])),
+    prev_revision: _numOrNull_(_cell(row, idx['prev_revision'])),
+    forecast_changed_flag: String(_cell(row, idx['forecast_changed_flag']) || ''),
+    qualitative_changed_flag: String(_cell(row, idx['qualitative_changed_flag']) || ''),
+    forecast_delta: _numOrNull_(_cell(row, idx['forecast_delta'])),
+    production_abs_error: _numOrNull_(_cell(row, idx['production_abs_error'])),
+    v2b_abs_error: _numOrNull_(_cell(row, idx['v2b_abs_error'])),
+    improved_flag: String(_cell(row, idx['improved_flag']) || ''),
+    worsened_flag: String(_cell(row, idx['worsened_flag']) || ''),
+    unchanged_flag: String(_cell(row, idx['unchanged_flag']) || ''),
+    production_value_dir_ok: String(_cell(row, idx['production_value_dir_ok']) || ''),
+    v2b_value_dir_ok: String(_cell(row, idx['v2b_value_dir_ok']) || ''),
+    context_fields_referenced_count: Number(_cell(row, idx['context_fields_referenced_count']) || 0),
+    context_fields_referenced_list: String(_cell(row, idx['context_fields_referenced_list']) || ''),
+    stability_bucket: String(_cell(row, idx['stability_bucket']) || ''),
+    v2b_provider_model: String(_cell(row, idx['v2b_provider_model']) || ''),
+    replay_status: String(_cell(row, idx['replay_status']) || ''),
+    v2b_rationale_short: String(_cell(row, idx['v2b_rationale_short']) || ''),
+    v2b_rationale: String(_cell(row, idx['v2b_rationale']) || ''),
+    v2b_attention_summary: String(_cell(row, idx['v2b_attention_summary']) || ''),
+    v2b_attention_factors: String(_cell(row, idx['v2b_attention_factors']) || '')
+  };
+}
+
+function _controlledV2BReplaySummaryRows_(generatedTs, cases) {
+  var total = cases.length;
+  var numeric = cases.filter(function(c){ return c.production_forecast_value !== '' && c.v2b_forecast_value !== ''; });
+  var forecastChanged = numeric.filter(function(c){ return c.forecast_changed_flag === 'TRUE'; }).length;
+  var qualChanged = cases.filter(function(c){ return c.qualitative_changed_flag === 'TRUE'; }).length;
+  var improved = numeric.filter(function(c){ return c.improved_flag === 'TRUE'; }).length;
+  var worsened = numeric.filter(function(c){ return c.worsened_flag === 'TRUE'; }).length;
+  var unchanged = numeric.filter(function(c){ return c.unchanged_flag === 'TRUE'; }).length;
+  var prodMae = _controlledV2BReplayMeanAbsError_(numeric.map(function(c){ return c.production_abs_error; }));
+  var v2bMae = _controlledV2BReplayMeanAbsError_(numeric.map(function(c){ return c.v2b_abs_error; }));
+  var prodDir = _controlledV2BReplayDirAccuracy_(cases, 'production_value_dir_ok');
+  var v2bDir = _controlledV2BReplayDirAccuracy_(cases, 'v2b_value_dir_ok');
+  return [{
+    generated_ts: generatedTs,
+    row_type: 'summary',
+    sample_rows: total,
+    sample_events: _controlledV2BReplayUniqueEventCount_(cases),
+    forecast_changed_pct: total ? _round4_((forecastChanged / total) * 100) : '',
+    qualitative_changed_pct: total ? _round4_((qualChanged / total) * 100) : '',
+    improved_pct: numeric.length ? _round4_((improved / numeric.length) * 100) : '',
+    worsened_pct: numeric.length ? _round4_((worsened / numeric.length) * 100) : '',
+    unchanged_pct: numeric.length ? _round4_((unchanged / numeric.length) * 100) : '',
+    production_mae: prodMae,
+    v2b_mae: v2bMae,
+    production_directional_accuracy: prodDir,
+    v2b_directional_accuracy: v2bDir,
+    note: 'Overall comparison of production versus v2B replay predictions.'
+  }];
+}
+
+function _controlledV2BReplayContextUtilizationRows_(generatedTs, cases) {
+  var byProvider = _controlledV2BReplayGroupBy_(cases, function(c){ return c.provider || 'unknown'; });
+  var rows = [];
+  Object.keys(byProvider).sort().forEach(function(provider) {
+    var list = byProvider[provider];
+    var counts = {};
+    for (var i = 0; i < list.length; i++) {
+      var fields = String(list[i].context_fields_referenced_list || '').split('|').map(function(s){ return String(s || '').trim(); }).filter(Boolean);
+      for (var j = 0; j < fields.length; j++) counts[fields[j]] = (counts[fields[j]] || 0) + 1;
+    }
+    rows.push({
+      generated_ts: generatedTs,
+      row_type: 'provider_summary',
+      provider: provider,
+      sample_rows: list.length,
+      context_fields_referenced_count: _round4_(_controlledV2BReplayMean_(list.map(function(c){ return c.context_fields_referenced_count; }))),
+      context_fields_referenced_list: _controlledV2BReplayUnionFields_(list),
+      field_reference_counts: Object.keys(counts).sort().map(function(k){ return k + ':' + counts[k]; }).join('|'),
+      note: 'Replay reasoning context usage by provider.'
+    });
+  });
+  return rows;
+}
+
+function _controlledV2BReplayStabilityRows_(generatedTs, cases) {
+  var byProviderFamily = _controlledV2BReplayGroupBy_(cases, function(c){ return (c.provider || 'unknown') + '|' + (c.outcome_family || 'other'); });
+  var rows = [];
+  Object.keys(byProviderFamily).sort().forEach(function(key) {
+    var parts = key.split('|');
+    var list = byProviderFamily[key];
+    var unchanged = list.filter(function(c){ return c.stability_bucket === 'minor' && c.forecast_changed_flag === 'FALSE'; }).length;
+    var changed = list.filter(function(c){ return c.forecast_changed_flag === 'TRUE'; }).length;
+    var minor = list.filter(function(c){ return c.stability_bucket === 'minor'; }).length;
+    var moderate = list.filter(function(c){ return c.stability_bucket === 'moderate'; }).length;
+    var major = list.filter(function(c){ return c.stability_bucket === 'major'; }).length;
+    rows.push({
+      generated_ts: generatedTs,
+      row_type: 'provider_family_summary',
+      provider: parts[0] || '',
+      family: parts[1] || '',
+      sample_rows: list.length,
+      unchanged_count: list.filter(function(c){ return c.forecast_changed_flag === 'FALSE'; }).length,
+      changed_count: changed,
+      minor_count: minor,
+      moderate_count: moderate,
+      major_count: major,
+      unchanged_pct: list.length ? _round4_((list.filter(function(c){ return c.forecast_changed_flag === 'FALSE'; }).length / list.length) * 100) : '',
+      changed_pct: list.length ? _round4_((changed / list.length) * 100) : '',
+      minor_pct: list.length ? _round4_((minor / list.length) * 100) : '',
+      moderate_pct: list.length ? _round4_((moderate / list.length) * 100) : '',
+      major_pct: list.length ? _round4_((major / list.length) * 100) : '',
+      note: 'Forecast stability bucket by provider and family.'
+    });
+  });
+  return rows;
+}
+
+function _controlledV2BReplayFamilySummaryRows_(generatedTs, cases) {
+  var byFamily = _controlledV2BReplayGroupBy_(cases, function(c){ return c.outcome_family || 'other'; });
+  var rows = [];
+  Object.keys(byFamily).sort().forEach(function(family) {
+    var list = byFamily[family];
+    rows.push({
+      generated_ts: generatedTs,
+      family: family,
+      event_count: _controlledV2BReplayUniqueEventCount_(list),
+      row_count: list.length,
+      production_mae: _controlledV2BReplayMeanAbsError_(list.map(function(c){ return c.production_abs_error; })),
+      v2b_mae: _controlledV2BReplayMeanAbsError_(list.map(function(c){ return c.v2b_abs_error; })),
+      improvement_pct: list.length ? _round4_((list.filter(function(c){ return c.improved_flag === 'TRUE'; }).length / list.length) * 100) : '',
+      worsening_pct: list.length ? _round4_((list.filter(function(c){ return c.worsened_flag === 'TRUE'; }).length / list.length) * 100) : '',
+      forecast_changed_pct: list.length ? _round4_((list.filter(function(c){ return c.forecast_changed_flag === 'TRUE'; }).length / list.length) * 100) : '',
+      production_directional_accuracy: _controlledV2BReplayDirAccuracy_(list, 'production_value_dir_ok'),
+      v2b_directional_accuracy: _controlledV2BReplayDirAccuracy_(list, 'v2b_value_dir_ok'),
+      best_worst_note: 'Family summary of production vs v2B replay.'
+    });
+  });
+  return rows;
+}
+
+function _controlledV2BReplayProviderSummaryRows_(generatedTs, cases) {
+  var byProvider = _controlledV2BReplayGroupBy_(cases, function(c){ return c.provider || 'unknown'; });
+  var rows = [];
+  Object.keys(byProvider).sort().forEach(function(provider) {
+    var list = byProvider[provider];
+    rows.push({
+      generated_ts: generatedTs,
+      provider: provider,
+      row_count: list.length,
+      forecast_changed_pct: list.length ? _round4_((list.filter(function(c){ return c.forecast_changed_flag === 'TRUE'; }).length / list.length) * 100) : '',
+      improvement_pct: list.length ? _round4_((list.filter(function(c){ return c.improved_flag === 'TRUE'; }).length / list.length) * 100) : '',
+      worsening_pct: list.length ? _round4_((list.filter(function(c){ return c.worsened_flag === 'TRUE'; }).length / list.length) * 100) : '',
+      production_mae: _controlledV2BReplayMeanAbsError_(list.map(function(c){ return c.production_abs_error; })),
+      v2b_mae: _controlledV2BReplayMeanAbsError_(list.map(function(c){ return c.v2b_abs_error; })),
+      production_directional_accuracy: _controlledV2BReplayDirAccuracy_(list, 'production_value_dir_ok'),
+      v2b_directional_accuracy: _controlledV2BReplayDirAccuracy_(list, 'v2b_value_dir_ok'),
+      best_worst_note: 'Provider summary of production vs v2B replay.'
+    });
+  });
+  return rows;
+}
+
+function _controlledV2BReplayMeanAbsError_(values) {
+  var nums = (values || []).map(Number).filter(function(v){ return isFinite(v); });
+  if (!nums.length) return '';
+  return _round4_(nums.reduce(function(a, b){ return a + Math.abs(b); }, 0) / nums.length);
+}
+
+function _controlledV2BReplayMean_(values) {
+  var nums = (values || []).map(Number).filter(function(v){ return isFinite(v); });
+  if (!nums.length) return '';
+  return _round4_(nums.reduce(function(a, b){ return a + b; }, 0) / nums.length);
+}
+
+function _controlledV2BReplayDirAccuracy_(cases, key) {
+  var scored = 0, ok = 0;
+  for (var i = 0; i < (cases || []).length; i++) {
+    var val = String(cases[i][key] || '').trim().toUpperCase();
+    if (val === 'TRUE' || val === 'FALSE') {
+      scored += 1;
+      if (val === 'TRUE') ok += 1;
+    }
+  }
+  return scored ? _round4_((ok / scored) * 100) : '';
+}
+
+function _controlledV2BReplayUniqueEventCount_(cases) {
+  var seen = {};
+  for (var i = 0; i < (cases || []).length; i++) {
+    if (cases[i].event_id) seen[cases[i].event_id] = true;
+  }
+  return Object.keys(seen).length;
+}
+
+function _controlledV2BReplayGroupBy_(cases, keyFn) {
+  var out = {};
+  for (var i = 0; i < (cases || []).length; i++) {
+    var key = keyFn(cases[i]) || 'unknown';
+    if (!out[key]) out[key] = [];
+    out[key].push(cases[i]);
+  }
+  return out;
+}
+
+function _controlledV2BReplayUnionFields_(cases) {
+  var counts = {};
+  for (var i = 0; i < (cases || []).length; i++) {
+    var fields = String(cases[i].context_fields_referenced_list || '').split('|').map(function(s){ return String(s || '').trim(); }).filter(Boolean);
+    for (var j = 0; j < fields.length; j++) counts[fields[j]] = true;
+  }
+  return Object.keys(counts).sort().join('|');
 }
 
 function buildPredictionAggregateForEvent_(eventId) {
