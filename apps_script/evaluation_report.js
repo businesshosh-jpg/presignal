@@ -8624,10 +8624,16 @@ function getArchiveSpreadsheet_() {
 function getSheetLocation_(sheetName) {
   var registry = _sheetLocationRegistry_();
   var name = String(sheetName || '').trim();
+  var retired = isRetiredCharacterOutcomeOrSignalSheetName_(name);
   if (registry[name]) {
     var item = {};
     for (var k in registry[name]) item[k] = registry[name][k];
     item.sheet_name = name;
+    if (retired) {
+      item.retired = true;
+      item.rebuildable = false;
+      item.write_policy = 'RETIRED';
+    }
     return item;
   }
   var workbookType = isDiagnosticsSheetName_(name) ? 'DIAGNOSTICS' : 'MAIN';
@@ -8636,9 +8642,10 @@ function getSheetLocation_(sheetName) {
     category: workbookType === 'DIAGNOSTICS' ? 'DIAGNOSTIC' : 'DERIVED',
     workbook_type: workbookType,
     read_policy: workbookType === 'DIAGNOSTICS' ? 'DIAGNOSTICS_FIRST' : 'MAIN_FIRST',
-    write_policy: workbookType,
+    write_policy: retired ? 'RETIRED' : workbookType,
     canonical: false,
-    rebuildable: true
+    rebuildable: !retired,
+    retired: retired
   };
 }
 
@@ -8651,7 +8658,8 @@ function describeSheetLocation_(sheetName) {
     'read_policy=' + loc.read_policy,
     'write_policy=' + loc.write_policy,
     'canonical=' + loc.canonical,
-    'rebuildable=' + loc.rebuildable
+    'rebuildable=' + loc.rebuildable,
+    'retired=' + !!loc.retired
   ].join(',');
 }
 
