@@ -384,61 +384,6 @@ function apiBuildProviderCharacterEconomicOutcomeLink(params) {
   return apiBuildProviderCharacterEconomicOutcomeLink_();
 }
 
-function apiBuildCharacterOutcomeLink_() {
-  return {
-    status: 'ok',
-    character_outcome_link: buildCharacterOutcomeLink_()
-  };
-}
-
-function apiBuildCharacterOutcomeLink(params) {
-  return apiBuildCharacterOutcomeLink_();
-}
-
-function apiBuildCharacterOutcomeFalsification_() {
-  return {
-    status: 'ok',
-    character_outcome_falsification: buildCharacterOutcomeFalsification_()
-  };
-}
-
-function apiBuildCharacterOutcomeFalsification(params) {
-  return apiBuildCharacterOutcomeFalsification_();
-}
-
-function apiBuildCharacterOutcomeRecurrenceDriftValidation_() {
-  return {
-    status: 'ok',
-    character_outcome_recurrence_drift_validation: buildCharacterOutcomeRecurrenceDriftValidation_()
-  };
-}
-
-function apiBuildCharacterOutcomeRecurrenceDriftValidation(params) {
-  return apiBuildCharacterOutcomeRecurrenceDriftValidation_();
-}
-
-function apiBuildCharacterSignalCandidateLayer_() {
-  return {
-    status: 'ok',
-    character_signal_candidate_layer: buildCharacterSignalCandidateLayer_()
-  };
-}
-
-function apiBuildCharacterSignalCandidateLayer(params) {
-  return apiBuildCharacterSignalCandidateLayer_();
-}
-
-function apiBuildCharacterSignalShadowTest_() {
-  return {
-    status: 'ok',
-    character_signal_shadow_test: buildCharacterSignalShadowTest_()
-  };
-}
-
-function apiBuildCharacterSignalShadowTest(params) {
-  return apiBuildCharacterSignalShadowTest_();
-}
-
 function apiBuildAttentionProviderIndividuality_() {
   return {
     status: 'ok',

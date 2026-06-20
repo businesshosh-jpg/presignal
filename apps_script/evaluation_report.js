@@ -965,7 +965,7 @@ function buildActiveDecisionReports_() {
     { name: 'buildEconomicValueAccuracy_', fn: buildEconomicValueAccuracy_, outputs: ['Economic_Value_Accuracy'] },
     { name: 'buildProviderFamilyEconomicAccuracy_', fn: buildProviderFamilyEconomicAccuracy_, outputs: ['Provider_Family_Economic_Accuracy'] },
     { name: 'buildEconomicToMarketTranslationErrors_', fn: buildEconomicToMarketTranslationErrors_, outputs: ['Economic_To_Market_Translation_Errors'] },
-    { name: 'buildProviderCharacterOutcomeLayerAudit_', fn: buildProviderCharacterOutcomeLayerAudit_, outputs: ['Provider_Character_Outcome_Layer_Audit', 'Provider_Character_Economic_Rebuild_Plan', 'Provider_Character_Translation_Reinterpretation', 'Provider_Character_Methodology_Summary'] },
+    { name: 'buildProviderCharacterEconomicOutcomeLink_', fn: buildProviderCharacterEconomicOutcomeLink_, outputs: ['Character_Economic_Outcome_Link', 'Character_Economic_Outcome_Family_Link', 'Character_Economic_Outcome_Summary', 'Character_Economic_Outcome_Methodology'] },
     { name: 'buildMarketSensitivityFilterCandidates_', fn: buildMarketSensitivityFilterCandidates_, outputs: ['Market_Sensitivity_Filter_Candidates'], dependency_only: true },
     { name: 'buildMarketSensitivityFilterSummary_', fn: buildMarketSensitivityFilterSummary_, outputs: ['Market_Sensitivity_Filter_Summary'] },
     { name: 'buildMarketSensitivityNoSignalCounterfactuals_', fn: buildMarketSensitivityNoSignalCounterfactuals_, outputs: ['Market_Sensitivity_NoSignal_Counterfactuals'] },
@@ -1007,13 +1007,17 @@ function buildActiveDecisionReports_() {
     started_ts: startedTs,
     ended_ts: new Date().toISOString(),
     active_decision_path: [
-      'Economic_Value_Accuracy',
-      'Provider_Family_Economic_Accuracy',
-      'Economic_To_Market_Translation_Errors',
-      'Market_Sensitivity_Filter_Summary',
-      'Market_Sensitivity_NoSignal_Counterfactuals',
-      'Inflation_NoSignal_Review'
-    ],
+    'Economic_Value_Accuracy',
+    'Provider_Family_Economic_Accuracy',
+    'Economic_To_Market_Translation_Errors',
+    'Market_Sensitivity_Filter_Summary',
+    'Market_Sensitivity_NoSignal_Counterfactuals',
+    'Inflation_NoSignal_Review',
+    'Character_Economic_Outcome_Link',
+    'Character_Economic_Outcome_Family_Link',
+    'Character_Economic_Outcome_Summary',
+    'Character_Economic_Outcome_Methodology'
+  ],
     included_builders: steps.map(function(step) { return step.name; }),
     excluded_builders: excludedBuilders,
     total_sheets_written: totalSheetsWritten,
@@ -8481,27 +8485,6 @@ function _sheetLocationRegistry_() {
     'Character_Economic_Outcome_Family_Link': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Character_Economic_Outcome_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Character_Economic_Outcome_Methodology': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Link': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Family_Link': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Provider_Controlled': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Family_Controlled': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Permutation_Test': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Robust_Traits': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Good_Reasoning_Proxy_Test': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Falsification_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Recurrence_Validation': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Drift_Assessment': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Recurrence_Block_Detail': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Outcome_Recurrence_Interpretation': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Signal_Candidates': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Signal_Candidate_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Signal_Candidate_Family_Map': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Signal_Readiness_Report': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Signal_Shadow_Test': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Signal_Shadow_Family_Test': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Signal_Shadow_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
-    'Character_Signal_Shadow_Readiness': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Project_Status': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_FIRST', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'Decision_Log': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_FIRST', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'Prediction_Aggregates': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true }
@@ -8549,27 +8532,7 @@ function isDiagnosticsSheetName_(sheetName) {
     'Character_Economic_Outcome_Family_Link': true,
     'Character_Economic_Outcome_Summary': true,
     'Character_Economic_Outcome_Methodology': true,
-    'Character_Outcome_Link': true,
-    'Character_Outcome_Summary': true,
-    'Character_Outcome_Family_Link': true,
-    'Character_Outcome_Provider_Controlled': true,
-    'Character_Outcome_Family_Controlled': true,
-    'Character_Outcome_Permutation_Test': true,
-    'Character_Outcome_Robust_Traits': true,
-    'Character_Good_Reasoning_Proxy_Test': true,
-    'Character_Outcome_Falsification_Report': true,
-    'Character_Outcome_Recurrence_Validation': true,
     'Character_Drift_Assessment': true,
-    'Character_Outcome_Recurrence_Block_Detail': true,
-    'Character_Outcome_Recurrence_Interpretation': true,
-    'Character_Signal_Candidates': true,
-    'Character_Signal_Candidate_Summary': true,
-    'Character_Signal_Candidate_Family_Map': true,
-    'Character_Signal_Readiness_Report': true,
-    'Character_Signal_Shadow_Test': true,
-    'Character_Signal_Shadow_Family_Test': true,
-    'Character_Signal_Shadow_Summary': true,
-    'Character_Signal_Shadow_Readiness': true,
     'Attention_Provider_Individuality': true,
     'Attention_Evidence_Report': true,
     'Attention_Disagreement_Review': true,
@@ -8635,6 +8598,18 @@ function getSheetLocation_(sheetName) {
       item.write_policy = 'RETIRED';
     }
     return item;
+  }
+  if (retired) {
+    return {
+      sheet_name: name,
+      category: 'DIAGNOSTIC',
+      workbook_type: 'DIAGNOSTICS',
+      read_policy: 'DIAGNOSTICS_FIRST',
+      write_policy: 'RETIRED',
+      canonical: false,
+      rebuildable: false,
+      retired: true
+    };
   }
   var workbookType = isDiagnosticsSheetName_(name) ? 'DIAGNOSTICS' : 'MAIN';
   return {
@@ -8822,29 +8797,7 @@ function getReportOutputSpreadsheet_(sheetName, warnings) {
 function isRetiredCharacterOutcomeOrSignalSheetName_(sheetName) {
   var name = String(sheetName || '').trim();
   if (!name) return false;
-  var retired = {
-    'Character_Outcome_Link': true,
-    'Character_Outcome_Summary': true,
-    'Character_Outcome_Family_Link': true,
-    'Character_Outcome_Provider_Controlled': true,
-    'Character_Outcome_Family_Controlled': true,
-    'Character_Outcome_Permutation_Test': true,
-    'Character_Outcome_Robust_Traits': true,
-    'Character_Good_Reasoning_Proxy_Test': true,
-    'Character_Outcome_Falsification_Report': true,
-    'Character_Outcome_Recurrence_Validation': true,
-    'Character_Outcome_Recurrence_Block_Detail': true,
-    'Character_Outcome_Recurrence_Interpretation': true,
-    'Character_Signal_Candidates': true,
-    'Character_Signal_Candidate_Summary': true,
-    'Character_Signal_Candidate_Family_Map': true,
-    'Character_Signal_Readiness_Report': true,
-    'Character_Signal_Shadow_Test': true,
-    'Character_Signal_Shadow_Family_Test': true,
-    'Character_Signal_Shadow_Summary': true,
-    'Character_Signal_Shadow_Readiness': true
-  };
-  return !!retired[name];
+  return name.indexOf('Character_Outcome_') === 0 || name.indexOf('Character_Signal_') === 0;
 }
 
 function getDiagnosticsSheet_(sheetName, headers, warnings) {

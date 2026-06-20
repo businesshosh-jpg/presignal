@@ -113,7 +113,6 @@ function onOpen() {
       .addItem('Build Character Residual Architecture', 'menuBuildCharacterResidualArchitecture_')
       .addItem('Build Character Recurrence Validation', 'menuBuildCharacterRecurrenceValidation_')
       .addItem('Build Provider Character Economic Outcome Link', 'menuBuildProviderCharacterEconomicOutcomeLink_')
-      .addItem('Build Provider Character Outcome-Layer Audit', 'menuBuildProviderCharacterOutcomeLayerAudit_')
   );
 
   menu.addSubMenu(
