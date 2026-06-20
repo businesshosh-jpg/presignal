@@ -8760,6 +8760,13 @@ function getSheetForRead_(sheetName) {
 
 function getSheetForWrite_(sheetName) {
   var loc = getSheetLocation_(sheetName);
+  if (isRetiredCharacterOutcomeOrSignalSheetName_(sheetName)) {
+    throw new Error(
+      'Retired character outcome/signal sheet is historical only and must not be recreated: ' +
+      sheetName +
+      ' | registry=' + describeSheetLocation_(sheetName)
+    );
+  }
   var ss = null;
   var workbookType = '';
   if (loc.write_policy === 'DIAGNOSTICS') {
@@ -8802,6 +8809,34 @@ function getReportOutputSpreadsheet_(sheetName, warnings) {
     target_workbook_type: target.workbook_type,
     location: target.location
   };
+}
+
+function isRetiredCharacterOutcomeOrSignalSheetName_(sheetName) {
+  var name = String(sheetName || '').trim();
+  if (!name) return false;
+  var retired = {
+    'Character_Outcome_Link': true,
+    'Character_Outcome_Summary': true,
+    'Character_Outcome_Family_Link': true,
+    'Character_Outcome_Provider_Controlled': true,
+    'Character_Outcome_Family_Controlled': true,
+    'Character_Outcome_Permutation_Test': true,
+    'Character_Outcome_Robust_Traits': true,
+    'Character_Good_Reasoning_Proxy_Test': true,
+    'Character_Outcome_Falsification_Report': true,
+    'Character_Outcome_Recurrence_Validation': true,
+    'Character_Outcome_Recurrence_Block_Detail': true,
+    'Character_Outcome_Recurrence_Interpretation': true,
+    'Character_Signal_Candidates': true,
+    'Character_Signal_Candidate_Summary': true,
+    'Character_Signal_Candidate_Family_Map': true,
+    'Character_Signal_Readiness_Report': true,
+    'Character_Signal_Shadow_Test': true,
+    'Character_Signal_Shadow_Family_Test': true,
+    'Character_Signal_Shadow_Summary': true,
+    'Character_Signal_Shadow_Readiness': true
+  };
+  return !!retired[name];
 }
 
 function getDiagnosticsSheet_(sheetName, headers, warnings) {
