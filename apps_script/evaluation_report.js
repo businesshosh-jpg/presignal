@@ -966,6 +966,10 @@ function buildActiveDecisionReports_() {
     { name: 'buildProviderFamilyEconomicAccuracy_', fn: buildProviderFamilyEconomicAccuracy_, outputs: ['Provider_Family_Economic_Accuracy'] },
     { name: 'buildEconomicToMarketTranslationErrors_', fn: buildEconomicToMarketTranslationErrors_, outputs: ['Economic_To_Market_Translation_Errors'] },
     { name: 'buildProviderCharacterEconomicOutcomeLink_', fn: buildProviderCharacterEconomicOutcomeLink_, outputs: ['Character_Economic_Outcome_Link', 'Character_Economic_Outcome_Family_Link', 'Character_Economic_Outcome_Summary', 'Character_Economic_Outcome_Methodology'] },
+    { name: 'buildProviderCharacterEconomicFalsification_', fn: buildProviderCharacterEconomicFalsification_, outputs: ['Character_Economic_Falsification', 'Character_Economic_Falsification_Summary', 'Character_Economic_Falsification_Methodology'] },
+    { name: 'buildProviderCharacterMicroExpressionPilot_', fn: buildProviderCharacterMicroExpressionPilot_, outputs: ['Provider_Character_MicroExpression_Pilot', 'Provider_Character_MicroExpression_Clusters', 'Provider_Character_MicroExpression_Summary', 'Provider_Character_MicroExpression_Methodology'] },
+    { name: 'buildProviderCharacterRawOutputMicroExpressionReplay_', fn: buildProviderCharacterRawOutputMicroExpressionReplay_, outputs: ['Provider_Character_RawOutput_MicroExpression_Replay', 'Provider_Character_RawOutput_Tier_Comparison', 'Provider_Character_RawOutput_Clusters', 'Provider_Character_RawOutput_Methodology'] },
+    { name: 'buildProviderCharacterFreshVsOriginalReplay_', fn: buildProviderCharacterFreshVsOriginalReplay_, outputs: ['Provider_Character_Fresh_Replay', 'Provider_Character_Fresh_vs_Original_Comparison', 'Provider_Character_Fresh_Expression_Clusters', 'Provider_Character_Fresh_Replay_Summary'] },
     { name: 'buildMarketSensitivityFilterCandidates_', fn: buildMarketSensitivityFilterCandidates_, outputs: ['Market_Sensitivity_Filter_Candidates'], dependency_only: true },
     { name: 'buildMarketSensitivityFilterSummary_', fn: buildMarketSensitivityFilterSummary_, outputs: ['Market_Sensitivity_Filter_Summary'] },
     { name: 'buildMarketSensitivityNoSignalCounterfactuals_', fn: buildMarketSensitivityNoSignalCounterfactuals_, outputs: ['Market_Sensitivity_NoSignal_Counterfactuals'] },
@@ -1016,7 +1020,22 @@ function buildActiveDecisionReports_() {
     'Character_Economic_Outcome_Link',
     'Character_Economic_Outcome_Family_Link',
     'Character_Economic_Outcome_Summary',
-    'Character_Economic_Outcome_Methodology'
+    'Character_Economic_Outcome_Methodology',
+    'Character_Economic_Falsification',
+    'Character_Economic_Falsification_Summary',
+    'Character_Economic_Falsification_Methodology',
+    'Provider_Character_MicroExpression_Pilot',
+    'Provider_Character_MicroExpression_Clusters',
+    'Provider_Character_MicroExpression_Summary',
+    'Provider_Character_MicroExpression_Methodology',
+    'Provider_Character_RawOutput_MicroExpression_Replay',
+    'Provider_Character_RawOutput_Tier_Comparison',
+    'Provider_Character_RawOutput_Clusters',
+    'Provider_Character_RawOutput_Methodology',
+    'Provider_Character_Fresh_Replay',
+    'Provider_Character_Fresh_vs_Original_Comparison',
+    'Provider_Character_Fresh_Expression_Clusters',
+    'Provider_Character_Fresh_Replay_Summary'
   ],
     included_builders: steps.map(function(step) { return step.name; }),
     excluded_builders: excludedBuilders,
@@ -8358,7 +8377,13 @@ function _predValue_(row, idx, key) {
 }
 
 function _getOrCreateSheet_(name) {
-  var ss = SpreadsheetApp.getActive();
+  var loc = getSheetLocation_(name);
+  var ss = null;
+  if (loc && loc.workbook_type === 'DIAGNOSTICS') ss = getDiagnosticsSpreadsheet_();
+  else if (loc && loc.workbook_type === 'OVERVIEW') ss = getOverviewSpreadsheet_();
+  else if (loc && loc.workbook_type === 'ARCHIVE') ss = getArchiveSpreadsheet_();
+  else ss = getMainSpreadsheet_() || SpreadsheetApp.getActive();
+  if (!ss) throw new Error('Unable to resolve workbook for sheet: ' + name);
   return ss.getSheetByName(name) || ss.insertSheet(name);
 }
 
@@ -8422,6 +8447,135 @@ function _diagnosticsWorkbookSafetyThreshold_() {
   return 9500000;
 }
 
+var _SHEET_REGISTRY_CACHE_ = null;
+
+function _normalizeSheetRegistryKey_(value) {
+  return String(value || '')
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+function _registryWorkbookTypeFor_(workbook) {
+  var value = String(workbook || '').trim().toUpperCase();
+  if (value === 'PROJECT_OVERVIEWS' || value === 'OVERVIEW') return 'OVERVIEW';
+  if (value === 'ARCHIVE_01' || value === 'ARCHIVE') return 'ARCHIVE';
+  if (value === 'DIAGNOSTICS') return 'DIAGNOSTICS';
+  return 'MAIN';
+}
+
+function _registryWorkbookLabelFor_(workbookType) {
+  var value = String(workbookType || '').trim().toUpperCase();
+  if (value === 'OVERVIEW') return 'PROJECT_OVERVIEWS';
+  if (value === 'ARCHIVE') return 'ARCHIVE_01';
+  if (value === 'DIAGNOSTICS') return 'DIAGNOSTICS';
+  return 'MAIN';
+}
+
+function _registryWorkbookIdForLabel_(workbookLabel) {
+  var label = String(workbookLabel || '').trim().toUpperCase();
+  if (label === 'MAIN') return _getConfigValueMaybe_('MAIN_SPREADSHEET_ID') || _configWorkbookIdFallback_('MAIN_SPREADSHEET_ID');
+  if (label === 'DIAGNOSTICS') return _getConfigValueMaybe_('DIAGNOSTICS_SPREADSHEET_ID') || _configWorkbookIdFallback_('DIAGNOSTICS_SPREADSHEET_ID');
+  if (label === 'PROJECT_OVERVIEWS' || label === 'OVERVIEW') return _getConfigValueMaybe_('OVERVIEW_SPREADSHEET_ID') || _configWorkbookIdFallback_('OVERVIEW_SPREADSHEET_ID');
+  if (label === 'ARCHIVE_01' || label === 'ARCHIVE') return _getConfigValueMaybe_('ARCHIVE_01_SPREADSHEET_ID') || _getConfigValueMaybe_('ARCHIVE_SPREADSHEET_ID') || _configWorkbookIdFallback_('ARCHIVE_01_SPREADSHEET_ID') || _configWorkbookIdFallback_('ARCHIVE_SPREADSHEET_ID');
+  return '';
+}
+
+function _getSheetRegistrySheet_() {
+  var overview = getOverviewSpreadsheet_();
+  if (!overview) return null;
+  return overview.getSheetByName('Sheet_Registry');
+}
+
+function _asRegistryBool_(value) {
+  if (typeof value === 'boolean') return value;
+  var s = String(value == null ? '' : value).trim().toLowerCase();
+  return s === 'true' || s === '1' || s === 'yes' || s === 'y';
+}
+
+function _loadSheetRegistryIndex_() {
+  if (_SHEET_REGISTRY_CACHE_) return _SHEET_REGISTRY_CACHE_;
+
+  var sh = _getSheetRegistrySheet_();
+  if (!sh) {
+    _SHEET_REGISTRY_CACHE_ = { rows: [], byKey: {} };
+    return _SHEET_REGISTRY_CACHE_;
+  }
+
+  var values = sh.getDataRange().getValues() || [];
+  if (values.length < 2) {
+    _SHEET_REGISTRY_CACHE_ = { rows: [], byKey: {} };
+    return _SHEET_REGISTRY_CACHE_;
+  }
+
+  var headers = (values[0] || []).map(function(h){ return String(h || '').trim(); });
+  var idx = {};
+  for (var i = 0; i < headers.length; i++) {
+    idx[headers[i].toLowerCase()] = i;
+  }
+
+  var rows = [];
+  var byKey = {};
+  for (var r = 1; r < values.length; r++) {
+    var row = values[r];
+    var physical = String(row[idx.physical_sheet_name] || row[idx.sheet_name] || '').trim();
+    var logical = String(row[idx.logical_sheet_id] || '').trim();
+    if (!physical && !logical) continue;
+    var workbookLabel = String(row[idx.workbook] || '').trim().toUpperCase();
+    var workbookType = _registryWorkbookTypeFor_(workbookLabel);
+    var record = {
+      logical_sheet_id: logical || _normalizeSheetRegistryKey_(physical),
+      physical_sheet_name: physical || logical,
+      workbook: workbookLabel || _registryWorkbookLabelFor_(workbookType),
+      workbook_type: workbookType,
+      workbook_id: String(row[idx.workbook_id] || '').trim(),
+      category: String(row[idx.category] || '').trim() || 'GOVERNANCE',
+      lifecycle_state: String(row[idx.lifecycle_state] || '').trim() || 'ACTIVE',
+      owner_module: String(row[idx.owner_module] || '').trim() || 'governance',
+      participates_in_rebuild: _asRegistryBool_(row[idx.participates_in_rebuild]),
+      read_only: _asRegistryBool_(row[idx.read_only]),
+      allow_creation: _asRegistryBool_(row[idx.allow_creation]),
+      created_phase: String(row[idx.created_phase] || '').trim(),
+      notes: String(row[idx.notes] || '').trim()
+    };
+    rows.push(record);
+    byKey[_normalizeSheetRegistryKey_(record.logical_sheet_id)] = record;
+    byKey[_normalizeSheetRegistryKey_(record.physical_sheet_name)] = record;
+  }
+
+  _SHEET_REGISTRY_CACHE_ = { rows: rows, byKey: byKey };
+  return _SHEET_REGISTRY_CACHE_;
+}
+
+function _sheetRegistryEntry_(sheetName) {
+  var index = _loadSheetRegistryIndex_();
+  var key = _normalizeSheetRegistryKey_(sheetName);
+  return (index && index.byKey && index.byKey[key]) ? index.byKey[key] : null;
+}
+
+function _sheetRegistryLocation_(sheetName) {
+  var entry = _sheetRegistryEntry_(sheetName);
+  if (!entry) return null;
+  return {
+    sheet_name: entry.physical_sheet_name,
+    logical_sheet_id: entry.logical_sheet_id,
+    category: entry.category,
+    workbook: entry.workbook,
+    workbook_type: entry.workbook_type,
+    workbook_id: entry.workbook_id,
+    read_policy: 'REGISTRY_ROUTED',
+    write_policy: entry.workbook_type,
+    canonical: false,
+    rebuildable: !!entry.participates_in_rebuild,
+    lifecycle_state: entry.lifecycle_state,
+    owner_module: entry.owner_module,
+    read_only: !!entry.read_only,
+    allow_creation: !!entry.allow_creation,
+    registry_source: 'Sheet_Registry'
+  };
+}
+
 function _sheetLocationRegistry_() {
   return {
     'Event': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
@@ -8433,12 +8587,27 @@ function _sheetLocationRegistry_() {
     'SeriesMap_Proposals': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
     'MR_ProviderRuns': { category: 'CANONICAL', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: true, rebuildable: false },
     'Outcome_Ledger': { category: 'DERIVED', workbook_type: 'MAIN', read_policy: 'MAIN_ONLY', write_policy: 'MAIN', canonical: false, rebuildable: true },
+    'Signal_Synchrony_Provider_Slice_Performance': { category: 'SIGNAL_SYNCHRONY', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Signal_Synchrony_Provider_Slice_Summary': { category: 'SIGNAL_SYNCHRONY', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Signal_Synchrony_Conditional_Value_Stability': { category: 'SIGNAL_SYNCHRONY', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Signal_Synchrony_Conditional_Value_Stability_Summary': { category: 'SIGNAL_SYNCHRONY', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Current_Roadmap': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'Research_Journey': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'PreSignal_Layer_Map': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'Experiment_Register': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'Interpretation_Corrections': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'Decision_Log_v2': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Workbook_Migration_Audit': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Workbook_Routing_Dependency_Audit': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Workbook_Migration_Phase2C_Report': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Workbook_Migration_Phase2E_Report': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Workbook_Migration_Control': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Workbook_Migration_Log': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Workbook_Migration_Post2F_Sanity_Audit': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Experiment_Lifecycle_Audit': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Experiment_Lifecycle_Summary': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Signal_Synchrony_v1': { category: 'SIGNAL_SYNCHRONY', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
+    'Sheet_Registry': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_ONLY', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'Economic_Value_Accuracy': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Provider_Family_Economic_Accuracy': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Economic_To_Market_Translation_Errors': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
@@ -8485,9 +8654,39 @@ function _sheetLocationRegistry_() {
     'Character_Economic_Outcome_Family_Link': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Character_Economic_Outcome_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Character_Economic_Outcome_Methodology': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Economic_Falsification': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Economic_Falsification_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Character_Economic_Falsification_Methodology': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_MicroExpression_Pilot': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_MicroExpression_Clusters': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_MicroExpression_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_MicroExpression_Methodology': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_RawOutput_MicroExpression_Replay': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_RawOutput_Tier_Comparison': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_RawOutput_Clusters': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_RawOutput_Methodology': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Fresh_Replay': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Fresh_vs_Original_Comparison': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Fresh_Expression_Clusters': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Fresh_Replay_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Capture': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Clusters': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Methodology': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
     'Project_Status': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_FIRST', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
     'Decision_Log': { category: 'GOVERNANCE', workbook_type: 'OVERVIEW', read_policy: 'OVERVIEW_FIRST', write_policy: 'OVERVIEW', canonical: false, rebuildable: true },
-    'Prediction_Aggregates': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true }
+    'Prediction_Aggregates': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Recurrence': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Provider_Profile': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Recurrence_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Recurrence_Methodology': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Economic_Link': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Economic_Link_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Economic_Link_Methodology': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Eligibility_Audit': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Provider_Character_Direct_Expression_Eligibility_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Signal_Synchrony_Cohort_Characterization': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true },
+    'Signal_Synchrony_Cohort_Characterization_Summary': { category: 'DIAGNOSTIC', workbook_type: 'DIAGNOSTICS', read_policy: 'DIAGNOSTICS_FIRST', write_policy: 'DIAGNOSTICS', canonical: false, rebuildable: true }
   };
 }
 
@@ -8532,6 +8731,45 @@ function isDiagnosticsSheetName_(sheetName) {
     'Character_Economic_Outcome_Family_Link': true,
     'Character_Economic_Outcome_Summary': true,
     'Character_Economic_Outcome_Methodology': true,
+    'Character_Economic_Falsification': true,
+    'Character_Economic_Falsification_Summary': true,
+    'Character_Economic_Falsification_Methodology': true,
+    'Provider_Character_MicroExpression_Pilot': true,
+    'Provider_Character_MicroExpression_Clusters': true,
+    'Provider_Character_MicroExpression_Summary': true,
+    'Provider_Character_MicroExpression_Methodology': true,
+    'Provider_Character_RawOutput_MicroExpression_Replay': true,
+    'Provider_Character_RawOutput_Tier_Comparison': true,
+    'Provider_Character_RawOutput_Clusters': true,
+    'Provider_Character_RawOutput_Methodology': true,
+    'Provider_Character_Fresh_Replay': true,
+    'Provider_Character_Fresh_vs_Original_Comparison': true,
+    'Provider_Character_Fresh_Expression_Clusters': true,
+    'Provider_Character_Fresh_Replay_Summary': true,
+    'Provider_Character_Direct_Expression_Capture': true,
+    'Provider_Character_Direct_Expression_Clusters': true,
+    'Provider_Character_Direct_Expression_Summary': true,
+    'Provider_Character_Direct_Expression_Methodology': true,
+    'Provider_Character_Direct_Expression_Validation': true,
+    'Provider_Character_Direct_Expression_Microcohort': true,
+    'Provider_Character_Direct_Expression_Outcome_Check': true,
+    'Provider_Character_Direct_Expression_Recurrence': true,
+    'Provider_Character_Direct_Expression_Provider_Profile': true,
+    'Provider_Character_Direct_Expression_Recurrence_Summary': true,
+    'Provider_Character_Direct_Expression_Recurrence_Methodology': true,
+    'Provider_Character_Direct_Expression_Economic_Link': true,
+    'Provider_Character_Direct_Expression_Economic_Link_Summary': true,
+    'Provider_Character_Direct_Expression_Economic_Link_Methodology': true,
+    'Provider_Character_Direct_Expression_Eligibility_Audit': true,
+    'Provider_Character_Direct_Expression_Eligibility_Summary': true,
+    'Signal_Synchrony_Cohort_Characterization': true,
+    'Signal_Synchrony_Cohort_Characterization_Summary': true,
+    'Signal_Synchrony_Rerun_Count_Sufficiency': true,
+    'Signal_Synchrony_Rerun_Count_Summary': true,
+    'Signal_Synchrony_Conditional_Value_Audit': true,
+    'Signal_Synchrony_Conditional_Value_Summary': true,
+    'Signal_Synchrony_Conditional_Value_Stability': true,
+    'Signal_Synchrony_Conditional_Value_Stability_Summary': true,
     'Character_Drift_Assessment': true,
     'Attention_Provider_Individuality': true,
     'Attention_Evidence_Report': true,
@@ -8568,6 +8806,7 @@ function getOverviewSpreadsheet_() {
 
 function getMainSpreadsheet_() {
   var mainId = _getConfigValueMaybe_('MAIN_SPREADSHEET_ID');
+  if (!mainId) mainId = _configWorkbookIdFallback_('MAIN_SPREADSHEET_ID');
   if (mainId) return SpreadsheetApp.openById(mainId);
   return SpreadsheetApp.getActive();
 }
@@ -8579,15 +8818,24 @@ function getDiagnosticsSpreadsheet_() {
 }
 
 function getArchiveSpreadsheet_() {
-  var archiveId = _getConfigValueMaybe_('ARCHIVE_SPREADSHEET_ID');
+  var archiveId = _getConfigValueMaybe_('ARCHIVE_01_SPREADSHEET_ID') || _getConfigValueMaybe_('ARCHIVE_SPREADSHEET_ID');
   if (!archiveId) return null;
   return SpreadsheetApp.openById(archiveId);
 }
 
 function getSheetLocation_(sheetName) {
-  var registry = _sheetLocationRegistry_();
   var name = String(sheetName || '').trim();
   var retired = isRetiredCharacterOutcomeOrSignalSheetName_(name);
+  var registryEntry = _sheetRegistryLocation_(name);
+  if (registryEntry) {
+    if (retired) {
+      registryEntry.retired = true;
+      registryEntry.rebuildable = false;
+      registryEntry.write_policy = 'RETIRED';
+    }
+    return registryEntry;
+  }
+  var registry = _sheetLocationRegistry_();
   if (registry[name]) {
     var item = {};
     for (var k in registry[name]) item[k] = registry[name][k];
@@ -8638,6 +8886,619 @@ function describeSheetLocation_(sheetName) {
   ].join(',');
 }
 
+function _clearSheetRegistryCache_() {
+  _SHEET_REGISTRY_CACHE_ = null;
+}
+
+function _sheetRegistryNowIso_() {
+  return new Date().toISOString();
+}
+
+function _sheetRegistryRequiredHeaders_() {
+  return [
+    'logical_sheet_id',
+    'physical_sheet_name',
+    'workbook',
+    'workbook_id',
+    'category',
+    'lifecycle_state',
+    'owner_module',
+    'participates_in_rebuild',
+    'read_only',
+    'allow_creation',
+    'created_phase',
+    'notes',
+    'registry_created_ts',
+    'registry_last_verified_ts',
+    'registry_migration_ts',
+    'registry_rename_ts'
+  ];
+}
+
+function _sheetRegistryAuditHeaders_() {
+  return [
+    'audit_ts',
+    'issue_type',
+    'logical_sheet_id',
+    'physical_sheet_name',
+    'registry_workbook',
+    'observed_workbook',
+    'status',
+    'details'
+  ];
+}
+
+function _allowedRegistryLifecycleStates_() {
+  return {
+    'ACTIVE': true,
+    'FROZEN': true,
+    'ARCHIVED': true,
+    'DEPRECATED': true
+  };
+}
+
+function _allowedRegistryCategories_() {
+  return {
+    'CANONICAL': true,
+    'DERIVED': true,
+    'DIAGNOSTIC': true,
+    'SIGNAL_SYNCHRONY': true,
+    'PROVIDER_CHARACTER': true,
+    'OUTCOME_LAYER': true,
+    'FEATURE_PACK': true,
+    'ECONOMIC_VALUE': true,
+    'GOVERNANCE': true,
+    'EVALUATION': true,
+    'MAIN_OPERATIONAL': true,
+    'REFERENCE_DATA': true,
+    'OPERATIONAL_DERIVED': true,
+    'MARKET_SENSITIVITY': true,
+    'ATTENTION_V1': true,
+    'ATTENTION_V3': true,
+    'ATTENTION_C0': true,
+    'FAMILY_STRUCTURE': true,
+    'LEGACY_MR': true,
+    'BATCH_SPLITTING': true,
+    'CHARACTER_ECONOMIC': true,
+    'UNKNOWN_REVIEW_REQUIRED': true
+  };
+}
+
+function _normalizeRegistryCategory_(value, fallbackValue) {
+  var raw = String(value || fallbackValue || 'GOVERNANCE').trim().toUpperCase();
+  return _allowedRegistryCategories_()[raw] ? raw : String(fallbackValue || 'GOVERNANCE').trim().toUpperCase();
+}
+
+function _normalizeRegistryLifecycle_(value, fallbackValue) {
+  var raw = String(value || fallbackValue || 'ACTIVE').trim().toUpperCase();
+  return _allowedRegistryLifecycleStates_()[raw] ? raw : String(fallbackValue || 'ACTIVE').trim().toUpperCase();
+}
+
+function _sheetRegistryColumnLetter_(colIndex) {
+  var n = Number(colIndex || 0);
+  if (n < 1) return 'A';
+  var out = '';
+  while (n > 0) {
+    var rem = (n - 1) % 26;
+    out = String.fromCharCode(65 + rem) + out;
+    n = Math.floor((n - 1) / 26);
+  }
+  return out;
+}
+
+function _deterministicPhysicalSheetName_(logicalSheetId, fallbackName) {
+  var name = String(fallbackName || logicalSheetId || '').trim();
+  if (!name) name = String(logicalSheetId || '').trim();
+  if (!name) name = 'Governed_Sheet';
+  if (name.length <= 99) return name;
+  var replacements = [
+    ['Conditional', 'Cond'],
+    ['Predictive', 'Pred'],
+    ['Expression', 'Expr'],
+    ['Provider', 'Prov'],
+    ['Character', 'Char'],
+    ['Synchronization', 'Synchrony'],
+    ['Methodology', 'Method'],
+    ['Economic', 'Econ'],
+    ['Direct_Expression', 'DE'],
+    ['Direct Expression', 'DE']
+  ];
+  for (var i = 0; i < replacements.length && name.length > 99; i++) {
+    name = name.split(replacements[i][0]).join(replacements[i][1]);
+  }
+  return name.length > 99 ? name.slice(0, 99) : name;
+}
+
+function _inferRegistryOwnerModule_(sheetName, fallbackOwner) {
+  var name = String(sheetName || '').trim();
+  if (fallbackOwner) return String(fallbackOwner).trim();
+  if (name.indexOf('Signal_Synchrony_') === 0) return 'signal_synchrony';
+  if (name.indexOf('Provider_Character_') === 0 || name.indexOf('Character_') === 0) return 'provider_character';
+  if (name.indexOf('Outcome_') === 0) return 'outcome';
+  if (name.indexOf('Evaluation_') === 0) return 'evaluation';
+  if (name.indexOf('Feature_Pack_') === 0 || name.indexOf('Market_Context_') === 0 || name.indexOf('V2B_') === 0 || name.indexOf('Production_vs_V2B_') === 0 || name.indexOf('Surprise_Pack_') === 0) return 'feature_pack';
+  if (name.indexOf('Attention_') === 0) return 'attention';
+  if (name.indexOf('Family_') === 0 || name.indexOf('Batch_') === 0) return 'family_structure';
+  if (name.indexOf('Workbook_') === 0 || name.indexOf('Experiment_') === 0 || name.indexOf('Decision_') === 0 || name.indexOf('Current_') === 0 || name.indexOf('Research_') === 0 || name.indexOf('PreSignal_') === 0 || name === 'Sheet_Registry' || name === 'Sheet_Registry_Audit') return 'governance';
+  return 'registry_auto_sync';
+}
+
+function _ensureSheetRegistrySchema_() {
+  var sh = _getSheetRegistrySheet_();
+  if (!sh) return null;
+  var headers = _ensureHeadersAppendOnlyForSheet_(sh, _sheetRegistryRequiredHeaders_());
+  var idx = {};
+  for (var i = 0; i < headers.length; i++) idx[String(headers[i] || '').trim().toLowerCase()] = i;
+  return { sheet: sh, headers: headers, index: idx };
+}
+
+function _loadSheetRegistryState_() {
+  if (_SHEET_REGISTRY_CACHE_ && _SHEET_REGISTRY_CACHE_.version === 2) return _SHEET_REGISTRY_CACHE_;
+
+  var schema = _ensureSheetRegistrySchema_();
+  if (!schema) {
+    _SHEET_REGISTRY_CACHE_ = {
+      version: 2,
+      sheet: null,
+      headers: [],
+      index: {},
+      rows: [],
+      byLogical: {},
+      byPhysical: {},
+      duplicateLogicalIds: [],
+      duplicatePhysicalNames: []
+    };
+    return _SHEET_REGISTRY_CACHE_;
+  }
+
+  var values = schema.sheet.getDataRange().getValues() || [];
+  var rows = [];
+  var byLogical = {};
+  var byPhysical = {};
+  for (var r = 1; r < values.length; r++) {
+    var row = values[r] || [];
+    var physical = String(row[schema.index.physical_sheet_name] || row[schema.index.sheet_name] || '').trim();
+    var logical = String(row[schema.index.logical_sheet_id] || '').trim();
+    if (!physical && !logical) continue;
+    var workbookLabel = String(row[schema.index.workbook] || '').trim().toUpperCase();
+    var workbookType = _registryWorkbookTypeFor_(workbookLabel);
+    var record = {
+      row_number: r + 1,
+      logical_sheet_id: logical || _normalizeSheetRegistryKey_(physical),
+      logical_key: _normalizeSheetRegistryKey_(logical || physical),
+      physical_sheet_name: physical || logical,
+      physical_key: _normalizeSheetRegistryKey_(physical || logical),
+      workbook: workbookLabel || _registryWorkbookLabelFor_(workbookType),
+      workbook_type: workbookType,
+      workbook_id: String(row[schema.index.workbook_id] || '').trim() || _registryWorkbookIdForLabel_(workbookLabel),
+      category: _normalizeRegistryCategory_(row[schema.index.category], 'GOVERNANCE'),
+      lifecycle_state: _normalizeRegistryLifecycle_(row[schema.index.lifecycle_state], 'ACTIVE'),
+      owner_module: String(row[schema.index.owner_module] || '').trim() || 'governance',
+      participates_in_rebuild: _asRegistryBool_(row[schema.index.participates_in_rebuild]),
+      read_only: _asRegistryBool_(row[schema.index.read_only]),
+      allow_creation: _asRegistryBool_(row[schema.index.allow_creation]),
+      created_phase: String(row[schema.index.created_phase] || '').trim(),
+      notes: String(row[schema.index.notes] || '').trim(),
+      registry_created_ts: String(row[schema.index.registry_created_ts] || '').trim(),
+      registry_last_verified_ts: String(row[schema.index.registry_last_verified_ts] || '').trim(),
+      registry_migration_ts: String(row[schema.index.registry_migration_ts] || '').trim(),
+      registry_rename_ts: String(row[schema.index.registry_rename_ts] || '').trim()
+    };
+    rows.push(record);
+    if (!byLogical[record.logical_key]) byLogical[record.logical_key] = [];
+    byLogical[record.logical_key].push(record);
+    if (!byPhysical[record.physical_key]) byPhysical[record.physical_key] = [];
+    byPhysical[record.physical_key].push(record);
+  }
+
+  var duplicateLogicalIds = [];
+  for (var logicalKey in byLogical) {
+    if (byLogical[logicalKey] && byLogical[logicalKey].length > 1) duplicateLogicalIds.push(logicalKey);
+  }
+  var duplicatePhysicalNames = [];
+  for (var physicalKey in byPhysical) {
+    if (byPhysical[physicalKey] && byPhysical[physicalKey].length > 1) duplicatePhysicalNames.push(physicalKey);
+  }
+
+  _SHEET_REGISTRY_CACHE_ = {
+    version: 2,
+    sheet: schema.sheet,
+    headers: schema.headers,
+    index: schema.index,
+    rows: rows,
+    byLogical: byLogical,
+    byPhysical: byPhysical,
+    duplicateLogicalIds: duplicateLogicalIds,
+    duplicatePhysicalNames: duplicatePhysicalNames
+  };
+  return _SHEET_REGISTRY_CACHE_;
+}
+
+function _sheetRegistryEntry_(sheetName) {
+  var key = _normalizeSheetRegistryKey_(sheetName);
+  var state = _loadSheetRegistryState_();
+  var logicalMatches = state.byLogical[key] || [];
+  if (logicalMatches.length === 1) return logicalMatches[0];
+  var physicalMatches = state.byPhysical[key] || [];
+  if (physicalMatches.length === 1) return physicalMatches[0];
+  return null;
+}
+
+function _sheetRegistryLocation_(sheetName) {
+  var entry = _sheetRegistryEntry_(sheetName);
+  if (!entry) return null;
+  return {
+    sheet_name: entry.physical_sheet_name,
+    logical_sheet_id: entry.logical_sheet_id,
+    category: entry.category,
+    workbook: entry.workbook,
+    workbook_type: entry.workbook_type,
+    workbook_id: entry.workbook_id,
+    read_policy: 'REGISTRY_ROUTED',
+    write_policy: entry.workbook_type,
+    canonical: false,
+    rebuildable: !!entry.participates_in_rebuild,
+    lifecycle_state: entry.lifecycle_state,
+    owner_module: entry.owner_module,
+    read_only: !!entry.read_only,
+    allow_creation: !!entry.allow_creation,
+    registry_source: 'Sheet_Registry'
+  };
+}
+
+function _registrySpecForSheet_(sheetName, mode, extras) {
+  var name = String(sheetName || '').trim();
+  var loc = getSheetLocation_(name);
+  var requestedMode = String(mode || 'read').trim().toLowerCase();
+  var workbookType = String(loc.workbook_type || 'MAIN').trim().toUpperCase();
+  var writePolicy = String(loc.write_policy || workbookType).trim().toUpperCase();
+  var desiredWorkbookType = requestedMode === 'read' ? workbookType : (writePolicy === 'RETIRED' ? workbookType : writePolicy);
+  var logicalId = _normalizeSheetRegistryKey_((extras && extras.logicalSheetId) || name);
+  return {
+    requested_name: name,
+    logical_sheet_id: logicalId,
+    physical_sheet_name: _deterministicPhysicalSheetName_(logicalId, (extras && extras.physicalSheetName) || loc.sheet_name || name),
+    desired_workbook_type: desiredWorkbookType,
+    desired_workbook: _registryWorkbookLabelFor_(desiredWorkbookType),
+    desired_workbook_id: _registryWorkbookIdForLabel_(_registryWorkbookLabelFor_(desiredWorkbookType)),
+    category: _normalizeRegistryCategory_((extras && extras.category) || loc.category, loc.category || 'GOVERNANCE'),
+    lifecycle_state: _normalizeRegistryLifecycle_((extras && extras.lifecycleState) || loc.lifecycle_state, 'ACTIVE'),
+    owner_module: _inferRegistryOwnerModule_(name, extras && extras.ownerModule),
+    participates_in_rebuild: !!((extras && extras.participatesInRebuild) != null ? extras.participatesInRebuild : loc.rebuildable),
+    read_only: !!((extras && extras.readOnly) != null ? extras.readOnly : false),
+    allow_creation: !!((extras && extras.allowCreation) != null ? extras.allowCreation : requestedMode !== 'read'),
+    created_phase: String((extras && extras.createdPhase) || 'Sheet Registry Governance v2').trim(),
+    notes: String((extras && extras.notes) || '').trim(),
+    location: loc
+  };
+}
+
+function _findGovernedSheetMatches_(spec) {
+  var names = [];
+  function addName_(value) {
+    var s = String(value || '').trim();
+    if (!s) return;
+    for (var i = 0; i < names.length; i++) if (names[i] === s) return;
+    names.push(s);
+  }
+  addName_(spec.requested_name);
+  addName_(spec.physical_sheet_name);
+  var entries = _knownWorkbookEntries_();
+  var matches = [];
+  for (var i = 0; i < entries.length; i++) {
+    var entry = entries[i];
+    if (!entry || !entry.spreadsheet) continue;
+    for (var j = 0; j < names.length; j++) {
+      var sh = entry.spreadsheet.getSheetByName(names[j]);
+      if (!sh) continue;
+      matches.push({
+        sheet: sh,
+        spreadsheet: entry.spreadsheet,
+        spreadsheet_id: entry.spreadsheet.getId(),
+        workbook_type: entry.type,
+        workbook: _registryWorkbookLabelFor_(entry.type),
+        matched_name: names[j]
+      });
+      break;
+    }
+  }
+  return matches;
+}
+
+function _writeRegistryRecord_(record, rowNumber) {
+  var state = _loadSheetRegistryState_();
+  if (!state.sheet) return;
+  var headers = state.headers || _sheetRegistryRequiredHeaders_();
+  var values = [];
+  for (var i = 0; i < headers.length; i++) {
+    var header = String(headers[i] || '').trim().toLowerCase();
+    values.push(record[header] != null ? record[header] : '');
+  }
+  state.sheet.getRange(rowNumber, 1, 1, headers.length).setValues([values]);
+  _clearSheetRegistryCache_();
+}
+
+function _appendRegistryRecord_(record) {
+  var state = _loadSheetRegistryState_();
+  if (!state.sheet) return;
+  var rowNumber = Math.max(state.sheet.getLastRow() + 1, 2);
+  _writeRegistryRecord_(record, rowNumber);
+}
+
+function _recordToRegistryRow_(entry, spec, timestamps) {
+  var now = (timestamps && timestamps.now) || _sheetRegistryNowIso_();
+  var row = {
+    logical_sheet_id: (entry && entry.logical_sheet_id) || spec.logical_sheet_id,
+    physical_sheet_name: (entry && entry.physical_sheet_name) || spec.physical_sheet_name,
+    workbook: (entry && entry.workbook) || spec.desired_workbook,
+    workbook_id: (entry && entry.workbook_id) || spec.desired_workbook_id,
+    category: _normalizeRegistryCategory_((entry && entry.category) || spec.category, spec.category),
+    lifecycle_state: _normalizeRegistryLifecycle_((entry && entry.lifecycle_state) || spec.lifecycle_state, spec.lifecycle_state),
+    owner_module: String((entry && entry.owner_module) || spec.owner_module || 'registry_auto_sync').trim(),
+    participates_in_rebuild: !!((entry && entry.participates_in_rebuild) != null ? entry.participates_in_rebuild : spec.participates_in_rebuild),
+    read_only: !!((entry && entry.read_only) != null ? entry.read_only : spec.read_only),
+    allow_creation: !!((entry && entry.allow_creation) != null ? entry.allow_creation : spec.allow_creation),
+    created_phase: String((entry && entry.created_phase) || spec.created_phase || '').trim(),
+    notes: String((entry && entry.notes) || spec.notes || '').trim(),
+    registry_created_ts: (entry && entry.registry_created_ts) || now,
+    registry_last_verified_ts: now,
+    registry_migration_ts: (entry && entry.registry_migration_ts) || '',
+    registry_rename_ts: (entry && entry.registry_rename_ts) || ''
+  };
+  return row;
+}
+
+function _synchronizeRegistryEntry_(spec, match, existingEntry) {
+  var now = _sheetRegistryNowIso_();
+  var entry = existingEntry || _sheetRegistryEntry_(spec.logical_sheet_id) || _sheetRegistryEntry_(spec.requested_name);
+  var current = _recordToRegistryRow_(entry, spec, { now: now });
+  var changed = false;
+  if (match) {
+    var matchPhysical = String(match.sheet.getName() || '').trim();
+    var matchWorkbook = _registryWorkbookLabelFor_(match.workbook_type);
+    if (current.physical_sheet_name !== matchPhysical) {
+      current.physical_sheet_name = matchPhysical;
+      current.registry_rename_ts = now;
+      changed = true;
+    }
+    if (current.workbook !== matchWorkbook || current.workbook_id !== match.spreadsheet_id) {
+      current.workbook = matchWorkbook;
+      current.workbook_id = match.spreadsheet_id;
+      current.registry_migration_ts = now;
+      changed = true;
+    }
+  }
+  if (current.category !== spec.category) {
+    current.category = spec.category;
+    changed = true;
+  }
+  if (current.lifecycle_state !== spec.lifecycle_state) {
+    current.lifecycle_state = spec.lifecycle_state;
+    changed = true;
+  }
+  if (current.owner_module !== spec.owner_module) {
+    current.owner_module = spec.owner_module;
+    changed = true;
+  }
+  if (!!current.participates_in_rebuild !== !!spec.participates_in_rebuild) {
+    current.participates_in_rebuild = !!spec.participates_in_rebuild;
+    changed = true;
+  }
+  if (!!current.read_only !== !!spec.read_only) {
+    current.read_only = !!spec.read_only;
+    changed = true;
+  }
+  if (!!current.allow_creation !== !!spec.allow_creation) {
+    current.allow_creation = !!spec.allow_creation;
+    changed = true;
+  }
+  current.registry_last_verified_ts = now;
+
+  if (entry && entry.row_number) {
+    if (changed || !entry.registry_last_verified_ts) _writeRegistryRecord_(current, entry.row_number);
+    return { action: changed ? 'updated' : 'verified', row: current };
+  }
+  _appendRegistryRecord_(current);
+  return { action: 'created', row: current };
+}
+
+function resolveGovernedSheet_(sheetName, options) {
+  var opts = options || {};
+  var mode = String(opts.mode || 'read').trim().toLowerCase();
+  var spec = _registrySpecForSheet_(sheetName, mode, opts);
+  var state = _loadSheetRegistryState_();
+  var logicalKey = _normalizeSheetRegistryKey_(spec.logical_sheet_id);
+  var physicalKey = _normalizeSheetRegistryKey_(spec.physical_sheet_name);
+  if ((state.byLogical[logicalKey] || []).length > 1) {
+    throw new Error('Duplicate logical sheet id in Sheet_Registry: ' + spec.logical_sheet_id);
+  }
+  if ((state.byPhysical[physicalKey] || []).length > 1) {
+    throw new Error('Duplicate physical sheet name in Sheet_Registry: ' + spec.physical_sheet_name);
+  }
+
+  var entry = _sheetRegistryEntry_(spec.logical_sheet_id) || _sheetRegistryEntry_(sheetName);
+  var matches = _findGovernedSheetMatches_(spec);
+  var chosenMatch = null;
+  if (entry) {
+    for (var i = 0; i < matches.length; i++) {
+      if (matches[i].spreadsheet_id === entry.workbook_id) {
+        chosenMatch = matches[i];
+        break;
+      }
+    }
+  }
+  if (!chosenMatch && matches.length === 1) chosenMatch = matches[0];
+  if (!chosenMatch && matches.length > 1) {
+    for (var j = 0; j < matches.length; j++) {
+      if (matches[j].sheet.getName() === spec.physical_sheet_name || matches[j].sheet.getName() === spec.requested_name) {
+        chosenMatch = matches[j];
+        break;
+      }
+    }
+  }
+
+  if (!chosenMatch && mode !== 'read') {
+    if (entry && !entry.allow_creation) {
+      throw new Error('Registry entry exists but allow_creation=FALSE: ' + spec.logical_sheet_id);
+    }
+    var targetSs = null;
+    if (spec.desired_workbook_type === 'DIAGNOSTICS') targetSs = getDiagnosticsSpreadsheet_();
+    else if (spec.desired_workbook_type === 'OVERVIEW') targetSs = getOverviewSpreadsheet_();
+    else if (spec.desired_workbook_type === 'ARCHIVE') targetSs = getArchiveSpreadsheet_();
+    else targetSs = getMainSpreadsheet_();
+    if (!targetSs) {
+      throw new Error('Target workbook unavailable for governed sheet: ' + spec.logical_sheet_id);
+    }
+    var createdSheet = targetSs.getSheetByName(spec.physical_sheet_name) || targetSs.insertSheet(spec.physical_sheet_name);
+    chosenMatch = {
+      sheet: createdSheet,
+      spreadsheet: targetSs,
+      spreadsheet_id: targetSs.getId(),
+      workbook_type: spec.desired_workbook_type,
+      workbook: _registryWorkbookLabelFor_(spec.desired_workbook_type),
+      matched_name: spec.physical_sheet_name
+    };
+  }
+
+  if (!chosenMatch && mode === 'read') {
+    throw new Error('Sheet not found for governed read: ' + spec.requested_name + ' | registry=' + describeSheetLocation_(spec.requested_name));
+  }
+
+  var sync = _synchronizeRegistryEntry_(spec, chosenMatch, entry);
+  return {
+    sheet: chosenMatch.sheet,
+    spreadsheet: chosenMatch.spreadsheet,
+    spreadsheet_id: chosenMatch.spreadsheet_id,
+    workbook_type: chosenMatch.workbook_type,
+    location: _sheetRegistryLocation_(spec.logical_sheet_id) || spec.location,
+    checked_workbooks: matches.map(function(m) { return m.workbook_type + ':' + m.spreadsheet_id; }),
+    registry_sync: sync
+  };
+}
+
+function menuBuildSheetRegistryAudit_() {
+  return buildSheetRegistryAudit_();
+}
+
+function buildSheetRegistryAudit_() {
+  var auditHeaders = _sheetRegistryAuditHeaders_();
+  var resolved = resolveGovernedSheet_('Sheet_Registry_Audit', {
+    mode: 'write',
+    category: 'GOVERNANCE',
+    lifecycleState: 'ACTIVE',
+    ownerModule: 'governance',
+    participatesInRebuild: true,
+    readOnly: false,
+    allowCreation: true,
+    createdPhase: 'Sheet Registry Governance v2',
+    notes: 'Derived registry validation report'
+  });
+  var auditSheet = resolved.sheet;
+  var actualHeaders = _ensureHeadersAppendOnlyForSheet_(auditSheet, auditHeaders);
+  if (auditSheet.getLastRow() > 1) {
+    auditSheet.getRange(2, 1, auditSheet.getLastRow() - 1, Math.max(auditSheet.getLastColumn(), actualHeaders.length)).clearContent();
+  }
+
+  var now = _sheetRegistryNowIso_();
+  var state = _loadSheetRegistryState_();
+  var rows = [];
+  var workbookSheets = {};
+  var entries = _knownWorkbookEntries_();
+  for (var i = 0; i < entries.length; i++) {
+    if (!entries[i] || !entries[i].spreadsheet) continue;
+    var sheetList = entries[i].spreadsheet.getSheets();
+    for (var j = 0; j < sheetList.length; j++) {
+      var sh = sheetList[j];
+      workbookSheets[_normalizeSheetRegistryKey_(sh.getName()) + '::' + entries[i].type] = {
+        name: sh.getName(),
+        workbook_type: entries[i].type
+      };
+    }
+  }
+
+  function pushAudit_(issueType, logicalId, physicalName, registryWorkbook, observedWorkbook, status, details) {
+    rows.push({
+      audit_ts: now,
+      issue_type: issueType,
+      logical_sheet_id: logicalId || '',
+      physical_sheet_name: physicalName || '',
+      registry_workbook: registryWorkbook || '',
+      observed_workbook: observedWorkbook || '',
+      status: status || '',
+      details: details || ''
+    });
+  }
+
+  pushAudit_('SUMMARY', '', '', '', '', 'PASS', 'registered_sheets=' + state.rows.length);
+  pushAudit_('SUMMARY', '', '', '', '', 'PASS', 'active_sheets=' + state.rows.filter(function(r){ return r.lifecycle_state === 'ACTIVE'; }).length);
+
+  for (var d = 0; d < state.duplicateLogicalIds.length; d++) {
+    pushAudit_('DUPLICATE_LOGICAL_ID', state.duplicateLogicalIds[d], '', '', '', 'FAIL', 'Duplicate logical id present in Sheet_Registry');
+  }
+  for (var p = 0; p < state.duplicatePhysicalNames.length; p++) {
+    pushAudit_('DUPLICATE_PHYSICAL_NAME', '', state.duplicatePhysicalNames[p], '', '', 'FAIL', 'Duplicate physical sheet mapping present in Sheet_Registry');
+  }
+
+  for (var r = 0; r < state.rows.length; r++) {
+    var record = state.rows[r];
+    var observed = _findGovernedSheetMatches_({
+      requested_name: record.logical_sheet_id,
+      physical_sheet_name: record.physical_sheet_name
+    });
+    if (!observed.length) {
+      pushAudit_('MISSING_SHEET', record.logical_sheet_id, record.physical_sheet_name, record.workbook, '', 'WARN', 'Registry entry exists but no workbook sheet was found.');
+      continue;
+    }
+    var match = observed[0];
+    if (observed.length > 1) {
+      pushAudit_('ORPHAN_GOVERNED_SHEET', record.logical_sheet_id, record.physical_sheet_name, record.workbook, match.workbook, 'WARN', 'Multiple workbook matches found for governed sheet.');
+    }
+    if (match.sheet.getName() !== record.physical_sheet_name) {
+      pushAudit_('RENAMED_SHEET', record.logical_sheet_id, record.physical_sheet_name, record.workbook, match.workbook, 'WARN', 'Observed sheet name=' + match.sheet.getName());
+    }
+    if (match.workbook !== record.workbook || match.spreadsheet_id !== record.workbook_id) {
+      pushAudit_('MIGRATED_SHEET', record.logical_sheet_id, record.physical_sheet_name, record.workbook, match.workbook, 'WARN', 'Workbook id mismatch between registry and observed sheet.');
+    }
+    if (!_allowedRegistryLifecycleStates_()[String(record.lifecycle_state || '').toUpperCase()]) {
+      pushAudit_('INVALID_LIFECYCLE', record.logical_sheet_id, record.physical_sheet_name, record.workbook, match.workbook, 'FAIL', 'Unsupported lifecycle_state=' + record.lifecycle_state);
+    }
+    if (!_allowedRegistryCategories_()[String(record.category || '').toUpperCase()]) {
+      pushAudit_('INVALID_CATEGORY', record.logical_sheet_id, record.physical_sheet_name, record.workbook, match.workbook, 'FAIL', 'Unsupported category=' + record.category);
+    }
+  }
+
+  var registryLogicalKeys = {};
+  var registryPhysicalKeys = {};
+  for (var x = 0; x < state.rows.length; x++) {
+    registryLogicalKeys[state.rows[x].logical_key] = true;
+    registryPhysicalKeys[state.rows[x].physical_key + '::' + state.rows[x].workbook_type] = true;
+  }
+  var fallbackRegistry = _sheetLocationRegistry_();
+  for (var sheetName in fallbackRegistry) {
+    var fallbackKey = _normalizeSheetRegistryKey_(sheetName);
+    if (!registryLogicalKeys[fallbackKey]) {
+      pushAudit_('ORPHAN_GOVERNED_SHEET', fallbackKey, sheetName, _registryWorkbookLabelFor_(fallbackRegistry[sheetName].workbook_type), '', 'WARN', 'Governed fallback sheet is not yet registered.');
+    }
+  }
+
+  if (rows.length) {
+    var values = rows.map(function(row) {
+      return actualHeaders.map(function(header) {
+        return row[String(header || '').trim().toLowerCase()] || '';
+      });
+    });
+    auditSheet.getRange(2, 1, values.length, actualHeaders.length).setValues(values);
+  }
+  auditSheet.setFrozenRows(1);
+  return {
+    audit_ts: now,
+    registered_sheets: state.rows.length,
+    duplicate_logical_ids: state.duplicateLogicalIds.length,
+    duplicate_physical_names: state.duplicatePhysicalNames.length,
+    audit_rows_written: rows.length
+  };
+}
+
 function _knownWorkbookEntries_() {
   return [
     { type: 'MAIN', spreadsheet: getMainSpreadsheet_() },
@@ -8648,6 +9509,24 @@ function _knownWorkbookEntries_() {
 }
 
 function findSheetAcrossKnownWorkbooks_(sheetName) {
+  var registryEntry = _sheetRegistryEntry_(sheetName);
+  if (registryEntry && registryEntry.workbook_id) {
+    try {
+      var regSs = SpreadsheetApp.openById(registryEntry.workbook_id);
+      var regSheet = regSs.getSheetByName(sheetName) || regSs.getSheetByName(registryEntry.physical_sheet_name);
+      if (regSheet) {
+        return {
+          found: true,
+          sheet: regSheet,
+          spreadsheet: regSs,
+          spreadsheet_id: regSs.getId(),
+          workbook_type: registryEntry.workbook_type,
+          checked_workbooks: [registryEntry.workbook + ':' + registryEntry.workbook_id],
+          location: _sheetRegistryLocation_(sheetName) || null
+        };
+      }
+    } catch (e) {}
+  }
   var entries = _knownWorkbookEntries_();
   var checked = [];
   for (var i = 0; i < entries.length; i++) {
@@ -8677,68 +9556,7 @@ function findSheetAcrossKnownWorkbooks_(sheetName) {
 }
 
 function getSheetForRead_(sheetName) {
-  var loc = getSheetLocation_(sheetName);
-  var name = String(sheetName || '').trim();
-
-  function resolved(entry) {
-    if (!entry || !entry.spreadsheet) return null;
-    var sh = entry.spreadsheet.getSheetByName(name);
-    if (!sh) return null;
-    return {
-      sheet: sh,
-      spreadsheet: entry.spreadsheet,
-      spreadsheet_id: entry.spreadsheet.getId(),
-      workbook_type: entry.type,
-      location: loc,
-      checked_workbooks: [entry.type + ':' + entry.spreadsheet.getId()]
-    };
-  }
-
-  var mainEntry = { type: 'MAIN', spreadsheet: getMainSpreadsheet_() };
-  var diagEntry = { type: 'DIAGNOSTICS', spreadsheet: getDiagnosticsSpreadsheet_() };
-  var overviewEntry = { type: 'OVERVIEW', spreadsheet: getOverviewSpreadsheet_() };
-  var archEntry = { type: 'ARCHIVE', spreadsheet: getArchiveSpreadsheet_() };
-
-  var order = [];
-  switch (String(loc.read_policy || 'REGISTRY_ROUTED')) {
-    case 'MAIN_ONLY': order = [mainEntry]; break;
-    case 'DIAGNOSTICS_ONLY': order = [diagEntry]; break;
-    case 'OVERVIEW_ONLY': order = [overviewEntry]; break;
-    case 'MAIN_FIRST': order = [mainEntry, diagEntry, archEntry]; break;
-    case 'DIAGNOSTICS_FIRST': order = [diagEntry, mainEntry, archEntry]; break;
-    case 'OVERVIEW_FIRST': order = [overviewEntry, diagEntry, mainEntry, archEntry]; break;
-    case 'REGISTRY_ROUTED':
-    default:
-      if (loc.workbook_type === 'DIAGNOSTICS') order = [diagEntry, mainEntry, overviewEntry, archEntry];
-      else if (loc.workbook_type === 'OVERVIEW') order = [overviewEntry, diagEntry, mainEntry, archEntry];
-      else if (loc.workbook_type === 'ARCHIVE') order = [archEntry, diagEntry, mainEntry];
-      else order = [mainEntry, diagEntry, archEntry];
-      break;
-  }
-
-  var checked = [];
-  for (var i = 0; i < order.length; i++) {
-    var entry = order[i];
-    if (!entry || !entry.spreadsheet) continue;
-    checked.push(entry.type + ':' + entry.spreadsheet.getId());
-    var sh = entry.spreadsheet.getSheetByName(name);
-    if (sh) {
-      return {
-        sheet: sh,
-        spreadsheet: entry.spreadsheet,
-        spreadsheet_id: entry.spreadsheet.getId(),
-        workbook_type: entry.type,
-        location: loc,
-        checked_workbooks: checked
-      };
-    }
-  }
-
-  throw new Error(
-    'Sheet not found for read: ' + name +
-    ' | registry=' + describeSheetLocation_(name) +
-    ' | checked=' + checked.join(';')
-  );
+  return resolveGovernedSheet_(sheetName, { mode: 'read' });
 }
 
 function getSheetForWrite_(sheetName) {
@@ -8750,35 +9568,22 @@ function getSheetForWrite_(sheetName) {
       ' | registry=' + describeSheetLocation_(sheetName)
     );
   }
-  var ss = null;
-  var workbookType = '';
-  if (loc.write_policy === 'DIAGNOSTICS') {
-    ss = getDiagnosticsSpreadsheet_();
-    workbookType = 'DIAGNOSTICS';
-  } else if (loc.write_policy === 'OVERVIEW') {
-    ss = getOverviewSpreadsheet_();
-    workbookType = 'OVERVIEW';
-  } else if (loc.write_policy === 'ARCHIVE') {
-    ss = getArchiveSpreadsheet_();
-    workbookType = 'ARCHIVE';
-  } else {
-    ss = getMainSpreadsheet_();
-    workbookType = 'MAIN';
-  }
-  if (!ss) {
-    throw new Error(
-      'Target workbook unavailable for write: ' + sheetName +
-      ' | registry=' + describeSheetLocation_(sheetName)
-    );
-  }
-  var sh = ss.getSheetByName(sheetName) || ss.insertSheet(sheetName);
-  return {
-    sheet: sh,
-    spreadsheet: ss,
-    spreadsheet_id: ss.getId(),
-    workbook_type: workbookType,
-    location: loc
-  };
+  return resolveGovernedSheet_(sheetName, {
+    mode: 'write',
+    category: loc.category,
+    lifecycleState: loc.lifecycle_state || 'ACTIVE',
+    ownerModule: loc.owner_module || null,
+    participatesInRebuild: !!loc.rebuildable,
+    readOnly: false,
+    allowCreation: true
+  });
+}
+
+function resolveSheet_(sheetName, mode) {
+  var action = String(mode || 'read').trim().toLowerCase();
+  return resolveGovernedSheet_(sheetName, {
+    mode: (action === 'write' || action === 'create') ? 'write' : 'read'
+  });
 }
 
 function getReportOutputSpreadsheet_(sheetName, warnings) {
@@ -8786,6 +9591,7 @@ function getReportOutputSpreadsheet_(sheetName, warnings) {
   var ss = target.spreadsheet;
   return {
     spreadsheet: ss,
+    sheet: target.sheet,
     spreadsheet_id: ss.getId(),
     used_external_diagnostics_workbook: target.workbook_type === 'DIAGNOSTICS',
     used_external_overview_workbook: target.workbook_type === 'OVERVIEW',
@@ -8803,7 +9609,7 @@ function isRetiredCharacterOutcomeOrSignalSheetName_(sheetName) {
 function getDiagnosticsSheet_(sheetName, headers, warnings) {
   var target = getReportOutputSpreadsheet_(sheetName, warnings);
   var ss = target.spreadsheet;
-  var sheet = ss.getSheetByName(sheetName) || ss.insertSheet(sheetName);
+  var sheet = target.sheet || ss.getSheetByName(sheetName) || ss.insertSheet(sheetName);
   var actualHeaders = _ensureHeadersAppendOnlyForSheet_(sheet, headers || []);
   return {
     spreadsheet: ss,
@@ -9230,18 +10036,35 @@ function _governanceProjectRegistry_() {
         work_id: 'Provider_Character_Economic_Validation_Branch_v1',
         work_name: 'Provider Character Economic Validation Branch v1',
         category: 'character_economic_validation',
-        phase: 'active',
-        status: 'active',
+        phase: 'completed',
+        status: 'completed',
         confidence: 'medium',
         start_date: '2026-06-20',
-        last_review_date: '2026-06-20',
-        last_updated: '2026-06-20',
-        next_review_target: 'after_next_economic_validation_block',
+        last_review_date: '2026-06-21',
+        last_updated: '2026-06-21',
+        next_review_target: 'after_micro_expression_pilot_design',
         owner: 'Codex',
-        current_focus: 'Economic Outcome Link -> Economic Falsification -> Economic Recurrence -> Economic Shadow Test',
-        next_action: 'Evaluate character evidence against Economic Value outcomes only; keep market-reaction, reliability, and calibration-candidate branches retired.',
-        evidence_summary: 'The outcome-layer audit completed and broadened character-outcome claims were not proven; economic validation is now the active branch.',
-        decision_summary: 'Activate economic-value validation as the new active branch after the outcome-layer audit.'
+        current_focus: 'Label-based economic validation is complete; the next question is whether micro-expressions preserve more provider-character information.',
+        next_action: 'Design a compact free-form Micro-Expression Pilot v1 and keep predefined label expansion frozen.',
+        evidence_summary: 'Provider Character Economic Falsification v1 found no surviving independent Character label candidates; overlap artifacts, thin samples, and insufficient evidence dominated the remaining signals.',
+        decision_summary: 'Freeze Provider Character v1 and pivot to Provider Character v2 micro-expression research.'
+      },
+      {
+        work_id: 'Provider_Character_v2_Micro_Expression_Research_Branch_v1',
+        work_name: 'Provider Character v2 — Micro-Expression Research Branch v1',
+        category: 'character_measurement',
+        phase: 'planned',
+        status: 'planned',
+        confidence: 'medium',
+        start_date: '2026-06-21',
+        last_review_date: '2026-06-21',
+        last_updated: '2026-06-21',
+        next_review_target: 'after_micro_expression_pilot',
+        owner: 'Codex',
+        current_focus: 'Low-token free-form provider expressions without predefined labels',
+        next_action: 'Design Micro-Expression Pilot v1 and define discovery criteria for repeatable provider-specific reasoning patterns.',
+        evidence_summary: 'The label taxonomy may be compressing or obscuring useful provider reasoning patterns.',
+        decision_summary: 'Investigate compact free-form micro-expressions rather than predefined Character labels.'
       }
     ],
     decisions: [
@@ -9258,7 +10081,8 @@ function _governanceProjectRegistry_() {
       ['2026-06-19', 'Character_Diagnostics_v1', 'review', 'active', 'Character diagnostics stack updated with recurrence, outcome-link, falsification, drift, and recurrence-validation layers.'],
       ['2026-06-19', 'Docs_Revision_2026_06_19', 'review', 'active', 'RuleBook and Blueprint revised to capture the current character-diagnostics stack as derived-only governance context.'],
       ['2026-06-20', 'Character_Diagnostics_v1', 'review', 'completed', 'Character outcome-layer audit completed; retain residual and recurrence diagnostics as foundation, but retire market-reaction, reliability, and calibration-candidate branches.'],
-      ['2026-06-20', 'Provider_Character_Economic_Validation_Branch_v1', 'review', 'active', 'Economic Outcome Link, Falsification, Recurrence, and Shadow Test are now the active branch; future work evaluates Economic Value outcomes only.']
+      ['2026-06-20', 'Provider_Character_Economic_Validation_Branch_v1', 'review', 'active', 'Economic Outcome Link, Falsification, Recurrence, and Shadow Test are now the active branch; future work evaluates Economic Value outcomes only.'],
+      ['2026-06-21', 'Provider_Character_v1_Freeze_To_Micro_Expressions', 'governance', 'provider_character', 'frozen']
     ]
   };
 }

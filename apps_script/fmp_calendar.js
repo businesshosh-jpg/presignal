@@ -571,7 +571,22 @@ function runFmpRangeToEvent_(fromUtcIso, toUtcIso) {
 /** ===== FMP Event Catalog (for SeriesMap suggestion workflows) ===== **/
 
 function _getOrCreateSheet_(name) {
-  var ss = SpreadsheetApp.getActive();
+  var ss = null;
+  try {
+    if (typeof getSheetLocation_ === 'function') {
+      var loc = getSheetLocation_(name);
+      if (loc && loc.workbook_type === 'DIAGNOSTICS' && typeof getDiagnosticsSpreadsheet_ === 'function') {
+        ss = getDiagnosticsSpreadsheet_();
+      } else if (loc && loc.workbook_type === 'OVERVIEW' && typeof getOverviewSpreadsheet_ === 'function') {
+        ss = getOverviewSpreadsheet_();
+      } else if (loc && loc.workbook_type === 'ARCHIVE' && typeof getArchiveSpreadsheet_ === 'function') {
+        ss = getArchiveSpreadsheet_();
+      } else if (typeof getMainSpreadsheet_ === 'function') {
+        ss = getMainSpreadsheet_();
+      }
+    }
+  } catch (e) {}
+  if (!ss) ss = SpreadsheetApp.getActive();
   var sh = ss.getSheetByName(name);
   if (sh) return sh;
   return ss.insertSheet(name);

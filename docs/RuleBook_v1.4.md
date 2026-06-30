@@ -21,7 +21,7 @@ Fetches released actuals using a deterministic hybrid resolver: direct FMP calen
 Computes a USD/JPY market reaction move around event timestamps and writes best-effort evaluation fields back into the Predictions sheet, while also logging the result.  
 Builds derived evaluation/report tabs from scored Predictions rows for readable review and provider comparison.  
 Builds a derived-only character diagnostics stack from existing predictions/outcomes, including residual, recurrence, outcome-link, falsification, and recurrence/drift validation layers.
-After the outcome-layer audit completed, character work is now governed as a Provider Character Economic Validation Branch: Economic Outcome Link → Economic Falsification → Economic Recurrence → Economic Shadow Test. Market-reaction outcome linkage, reliability outcome linkage, and calibration-candidate promotion are retired from future active work unless a later document explicitly re-opens them.
+Provider Character v1 is completed and frozen. Its validated evidence base includes Character Residual, Character Recurrence, Provider Individuality, Economic Outcome Link, and Economic Falsification. The older market-reaction outcome, reliability outcome, and calibration-candidate branches remain retired. Provider Character v2 is now the active Direct Expression Research Branch, which uses compact free-form provider expressions instead of predefined labels because the label taxonomy may be compressing or obscuring useful provider reasoning patterns. The current methodology-validation sequence is Direct Expression Capture -> Same Path Validation -> Signal Synchrony -> Provider Slice Analysis -> Family Slice Analysis -> Event Class Analysis -> Conditional Predictive Value -> Calibration Research -> Production Learning. Signal Synchrony v1 is active methodology validation and is not a prediction system.
 
 ### Explicit non-scope (not implemented).
 
@@ -31,7 +31,7 @@ A standalone scoring warehouse beyond the operational sheets and derived evaluat
 Automated provider leaderboards beyond the derived reporting summaries built from Predictions.  
 Market reaction for FX pairs other than USD/JPY.  
 Character traits as routing, weighting, calibration, or production policy inputs. Character diagnostics are derived-only and must not be treated as approval for provider-role assignment or behavior steering.  
-Character → Market Reaction Outcome, Character → Reliability Outcome, and Character → Calibration Candidate promotion are retired branches; future active work should evaluate Character evidence against Economic Value outcomes only unless explicitly stated otherwise.
+Character → Market Reaction Outcome, Character → Reliability Outcome, and Character → Calibration Candidate promotion are retired branches. Future character work should use Provider Character v2 — Direct Expression Research Branch as the exploratory measurement path, with Direct Expression, Same Path, Signal Synchrony, Measurement Stability, and Reproducibility treated as methodology-validation layers rather than a continuation of the old label taxonomy.
 
 ### Operational boundaries.
 
@@ -76,7 +76,7 @@ The current live state extends the original `v1.4` system with deterministic fea
   - `Character_Recurrence_Family_Validation`
   - `Character_Drift_Assessment`
   - Retired and intentionally removed legacy tabs from the old outcome / signal path: `Character_Outcome_Link`, `Character_Outcome_Summary`, `Character_Outcome_Family_Link`, `Character_Outcome_Provider_Controlled`, `Character_Outcome_Family_Controlled`, `Character_Outcome_Permutation_Test`, `Character_Outcome_Robust_Traits`, `Character_Good_Reasoning_Proxy_Test`, `Character_Outcome_Falsification_Report`, `Character_Outcome_Recurrence_Validation`, `Character_Outcome_Recurrence_Block_Detail`, `Character_Outcome_Recurrence_Interpretation`, `Character_Signal_Candidates`, `Character_Signal_Candidate_Summary`, `Character_Signal_Candidate_Family_Map`, `Character_Signal_Readiness_Report`, `Character_Signal_Shadow_Test`, `Character_Signal_Shadow_Family_Test`, `Character_Signal_Shadow_Summary`, and `Character_Signal_Shadow_Readiness`.
-  - These active sheets compare residual behavior, recurrence, and drift only; economic-value validation now belongs to the separate Provider Character Economic Validation Branch. The retired tabs above must not be recreated.
+  - These active sheets compare residual behavior, recurrence, and drift only. Provider Character v1 is complete and frozen; the next research path is Provider Character v2 — Direct Expression Research Branch, which uses compact free-form provider expressions rather than predefined labels. Signal Synchrony v1 is the active methodology-validation page that follows Direct Expression and Same Path. The retired tabs above must not be recreated.
 
 For sheet-level analysis, `attention_schema_version` is the row-level marker for the attention-shadow era. Blank values indicate pre-attention `v1.4-baseline` rows, while `attention_schema_version = "1.0"` indicates `v1.4-attn-shadow` rows, including provider-error rows where attention parsing could not occur.
 
@@ -469,17 +469,32 @@ Heavy derived diagnostics may write to an external workbook when `DIAGNOSTICS_SP
 
 Canonical tabs in the overview workbook:
 
-- `Current_Roadmap`
-- `Research_Journey`
-- `PreSignal_Layer_Map`
-- `Experiment_Register`
-- `Interpretation_Corrections`
-- `Decision_Log_v2`
+  - `Current_Roadmap`
+  - `Research_Journey`
+  - `PreSignal_Layer_Map`
+  - `Experiment_Register`
+  - `Interpretation_Corrections`
+  - `Decision_Log_v2`
+  - `Signal_Synchrony_v1`
 
 Compatibility / derived governance helpers, if present, also resolve to the overview workbook:
 
 - `Project_Status`
 - `Decision_Log`
+
+Migration governance and audit sheets, if present, also resolve to the overview workbook:
+
+- `Workbook_Migration_Control`
+- `Workbook_Migration_Log`
+- `Workbook_Migration_Audit`
+- `Workbook_Routing_Dependency_Audit`
+- `Experiment_Lifecycle_Audit`
+- `Experiment_Lifecycle_Summary`
+- `Workbook_Migration_Phase2C_Report`
+- `Workbook_Migration_Phase2E_Report`
+- `Workbook_Migration_Post2F_Sanity_Audit`
+
+`Workbook_Migration_Control` is the control source of truth for sheet-migration approvals, `Workbook_Migration_Log` is the append-only execution ledger, and the audit / lifecycle sheets are governance-only memory. They must not affect predictions, prompts, provider behavior, evaluation scoring, market-reaction scoring, routing, weighting, calibration, or subscriber-facing behavior.
 
 Builders must not assume that migrated derived sheets live in the active workbook. Source-sheet discovery for report builders should flow through a central sheet-location registry and workbook resolver so sheets can move between `MAIN`, `DIAGNOSTICS`, and future archive workbooks without changing report semantics. Missing-sheet errors must identify the requested sheet, its registry location, and the workbooks checked.
 

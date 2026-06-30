@@ -30,6 +30,7 @@ DEFAULT_SCRIPT_HTTP_TIMEOUT_SEC = int(os.environ.get("PRESIGNAL_SCRIPT_HTTP_TIME
 DEFAULT_API_RETRY_COUNT = int(os.environ.get("PRESIGNAL_API_RETRY_COUNT", "4"))
 DEFAULT_API_RETRY_SLEEP_SEC = float(os.environ.get("PRESIGNAL_API_RETRY_SLEEP_SEC", "2"))
 FORCE_GOOGLE_API_IPV4 = os.environ.get("PRESIGNAL_FORCE_GOOGLE_API_IPV4", "1") == "1"
+os.environ.setdefault("OAUTHLIB_RELAX_TOKEN_SCOPE", "1")
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",

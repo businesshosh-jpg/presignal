@@ -313,19 +313,29 @@ These sheets are read-only over their source layers and rewrite only their own b
 
 `Character_Baseline_E`, `Provider_Character_Residuals`, `Provider_Character_Summary`, `Provider_Character_Family_Summary`, and `Character_Disagreement_Report` are the Character Residual Architecture v1 diagnostics layers. They construct a deterministic baseline from existing event fields and context, then record provider residual behavior relative to that baseline without changing prediction semantics or provider prompts. The retired `Character_Outcome_*`, `Character_Signal_*`, and `Character_Signal_Shadow_*` tabs are historical only and must not be recreated.
 
-After the outcome-layer audit completed, the active character branch is now the Provider Character Economic Validation Branch. Its roadmap is:
+Provider Character v1 is completed and frozen. Its validated evidence base includes Character Residual, Character Recurrence, Provider Individuality, Economic Outcome Link, and Economic Falsification. The older market-reaction outcome, reliability outcome, and calibration-candidate branches remain retired. Provider Character v2 is now the active Direct Expression Research Branch, which uses compact free-form provider expressions instead of predefined labels because the label taxonomy may be compressing or obscuring useful provider reasoning patterns. Its active methodology roadmap is:
 
-`Economic Outcome Link`
+`Direct Expression Capture`
 ↓
-`Economic Falsification`
+`Same Path Validation`
 ↓
-`Economic Recurrence`
+`Signal Synchrony`
 ↓
-`Economic Shadow Test`
+`Provider Slice Analysis`
+↓
+`Family Slice Analysis`
+↓
+`Event Class Analysis`
+↓
+`Conditional Predictive Value`
+↓
+`Calibration Research`
+↓
+`Production Learning`
 
-The retired branches `Character → Market Reaction Outcome`, `Character → Reliability Outcome`, and `Character → Calibration Candidate` are no longer active. Future character work should evaluate against Economic Value outcomes only unless a later document explicitly re-opens a different axis.
+Methodology Validation now groups the Direct Expression, Same Path, Signal Synchrony, Measurement Stability, and Reproducibility layers. Signal Synchrony v1 is active methodology validation and is not a prediction system.
 
-`Character_Recurrence_Validation`, `Character_Recurrence_Family_Validation`, and `Character_Drift_Assessment` remain derived-only validation layers. They compare independent blocks, test recurrence, and measure drift. The retired `Character_Outcome_*`, `Character_Signal_*`, and `Character_Signal_Shadow_*` tabs are historical only and must not be recreated. The active branch for future research is the Provider Character Economic Validation Branch above.
+`Character_Recurrence_Validation`, `Character_Recurrence_Family_Validation`, and `Character_Drift_Assessment` remain derived-only validation layers. They compare independent blocks, test recurrence, and measure drift. The retired `Character_Outcome_*`, `Character_Signal_*`, and `Character_Signal_Shadow_*` tabs are historical only and must not be recreated.
 
 `Feature_Pack_Audit`, `Surprise_Pack_Coverage_Report`, `Market_Context_Provider_Repair_Report`, `Market_Context_Data_Sanity_Report`, `Market_Context_Source_Validation_Report`, `Feature_Pack_v2B_Core_Audit`, `Production_vs_V2B_Replay`, `V2B_Context_Utilization_Report`, `V2B_Prediction_Stability`, `Production_vs_V2B_Summary`, `Production_vs_V2B_Family_Summary`, `Production_vs_V2B_Provider_Summary`, and `V2B_Context_Consumption_Audit` are diagnostics layers for feature-pack and replay validation. They are read-only over their source layers, may be rebuilt deterministically, and must not change provider prompts, routing, weighting, calibration, scoring logic, or canonical prediction semantics.
 
@@ -356,11 +366,26 @@ Canonical tabs in the overview workbook:
 - `Experiment_Register`
 - `Interpretation_Corrections`
 - `Decision_Log_v2`
+- `Signal_Synchrony_v1`
 
 Compatibility / derived governance helpers, if present, also resolve to the overview workbook:
 
 - `Project_Status`
 - `Decision_Log`
+
+Migration governance and audit sheets, if present, also resolve to the overview workbook:
+
+- `Workbook_Migration_Control`
+- `Workbook_Migration_Log`
+- `Workbook_Migration_Audit`
+- `Workbook_Routing_Dependency_Audit`
+- `Experiment_Lifecycle_Audit`
+- `Experiment_Lifecycle_Summary`
+- `Workbook_Migration_Phase2C_Report`
+- `Workbook_Migration_Phase2E_Report`
+- `Workbook_Migration_Post2F_Sanity_Audit`
+
+`Workbook_Migration_Control` is the approval/control surface for sheet-migration batches, `Workbook_Migration_Log` is the append-only execution ledger, and the audit/lifecycle sheets are governance-only memory. They must not affect predictions, prompts, provider behavior, scoring, routing, weighting, calibration, or subscriber-facing behavior.
 
 `Market_Sensitivity_Filter_Candidates` is a derived-only diagnostic layer over `Economic_To_Market_Translation_Errors` and `Provider_Family_Economic_Accuracy`. It ranks repeated flat-market translation failures into candidate low-confidence / no-signal filter rules so the team can inspect whether some families or indicators are being over-converted into directional market calls. It does not change prompts, providers, Predictions rows, Event rows, market-reaction scoring, evaluation scoring, routing, weighting, calibration, or subscriber-facing behavior.
 

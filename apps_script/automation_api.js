@@ -384,6 +384,187 @@ function apiBuildProviderCharacterEconomicOutcomeLink(params) {
   return apiBuildProviderCharacterEconomicOutcomeLink_();
 }
 
+function apiBuildProviderCharacterEconomicFalsification_() {
+  return {
+    status: 'ok',
+    provider_character_economic_falsification: buildProviderCharacterEconomicFalsification_()
+  };
+}
+
+function apiBuildProviderCharacterEconomicFalsification(params) {
+  return apiBuildProviderCharacterEconomicFalsification_();
+}
+
+function apiBuildProviderCharacterMicroExpressionPilot_() {
+  return {
+    status: 'ok',
+    provider_character_micro_expression_pilot: buildProviderCharacterMicroExpressionPilot_()
+  };
+}
+
+function apiBuildProviderCharacterMicroExpressionPilot(params) {
+  return apiBuildProviderCharacterMicroExpressionPilot_();
+}
+
+function apiBuildProviderCharacterRawOutputMicroExpressionReplay_() {
+  return {
+    status: 'ok',
+    provider_character_raw_output_micro_expression_replay: buildProviderCharacterRawOutputMicroExpressionReplay_()
+  };
+}
+
+function apiBuildProviderCharacterRawOutputMicroExpressionReplay(params) {
+  return apiBuildProviderCharacterRawOutputMicroExpressionReplay_();
+}
+
+function apiBuildProviderCharacterFreshVsOriginalReplay_() {
+  return {
+    status: 'ok',
+    provider_character_fresh_vs_original_micro_expression_replay: buildProviderCharacterFreshVsOriginalReplay_()
+  };
+}
+
+function apiBuildProviderCharacterFreshVsOriginalReplay(params) {
+  return apiBuildProviderCharacterFreshVsOriginalReplay_();
+}
+
+function apiBuildProviderCharacterDirectExpressionCapture_() {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_capture: buildProviderCharacterDirectExpressionCapture_({})
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionCapture(params) {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_capture: buildProviderCharacterDirectExpressionCapture_(params || {})
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionRandomCohort_() {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_random_cohort: buildProviderCharacterDirectExpressionRandomCohort_({})
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionRandomCohort(params) {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_random_cohort: buildProviderCharacterDirectExpressionRandomCohort_(params || {})
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionRecurrence_() {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_recurrence: buildProviderCharacterDirectExpressionRecurrence_()
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionRecurrence(params) {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_recurrence: buildProviderCharacterDirectExpressionRecurrence_(params || {})
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionEconomicLink_() {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_economic_link: buildProviderCharacterDirectExpressionEconomicLink_({})
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionEconomicLink(params) {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_economic_link: buildProviderCharacterDirectExpressionEconomicLink_(params || {})
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionValidation_() {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_validation: buildProviderCharacterDirectExpressionValidation_()
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionValidation(params) {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_validation: buildProviderCharacterDirectExpressionValidation_(params || {})
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionMicrocohortRerun_() {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_microcohort_rerun: buildProviderCharacterDirectExpressionMicrocohortRerun_()
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionMicrocohortRerun(params) {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_microcohort_rerun: buildProviderCharacterDirectExpressionMicrocohortRerun_(params || {})
+  };
+}
+
+function apiListProviderCharacterDirectExpressionMicrocohortEligibleRows_(params) {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_microcohort_eligible_rows: listProviderCharacterDirectExpressionMicrocohortEligibleRows_(params || {})
+  };
+}
+
+function apiListProviderCharacterDirectExpressionMicrocohortEligibleRows(params) {
+  return apiListProviderCharacterDirectExpressionMicrocohortEligibleRows_(params);
+}
+
+function apiBuildProviderCharacterDirectExpressionEligibilityAudit_() {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_eligibility_audit: buildProviderCharacterDirectExpressionEligibilityAudit_({})
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionEligibilityAudit(params) {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_eligibility_audit: buildProviderCharacterDirectExpressionEligibilityAudit_(params || {})
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionOutcomeCheck_() {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_outcome_check: buildProviderCharacterDirectExpressionOutcomeCheck_()
+  };
+}
+
+function apiBuildProviderCharacterDirectExpressionOutcomeCheck(params) {
+  return {
+    status: 'ok',
+    provider_character_direct_expression_outcome_check: buildProviderCharacterDirectExpressionOutcomeCheck_(params || {})
+  };
+}
+
+function apiBuildSignalSynchronyCohortCharacterization_() {
+  return {
+    status: 'ok',
+    signal_synchrony_cohort_characterization: buildSignalSynchronyCohortCharacterization_()
+  };
+}
+
+function apiBuildSignalSynchronyCohortCharacterization(params) {
+  return {
+    status: 'ok',
+    signal_synchrony_cohort_characterization: buildSignalSynchronyCohortCharacterization_(params || {})
+  };
+}
+
 function apiBuildAttentionProviderIndividuality_() {
   return {
     status: 'ok',

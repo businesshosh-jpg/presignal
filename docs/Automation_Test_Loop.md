@@ -12,6 +12,32 @@ python3 auth_sheets.py
 
 After that, the runner should reuse the same token without prompting again.
 
+## Stable Google connection
+
+This repo is set up to use the persistent local token on this Mac:
+
+- `local/token.json`
+
+If re-authentication is ever needed:
+
+```bash
+cd /Users/junhoshino/projects/presignal
+rm -f local/token.json
+python3 auth_sheets.py
+```
+
+Use the programmatic client path only for live Google work:
+
+- `automation/google_clients.py`
+- `load_credentials()`
+- `build_sheets_service()`
+- `build_script_service()`
+- `run_script_function()`
+
+For live Google Sheets / Apps Script runs, prefer outside-sandbox execution. Sandboxed Google calls can fail with misleading DNS or resolution errors even when auth is valid.
+
+No browser is needed for normal repo work; only the one-time consent step may open a browser.
+
 ## Runner modes
 
 ### `day-run`

@@ -113,6 +113,16 @@ function onOpen() {
       .addItem('Build Character Residual Architecture', 'menuBuildCharacterResidualArchitecture_')
       .addItem('Build Character Recurrence Validation', 'menuBuildCharacterRecurrenceValidation_')
       .addItem('Build Provider Character Economic Outcome Link', 'menuBuildProviderCharacterEconomicOutcomeLink_')
+      .addItem('Build Provider Character Economic Falsification', 'menuBuildProviderCharacterEconomicFalsification_')
+      .addItem('Build Provider Character Micro-Expression Pilot', 'menuBuildProviderCharacterMicroExpressionPilot_')
+      .addItem('Build Provider Character Raw Output Replay', 'menuBuildProviderCharacterRawOutputMicroExpressionReplay_')
+      .addItem('Build Provider Character Fresh vs Original Replay', 'menuBuildProviderCharacterFreshVsOriginalReplay_')
+      .addItem('Build Provider Character Direct Expression Capture', 'menuBuildProviderCharacterDirectExpressionCapture_')
+      .addItem('Build Provider Character Direct Expression Recurrence', 'menuBuildProviderCharacterDirectExpressionRecurrence_')
+      .addItem('Build Provider Character Direct Expression Economic Link', 'menuBuildProviderCharacterDirectExpressionEconomicLink_')
+      .addItem('Build Provider Character Direct Expression Validation', 'menuBuildProviderCharacterDirectExpressionValidation_')
+      .addItem('Build Direct Expression Microcohort Rerun', 'menuBuildProviderCharacterDirectExpressionMicrocohortRerun_')
+      .addItem('Build Signal Synchrony Cohort Characterization', 'menuBuildSignalSynchronyCohortCharacterization_')
   );
 
   menu.addSubMenu(

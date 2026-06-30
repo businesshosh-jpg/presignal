@@ -1,0 +1,39 @@
+{
+  "pid": 45217,
+  "started_at": "2026-06-03T03:28:46.073515Z",
+  "updated_at": "2026-06-03T03:31:31.812017Z",
+  "mode": "day-run",
+  "phase": "predictions",
+  "params": {
+    "window_from_local": "2024-11-25 00:00",
+    "window_to_local": "2024-11-26 00:00",
+    "window_tz": "UTC",
+    "providers": [
+      "Gemini",
+      "OpenAI",
+      "Anthropic"
+    ],
+    "run_predictions": true,
+    "run_actuals": true,
+    "run_market_reaction": true,
+    "build_evaluation": true,
+    "continue_until_done": true,
+    "clear_checkpoint": true,
+    "max_passes": 12,
+    "prediction_round_limit": 72,
+    "runner_mode": "day-run",
+    "heavy_day_mode": "auto"
+  },
+  "run_log_path": "/Users/junhoshino/projects/presignal/automation_runs/live_logs/day_run_20260603T032844Z.log",
+  "providers": [
+    "Gemini",
+    "OpenAI",
+    "Anthropic"
+  ],
+  "pred_max_work_units_per_run": 2,
+  "clear_checkpoint": false,
+  "prediction_phase_elapsed_sec": 123,
+  "prediction_phase_timeout_sec": 2700,
+  "prediction_degrade_count": 1,
+  "prediction_max_degrades": 6
+}

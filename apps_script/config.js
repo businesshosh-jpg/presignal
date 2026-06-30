@@ -13,9 +13,42 @@
 /** Sheet name for human-editable settings (optional). */
 var CONFIG_SHEET_NAME = 'Config';
 
+/** Fallback workbook ids for non-active execution contexts. */
+var CONFIG_WORKBOOK_ID_FALLBACKS = {
+  main_spreadsheet_id: '1_gZGnd6h3VzdiBvGBHRSxn78KW8tsOi2UEc6Y_Sc23Q',
+  diagnostics_spreadsheet_id: '1jxcZotbzJKcAzrK0VhxetYX6hp5DPXCCIA0J6B6RUy0',
+  overview_spreadsheet_id: '1PtXrQpzNX8600I0aCOb2hLPkWtTvFKtDVIZZIys_Uvo',
+  archive_spreadsheet_id: '12hi1rugE_F-MhlupgmL13BIagerzA8CZkm1sk_nHPSg',
+  archive_01_spreadsheet_id: '12hi1rugE_F-MhlupgmL13BIagerzA8CZkm1sk_nHPSg'
+};
+
+function _configWorkbookIdFallback_(key) {
+  var normalized = String(key || '').trim().toLowerCase();
+  if (!normalized) return '';
+  try {
+    var props = PropertiesService.getScriptProperties();
+    if (props) {
+      var candidates = [
+        normalized,
+        normalized.toUpperCase(),
+        normalized.replace(/_01_/g, '_')
+      ];
+      for (var i = 0; i < candidates.length; i++) {
+        var candidate = String(candidates[i] || '').trim();
+        if (!candidate) continue;
+        var value = String(props.getProperty(candidate) || '').trim();
+        if (value) return value;
+      }
+    }
+  } catch (e) {}
+  return String(CONFIG_WORKBOOK_ID_FALLBACKS[normalized] || '').trim();
+}
+
 /** Read config map from the Config sheet, if present. Lower-cases keys. */
 function _readConfigSheetMap_() {
-  var ss = SpreadsheetApp.getActive();
+  var mainId = _configWorkbookIdFallback_('MAIN_SPREADSHEET_ID');
+  if (!mainId) return null;
+  var ss = SpreadsheetApp.openById(mainId);
   var sh = ss.getSheetByName(CONFIG_SHEET_NAME);
   if (!sh) return null;
 

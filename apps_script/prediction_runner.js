@@ -1367,6 +1367,7 @@ function _getPredictionEventById_(eventSheet, eventId) {
     country: _cell(targetRow, idx['country']) || '',
     indicator_name: _cell(targetRow, idx['indicator_name']) || '',
     genre: _cell(targetRow, idx['genre']) || '',
+    unit: _cell(targetRow, idx['unit']) || '',
     importance: (_cell(targetRow, idx['importance']) || '').toString(),
     release_ts: _toIsoOrNull_(_cell(targetRow, idx['release_ts'])),
     source_cal: _cell(targetRow, idx['source_cal']) || '',
@@ -5270,7 +5271,10 @@ function _resolveProviders_(want) {
   (ask||[]).forEach(function(name){
     if (name === 'Gemini') {
       var key = _getKey_(['GEMINI_API_KEY','GOOGLE_API_KEY','GOOGLE_AI_STUDIO_API_KEY']);
-      if (key) out.push({ name:'Gemini', key:key, model: CFG.GEMINI_MODEL, fn:_callGemini_ });
+      if (key) {
+        var gModel = (CFG.GEMINI_MODEL || '').trim() || 'gemini-2.5-flash-lite';
+        out.push({ name:'Gemini', key:key, model: gModel, fn:_callGemini_ });
+      }
     } else if (name === 'OpenAI') {
       var k = _getKey_(['OPENAI_API_KEY']);
       if (k) {
@@ -5279,7 +5283,10 @@ function _resolveProviders_(want) {
       }
     } else if (name === 'Anthropic' || name === 'Claude') {
       var ka = _getKey_(['ANTHROPIC_API_KEY']);
-      if (ka) out.push({ name:'Anthropic', key:ka, model: CFG.CLAUDE_MODEL, fn:_callClaude_ });
+      if (ka) {
+        var cModel = (CFG.CLAUDE_MODEL || '').trim() || 'claude-haiku-4-5';
+        out.push({ name:'Anthropic', key:ka, model: cModel, fn:_callClaude_ });
+      }
     }
   });
   return out;
