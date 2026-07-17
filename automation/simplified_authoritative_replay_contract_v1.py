@@ -1,0 +1,95 @@
+"""Minimal provider contract for the restarted authoritative replay canary.
+
+This module deliberately owns no provider-specific scientific schema.  It
+validates one reduced cross-provider object and deterministically resolves
+provider-selected driver tokens to frozen session members.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+from typing import Any, Mapping, Sequence
+
+
+DIRECTIONS = {"UP", "DOWN", "FLAT", "NO_CLEAR_DIRECTION"}
+STRENGTHS = {"WEAK", "MODERATE", "STRONG"}
+REQUIRED = {
+    "primary_driver_token", "secondary_driver_token", "final_usdjpy_direction",
+    "reaction_strength", "confidence", "primary_thesis", "secondary_thesis",
+    "reasoning_steps",
+}
+
+
+class ReducedForecastError(ValueError):
+    pass
+
+
+def _canon(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+
+
+def driver_options(members: Sequence[Mapping[str, Any]]) -> list[dict[str, str]]:
+    """Create stable, collision-resistant provider tokens from frozen IDs."""
+    options = []
+    for row in sorted(members, key=lambda item: str(item["event_id"])):
+        event_id = str(row["event_id"])
+        token = "DRV_" + hashlib.sha256(event_id.encode()).hexdigest()[:20]
+        options.append({"token": token, "event_id": event_id, "label": str(row.get("indicator_name") or "")})
+    if len({row["token"] for row in options}) != len(options):
+        raise ReducedForecastError("DRIVER_TOKEN_COLLISION")
+    return options
+
+
+def canonical_event_identity(member: Mapping[str, Any]) -> str:
+    """Deterministic upstream ID from immutable source-member content."""
+    keys = ("session_id", "batch_id", "country", "indicator_name", "genre", "importance",
+            "consensus_value", "prev_revision", "release_ts", "same_minute_group_key",
+            "member_order", "source_sheet", "type")
+    return "EID_" + hashlib.sha256(_canon({key: member.get(key) for key in keys}).encode()).hexdigest()[:24]
+
+
+def require_unique_event_identities(members: Sequence[Mapping[str, Any]]) -> None:
+    ids = [str(row.get("event_id") or "") for row in members]
+    if not all(ids) or len(ids) != len(set(ids)):
+        raise ReducedForecastError("DUPLICATE_OR_MISSING_EVENT_IDENTITY")
+
+
+def validate_and_resolve(payload: Mapping[str, Any], members: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    if not isinstance(payload, Mapping):
+        raise ReducedForecastError("FORECAST_NOT_OBJECT")
+    extra = set(payload) - REQUIRED
+    missing = REQUIRED - set(payload)
+    if extra:
+        raise ReducedForecastError("UNKNOWN_FIELD:" + sorted(extra)[0])
+    if missing:
+        raise ReducedForecastError("MISSING_FIELD:" + sorted(missing)[0])
+    options = {row["token"]: row["event_id"] for row in driver_options(members)}
+    primary = payload["primary_driver_token"]
+    secondary = payload["secondary_driver_token"]
+    if not isinstance(primary, str) or primary not in options:
+        raise ReducedForecastError("PRIMARY_DRIVER_TOKEN_INVALID")
+    if secondary not in (None, "") and (not isinstance(secondary, str) or secondary not in options or secondary == primary):
+        raise ReducedForecastError("SECONDARY_DRIVER_TOKEN_INVALID")
+    if payload["final_usdjpy_direction"] not in DIRECTIONS:
+        raise ReducedForecastError("FINAL_DIRECTION_INVALID")
+    if payload["reaction_strength"] not in STRENGTHS:
+        raise ReducedForecastError("REACTION_STRENGTH_INVALID")
+    if isinstance(payload["confidence"], bool) or not isinstance(payload["confidence"], (int, float)) or not 0 <= payload["confidence"] <= 1:
+        raise ReducedForecastError("CONFIDENCE_INVALID")
+    if not isinstance(payload["primary_thesis"], str) or not payload["primary_thesis"].strip():
+        raise ReducedForecastError("PRIMARY_THESIS_INVALID")
+    if payload["secondary_thesis"] not in (None, "") and not isinstance(payload["secondary_thesis"], str):
+        raise ReducedForecastError("SECONDARY_THESIS_INVALID")
+    steps = payload["reasoning_steps"]
+    if not isinstance(steps, list) or not 2 <= len(steps) <= 4 or any(not isinstance(step, str) or not step.strip() for step in steps):
+        raise ReducedForecastError("REASONING_STEPS_INVALID")
+    return {
+        "primary_driver_event_id": options[primary],
+        "secondary_driver_event_id": options.get(secondary, "") if secondary else "",
+        "final_usdjpy_direction": payload["final_usdjpy_direction"],
+        "reaction_strength": payload["reaction_strength"],
+        "confidence": float(payload["confidence"]),
+        "primary_thesis": payload["primary_thesis"],
+        "secondary_thesis": payload["secondary_thesis"] or "",
+        "reasoning_steps": list(steps),
+    }

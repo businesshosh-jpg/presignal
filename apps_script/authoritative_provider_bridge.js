@@ -44,28 +44,34 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
       error: 'provider_not_configured'
     });
   }
-  var prov = resolved[0];
-  if (String(prov.model || '').trim() !== requestedModel) {
+  var resolvedProvider = resolved[0];
+  if (!String(resolvedProvider.model || '').trim()) {
     return _authoritativeBridgeResult_(metadata, {
       status: 'model_not_enforceable',
       request_status: 'rejected_before_provider_execution',
       response_status: 'model_not_enforceable',
       terminal_status: 'model_not_enforceable',
-      error: 'configured_model_does_not_match_frozen_model'
+      error: 'configured_provider_route_has_no_model_metadata'
     });
   }
+  // The scientific package, rather than a resolver alias, owns the exact
+  // model identifier. Keep the authenticated provider route and dispatch the
+  // frozen model verbatim; returned metadata is checked before acceptance.
+  var prov = {};
+  Object.keys(resolvedProvider).forEach(function(key) { prov[key] = resolvedProvider[key]; });
+  prov.model = requestedModel;
   var prompt = params.prompt || {};
   var startedMs = new Date().getTime();
   try {
-    var response = _apiCallProviderRawJsonObject_(prov, {
+    var response = _callProviderJsonObject_(prov, {
       system: String(prompt.system || ''),
       user: String(prompt.user || ''),
       instruction: String(prompt.instruction || ''),
       cache_scaffold: String(prompt.cache_scaffold || '')
-    });
+    }, null);
     var elapsedMs = new Date().getTime() - startedMs;
-    var actualProvider = String(response.ai_name || '').trim();
-    var actualModel = String(response.ai_model || '').trim();
+    var actualProvider = String(response.ai_name || prov.name || '').trim();
+    var actualModel = String(response.ai_model || prov.model || '').trim();
     if (elapsedMs > hardTimeoutSeconds * 1000) {
       return _authoritativeBridgeResult_(metadata, {
         status: 'timeout',
@@ -100,7 +106,8 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
       prompt_tokens: response.prompt_tokens || null,
       completion_tokens: response.completion_tokens || null,
       cache_creation_input_tokens: response.cache_creation_input_tokens || null,
-      cache_read_input_tokens: response.cache_read_input_tokens || null
+      cache_read_input_tokens: response.cache_read_input_tokens || null,
+      stop_reason: response.stop_reason || null
     });
   } catch (error) {
     return _authoritativeBridgeResult_(metadata, {
@@ -142,7 +149,8 @@ function _authoritativeBridgeResult_(metadata, result) {
     prompt_tokens: result.prompt_tokens || null,
     completion_tokens: result.completion_tokens || null,
     cache_creation_input_tokens: result.cache_creation_input_tokens || null,
-    cache_read_input_tokens: result.cache_read_input_tokens || null
+    cache_read_input_tokens: result.cache_read_input_tokens || null,
+    stop_reason: result.stop_reason || null
   };
 }
 

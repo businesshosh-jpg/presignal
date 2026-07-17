@@ -1725,12 +1725,14 @@ function _callGeminiJsonObject_(prov, prompt, expectedObject) {
 
 function _callClaudeJsonObject_(prov, prompt, expectedObject) {
   var url = 'https://api.anthropic.com/v1/messages';
+  var staticPromptBlock = { type: 'text', text: [prompt.system, prompt.instruction, prompt.cache_scaffold || ''].filter(function(part){ return !!part; }).join('\n\n') };
+  if (_anthropicPromptCacheEnabled_()) staticPromptBlock.cache_control = _anthropicPromptCacheControl_();
   var body = {
     model: prov.model,
-    max_tokens: 1024,
+    max_tokens: 4096,
     temperature: CFG.PREDICTION_TEMPERATURE,
-    system: prompt.system,
-    messages: [{ role: 'user', content: prompt.user + '\n\n' + prompt.instruction }]
+    system: [staticPromptBlock],
+    messages: [{ role: 'user', content: [{ type: 'text', text: prompt.user }] }]
   };
   return _withRetries_(function() {
     var resp = UrlFetchApp.fetch(url, {
@@ -1752,7 +1754,11 @@ function _callClaudeJsonObject_(prov, prompt, expectedObject) {
       parsed: _strictParseJsonObject_(c, expectedObject),
       raw_output: c,
       prompt_tokens: (j.usage || {}).input_tokens || null,
-      completion_tokens: (j.usage || {}).output_tokens || null
+      completion_tokens: (j.usage || {}).output_tokens || null,
+      cache_creation_input_tokens: (j.usage || {}).cache_creation_input_tokens || null,
+      cache_read_input_tokens: (j.usage || {}).cache_read_input_tokens || null,
+      stop_reason: j.stop_reason || null,
+      ai_name: 'Anthropic', ai_model: prov.model
     };
   }, { provider: prov.name });
 }
