@@ -118,7 +118,7 @@ class ProductionFreezePackageTest(unittest.TestCase):
             audit = json.loads((package / "token_mapping_audit.json").read_text())[identity["session_id"]]
             raw = {
                 "primary_driver_token": audit[0]["token"],
-                "secondary_driver_token": "",
+                "secondary_driver_token": None,
                 "final_usdjpy_direction": "UP",
                 "reaction_strength": "MODERATE",
                 "confidence": 0.5,

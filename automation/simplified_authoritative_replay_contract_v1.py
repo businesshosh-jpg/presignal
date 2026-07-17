@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from typing import Any, Mapping, Sequence
 
 
@@ -26,6 +27,22 @@ class ReducedForecastError(ValueError):
 
 def _canon(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+
+
+def parse_reduced_output_json(raw_output: Any) -> tuple[Any, dict[str, Any]]:
+    """Parse strict JSON, allowing one complete outer Markdown code fence only."""
+    if not isinstance(raw_output, str):
+        raise json.JSONDecodeError("REDUCED_OUTPUT_NOT_TEXT", str(raw_output), 0)
+    text = raw_output.strip()
+    if text.startswith("```"):
+        match = re.fullmatch(r"```(?P<language>json)?[ \t]*\r?\n(?P<body>.*)\r?\n```", text, re.DOTALL)
+        if not match or "```" in match.group("body"):
+            raise json.JSONDecodeError("OUTER_MARKDOWN_FENCE_INVALID", raw_output, 0)
+        return json.loads(match.group("body")), {
+            "output_normalization": "single_outer_markdown_fence_removed",
+            "fence_language": match.group("language") or "",
+        }
+    return json.loads(text), {"output_normalization": "none"}
 
 
 def driver_options(members: Sequence[Mapping[str, Any]]) -> list[dict[str, str]]:
@@ -68,7 +85,7 @@ def validate_and_resolve(payload: Mapping[str, Any], members: Sequence[Mapping[s
     secondary = payload["secondary_driver_token"]
     if not isinstance(primary, str) or primary not in options:
         raise ReducedForecastError("PRIMARY_DRIVER_TOKEN_INVALID")
-    if secondary not in (None, "") and (not isinstance(secondary, str) or secondary not in options or secondary == primary):
+    if secondary is not None and (not isinstance(secondary, str) or secondary not in options or secondary == primary):
         raise ReducedForecastError("SECONDARY_DRIVER_TOKEN_INVALID")
     if payload["final_usdjpy_direction"] not in DIRECTIONS:
         raise ReducedForecastError("FINAL_DIRECTION_INVALID")
@@ -78,14 +95,16 @@ def validate_and_resolve(payload: Mapping[str, Any], members: Sequence[Mapping[s
         raise ReducedForecastError("CONFIDENCE_INVALID")
     if not isinstance(payload["primary_thesis"], str) or not payload["primary_thesis"].strip():
         raise ReducedForecastError("PRIMARY_THESIS_INVALID")
-    if payload["secondary_thesis"] not in (None, "") and not isinstance(payload["secondary_thesis"], str):
+    if secondary is None and payload["secondary_thesis"] not in (None, ""):
+        raise ReducedForecastError("SECONDARY_THESIS_WITHOUT_DRIVER")
+    if secondary is not None and (not isinstance(payload["secondary_thesis"], str) or not payload["secondary_thesis"].strip()):
         raise ReducedForecastError("SECONDARY_THESIS_INVALID")
     steps = payload["reasoning_steps"]
     if not isinstance(steps, list) or not 2 <= len(steps) <= 4 or any(not isinstance(step, str) or not step.strip() for step in steps):
         raise ReducedForecastError("REASONING_STEPS_INVALID")
     return {
         "primary_driver_event_id": options[primary],
-        "secondary_driver_event_id": options.get(secondary, "") if secondary else "",
+        "secondary_driver_event_id": options.get(secondary, "") if secondary is not None else "",
         "final_usdjpy_direction": payload["final_usdjpy_direction"],
         "reaction_strength": payload["reaction_strength"],
         "confidence": float(payload["confidence"]),

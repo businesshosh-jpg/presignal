@@ -22,6 +22,8 @@ from automation.build_simplified_replay_package_v1 import (
 )
 from automation.simplified_authoritative_replay_contract_v1 import (
     ReducedForecastError,
+    driver_options,
+    parse_reduced_output_json,
     validate_and_resolve,
 )
 
@@ -270,13 +272,17 @@ def production_bridge_dispatch(payload: Mapping[str, Any], *, script_service=Non
 
 def _load_package_state(package_dir: Path) -> dict[str, Any]:
     population = {row["forecast_identity"]: row for row in _rows(package_dir / "snapshot" / "authoritative_forecast_population.jsonl")}
+    sessions = {row["session_id"]: row for row in _rows(package_dir / "snapshot" / "authoritative_sessions.jsonl")}
     members_by_session: dict[str, list[dict[str, Any]]] = {}
     for row in _rows(package_dir / "snapshot" / "authoritative_session_members.jsonl"):
         members_by_session.setdefault(row["session_id"], []).append(row)
+    pack_references = {row["session_id"]: row for row in _rows(package_dir / "snapshot" / "authoritative_pack_references.jsonl")}
     excluded_sessions = {row["session_id"] for row in _rows(package_dir / "snapshot" / "authoritative_excluded_sessions.jsonl")}
     return {
         "population": population,
+        "sessions": sessions,
         "members_by_session": members_by_session,
+        "pack_references": pack_references,
         "excluded_sessions": excluded_sessions,
     }
 
@@ -368,8 +374,10 @@ def _classify_parse_or_validation(error: Exception) -> str:
     return "parser_failure"
 
 
-def _default_parser(response: Mapping[str, Any], members: Sequence[Mapping[str, Any]], _context: Mapping[str, Any]) -> dict[str, Any]:
-    payload = json.loads(str(response.get("raw_output") or ""))
+def _default_parser(response: Mapping[str, Any], members: Sequence[Mapping[str, Any]], context: Mapping[str, Any]) -> dict[str, Any]:
+    payload, parser_metadata = parse_reduced_output_json(response.get("raw_output"))
+    if isinstance(context, dict):
+        context["parser_metadata"] = parser_metadata
     return validate_and_resolve(payload, members)
 
 
@@ -381,7 +389,85 @@ def _default_prediction_persistor(path: Path, record: Mapping[str, Any]) -> None
     _atomic_write_json(path, record, overwrite=False)
 
 
-def _bridge_payload(run_id: str, identity: Mapping[str, Any], *, hard_timeout_seconds: int = 300) -> dict[str, Any]:
+def _dynamic_token_enum_schema(tokens: Sequence[str]) -> dict[str, Any]:
+    allowed = list(tokens)
+    return {
+        "primary_driver_token": {"type": "string", "enum": allowed},
+        "secondary_driver_token": {
+            "anyOf": [
+                {"type": "string", "enum": allowed},
+                {"type": "null"},
+            ],
+        },
+    }
+
+
+def _build_reduced_prompt(
+    identity: Mapping[str, Any],
+    package_state: Mapping[str, Any],
+    members: Sequence[Mapping[str, Any]],
+) -> dict[str, str]:
+    session_id = str(identity["session_id"])
+    session = package_state["sessions"].get(session_id)
+    pack_reference = package_state["pack_references"].get(session_id)
+    if not session or not pack_reference:
+        raise DurableExecutionError("FROZEN_PROMPT_CONTEXT_MISSING")
+    if identity["arm"] == "E":
+        if not identity.get("pack_fingerprint") or identity["pack_fingerprint"] != pack_reference.get("pack_fingerprint"):
+            raise DurableExecutionError("FROZEN_PACK_REFERENCE_MISMATCH")
+        historical_environment = pack_reference
+    else:
+        if identity.get("pack_fingerprint"):
+            raise DurableExecutionError("PACK_A_UNEXPECTED_ENVIRONMENT_REFERENCE")
+        historical_environment = None
+
+    tokens = [option["token"] for option in driver_options(members)]
+    context = {
+        "task": "simplified_authoritative_usdjpy_replay_forecast",
+        "decision_support_only": True,
+        "forecast_identity": identity["forecast_identity"],
+        "pack_arm": identity["arm"],
+        "forecast_cutoff": session.get("forecast_cutoff", ""),
+        "session": session,
+        "session_members": list(members),
+        "driver_options": driver_options(members),
+        "allowed_primary_driver_tokens": tokens,
+        "allowed_secondary_driver_tokens": tokens,
+        "dynamic_token_enum_schema": _dynamic_token_enum_schema(tokens),
+        "historical_environment_pack": historical_environment,
+        "outcome_data_supplied": False,
+        "evaluation_data_supplied": False,
+    }
+    return {
+        "system": (
+            "You are a macroeconomic decision-support forecaster. Use only the frozen information "
+            "in the request and do not give trading instructions. Return strict JSON only."
+        ),
+        "user": _canon(context),
+        "instruction": (
+            "Return exactly one JSON object with exactly these fields: primary_driver_token, "
+            "secondary_driver_token, final_usdjpy_direction, reaction_strength, confidence, "
+            "primary_thesis, secondary_thesis, reasoning_steps. primary_driver_token must be one "
+            "exact listed primary token copied verbatim. secondary_driver_token must be JSON null "
+            "or one exact listed secondary token copied verbatim and different from the primary token. "
+            "Do not emit event names, labels, partial tokens, or approximate tokens. "
+            "final_usdjpy_direction must be UP, DOWN, FLAT, or NO_CLEAR_DIRECTION. reaction_strength "
+            "must be WEAK, MODERATE, or STRONG. confidence must be a number from 0 to 1. "
+            "primary_thesis must be non-empty. If secondary_driver_token is null, secondary_thesis "
+            "must be empty; otherwise secondary_thesis must be non-empty. reasoning_steps must be "
+            "an array of 2 to 4 non-empty strings. Do not add fields, markdown, or commentary."
+        ),
+        "cache_scaffold": "",
+    }
+
+
+def _bridge_payload(
+    run_id: str,
+    identity: Mapping[str, Any],
+    prompt: Mapping[str, str],
+    *,
+    hard_timeout_seconds: int = 300,
+) -> dict[str, Any]:
     return {
         "provider": identity["provider"],
         "model": identity["model"],
@@ -391,7 +477,7 @@ def _bridge_payload(run_id: str, identity: Mapping[str, Any], *, hard_timeout_se
         "arm": identity["arm"],
         "request_schema_version": BRIDGE_SCHEMA_VERSION,
         "hard_timeout_seconds": hard_timeout_seconds,
-        "prompt": {},
+        "prompt": dict(prompt),
     }
 
 
@@ -429,7 +515,8 @@ def execute_live_identity(
     prediction_writer = prediction_persistor or _default_prediction_persistor
     transaction_id = _stable_id("TX", run_id, identity_id)
     invocation_id = _stable_id("INV", run_id, identity_id)
-    payload = _bridge_payload(run_id, frozen_identity)
+    prompt = _build_reduced_prompt(frozen_identity, package_state, members)
+    payload = _bridge_payload(run_id, frozen_identity, prompt)
 
     _reserve_identity(run_path, identity_id, {
         "run_id": run_id,
@@ -514,7 +601,14 @@ def execute_live_identity(
             raise DurableExecutionError("model_substitution")
 
         try:
-            resolved = parser(response, members, {"run_dir": run_path, "raw_response_path": raw_path, "transaction_id": transaction_id})
+            parser_context: dict[str, Any] = {
+                "run_dir": run_path,
+                "raw_response_path": raw_path,
+                "transaction_id": transaction_id,
+            }
+            resolved = parser(response, members, parser_context)
+            transaction["parser_metadata"] = parser_context.get("parser_metadata", {"output_normalization": "custom_parser"})
+            _atomic_write_json(transaction_path, transaction)
         except Exception as error:
             classification = _classify_parse_or_validation(error)
             _write_failure(run_path, run_id, identity_id, transaction_id, classification, error, transaction["attempt_count"] - 1)

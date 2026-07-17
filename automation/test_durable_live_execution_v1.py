@@ -72,7 +72,7 @@ def valid_response(identity: dict, members: list[dict]) -> dict:
         "actual_model": identity["model"],
         "raw_output": json.dumps({
             "primary_driver_token": token,
-            "secondary_driver_token": "",
+            "secondary_driver_token": None,
             "final_usdjpy_direction": "UP",
             "reaction_strength": "MODERATE",
             "confidence": 0.5,
@@ -170,6 +170,31 @@ class DurableLiveExecutionTest(unittest.TestCase):
             self.assertTrue(checkpoints["invocation_before_dispatch"])
             self.assertTrue(checkpoints["transaction_before_dispatch"])
             self.assertTrue(checkpoints["raw_before_parser"])
+
+    def test_live_invocation_persists_frozen_pack_prompt_before_dispatch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            package, run_dir, _run_manifest, identity, members = make_package_and_run(tmp)
+            captured = {}
+
+            def dispatch(payload):
+                captured.update(payload)
+                invocation = read_json(next((run_dir / "ledgers" / "invocations").glob("*.json")))
+                self.assertEqual(invocation["payload"], payload)
+                return valid_response(identity, members)
+
+            execute_live_identity(
+                run_dir=run_dir,
+                package_dir=package,
+                identity=identity,
+                dispatch_fn=dispatch,
+            )
+            prompt_context = json.loads(captured["prompt"]["user"])
+            self.assertEqual(prompt_context["forecast_identity"], identity["forecast_identity"])
+            self.assertEqual(prompt_context["pack_arm"], "A")
+            self.assertIsNone(prompt_context["historical_environment_pack"])
+            self.assertEqual(len(prompt_context["driver_options"]), len(members))
+            self.assertFalse(prompt_context["outcome_data_supplied"])
+            self.assertFalse(prompt_context["evaluation_data_supplied"])
 
     def test_parser_cannot_run_when_raw_persistence_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
