@@ -36,12 +36,29 @@ from automation.run_phase9_historical_square_one_replay_v0 import (  # type: ign
     _square_one_forecast_prompt,
 )
 from automation.v2_layered_prediction_evaluation_v0 import release_clusters  # type: ignore
+from automation.native_v2_typed_schema_v0 import (  # type: ignore
+    PRIMARY_REACTION_BINDING_FIELD,
+    SECONDARY_REACTION_TRANSPORT_FIELD,
+    canonical_schema_fingerprint,
+    decode_primary_reaction_transport,
+    primary_reaction_binding_fingerprint,
+    primary_reaction_binding_set,
+    transport_adapter_schema,
+    transport_adapter_schema_fingerprint,
+)
 
 
 AUTHORITATIVE_CONTRACT_FP = "7ad8b1537f59041a9f9311fbbd547d682a5a15d7fc55a1bc225ca14d24c42e85"
 LEGACY_ACTIVE_PARTS = ("phase9_historical_square_one_acquisition_repair", "active_v1")
 AUTHORITATIVE_BRIDGE_FUNCTION = "apiCallAuthoritativeProviderJsonObject"
 AUTHORITATIVE_BRIDGE_SCHEMA_VERSION = "authoritative_historical_replay_bridge_v1"
+APPS_SCRIPT_PROJECT_BINDING_KEYS = {
+    "project_id",
+    "version_number",
+    "aggregate_fingerprint",
+    "bridge_file_name",
+    "bridge_sha256",
+}
 
 TERMINAL_STATUSES = {
     "SUCCEEDED_NATIVE_V2",
@@ -81,6 +98,68 @@ def _sha(value: Any) -> str:
 
 def _file_sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _apps_script_project_fingerprint(files: Sequence[Mapping[str, Any]]) -> Tuple[str, List[Dict[str, str]]]:
+    """Fingerprint retrieved Apps Script source, independent of API file ordering."""
+    records: List[Dict[str, str]] = []
+    seen = set()
+    for file in files:
+        name = str(file.get("name") or "")
+        file_type = str(file.get("type") or "")
+        if not name or not file_type or "source" not in file:
+            raise ExecutorError("APPS_SCRIPT_PROJECT_CONTENT_INCOMPLETE")
+        key = (name, file_type)
+        if key in seen:
+            raise ExecutorError("APPS_SCRIPT_PROJECT_CONTENT_DUPLICATE_FILE:" + name)
+        seen.add(key)
+        records.append({
+            "name": name,
+            "type": file_type,
+            "sha256": hashlib.sha256(str(file.get("source") or "").encode("utf-8")).hexdigest(),
+        })
+    records.sort(key=lambda row: (row["name"], row["type"]))
+    return _sha(records), records
+
+
+def _validate_apps_script_project_binding(state: "PackageState") -> Dict[str, Any]:
+    binding = state.config.get("apps_script_project_binding") or {}
+    if set(binding) != APPS_SCRIPT_PROJECT_BINDING_KEYS:
+        raise ExecutorError("APPS_SCRIPT_PROJECT_BINDING_METADATA_INCOMPLETE")
+    project_id = str(binding.get("project_id") or "")
+    if not project_id or project_id != default_script_id():
+        raise ExecutorError("APPS_SCRIPT_PROJECT_ID_BINDING_MISMATCH")
+    try:
+        version_number = int(binding.get("version_number"))
+    except (TypeError, ValueError) as exc:
+        raise ExecutorError("APPS_SCRIPT_PROJECT_VERSION_BINDING_MISMATCH") from exc
+    expected_fingerprint = str(binding.get("aggregate_fingerprint") or "")
+    if len(expected_fingerprint) != 64 or any(char not in "0123456789abcdef" for char in expected_fingerprint.lower()):
+        raise ExecutorError("APPS_SCRIPT_PROJECT_FINGERPRINT_BINDING_MISMATCH")
+    bridge_binding = (state.config.get("execution_bindings") or {}).get("provider_bridge") or {}
+    if str(binding.get("bridge_sha256") or "") != str(bridge_binding.get("sha256") or ""):
+        raise ExecutorError("APPS_SCRIPT_PROJECT_BRIDGE_BINDING_MISMATCH")
+    credentials = load_credentials(interactive=False)
+    service = build_script_service(credentials, timeout_seconds=300)
+    version_content = service.projects().getContent(scriptId=project_id, versionNumber=version_number).execute()
+    head_content = service.projects().getContent(scriptId=project_id).execute()
+    version_fingerprint, version_records = _apps_script_project_fingerprint(version_content.get("files") or [])
+    head_fingerprint, head_records = _apps_script_project_fingerprint(head_content.get("files") or [])
+    if version_fingerprint != expected_fingerprint:
+        raise ExecutorError("IMMUTABLE_APPS_SCRIPT_PROJECT_FINGERPRINT_MISMATCH")
+    if head_fingerprint != expected_fingerprint or head_records != version_records:
+        raise ExecutorError("CURRENT_APPS_SCRIPT_PROJECT_FINGERPRINT_MISMATCH")
+    bridge_record = next((row for row in version_records if row["name"] == str(binding["bridge_file_name"]) and row["type"] == "SERVER_JS"), None)
+    if not bridge_record or bridge_record["sha256"] != str(binding["bridge_sha256"]):
+        raise ExecutorError("IMMUTABLE_APPS_SCRIPT_BRIDGE_FINGERPRINT_MISMATCH")
+    return {
+        "project_id": project_id,
+        "version_number": version_number,
+        "aggregate_fingerprint": version_fingerprint,
+        "file_count": len(version_records),
+        "bridge_sha256": bridge_record["sha256"],
+        "version_and_head_identical": True,
+    }
 
 
 def _git_value(*args: str) -> str:
@@ -331,9 +410,16 @@ def validate_package(package: Path, *, strict_authoritative: bool = True) -> Dic
 
 def _terminal_by_identity(state: PackageState) -> Dict[str, Dict[str, Any]]:
     terminals = _rows(state.terminal_path)
+    recovery_eligible = _recovery_eligible_identities(state)
     result: Dict[str, Dict[str, Any]] = {}
     for row in terminals:
         fid = row.get("forecast_identity")
+        # A preserved OpenAI route rejection predates provider dispatch.  The
+        # approved recovery ledger can make that historical terminal record
+        # non-effective exactly once; it remains in the immutable evidence
+        # ledger while a linked retry gets a new authoritative terminal state.
+        if fid in recovery_eligible and _is_superseded_pre_dispatch_route_failure(row):
+            continue
         if fid in result:
             raise ExecutorError("DUPLICATE_TERMINAL_IDENTITY:" + str(fid))
         if fid not in state.population_by_id:
@@ -341,6 +427,35 @@ def _terminal_by_identity(state: PackageState) -> Dict[str, Dict[str, Any]]:
         if row.get("terminal_status") not in TERMINAL_STATUSES:
             raise ExecutorError("UNKNOWN_TERMINAL_STATUS:" + str(row.get("terminal_status")))
         result[fid] = row
+    return result
+
+
+def _is_superseded_pre_dispatch_route_failure(row: Mapping[str, Any]) -> bool:
+    return (
+        int(row.get("attempt_number") or 0) == 1
+        and str(row.get("provider") or "") == "OpenAI"
+        and str(row.get("failure_class") or "") == "NON_RETRYABLE_PROVIDER_FAILURE"
+        and any("configured_model_does_not_match_frozen_model" in str(error) for error in (row.get("errors") or []))
+    )
+
+
+def _recovery_eligible_identities(state: PackageState) -> set[str]:
+    path = state.execution / "recovery_eligibility.json"
+    if not path.exists():
+        return set()
+    payload = json.loads(path.read_text())
+    if str(payload.get("run_id") or "") != state.run_id:
+        raise ExecutorError("RECOVERY_ELIGIBILITY_RUN_ID_MISMATCH")
+    identities = payload.get("openai_pre_dispatch_route_rejections")
+    if not isinstance(identities, list) or len(identities) != len(set(identities)):
+        raise ExecutorError("RECOVERY_ELIGIBILITY_IDENTITY_SET_INVALID")
+    result = {str(identity) for identity in identities}
+    terminals = _rows(state.terminal_path)
+    for fid in result:
+        entry = state.population_by_id.get(fid)
+        historical = [row for row in terminals if row.get("forecast_identity") == fid]
+        if not entry or entry.get("provider") != "OpenAI" or not any(_is_superseded_pre_dispatch_route_failure(row) for row in historical):
+            raise ExecutorError("RECOVERY_ELIGIBILITY_EVIDENCE_MISMATCH:" + fid)
     return result
 
 
@@ -457,6 +572,8 @@ def _next_attempt_plan(state: PackageState, entry: Mapping[str, Any]) -> Optiona
         return 1, "initial"
     attempts = sorted(int(row.get("attempt_number") or 0) for row in invocations)
     last_attempt = attempts[-1]
+    if fid in _recovery_eligible_identities(state) and not any(bool(row.get("recovery_attempt")) for row in invocations):
+        return last_attempt + 1, "recovery_retry"
     failures = [row for row in _rows(state.failure_path) if row.get("forecast_identity") == fid and int(row.get("attempt_number") or 0) == last_attempt]
     if not failures:
         raise ExecutorError("STALE_RESERVATION_REQUIRES_RECOVERY:" + fid)
@@ -490,9 +607,11 @@ def _reserve_attempt(state: PackageState, entry: Mapping[str, Any], attempt_numb
     counts = _attempt_counts(state)
     if counts["duplicate_reservations"]:
         raise ExecutorError("DUPLICATE_INVOCATION_RESERVATION")
+    if initial_or_retry not in {"initial", "retry", "recovery_retry"}:
+        raise ExecutorError("UNKNOWN_ATTEMPT_CLASS:" + initial_or_retry)
     if initial_or_retry == "initial" and counts["initial"] >= int(state.config["initial_call_ceiling"]):
         raise ExecutorError("INITIAL_CALL_CEILING_EXCEEDED")
-    if initial_or_retry == "retry" and counts["retry"] >= int(state.config["retry_call_ceiling"]):
+    if initial_or_retry in {"retry", "recovery_retry"} and counts["retry"] >= int(state.config["retry_call_ceiling"]):
         raise ExecutorError("RETRY_CALL_CEILING_EXCEEDED")
     if counts["total"] >= int(state.config["total_call_ceiling"]):
         raise ExecutorError("TOTAL_CALL_CEILING_EXCEEDED")
@@ -513,7 +632,8 @@ def _reserve_attempt(state: PackageState, entry: Mapping[str, Any], attempt_numb
         "model": entry["model"],
         "arm": entry["arm"],
         "attempt_number": attempt_number,
-        "initial_or_retry": initial_or_retry,
+        "initial_or_retry": "retry" if initial_or_retry == "recovery_retry" else initial_or_retry,
+        "recovery_attempt": initial_or_retry == "recovery_retry",
         "reservation_timestamp": _now(),
         "dispatch_status": "RESERVED",
         "snapshot_fingerprint": state.snapshot_fingerprint,
@@ -537,7 +657,29 @@ def _prompt_for_entry(state: PackageState, entry: Mapping[str, Any]) -> Dict[str
             "rendered_context_fingerprint": pack.get("rendered_context_fingerprint"),
             "items": pack.get("items") or [],
         }
-    return _square_one_forecast_prompt(session, members, exposure, str(entry["provider"]), str(entry["model"]))
+    prompt = _square_one_forecast_prompt(session, members, exposure, str(entry["provider"]), str(entry["model"]))
+    try:
+        user = json.loads(str(prompt["user"]))
+    except Exception as exc:
+        raise ExecutorError("FROZEN_PROMPT_USER_NOT_JSON_OBJECT") from exc
+    if not isinstance(user, dict):
+        raise ExecutorError("FROZEN_PROMPT_USER_NOT_JSON_OBJECT")
+    choices = primary_reaction_binding_set(str(entry["session_id"]), members)
+    user["native_v2_primary_reaction_binding_transport"] = {
+        "field": PRIMARY_REACTION_BINDING_FIELD,
+        "choice_set_fingerprint": primary_reaction_binding_fingerprint(str(entry["session_id"]), members),
+        "choices": [row["binding"] for row in choices],
+    }
+    prompt["user"] = _canon(user)
+    prompt["instruction"] = str(prompt.get("instruction") or "") + (
+        " Provider transport uses the required scalar " + PRIMARY_REACTION_BINDING_FIELD +
+        " enum supplied in native_v2_primary_reaction_binding_transport. Select exactly one listed binding. "
+        "Do not emit primary_driver_event_id, primary_reaction_target_type, or primary_reaction_target_id; "
+        "the transport adapter deterministically decodes only the binding you selected into those existing canonical fields. "
+        "Emit secondary_reaction as exactly one typed branch: a status-only no-reaction branch, or a complete "
+        "PREDICTED branch. Do not emit any legacy secondary_reaction_* fields."
+    )
+    return prompt
 
 
 def _parse_response(state: PackageState, entry: Mapping[str, Any], raw: str, response: Mapping[str, Any]) -> Tuple[Dict[str, Any], List[Dict[str, Any]], List[str]]:
@@ -558,6 +700,13 @@ def _parse_response(state: PackageState, entry: Mapping[str, Any], raw: str, res
             errors.append("PROVIDER_EXECUTION_METADATA_MISMATCH:" + field + ":" + actual)
     if str(response.get("request_schema_version") or "") != AUTHORITATIVE_BRIDGE_SCHEMA_VERSION:
         errors.append("PROVIDER_BRIDGE_SCHEMA_MISMATCH")
+    expected_mode = {
+        "OpenAI": "openai_json_schema_strict",
+        "Gemini": "gemini_response_schema",
+        "Anthropic": "anthropic_forced_tool_input_schema",
+    }[str(entry["provider"])]
+    if str(response.get("structured_output_mode") or "") != expected_mode:
+        errors.append("PROVIDER_STRUCTURED_OUTPUT_MODE_MISMATCH")
     if _hindsight_hits(raw):
         errors.append("HINDSIGHT_OUTPUT_DETECTED:" + "|".join(_hindsight_hits(raw)))
     session = state.sessions[str(entry["session_id"])]
@@ -565,8 +714,20 @@ def _parse_response(state: PackageState, entry: Mapping[str, Any], raw: str, res
     arm_pack_fp = "" if entry["arm"] == "A" else str(entry.get("pack_fingerprint") or "")
     pack_freeze_id = "NO_PACK" if entry["arm"] == "A" else "SQ1PACK_" + arm_pack_fp[:24]
     try:
+        parsed_transport = json.loads(raw)
+        if not isinstance(parsed_transport, dict):
+            raise ValueError("PRIMARY_REACTION_TRANSPORT_NOT_OBJECT")
+        if PRIMARY_REACTION_BINDING_FIELD not in parsed_transport:
+            if response.get("fixture_response") is True:
+                canonical_raw = raw
+            else:
+                raise ValueError("PRIMARY_REACTION_BINDING_MISSING")
+        else:
+            canonical_raw = _canon(decode_primary_reaction_transport(
+                parsed_transport, str(entry["session_id"]), members,
+            ))
         _parsed, prediction, paths, parse_errors = _normalized_forecast_response(
-            raw,
+            canonical_raw,
             session=session,
             members=members,
             provider=str(entry["provider"]),
@@ -699,6 +860,9 @@ def _bridge_payload(state: PackageState, entry: Mapping[str, Any], prompt: Mappi
             raise ExecutorError("FROZEN_BRIDGE_PAYLOAD_FIELD_MISSING:" + key)
     if timeout_seconds <= 0:
         raise ExecutorError("FROZEN_BRIDGE_TIMEOUT_MISSING")
+    members = state.members_by_session[str(entry["session_id"])]
+    provider = str(entry["provider"])
+    choice_set_fingerprint = primary_reaction_binding_fingerprint(str(entry["session_id"]), members)
     return {
         "provider": entry["provider"],
         "model": entry["model"],
@@ -709,6 +873,21 @@ def _bridge_payload(state: PackageState, entry: Mapping[str, Any], prompt: Mappi
         "session_id": entry["session_id"],
         "hard_timeout_seconds": timeout_seconds,
         "request_schema_version": AUTHORITATIVE_BRIDGE_SCHEMA_VERSION,
+        "structured_output_mode": {"OpenAI": "openai_json_schema_strict", "Gemini": "gemini_response_schema", "Anthropic": "anthropic_forced_tool_input_schema"}[provider],
+        "structured_output": {
+            "schema_id": "presignal_native_v2_primary_secondary_reaction_transport_v1",
+            "schema_fingerprint": canonical_schema_fingerprint(),
+            "canonical_schema": transport_adapter_schema(provider, str(entry["session_id"]), members),
+            "primary_reaction_binding": {
+                "field": PRIMARY_REACTION_BINDING_FIELD,
+                "choice_set_fingerprint": choice_set_fingerprint,
+                "adapter_schema_fingerprint": transport_adapter_schema_fingerprint(provider, str(entry["session_id"]), members),
+            },
+            "secondary_reaction": {
+                "field": SECONDARY_REACTION_TRANSPORT_FIELD,
+                "branches": ["NO_SEPARATE_REACTION", "PREDICTED"],
+            },
+        },
     }
 
 
@@ -745,13 +924,14 @@ def execute_queue(
     state: PackageState, *,
     dispatcher: Callable[[PackageState, Mapping[str, Any], Mapping[str, str]], Dict[str, Any]],
     limit: Optional[int] = None,
+    entries: Optional[Sequence[Mapping[str, Any]]] = None,
 ) -> Dict[str, Any]:
     processed = 0
     with _exclusive_lease(state.lease_path, f"{os.getpid()}:{_now()}"):
         recover_incomplete_reservations(state)
         while True:
             progressed = False
-            for entry in state.queue():
+            for entry in (list(entries) if entries is not None else state.queue()):
                 if limit is not None and processed >= limit:
                     break
                 plan = _next_attempt_plan(state, entry)
@@ -776,6 +956,53 @@ def execute_queue(
                 _write_json(state.checkpoint_path, {"run_id": state.run_id, "processed_this_execution": processed, "last_forecast_identity": entry["forecast_identity"], "updated_ts": _now()})
             if (limit is not None and processed >= limit) or not progressed:
                 break
+    return reconcile_completion(state, write_manifest=False)
+
+
+def execute_compatibility_canary(
+    state: PackageState, *, dispatcher: Callable[[PackageState, Mapping[str, Any], Mapping[str, str]], Dict[str, Any]],
+    forecast_identities: Sequence[str],
+) -> Dict[str, Any]:
+    if len(forecast_identities) != 6 or len(set(forecast_identities)) != 6:
+        raise ExecutorError("COMPATIBILITY_CANARY_REQUIRES_EXACTLY_SIX_UNIQUE_IDENTITIES")
+    entries = [state.population_by_id.get(fid) for fid in forecast_identities]
+    if any(entry is None for entry in entries):
+        raise ExecutorError("COMPATIBILITY_CANARY_IDENTITY_OUTSIDE_FROZEN_POPULATION")
+    typed_entries = [dict(entry) for entry in entries if entry is not None]
+    expected_pairs = {(provider, arm) for provider in ("OpenAI", "Gemini", "Anthropic") for arm in ("A", "E")}
+    actual_pairs = {(str(entry["provider"]), str(entry["arm"])) for entry in typed_entries}
+    if actual_pairs != expected_pairs:
+        raise ExecutorError("COMPATIBILITY_CANARY_PROVIDER_ARM_COMPOSITION_MISMATCH")
+    invocation_rows = _rows(state.invocations_path)
+    invoked = {str(row.get("forecast_identity")) for row in invocation_rows}
+    terminals = _terminal_by_identity(state)
+    failures_by_identity: Dict[str, List[Dict[str, Any]]] = {}
+    for failure in _rows(state.failure_path):
+        failures_by_identity.setdefault(str(failure.get("forecast_identity")), []).append(failure)
+    for entry in typed_entries:
+        fid = str(entry["forecast_identity"])
+        if fid not in invoked:
+            continue
+        attempts = [row for row in invocation_rows if str(row.get("forecast_identity")) == fid]
+        failures = failures_by_identity.get(fid, [])
+        latest_failure = max(failures, key=lambda row: int(row.get("attempt_number") or 0)) if failures else None
+        # A failed canary arm may make its one frozen retry under the repaired
+        # contract.  All other canary identities must still be untouched.
+        if (
+            fid in terminals
+            or len(attempts) != 1
+            or latest_failure is None
+            or not str(latest_failure.get("failure_class") or "").startswith("RETRYABLE_")
+        ):
+            raise ExecutorError("COMPATIBILITY_CANARY_REQUIRES_UNTOUCHED_OR_SINGLE_RETRYABLE_IDENTITY")
+    # A canary is a release gate, not a six-item batch: once one arm fails, do
+    # not spend the remaining canary calls. Completed evidence is preserved and
+    # the caller receives a reconciled partial canary result.
+    for entry in typed_entries:
+        execute_queue(state, dispatcher=dispatcher, limit=1, entries=[entry])
+        terminal = _terminal_by_identity(state).get(str(entry["forecast_identity"]))
+        if not terminal or terminal.get("terminal_status") != "SUCCEEDED_NATIVE_V2":
+            return reconcile_completion(state, write_manifest=False)
     return reconcile_completion(state, write_manifest=False)
 
 
@@ -1000,6 +1227,7 @@ def _fixture_response(raw_payload: Mapping[str, Any], entry: Mapping[str, Any], 
     actual_provider = provider or entry["provider"]
     actual_model = model or entry["model"]
     return {
+        "fixture_response": True,
         "status": status,
         "provider": actual_provider,
         "model": actual_model,
@@ -1008,6 +1236,7 @@ def _fixture_response(raw_payload: Mapping[str, Any], entry: Mapping[str, Any], 
         "actual_provider": actual_provider,
         "actual_model": actual_model,
         "request_schema_version": AUTHORITATIVE_BRIDGE_SCHEMA_VERSION,
+        "structured_output_mode": {"OpenAI": "openai_json_schema_strict", "Gemini": "gemini_response_schema", "Anthropic": "anthropic_forced_tool_input_schema"}[str(entry["provider"])],
         "raw_output": json.dumps(raw_payload, sort_keys=True),
         "error": error,
     }
@@ -1218,6 +1447,8 @@ def main() -> None:
     parser.add_argument("--fixture-execution", action="store_true")
     parser.add_argument("--execute-authoritative", action="store_true")
     parser.add_argument("--resume-authoritative", action="store_true")
+    parser.add_argument("--execute-compatibility-canary", action="store_true")
+    parser.add_argument("--canary-forecast-identities", default="")
     parser.add_argument("--finalize-manifest", action="store_true")
     parser.add_argument("--confirm-run-id", default="")
     args = parser.parse_args()
@@ -1238,12 +1469,30 @@ def main() -> None:
         if manifest["completion_status"] != "AUTHORITATIVE_REPLAY_EXECUTION_COMPLETE":
             raise SystemExit(2)
         return
-    if args.execute_authoritative or args.resume_authoritative:
+    if args.execute_authoritative or args.resume_authoritative or args.execute_compatibility_canary:
         state = PackageState(package, strict_authoritative=True)
         if args.confirm_run_id != state.run_id:
             raise ExecutorError("AUTHORITATIVE_CONFIRM_RUN_ID_REQUIRED")
+        project_binding = _validate_apps_script_project_binding(state)
+        _write_json(state.execution / "preflight_validation.json", {
+            "run_id": state.run_id,
+            "status": "PASS",
+            "apps_script_project_binding": project_binding,
+            "validated_ts": _now(),
+        })
         dispatcher = _real_provider_dispatcher(state)
-        result = execute_queue(state, dispatcher=dispatcher)
+        if args.execute_compatibility_canary:
+            identities = [value.strip() for value in args.canary_forecast_identities.split(",") if value.strip()]
+            result = execute_compatibility_canary(state, dispatcher=dispatcher, forecast_identities=identities)
+            canary_stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+            _write_json(state.execution / ("compatibility_canary_" + canary_stamp + ".json"), {
+                "run_id": state.run_id,
+                "forecast_identities": identities,
+                "result": result,
+                "completed_ts": _now(),
+            })
+        else:
+            result = execute_queue(state, dispatcher=dispatcher)
         print(json.dumps(result, sort_keys=True))
         return
     raise ExecutorError("NO_PROVIDER_DISPATCH_WITHOUT_EXPLICIT_MODE")

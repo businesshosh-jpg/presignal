@@ -44,17 +44,33 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
       error: 'provider_not_configured'
     });
   }
-  var prov = resolved[0];
-  if (String(prov.model || '').trim() !== requestedModel) {
+  var resolvedProvider = resolved[0];
+  if (!String(resolvedProvider.model || '').trim()) {
     return _authoritativeBridgeResult_(metadata, {
       status: 'model_not_enforceable',
       request_status: 'rejected_before_provider_execution',
       response_status: 'model_not_enforceable',
       terminal_status: 'model_not_enforceable',
-      error: 'configured_model_does_not_match_frozen_model'
+      error: 'configured_provider_route_has_no_model_metadata'
     });
   }
+  // The provider resolver supplies the authenticated provider route, but its
+  // configured model may be an unversioned alias. The package is authoritative
+  // about the exact model identifier, so clone the route and dispatch that exact
+  // frozen identifier. Returned provider metadata is still checked below.
+  var prov = {};
+  Object.keys(resolvedProvider).forEach(function(key) { prov[key] = resolvedProvider[key]; });
+  prov.model = requestedModel;
   var prompt = params.prompt || {};
+  var structuredOutput = params.structured_output || {};
+  var structuredSchema = structuredOutput.canonical_schema;
+  if (!structuredSchema || typeof structuredSchema !== 'object' || !String(structuredOutput.schema_fingerprint || '').trim()) {
+    throw new Error('apiCallAuthoritativeProviderJsonObject requires canonical typed structured_output schema.');
+  }
+  prov.response_schema = structuredSchema;
+  prov.response_schema_name = 'presignal_native_v2_prediction';
+  prov.structured_output_mode = providerName === 'OpenAI' ? 'openai_json_schema_strict' :
+    providerName === 'Gemini' ? 'gemini_response_schema' : 'anthropic_forced_tool_input_schema';
   var startedMs = new Date().getTime();
   try {
     var response = _apiCallProviderRawJsonObject_(prov, {
@@ -100,7 +116,11 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
       prompt_tokens: response.prompt_tokens || null,
       completion_tokens: response.completion_tokens || null,
       cache_creation_input_tokens: response.cache_creation_input_tokens || null,
-      cache_read_input_tokens: response.cache_read_input_tokens || null
+      cache_read_input_tokens: response.cache_read_input_tokens || null,
+      stop_reason: response.stop_reason || null,
+      finish_reason: response.finish_reason || null,
+      refusal: response.refusal || null,
+      structured_output_mode: response.structured_output_mode || ''
     });
   } catch (error) {
     return _authoritativeBridgeResult_(metadata, {
@@ -142,7 +162,11 @@ function _authoritativeBridgeResult_(metadata, result) {
     prompt_tokens: result.prompt_tokens || null,
     completion_tokens: result.completion_tokens || null,
     cache_creation_input_tokens: result.cache_creation_input_tokens || null,
-    cache_read_input_tokens: result.cache_read_input_tokens || null
+    cache_read_input_tokens: result.cache_read_input_tokens || null,
+    stop_reason: result.stop_reason || null,
+    finish_reason: result.finish_reason || null,
+    refusal: result.refusal || null,
+    structured_output_mode: result.structured_output_mode || ''
   };
 }
 

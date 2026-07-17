@@ -24,6 +24,10 @@ BLOCKED_PACKAGE = OUTPUT_ROOT / BLOCKED_RUN_ID
 CONTRACT_FP = "7ad8b1537f59041a9f9311fbbd547d682a5a15d7fc55a1bc225ca14d24c42e85"
 SCHEMA = "v2.0-layered-shadow-v0"
 BRIDGE_SCHEMA = "authoritative_historical_replay_bridge_v1"
+APPS_SCRIPT_PROJECT_ID = "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9"
+APPS_SCRIPT_VERSION = 74
+APPS_SCRIPT_PROJECT_FINGERPRINT = "9449bcc334ff608a947e838151d8b10224bc97d493ea30fb9386397d8c7e5b50"
+APPS_SCRIPT_BRIDGE_FILE_NAME = "authoritative_provider_bridge"
 SCIENTIFIC_SNAPSHOT_FILES = (
     "authoritative_sessions.jsonl",
     "authoritative_session_members.jsonl",
@@ -171,6 +175,13 @@ def supersede_package(blocked: Path = BLOCKED_PACKAGE) -> Dict[str, Any]:
         "rollback_boundary": str(run_dir),
         "runner_fingerprint": bindings["executor"]["sha256"],
         "execution_bindings": bindings,
+        "apps_script_project_binding": {
+            "project_id": APPS_SCRIPT_PROJECT_ID,
+            "version_number": APPS_SCRIPT_VERSION,
+            "aggregate_fingerprint": APPS_SCRIPT_PROJECT_FINGERPRINT,
+            "bridge_file_name": APPS_SCRIPT_BRIDGE_FILE_NAME,
+            "bridge_sha256": bindings["provider_bridge"]["sha256"],
+        },
     })
     if config.get("prompt_fingerprint") == config["runner_fingerprint"]:
         raise RuntimeError("RUNNER_FINGERPRINT_COLLIDES_WITH_PROMPT_FINGERPRINT")
@@ -203,7 +214,7 @@ def supersede_package(blocked: Path = BLOCKED_PACKAGE) -> Dict[str, Any]:
         "configuration_fingerprint": config_fingerprint,
         "snapshot_fingerprint": sha(component_fingerprints),
         "created_ts": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "execution_integrity_repair": "EXECUTOR_GIT_BRIDGE_MODEL_TIMEOUT_BINDING_V1",
+        "execution_integrity_repair": "EXECUTOR_GIT_BRIDGE_MODEL_TIMEOUT_PROJECT_BINDING_V2",
     }
     write_json(snapshot / "authoritative_replay_input_manifest.json", manifest)
     write_json(run_dir / "execution" / "frozen_execution_configuration.json", config)
@@ -214,7 +225,7 @@ def supersede_package(blocked: Path = BLOCKED_PACKAGE) -> Dict[str, Any]:
     write_json(run_dir / "manifests" / "package_manifest.json", {"run_id": run_id, "snapshot_fingerprint": manifest["snapshot_fingerprint"], "configuration_fingerprint": config_fingerprint, "source_blocked_package": str(blocked), "authoritative_replay_started": False})
     old_manifest_path = blocked / "manifests" / "package_manifest.json"
     old_manifest = read_json(old_manifest_path)
-    old_manifest.update({"package_status": "SUPERSEDED_BEFORE_EXECUTION_PACKAGE_INTEGRITY_FAILURE", "superseded_by": run_id, "superseded_ts": manifest["created_ts"], "supersession_reason": "EXECUTOR_GIT_BRIDGE_MODEL_TIMEOUT_BINDING_REPAIR"})
+    old_manifest.update({"package_status": "SUPERSEDED_BEFORE_EXECUTION_PACKAGE_INTEGRITY_FAILURE", "superseded_by": run_id, "superseded_ts": manifest["created_ts"], "supersession_reason": "IMMUTABLE_VERSION74_PROJECT_FINGERPRINT_BINDING_CORRECTION"})
     write_json(old_manifest_path, old_manifest)
     return {"run_id": run_id, "run_dir": str(run_dir), "snapshot_fingerprint": manifest["snapshot_fingerprint"], "configuration_fingerprint": config_fingerprint, "source_blocked_package": str(blocked)}
 

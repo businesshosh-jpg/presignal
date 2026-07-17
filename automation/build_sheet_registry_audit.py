@@ -85,6 +85,7 @@ ALLOWED_CATEGORY = {
     "LEGACY_MR",
     "BATCH_SPLITTING",
     "CHARACTER_ECONOMIC",
+    "PRESIGNAL_V2_MARKET_SESSION",
     "UNKNOWN_REVIEW_REQUIRED",
 }
 
@@ -163,6 +164,8 @@ def _owner_module(sheet_name: str, existing: str) -> str:
         return "feature_pack"
     if name.startswith("Attention_"):
         return "attention"
+    if name.startswith("Market_Session_"):
+        return "market_session"
     if name.startswith("Family_") or name.startswith("Batch_"):
         return "family_structure"
     if (
