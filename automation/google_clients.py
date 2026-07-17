@@ -126,9 +126,13 @@ def build_sheets_service(creds: Credentials):
         return build("sheets", "v4", http=http, cache_discovery=False)
 
 
-def build_script_service(creds: Credentials):
+def build_script_service(creds: Credentials, timeout_seconds: Optional[int] = None):
+    """Build an Apps Script client with an explicit request-layer timeout."""
+    timeout = DEFAULT_SCRIPT_HTTP_TIMEOUT_SEC if timeout_seconds is None else int(timeout_seconds)
+    if timeout <= 0:
+        raise ValueError("Script HTTP timeout must be positive")
     with _GoogleApiIPv4Only():
-        http = AuthorizedHttp(creds, http=httplib2.Http(timeout=DEFAULT_SCRIPT_HTTP_TIMEOUT_SEC))
+        http = AuthorizedHttp(creds, http=httplib2.Http(timeout=timeout))
         return build("script", "v1", http=http, cache_discovery=False)
 
 

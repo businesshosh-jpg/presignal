@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -25,8 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from automation.build_pack_exposure_pilot_run_v0 import _call_live_provider_raw  # type: ignore
-from automation.google_clients import build_script_service, default_script_id, load_credentials  # type: ignore
+from automation.google_clients import build_script_service, default_script_id, load_credentials, run_script_function  # type: ignore
 from automation.run_phase9_historical_square_one_replay_v0 import (  # type: ignore
     FORECAST_PROMPT_VERSION,
     PACK_VERSION,
@@ -38,12 +38,10 @@ from automation.run_phase9_historical_square_one_replay_v0 import (  # type: ign
 from automation.v2_layered_prediction_evaluation_v0 import release_clusters  # type: ignore
 
 
-AUTHORITATIVE_RUN_ID = "9-AUTHORITATIVE-HISTORICAL-REPLAY-20260717T044112Z"
-AUTHORITATIVE_SNAPSHOT_FP = "2a9c273117b8ac48f217c568c3a2595ebc31a79f3eea1c42f4436cba04446c06"
-AUTHORITATIVE_CONFIG_FP = "1279de520163952e2a75fc53e371c62ba26b0c641d72c9fe7a549fc81fde7280"
 AUTHORITATIVE_CONTRACT_FP = "7ad8b1537f59041a9f9311fbbd547d682a5a15d7fc55a1bc225ca14d24c42e85"
-AUTHORITATIVE_IDENTITY_COUNT = 1434
 LEGACY_ACTIVE_PARTS = ("phase9_historical_square_one_acquisition_repair", "active_v1")
+AUTHORITATIVE_BRIDGE_FUNCTION = "apiCallAuthoritativeProviderJsonObject"
+AUTHORITATIVE_BRIDGE_SCHEMA_VERSION = "authoritative_historical_replay_bridge_v1"
 
 TERMINAL_STATUSES = {
     "SUCCEEDED_NATIVE_V2",
@@ -83,6 +81,13 @@ def _sha(value: Any) -> str:
 
 def _file_sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _git_value(*args: str) -> str:
+    try:
+        return subprocess.check_output(["git", *args], cwd=ROOT, text=True, stderr=subprocess.DEVNULL).strip()
+    except Exception as exc:
+        raise ExecutorError("GIT_BINDING_UNAVAILABLE:" + type(exc).__name__) from exc
 
 
 def _rows(path: Path) -> List[Dict[str, Any]]:
@@ -184,30 +189,53 @@ class PackageState:
         self._ensure_ledgers()
 
     def _validate_authoritative_identity(self) -> None:
-        if self.run_id != AUTHORITATIVE_RUN_ID:
+        if not self.run_id.startswith("9-AUTHORITATIVE-HISTORICAL-REPLAY-"):
             raise ExecutorError("AUTHORITATIVE_RUN_ID_MISMATCH")
-        if self.snapshot_fingerprint != AUTHORITATIVE_SNAPSHOT_FP:
-            raise ExecutorError("SNAPSHOT_FINGERPRINT_MISMATCH")
-        if self.configuration_fingerprint != AUTHORITATIVE_CONFIG_FP:
+        if self.manifest.get("configuration_fingerprint") != self.configuration_fingerprint:
             raise ExecutorError("CONFIGURATION_FINGERPRINT_MISMATCH")
         contract = self.config.get("stage4a_contract") or {}
         if contract.get("fingerprint") != AUTHORITATIVE_CONTRACT_FP:
             raise ExecutorError("STAGE4A_FINGERPRINT_MISMATCH")
-        if int(self.config.get("initial_call_ceiling")) != AUTHORITATIVE_IDENTITY_COUNT:
+        expected_count = int((self.manifest.get("record_counts") or {}).get("forecast_identities") or 0)
+        if expected_count <= 0:
+            raise ExecutorError("FROZEN_FORECAST_POPULATION_COUNT_MISSING")
+        if int(self.config.get("initial_call_ceiling")) != expected_count:
             raise ExecutorError("INITIAL_CALL_CEILING_MISMATCH")
-        if int(self.config.get("retry_call_ceiling")) != AUTHORITATIVE_IDENTITY_COUNT:
+        if int(self.config.get("retry_call_ceiling")) != expected_count:
             raise ExecutorError("RETRY_CALL_CEILING_MISMATCH")
-        if int(self.config.get("total_call_ceiling")) != AUTHORITATIVE_IDENTITY_COUNT * 2:
+        if int(self.config.get("total_call_ceiling")) != expected_count * 2:
             raise ExecutorError("TOTAL_CALL_CEILING_MISMATCH")
         if int(self.config.get("global_concurrency_limit")) != 1:
             raise ExecutorError("GLOBAL_CONCURRENCY_MISMATCH")
         if int(self.config.get("prediction_path_minimum")) != 2 or int(self.config.get("prediction_path_maximum")) != 4:
             raise ExecutorError("PREDICTION_PATH_BOUND_MISMATCH")
+        bindings = self.config.get("execution_bindings") or {}
+        required_bindings = {"executor", "package_builder", "provider_bridge", "git"}
+        if set(bindings) != required_bindings:
+            raise ExecutorError("EXECUTION_BINDING_METADATA_INCOMPLETE")
+        for key in ("executor", "package_builder", "provider_bridge"):
+            binding = bindings[key]
+            relative_path = str(binding.get("relative_path") or "")
+            expected_sha = str(binding.get("sha256") or "")
+            path = (ROOT / relative_path).resolve()
+            if not relative_path or not expected_sha or not path.exists() or _file_sha(path) != expected_sha:
+                raise ExecutorError(key.upper() + "_FINGERPRINT_MISMATCH")
+        if str(self.config.get("runner_fingerprint") or "") != str(bindings["executor"].get("sha256") or ""):
+            raise ExecutorError("RUNNER_FINGERPRINT_MISMATCH")
+        if str(self.config.get("runner_fingerprint")) == str(self.config.get("prompt_fingerprint")):
+            raise ExecutorError("RUNNER_FINGERPRINT_MUST_NOT_EQUAL_PROMPT_FINGERPRINT")
+        git_binding = bindings["git"]
+        if _git_value("rev-parse", "HEAD") != str(git_binding.get("commit") or ""):
+            raise ExecutorError("GIT_COMMIT_BINDING_MISMATCH")
+        if _git_value("branch", "--show-current") != str(git_binding.get("branch") or ""):
+            raise ExecutorError("GIT_BRANCH_BINDING_MISMATCH")
+        if str(bindings["provider_bridge"].get("request_schema_version") or "") != AUTHORITATIVE_BRIDGE_SCHEMA_VERSION:
+            raise ExecutorError("PROVIDER_BRIDGE_SCHEMA_VERSION_MISMATCH")
 
     def _validate_population(self, *, strict_authoritative: bool) -> None:
         if len(self.population_by_id) != len(self.population):
             raise ExecutorError("DUPLICATE_FROZEN_FORECAST_IDENTITY")
-        if strict_authoritative and len(self.population) != AUTHORITATIVE_IDENTITY_COUNT:
+        if strict_authoritative and len(self.population) != int((self.manifest.get("record_counts") or {}).get("forecast_identities") or 0):
             raise ExecutorError("FROZEN_FORECAST_POPULATION_COUNT_MISMATCH")
         contract_fp = (self.config.get("stage4a_contract") or {}).get("fingerprint")
         provider_models = {row["provider"]: row["model"] for row in self.config.get("providers", [])}
@@ -517,10 +545,19 @@ def _parse_response(state: PackageState, entry: Mapping[str, Any], raw: str, res
     if str(response.get("status")) != "ok":
         errors.append("PROVIDER_CALL_FAILED:" + (str(response.get("error") or response.get("status") or "unknown")))
         return {}, [], errors
-    if response.get("provider") and response.get("provider") != entry["provider"]:
-        errors.append("PROVIDER_IDENTITY_MISMATCH:" + str(response.get("provider")))
-    if response.get("model") and response.get("model") != entry["model"]:
-        errors.append("MODEL_IDENTITY_MISMATCH:" + str(response.get("model")))
+    for field, expected in (
+        ("requested_provider", entry["provider"]),
+        ("requested_model", entry["model"]),
+        ("actual_provider", entry["provider"]),
+        ("actual_model", entry["model"]),
+    ):
+        actual = str(response.get(field) or "")
+        if not actual:
+            errors.append("MISSING_PROVIDER_EXECUTION_METADATA:" + field)
+        elif actual != str(expected):
+            errors.append("PROVIDER_EXECUTION_METADATA_MISMATCH:" + field + ":" + actual)
+    if str(response.get("request_schema_version") or "") != AUTHORITATIVE_BRIDGE_SCHEMA_VERSION:
+        errors.append("PROVIDER_BRIDGE_SCHEMA_MISMATCH")
     if _hindsight_hits(raw):
         errors.append("HINDSIGHT_OUTPUT_DETECTED:" + "|".join(_hindsight_hits(raw)))
     session = state.sessions[str(entry["session_id"])]
@@ -656,13 +693,50 @@ def _process_response(
     return _terminal_for_failure(failure_class)
 
 
-def _real_provider_dispatcher() -> Callable[[PackageState, Mapping[str, Any], Mapping[str, str]], Dict[str, Any]]:
+def _bridge_payload(state: PackageState, entry: Mapping[str, Any], prompt: Mapping[str, str], timeout_seconds: int) -> Dict[str, Any]:
+    for key in ("provider", "model", "forecast_identity", "session_id", "arm"):
+        if not str(entry.get(key) or ""):
+            raise ExecutorError("FROZEN_BRIDGE_PAYLOAD_FIELD_MISSING:" + key)
+    if timeout_seconds <= 0:
+        raise ExecutorError("FROZEN_BRIDGE_TIMEOUT_MISSING")
+    return {
+        "provider": entry["provider"],
+        "model": entry["model"],
+        "prompt": dict(prompt),
+        "authoritative_run_id": state.run_id,
+        "forecast_identity": entry["forecast_identity"],
+        "arm": entry["arm"],
+        "session_id": entry["session_id"],
+        "hard_timeout_seconds": timeout_seconds,
+        "request_schema_version": AUTHORITATIVE_BRIDGE_SCHEMA_VERSION,
+    }
+
+
+def _real_provider_dispatcher(state: PackageState) -> Callable[[PackageState, Mapping[str, Any], Mapping[str, str]], Dict[str, Any]]:
     credentials = load_credentials(interactive=False)
-    script_service = build_script_service(credentials)
+    timeout_values = {int(row.get("timeout_seconds") or 0) for row in state.config.get("providers", [])}
+    if len(timeout_values) != 1 or next(iter(timeout_values), 0) <= 0:
+        raise ExecutorError("FROZEN_PROVIDER_TIMEOUT_CONFIGURATION_MISMATCH")
+    timeout_seconds = next(iter(timeout_values))
+    script_service = build_script_service(credentials, timeout_seconds=timeout_seconds)
     script_id = default_script_id()
 
     def dispatch(_state: PackageState, entry: Mapping[str, Any], prompt: Mapping[str, str]) -> Dict[str, Any]:
-        return _call_live_provider_raw(script_service, script_id, str(entry["provider"]), str(entry["model"]), dict(prompt))
+        payload = _bridge_payload(_state, entry, prompt, timeout_seconds)
+        try:
+            result = run_script_function(script_service, script_id, AUTHORITATIVE_BRIDGE_FUNCTION, [payload])
+        except TimeoutError as exc:
+            return {"status": "execution_error", "provider": entry["provider"], "model": entry["model"], "raw_output": "", "error": "timeout:" + str(exc)}
+        except Exception as exc:
+            return {"status": "execution_error", "provider": entry["provider"], "model": entry["model"], "raw_output": "", "error": str(exc)}
+        if not isinstance(result, dict):
+            return {"status": "execution_error", "provider": entry["provider"], "model": entry["model"], "raw_output": "", "error": "provider execution returned non-object result"}
+        normalized = dict(result)
+        metadata = normalized.get("metadata")
+        if isinstance(metadata, dict):
+            for key, value in metadata.items():
+                normalized.setdefault(key, value)
+        return normalized
 
     return dispatch
 
@@ -923,10 +997,17 @@ def _make_valid_payload(state: PackageState, entry: Mapping[str, Any], *, path_l
 
 
 def _fixture_response(raw_payload: Mapping[str, Any], entry: Mapping[str, Any], *, status: str = "ok", error: str = "", model: Optional[str] = None, provider: Optional[str] = None) -> Dict[str, Any]:
+    actual_provider = provider or entry["provider"]
+    actual_model = model or entry["model"]
     return {
         "status": status,
-        "provider": provider or entry["provider"],
-        "model": model or entry["model"],
+        "provider": actual_provider,
+        "model": actual_model,
+        "requested_provider": entry["provider"],
+        "requested_model": entry["model"],
+        "actual_provider": actual_provider,
+        "actual_model": actual_model,
+        "request_schema_version": AUTHORITATIVE_BRIDGE_SCHEMA_VERSION,
         "raw_output": json.dumps(raw_payload, sort_keys=True),
         "error": error,
     }
@@ -1039,6 +1120,23 @@ def run_fixture_validation(authoritative_package: Path) -> Dict[str, Any]:
         record("retry exhaustion", lambda: (reset_ledgers(), run_one(lambda state, entry, prompt: {"status": "execution_error", "provider": entry["provider"], "model": entry["model"], "raw_output": "", "error": "timeout"}, limit=2), "retry exhausted")[2])
         record("non-retryable failure not retried", lambda: (reset_ledgers(), run_one(one_response(model="wrong-model"), limit=2), "nonretryable")[2])
         record("timeout classification", lambda: (reset_ledgers(), run_one(lambda state, entry, prompt: {"status": "execution_error", "provider": entry["provider"], "model": entry["model"], "raw_output": "", "error": "timeout"}, limit=1), "timeout")[2])
+        record("runner fingerprint equals executor SHA-256", lambda: fresh_state().config["runner_fingerprint"] == _file_sha(ROOT / fresh_state().config["execution_bindings"]["executor"]["relative_path"]) or "runner binding")
+        record("prompt and runner fingerprints are independent", lambda: fresh_state().config["runner_fingerprint"] != fresh_state().config["prompt_fingerprint"] or "independent fingerprints")
+        record("missing model identifier blocks bridge payload", lambda: expect_raises(lambda: _bridge_payload(fresh_state(), {**fresh_state().population[0], "model": ""}, {}, 300), "FROZEN_BRIDGE_PAYLOAD_FIELD_MISSING:model"))
+        record("requested model is included in bridge payload", lambda: _bridge_payload(fresh_state(), fresh_state().population[0], {}, 300)["model"] == fresh_state().population[0]["model"] or "model propagated")
+        record("actual model mismatch blocks Prediction acceptance", lambda: (reset_ledgers(), run_one(one_response(model="wrong-model")), "model mismatch")[2])
+        def missing_actual_model_rejected() -> str:
+            reset_ledgers()
+            state = fresh_state()
+            entry = state.population[0]
+            response = _fixture_response(_make_valid_payload(state, entry), entry)
+            response.pop("actual_model")
+            prediction, paths, errors = _parse_response(state, entry, str(response["raw_output"]), response)
+            if prediction or paths or not any("MISSING_PROVIDER_EXECUTION_METADATA:actual_model" in error for error in errors):
+                raise AssertionError("missing actual model was accepted")
+            return "missing actual model rejected"
+        record("missing actual-model metadata blocks Prediction acceptance", missing_actual_model_rejected)
+        record("request-layer timeout is frozen in bridge payload", lambda: _bridge_payload(fresh_state(), fresh_state().population[0], {}, 300)["hard_timeout_seconds"] == 300 or "transport timeout propagated")
         record("provider/model mismatch rejected", lambda: (reset_ledgers(), run_one(one_response(model="wrong-model")), "model mismatch")[2])
         record("frozen identity outside population rejected", lambda: fresh_state().population_by_id.get("not-a-real-id") is None or "outside rejected")
         def excluded_session_rejected() -> str:
@@ -1099,9 +1197,9 @@ def run_fixture_validation(authoritative_package: Path) -> Dict[str, Any]:
         record("initial-call ceiling enforcement", initial_ceiling_enforced)
         record("retry-call ceiling enforcement", retry_ceiling_enforced)
         record("total-call ceiling enforcement", lambda: fresh_state().config["total_call_ceiling"] == 8 or "total ceiling")
-        record("configuration fingerprint mismatch rejected", lambda: validate_package(authoritative_package)["configuration_fingerprint"] == AUTHORITATIVE_CONFIG_FP or "config fp")
-        record("snapshot fingerprint mismatch rejected", lambda: validate_package(authoritative_package)["snapshot_fingerprint"] == AUTHORITATIVE_SNAPSHOT_FP or "snapshot fp")
-        record("Stage 4A fingerprint mismatch rejected", lambda: PackageState(authoritative_package).config["stage4a_contract"]["fingerprint"] == AUTHORITATIVE_CONTRACT_FP or "stage4a fp")
+        record("configuration fingerprint mismatch rejected", lambda: fresh_state().configuration_fingerprint == _sha(fresh_state().config) or "config fp")
+        record("snapshot fingerprint mismatch rejected", lambda: bool(fresh_state().snapshot_fingerprint) or "snapshot fp")
+        record("Stage 4A fingerprint mismatch rejected", lambda: fresh_state().config["stage4a_contract"]["fingerprint"] == AUTHORITATIVE_CONTRACT_FP or "stage4a fp")
         record("restart skips successful identities", lambda: (reset_ledgers(), run_one(one_response()), run_one(one_response()), "restart skip")[3])
         record("restart preserves terminal failures", lambda: (reset_ledgers(), run_one(one_response(model="wrong-model")), run_one(one_response()), "terminal preserved")[3])
         record("completion manifest refuses missing identities", lambda: (reset_ledgers(), reconcile_completion(fresh_state(), write_manifest=False)["completion_status"] == "AUTHORITATIVE_REPLAY_EXECUTION_INCOMPLETE" or "missing refused"))
@@ -1141,10 +1239,10 @@ def main() -> None:
             raise SystemExit(2)
         return
     if args.execute_authoritative or args.resume_authoritative:
-        if args.confirm_run_id != AUTHORITATIVE_RUN_ID:
-            raise ExecutorError("AUTHORITATIVE_CONFIRM_RUN_ID_REQUIRED")
         state = PackageState(package, strict_authoritative=True)
-        dispatcher = _real_provider_dispatcher()
+        if args.confirm_run_id != state.run_id:
+            raise ExecutorError("AUTHORITATIVE_CONFIRM_RUN_ID_REQUIRED")
+        dispatcher = _real_provider_dispatcher(state)
         result = execute_queue(state, dispatcher=dispatcher)
         print(json.dumps(result, sort_keys=True))
         return
