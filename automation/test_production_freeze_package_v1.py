@@ -10,6 +10,7 @@ from unittest.mock import patch
 from automation import build_simplified_replay_package_v1 as freezer
 from automation.build_simplified_replay_package_v1 import (
     SNAPSHOT,
+    apps_script_source_binding,
     freeze,
     freeze_production_package,
     verify_package_manifest,
@@ -19,13 +20,18 @@ from automation.run_simplified_replay_canary_v1 import execute
 
 
 def production_inputs(root: Path, package_id: str = "PRODUCTION-FREEZE-TEST") -> dict:
+    source_binding = apps_script_source_binding()
     return {
         "scientific_snapshot_path": SNAPSHOT,
         "durable_output_root": root,
         "package_id": package_id,
-        "immutable_apps_script_version": 78,
-        "bridge_source_fingerprint": "bridge-sha",
-        "prediction_runner_fingerprint": "runner-sha",
+        "apps_script_project_id": source_binding["apps_script_project_id"],
+        "execution_deployment_id": "AKfycbxd31I_td72HW0ZgScfYthYqliKfzBkQxE9EdURpTQU6ObQawGmX1sB5aVO3MADqXWf",
+        "execution_deployment_version": 79,
+        "immutable_apps_script_version": 79,
+        "project_fingerprint": source_binding["project_fingerprint"],
+        "bridge_source_fingerprint": source_binding["bridge_sha256"],
+        "prediction_runner_fingerprint": source_binding["prediction_runner_sha256"],
         "contract_fingerprint": "contract-sha",
         "executor_fingerprint": "executor-sha",
     }
@@ -46,13 +52,16 @@ class ProductionFreezePackageTest(unittest.TestCase):
             self.assertTrue(verify_whole_package_fingerprint(package))
 
             binding = json.loads((package / "binding" / "immutable_deployment_binding.json").read_text())
-            self.assertEqual(binding["apps_script_version"], 78)
+            self.assertEqual(binding["apps_script_version"], 79)
+            self.assertEqual(binding["execution_deployment_version"], 79)
+            self.assertEqual(binding["immutable_version_number"], 79)
             self.assertTrue(binding["version_is_immutable"])
             self.assertFalse(binding["deployment_performed"])
 
             fingerprints = json.loads((package / "fingerprints" / "implementation_fingerprints.json").read_text())
-            self.assertEqual(fingerprints["bridge_source_fingerprint"], "bridge-sha")
-            self.assertEqual(fingerprints["prediction_runner_fingerprint"], "runner-sha")
+            source_binding = apps_script_source_binding()
+            self.assertEqual(fingerprints["bridge_source_fingerprint"], source_binding["bridge_sha256"])
+            self.assertEqual(fingerprints["prediction_runner_fingerprint"], source_binding["prediction_runner_sha256"])
             self.assertEqual(fingerprints["contract_fingerprint"], "contract-sha")
             self.assertEqual(fingerprints["executor_fingerprint"], "executor-sha")
 

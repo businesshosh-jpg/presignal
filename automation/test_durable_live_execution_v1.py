@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from automation.build_simplified_replay_package_v1 import SNAPSHOT, freeze_production_package
+from automation.build_simplified_replay_package_v1 import SNAPSHOT, apps_script_source_binding, freeze_production_package
 from automation.run_simplified_replay_canary_v1 import (
     DurableExecutionError,
     PredictionPersistenceError,
@@ -19,28 +19,38 @@ from automation.simplified_authoritative_replay_contract_v1 import driver_option
 
 
 def package_inputs(root: Path, package_id: str = "PROD-FREEZE-FIXTURE") -> dict:
+    source_binding = apps_script_source_binding()
     return {
         "scientific_snapshot_path": SNAPSHOT,
         "durable_output_root": root,
         "package_id": package_id,
-        "immutable_apps_script_version": 78,
-        "bridge_source_fingerprint": "bridge-sha",
-        "prediction_runner_fingerprint": "runner-sha",
+        "apps_script_project_id": source_binding["apps_script_project_id"],
+        "execution_deployment_id": "AKfycbxd31I_td72HW0ZgScfYthYqliKfzBkQxE9EdURpTQU6ObQawGmX1sB5aVO3MADqXWf",
+        "execution_deployment_version": 79,
+        "immutable_apps_script_version": 79,
+        "project_fingerprint": source_binding["project_fingerprint"],
+        "bridge_source_fingerprint": source_binding["bridge_sha256"],
+        "prediction_runner_fingerprint": source_binding["prediction_runner_sha256"],
         "contract_fingerprint": "contract-sha",
         "executor_fingerprint": "executor-sha",
     }
 
 
 def init_inputs(package: Path, package_manifest: dict, run_root: Path, run_id: str = "RUN-FIXTURE") -> dict:
+    binding = read_json(package / "binding" / "immutable_deployment_binding.json")
     return {
         "package_dir": package,
         "durable_run_root": run_root,
         "run_id": run_id,
         "package_id": package_manifest["package_id"],
         "whole_package_fingerprint": (package / "whole_package_sha256.txt").read_text().strip(),
-        "apps_script_version": 78,
-        "bridge_source_fingerprint": "bridge-sha",
-        "prediction_runner_fingerprint": "runner-sha",
+        "apps_script_project_id": binding["apps_script_project_id"],
+        "execution_deployment_id": binding["execution_deployment_id"],
+        "execution_deployment_version": binding["execution_deployment_version"],
+        "immutable_version_number": binding["immutable_version_number"],
+        "project_fingerprint": binding["project_fingerprint"],
+        "bridge_sha256": binding["bridge_sha256"],
+        "prediction_runner_sha256": binding["prediction_runner_sha256"],
         "contract_fingerprint": "contract-sha",
         "executor_fingerprint": "executor-sha",
     }
@@ -83,7 +93,28 @@ def valid_response(identity: dict, members: list[dict]) -> dict:
     }
 
 
+def matching_deployment_metadata(project_id: str, deployment_id: str) -> dict:
+    source_binding = apps_script_source_binding()
+    return {
+        "apps_script_project_id": project_id,
+        "execution_deployment_id": deployment_id,
+        "execution_deployment_version": 79,
+        "project_fingerprint": source_binding["project_fingerprint"],
+        "bridge_sha256": source_binding["bridge_sha256"],
+        "prediction_runner_sha256": source_binding["prediction_runner_sha256"],
+        "deployment_api_response": {"deploymentId": deployment_id, "deploymentConfig": {"scriptId": project_id, "versionNumber": 79}},
+    }
+
+
 class DurableLiveExecutionTest(unittest.TestCase):
+    def setUp(self):
+        patcher = patch(
+            "automation.run_simplified_replay_canary_v1.read_execution_deployment_metadata",
+            side_effect=matching_deployment_metadata,
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def test_valid_frozen_package_initializes_durable_run_with_zero_counters(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -123,8 +154,8 @@ class DurableLiveExecutionTest(unittest.TestCase):
                 initialize_durable_run(**bad_fingerprint)
 
             bad_version = init_inputs(package, manifest, root / "runs", "RUN-BAD-VERSION")
-            bad_version["apps_script_version"] = 77
-            with self.assertRaisesRegex(DurableExecutionError, "apps_script_version"):
+            bad_version["immutable_version_number"] = 77
+            with self.assertRaisesRegex(DurableExecutionError, "immutable_version_number"):
                 initialize_durable_run(**bad_version)
 
             initialize_durable_run(**init_inputs(package, manifest, root / "runs", "RUN-DUP"))

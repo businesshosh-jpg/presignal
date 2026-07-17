@@ -19,6 +19,8 @@ from automation.simplified_authoritative_replay_contract_v1 import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+APPS_SCRIPT_DIR = ROOT / "apps_script"
+APPS_SCRIPT_CLASP_PATH = APPS_SCRIPT_DIR / ".clasp.json"
 SNAPSHOT = Path("/Users/junhoshino/projects/presignal_replay_archives/9-AUTHORITATIVE-HISTORICAL-REPLAY-20260717T094156Z/input_snapshot")
 
 CORE_SNAPSHOT_FILES = (
@@ -61,6 +63,38 @@ def sha(value: Any) -> str:
 
 def file_sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _local_apps_script_files() -> list[dict[str, str]]:
+    files: list[dict[str, str]] = []
+    for path in sorted(APPS_SCRIPT_DIR.iterdir(), key=lambda item: item.name):
+        if path.name == "appsscript.json":
+            files.append({"name": "appsscript", "type": "JSON", "source": path.read_text()})
+        elif path.is_file() and path.suffix == ".js":
+            files.append({"name": path.name[:-3], "type": "SERVER_JS", "source": path.read_text()})
+    return files
+
+
+def apps_script_project_fingerprint(files: Sequence[Mapping[str, Any]]) -> str:
+    normalized = sorted(
+        ({"name": str(item["name"]), "type": str(item["type"]), "source": str(item["source"])} for item in files),
+        key=lambda item: (item["name"], item["type"]),
+    )
+    payload = json.dumps(normalized, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def apps_script_source_binding() -> dict[str, Any]:
+    files = _local_apps_script_files()
+    by_name = {item["name"]: item for item in files}
+    project_id = str(json.loads(APPS_SCRIPT_CLASP_PATH.read_text()).get("scriptId") or "")
+    return {
+        "apps_script_project_id": project_id,
+        "project_fingerprint": apps_script_project_fingerprint(files),
+        "bridge_sha256": hashlib.sha256(by_name["authoritative_provider_bridge"]["source"].encode("utf-8")).hexdigest(),
+        "prediction_runner_sha256": hashlib.sha256(by_name["prediction_runner"]["source"].encode("utf-8")).hexdigest(),
+        "file_count": len(files),
+    }
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -225,6 +259,10 @@ def _validate_population_routes(population: Sequence[Mapping[str, Any]], session
 
 def _validate_production_inputs(
     immutable_apps_script_version: int,
+    apps_script_project_id: str,
+    execution_deployment_id: str,
+    execution_deployment_version: int,
+    project_fingerprint: str,
     fingerprints: Mapping[str, str],
     outcome_enabled: bool,
     evaluation_enabled: bool,
@@ -232,9 +270,26 @@ def _validate_production_inputs(
 ) -> None:
     if isinstance(immutable_apps_script_version, bool) or not isinstance(immutable_apps_script_version, int) or immutable_apps_script_version <= 0:
         raise ValueError("IMMUTABLE_APPS_SCRIPT_VERSION_MISSING_OR_MUTABLE")
+    if not isinstance(execution_deployment_id, str) or not execution_deployment_id.strip():
+        raise ValueError("EXECUTION_DEPLOYMENT_ID_MISSING")
+    if isinstance(execution_deployment_version, bool) or not isinstance(execution_deployment_version, int) or execution_deployment_version <= 0:
+        raise ValueError("EXECUTION_DEPLOYMENT_VERSION_MISSING")
+    if execution_deployment_version != immutable_apps_script_version:
+        raise ValueError("EXECUTION_DEPLOYMENT_VERSION_MISMATCH")
     missing = [key for key, value in fingerprints.items() if not isinstance(value, str) or not value.strip()]
     if missing:
         raise ValueError("IMPLEMENTATION_FINGERPRINT_MISSING:" + missing[0])
+    if not isinstance(project_fingerprint, str) or not project_fingerprint.strip():
+        raise ValueError("IMPLEMENTATION_FINGERPRINT_MISSING:project_fingerprint")
+    local_binding = apps_script_source_binding()
+    if apps_script_project_id != local_binding["apps_script_project_id"]:
+        raise ValueError("APPS_SCRIPT_PROJECT_ID_MISMATCH")
+    if project_fingerprint != local_binding["project_fingerprint"]:
+        raise ValueError("APPS_SCRIPT_PROJECT_FINGERPRINT_MISMATCH")
+    if fingerprints["bridge_source_fingerprint"] != local_binding["bridge_sha256"]:
+        raise ValueError("BRIDGE_SOURCE_FINGERPRINT_MISMATCH")
+    if fingerprints["prediction_runner_fingerprint"] != local_binding["prediction_runner_sha256"]:
+        raise ValueError("PREDICTION_RUNNER_FINGERPRINT_MISMATCH")
     if outcome_enabled or evaluation_enabled:
         raise ValueError("OUTCOME_OR_EVALUATION_ENABLED")
     if native_v2_prediction_path_required:
@@ -254,7 +309,7 @@ def _write_production_package(
     package_id: str,
     scientific_snapshot_path: Path,
     snapshot: Mapping[str, list[dict[str, Any]]],
-    immutable_apps_script_version: int,
+    deployment_binding: Mapping[str, Any],
     fingerprints: Mapping[str, str],
     counts: Mapping[str, int],
 ) -> None:
@@ -361,10 +416,12 @@ def _write_production_package(
         "driver_tokens_are_session_scoped": True,
     })
     write_json(package_dir / "binding" / "immutable_deployment_binding.json", {
-        "apps_script_version": immutable_apps_script_version,
+        # An immutable version can exist without the active API deployment pointing to it.
+        **dict(deployment_binding),
+        "apps_script_version": deployment_binding["immutable_version_number"],
         "version_is_immutable": True,
         "deployment_performed": False,
-        "binding_source": "operator_supplied_immutable_apps_script_version",
+        "binding_source": "operator_supplied_execution_deployment_and_immutable_version",
     })
     write_json(package_dir / "fingerprints" / "implementation_fingerprints.json", {
         **dict(fingerprints),
@@ -499,7 +556,11 @@ def freeze_production_package(
     scientific_snapshot_path: Path | str,
     durable_output_root: Path | str,
     package_id: str,
+    apps_script_project_id: str,
+    execution_deployment_id: str,
+    execution_deployment_version: int,
     immutable_apps_script_version: int,
+    project_fingerprint: str,
     bridge_source_fingerprint: str,
     prediction_runner_fingerprint: str,
     contract_fingerprint: str,
@@ -524,11 +585,24 @@ def freeze_production_package(
     }
     _validate_production_inputs(
         immutable_apps_script_version,
+        apps_script_project_id,
+        execution_deployment_id,
+        execution_deployment_version,
+        project_fingerprint,
         fingerprints,
         outcome_enabled,
         evaluation_enabled,
         native_v2_prediction_path_required,
     )
+    deployment_binding = {
+        "apps_script_project_id": apps_script_project_id,
+        "execution_deployment_id": execution_deployment_id,
+        "execution_deployment_version": execution_deployment_version,
+        "immutable_version_number": immutable_apps_script_version,
+        "project_fingerprint": project_fingerprint,
+        "bridge_sha256": bridge_source_fingerprint,
+        "prediction_runner_sha256": prediction_runner_fingerprint,
+    }
     snapshot = _load_core_snapshot(snapshot_path)
     counts = _validate_scientific_counts(snapshot)
     provider_models = _provider_model_counts(snapshot["population"])
@@ -542,7 +616,7 @@ def freeze_production_package(
             package_id,
             snapshot_path,
             snapshot,
-            immutable_apps_script_version,
+            deployment_binding,
             fingerprints,
             counts,
         )

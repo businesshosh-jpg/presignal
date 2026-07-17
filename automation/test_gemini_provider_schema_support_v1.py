@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from automation.build_simplified_replay_package_v1 import SNAPSHOT, freeze_production_package
+from automation.build_simplified_replay_package_v1 import SNAPSHOT, apps_script_source_binding, freeze_production_package
 from automation.run_simplified_replay_canary_v1 import (
     _bridge_payload,
     _build_reduced_prompt,
@@ -104,13 +104,18 @@ class GeminiProviderSchemaSupportTest(unittest.TestCase):
     def test_schema_is_separate_in_persisted_invocation_before_offline_dispatch(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
+            source_binding = apps_script_source_binding()
             manifest = freeze_production_package(
                 scientific_snapshot_path=SNAPSHOT,
                 durable_output_root=root / "packages",
                 package_id="GEMINI-SCHEMA-OFFLINE-PACKAGE",
-                immutable_apps_script_version=78,
-                bridge_source_fingerprint="bridge-sha",
-                prediction_runner_fingerprint="runner-sha",
+                apps_script_project_id=source_binding["apps_script_project_id"],
+                execution_deployment_id="AKfycbxd31I_td72HW0ZgScfYthYqliKfzBkQxE9EdURpTQU6ObQawGmX1sB5aVO3MADqXWf",
+                execution_deployment_version=79,
+                immutable_apps_script_version=79,
+                project_fingerprint=source_binding["project_fingerprint"],
+                bridge_source_fingerprint=source_binding["bridge_sha256"],
+                prediction_runner_fingerprint=source_binding["prediction_runner_sha256"],
                 contract_fingerprint="contract-sha",
                 executor_fingerprint="executor-sha",
             )
@@ -121,9 +126,13 @@ class GeminiProviderSchemaSupportTest(unittest.TestCase):
                 run_id="GEMINI-SCHEMA-OFFLINE-RUN",
                 package_id=manifest["package_id"],
                 whole_package_fingerprint=manifest["whole_package_sha256"],
-                apps_script_version=78,
-                bridge_source_fingerprint="bridge-sha",
-                prediction_runner_fingerprint="runner-sha",
+                apps_script_project_id=source_binding["apps_script_project_id"],
+                execution_deployment_id="AKfycbxd31I_td72HW0ZgScfYthYqliKfzBkQxE9EdURpTQU6ObQawGmX1sB5aVO3MADqXWf",
+                execution_deployment_version=79,
+                immutable_version_number=79,
+                project_fingerprint=source_binding["project_fingerprint"],
+                bridge_sha256=source_binding["bridge_sha256"],
+                prediction_runner_sha256=source_binding["prediction_runner_sha256"],
                 contract_fingerprint="contract-sha",
                 executor_fingerprint="executor-sha",
             )
@@ -154,7 +163,20 @@ class GeminiProviderSchemaSupportTest(unittest.TestCase):
                     }),
                 }
 
-            execute_live_identity(run_dir=run_dir, package_dir=package, identity=identity, dispatch_fn=dispatch)
+            execute_live_identity(
+                run_dir=run_dir,
+                package_dir=package,
+                identity=identity,
+                deployment_metadata_reader=lambda project_id, deployment_id: {
+                    "apps_script_project_id": project_id,
+                    "execution_deployment_id": deployment_id,
+                    "execution_deployment_version": 79,
+                    "project_fingerprint": source_binding["project_fingerprint"],
+                    "bridge_sha256": source_binding["bridge_sha256"],
+                    "prediction_runner_sha256": source_binding["prediction_runner_sha256"],
+                },
+                dispatch_fn=dispatch,
+            )
 
     def test_pack_a_and_e_use_the_same_frozen_schema_construction(self):
         schemas = {}

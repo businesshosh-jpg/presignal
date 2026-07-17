@@ -7,15 +7,18 @@ predictions.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
 import time
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
 from automation.build_simplified_replay_package_v1 import (
+    apps_script_project_fingerprint,
     file_sha,
     verify_package_manifest,
     verify_whole_package_fingerprint,
@@ -32,6 +35,7 @@ from automation.simplified_authoritative_replay_contract_v1 import (
 BRIDGE_FUNCTION_NAME = "apiCallAuthoritativeProviderJsonObject"
 BRIDGE_SCHEMA_VERSION = "authoritative_historical_replay_bridge_v1"
 LEDGER_DIRS = (
+    "deployment_verifications",
     "invocations",
     "raw_responses",
     "reservations",
@@ -39,6 +43,15 @@ LEDGER_DIRS = (
     "accepted_predictions",
     "failures",
     "terminal_identity_states",
+)
+DEPLOYMENT_BINDING_FIELDS = (
+    "apps_script_project_id",
+    "execution_deployment_id",
+    "execution_deployment_version",
+    "immutable_version_number",
+    "project_fingerprint",
+    "bridge_sha256",
+    "prediction_runner_sha256",
 )
 TRANSIENT_FAILURES = {
     "timeout",
@@ -105,9 +118,11 @@ def _canon(value: Any) -> str:
 
 
 def _stable_id(prefix: str, *parts: Any) -> str:
-    import hashlib
-
     return prefix + "_" + hashlib.sha256(_canon(parts).encode()).hexdigest()[:24]
+
+
+def _sha256(value: Any) -> str:
+    return hashlib.sha256(_canon(value).encode()).hexdigest()
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -165,12 +180,19 @@ def _package_binding(package_dir: Path) -> dict[str, Any]:
     manifest = _read_json(package_dir / "package_manifest.json")
     binding = _read_json(package_dir / "binding" / "immutable_deployment_binding.json")
     fingerprints = _read_json(package_dir / "fingerprints" / "implementation_fingerprints.json")
+    missing = [key for key in DEPLOYMENT_BINDING_FIELDS if key not in binding]
+    if missing:
+        raise DurableExecutionError("PACKAGE_DEPLOYMENT_BINDING_FIELD_MISSING:" + missing[0])
+    if binding["execution_deployment_version"] != binding["immutable_version_number"]:
+        raise DurableExecutionError("PACKAGE_EXECUTION_DEPLOYMENT_VERSION_MISMATCH")
+    if binding["bridge_sha256"] != fingerprints.get("bridge_source_fingerprint"):
+        raise DurableExecutionError("PACKAGE_BRIDGE_FINGERPRINT_MISMATCH")
+    if binding["prediction_runner_sha256"] != fingerprints.get("prediction_runner_fingerprint"):
+        raise DurableExecutionError("PACKAGE_PREDICTION_RUNNER_FINGERPRINT_MISMATCH")
     return {
         "package_id": manifest["package_id"],
         "whole_package_fingerprint": (package_dir / "whole_package_sha256.txt").read_text().strip(),
-        "apps_script_version": binding["apps_script_version"],
-        "bridge_source_fingerprint": fingerprints["bridge_source_fingerprint"],
-        "prediction_runner_fingerprint": fingerprints["prediction_runner_fingerprint"],
+        **{key: binding[key] for key in DEPLOYMENT_BINDING_FIELDS},
         "contract_fingerprint": fingerprints["contract_fingerprint"],
         "executor_fingerprint": fingerprints["executor_fingerprint"],
     }
@@ -201,9 +223,13 @@ def initialize_durable_run(
     run_id: str,
     package_id: str,
     whole_package_fingerprint: str,
-    apps_script_version: int,
-    bridge_source_fingerprint: str,
-    prediction_runner_fingerprint: str,
+    apps_script_project_id: str,
+    execution_deployment_id: str,
+    execution_deployment_version: int,
+    immutable_version_number: int,
+    project_fingerprint: str,
+    bridge_sha256: str,
+    prediction_runner_sha256: str,
     contract_fingerprint: str,
     executor_fingerprint: str,
 ) -> dict[str, Any]:
@@ -218,9 +244,13 @@ def initialize_durable_run(
     expected_binding = {
         "package_id": package_id,
         "whole_package_fingerprint": whole_package_fingerprint,
-        "apps_script_version": apps_script_version,
-        "bridge_source_fingerprint": bridge_source_fingerprint,
-        "prediction_runner_fingerprint": prediction_runner_fingerprint,
+        "apps_script_project_id": apps_script_project_id,
+        "execution_deployment_id": execution_deployment_id,
+        "execution_deployment_version": execution_deployment_version,
+        "immutable_version_number": immutable_version_number,
+        "project_fingerprint": project_fingerprint,
+        "bridge_sha256": bridge_sha256,
+        "prediction_runner_sha256": prediction_runner_sha256,
         "contract_fingerprint": contract_fingerprint,
         "executor_fingerprint": executor_fingerprint,
     }
@@ -237,6 +267,7 @@ def initialize_durable_run(
             "run_id": run_id,
             "package_dir": str(package_path),
             "binding": dict(expected_binding),
+            "binding_sha256": _sha256(expected_binding),
             "bridge_function_name": BRIDGE_FUNCTION_NAME,
             "bridge_schema_version": BRIDGE_SCHEMA_VERSION,
             "provider_calls_enabled": True,
@@ -271,6 +302,44 @@ def production_bridge_dispatch(payload: Mapping[str, Any], *, script_service=Non
     return run_script_function(service, script_id or default_script_id(), BRIDGE_FUNCTION_NAME, [dict(payload)])
 
 
+def read_execution_deployment_metadata(
+    apps_script_project_id: str,
+    execution_deployment_id: str,
+    *,
+    script_service=None,
+) -> dict[str, Any]:
+    from automation.google_clients import build_script_service, load_credentials
+
+    service = script_service or build_script_service(load_credentials())
+    deployment = service.projects().deployments().get(
+        scriptId=apps_script_project_id,
+        deploymentId=execution_deployment_id,
+    ).execute()
+    config = deployment.get("deploymentConfig") or {}
+    version = config.get("versionNumber")
+    if isinstance(version, bool) or not isinstance(version, int) or version <= 0:
+        raise DurableExecutionError("ACTIVE_EXECUTION_DEPLOYMENT_VERSION_UNKNOWN")
+    version_files = service.projects().getContent(
+        scriptId=apps_script_project_id,
+        versionNumber=version,
+    ).execute().get("files", [])
+    by_name = {str(item.get("name")): item for item in version_files}
+    try:
+        bridge_source = str(by_name["authoritative_provider_bridge"]["source"])
+        runner_source = str(by_name["prediction_runner"]["source"])
+    except KeyError as error:
+        raise DurableExecutionError("ACTIVE_EXECUTION_DEPLOYMENT_SOURCE_MISSING:" + str(error)) from error
+    return {
+        "apps_script_project_id": config.get("scriptId"),
+        "execution_deployment_id": deployment.get("deploymentId"),
+        "execution_deployment_version": version,
+        "project_fingerprint": apps_script_project_fingerprint(version_files),
+        "bridge_sha256": hashlib.sha256(bridge_source.encode("utf-8")).hexdigest(),
+        "prediction_runner_sha256": hashlib.sha256(runner_source.encode("utf-8")).hexdigest(),
+        "deployment_api_response": deployment,
+    }
+
+
 def _load_package_state(package_dir: Path) -> dict[str, Any]:
     population = {row["forecast_identity"]: row for row in _rows(package_dir / "snapshot" / "authoritative_forecast_population.jsonl")}
     sessions = {row["session_id"]: row for row in _rows(package_dir / "snapshot" / "authoritative_sessions.jsonl")}
@@ -288,8 +357,99 @@ def _load_package_state(package_dir: Path) -> dict[str, Any]:
     }
 
 
-def _verify_run_binding(run_dir: Path, package_dir: Path) -> None:
-    _assert_binding(_run_manifest(run_dir)["binding"], _package_binding(package_dir))
+def _verify_run_binding(run_dir: Path, package_dir: Path) -> dict[str, Any]:
+    manifest = _run_manifest(run_dir)
+    binding = manifest["binding"]
+    if manifest.get("binding_sha256") != _sha256(binding):
+        raise DurableExecutionError("RUN_DEPLOYMENT_BINDING_IMMUTABILITY_VIOLATION")
+    _assert_binding(binding, _package_binding(package_dir))
+    return binding
+
+
+def _write_deployment_verification(run_dir: Path, record: Mapping[str, Any]) -> dict[str, Any]:
+    ledger = _ledger(run_dir, "deployment_verifications")
+    sequence = len(list(ledger.glob("*.json"))) + 1
+    record_id = f"DEPLOYMENT_VERIFY_{sequence:06d}"
+    durable_record = {"verification_id": record_id, **dict(record)}
+    _atomic_write_json(_record_path(run_dir, "deployment_verifications", record_id), durable_record, overwrite=False)
+    return durable_record
+
+
+def _verify_active_execution_deployment(
+    run_dir: Path,
+    binding: Mapping[str, Any],
+    deployment_metadata_reader: Callable[[str, str], Mapping[str, Any]] | None,
+) -> dict[str, Any]:
+    reader = deployment_metadata_reader or read_execution_deployment_metadata
+    expected_fingerprints = {
+        "project_fingerprint": binding["project_fingerprint"],
+        "bridge_sha256": binding["bridge_sha256"],
+        "prediction_runner_sha256": binding["prediction_runner_sha256"],
+    }
+    base = {
+        "verification_timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "project_id": binding["apps_script_project_id"],
+        "deployment_id": binding["execution_deployment_id"],
+        "expected_version": binding["execution_deployment_version"],
+        "expected_immutable_version": binding["immutable_version_number"],
+        "expected_fingerprints": expected_fingerprints,
+    }
+    try:
+        observed = dict(reader(binding["apps_script_project_id"], binding["execution_deployment_id"]))
+    except Exception as error:
+        record = _write_deployment_verification(run_dir, {
+            **base,
+            "observed_version": None,
+            "observed_fingerprints": {},
+            "verification_status": "FAIL",
+            "failure_classification": "ACTIVE_EXECUTION_DEPLOYMENT_METADATA_READ_FAILED",
+            "api_response_fingerprint": _sha256({"error_type": type(error).__name__, "error": str(error)}),
+        })
+        raise DurableExecutionError(record["failure_classification"]) from error
+
+    observed_fingerprints = {key: observed.get(key) for key in expected_fingerprints}
+    response_digest = _sha256(observed)
+    checks = (
+        ("execution_deployment_id", "ACTIVE_EXECUTION_DEPLOYMENT_ID_MISMATCH"),
+        ("apps_script_project_id", "ACTIVE_EXECUTION_DEPLOYMENT_PROJECT_MISMATCH"),
+        ("execution_deployment_version", "ACTIVE_EXECUTION_DEPLOYMENT_VERSION_MISMATCH"),
+        ("project_fingerprint", "ACTIVE_EXECUTION_DEPLOYMENT_PROJECT_FINGERPRINT_MISMATCH"),
+        ("bridge_sha256", "ACTIVE_EXECUTION_DEPLOYMENT_BRIDGE_FINGERPRINT_MISMATCH"),
+        ("prediction_runner_sha256", "ACTIVE_EXECUTION_DEPLOYMENT_RUNNER_FINGERPRINT_MISMATCH"),
+    )
+    expected = {
+        **dict(expected_fingerprints),
+        "execution_deployment_id": binding["execution_deployment_id"],
+        "apps_script_project_id": binding["apps_script_project_id"],
+        "execution_deployment_version": binding["execution_deployment_version"],
+    }
+    failure = ""
+    if not observed:
+        failure = "ACTIVE_EXECUTION_DEPLOYMENT_MISSING"
+    elif (
+        isinstance(observed.get("execution_deployment_version"), bool)
+        or not isinstance(observed.get("execution_deployment_version"), int)
+        or observed["execution_deployment_version"] <= 0
+    ):
+        failure = "ACTIVE_EXECUTION_DEPLOYMENT_VERSION_UNKNOWN"
+    else:
+        for key, classification in checks:
+            if observed.get(key) != expected[key]:
+                failure = classification
+                break
+    record = _write_deployment_verification(run_dir, {
+        **base,
+        "observed_version": observed.get("execution_deployment_version"),
+        "observed_project_id": observed.get("apps_script_project_id"),
+        "observed_deployment_id": observed.get("execution_deployment_id"),
+        "observed_fingerprints": observed_fingerprints,
+        "verification_status": "FAIL" if failure else "PASS",
+        "failure_classification": failure,
+        "api_response_fingerprint": response_digest,
+    })
+    if failure:
+        raise DurableExecutionError(failure)
+    return record
 
 
 def _verify_identity_eligibility(package_state: Mapping[str, Any], identity: Mapping[str, Any]) -> dict[str, Any]:
@@ -488,6 +648,7 @@ def execute_live_identity(
     parser_fn: Callable[[Mapping[str, Any], Sequence[Mapping[str, Any]], Mapping[str, Any]], dict[str, Any]] | None = None,
     raw_response_persistor: Callable[[Path, Mapping[str, Any]], None] | None = None,
     prediction_persistor: Callable[[Path, Mapping[str, Any]], None] | None = None,
+    deployment_metadata_reader: Callable[[str, str], Mapping[str, Any]] | None = None,
     max_retries: int = 1,
 ) -> dict[str, Any]:
     run_path = Path(run_dir)
@@ -500,14 +661,21 @@ def execute_live_identity(
     if _accepted_path(run_path, identity_id).exists():
         raise DurableExecutionError("IDENTITY_ALREADY_ACCEPTED")
 
-    _verify_run_binding(run_path, package_path)
+    run_binding = _verify_run_binding(run_path, package_path)
+    _verify_active_execution_deployment(run_path, run_binding, deployment_metadata_reader)
     package_state = _load_package_state(package_path)
     frozen_identity = _verify_identity_eligibility(package_state, identity)
     members = package_state["members_by_session"].get(frozen_identity["session_id"], [])
     if not members:
         raise DurableExecutionError("IDENTITY_SESSION_MEMBERS_MISSING")
 
-    dispatch = dispatch_fn or production_bridge_dispatch
+    if dispatch_fn is None:
+        dispatch = lambda dispatch_payload: production_bridge_dispatch(
+            dispatch_payload,
+            script_id=run_binding["execution_deployment_id"],
+        )
+    else:
+        dispatch = dispatch_fn
     parser = parser_fn or _default_parser
     raw_writer = raw_response_persistor or _default_raw_response_persistor
     prediction_writer = prediction_persistor or _default_prediction_persistor
