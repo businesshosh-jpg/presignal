@@ -1645,10 +1645,10 @@ function _buildAttentionV3ReflectionPrompt_(ev, selected, prediction) {
   };
 }
 
-function _callProviderJsonObject_(prov, prompt, expectedObject) {
+function _callProviderJsonObject_(prov, prompt, expectedObject, responseSchema) {
   if (!prov || !prov.name) throw new Error('Provider metadata missing');
   if (prov.name === 'OpenAI') return _callOpenAiJsonObject_(prov, prompt, expectedObject);
-  if (prov.name === 'Gemini') return _callGeminiJsonObject_(prov, prompt, expectedObject);
+  if (prov.name === 'Gemini') return _callGeminiJsonObject_(prov, prompt, expectedObject, responseSchema);
   if (prov.name === 'Anthropic') return _callClaudeJsonObject_(prov, prompt, expectedObject);
   throw new Error('Unsupported provider for generic JSON object call: ' + prov.name);
 }
@@ -1689,8 +1689,7 @@ function _callOpenAiJsonObject_(prov, prompt, expectedObject) {
   }, { provider: prov.name });
 }
 
-function _callGeminiJsonObject_(prov, prompt, expectedObject) {
-  var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(prov.model) + ':generateContent?key=' + encodeURIComponent(prov.key);
+function _buildGeminiJsonObjectRequestBody_(prompt, responseSchema) {
   var body = {
     contents: [{ role: 'user', parts: [{ text: prompt.system + '\n\n' + prompt.user + '\n\n' + prompt.instruction }] }],
     generationConfig: {
@@ -1699,6 +1698,15 @@ function _callGeminiJsonObject_(prov, prompt, expectedObject) {
       seed: CFG.PREDICTION_SEED
     }
   };
+  if (responseSchema !== undefined && responseSchema !== null) {
+    body.generationConfig.responseJsonSchema = responseSchema;
+  }
+  return body;
+}
+
+function _callGeminiJsonObject_(prov, prompt, expectedObject, responseSchema) {
+  var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(prov.model) + ':generateContent?key=' + encodeURIComponent(prov.key);
+  var body = _buildGeminiJsonObjectRequestBody_(prompt, responseSchema);
   return _withRetries_(function() {
     var resp = UrlFetchApp.fetch(url, {
       method: 'post',

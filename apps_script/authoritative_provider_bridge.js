@@ -13,6 +13,8 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
   var forecastIdentity = String(params.forecast_identity || '').trim();
   var sessionId = String(params.session_id || '').trim();
   var arm = String(params.arm || '').trim();
+  var prompt = params.prompt || {};
+  var responseSchema = null;
   if (!providerName || !requestedModel || !authoritativeRunId || !forecastIdentity || !sessionId || !arm) {
     throw new Error('apiCallAuthoritativeProviderJsonObject requires frozen execution identity metadata.');
   }
@@ -21,6 +23,9 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
   }
   if (!isFinite(hardTimeoutSeconds) || hardTimeoutSeconds <= 0) {
     throw new Error('apiCallAuthoritativeProviderJsonObject requires positive hard_timeout_seconds.');
+  }
+  if (params.response_schema !== undefined && params.response_schema !== null) {
+    responseSchema = _validateAuthoritativeReducedResponseSchema_(params.response_schema, prompt.user);
   }
   var startedAt = new Date().toISOString();
   var metadata = {
@@ -60,7 +65,6 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
   var prov = {};
   Object.keys(resolvedProvider).forEach(function(key) { prov[key] = resolvedProvider[key]; });
   prov.model = requestedModel;
-  var prompt = params.prompt || {};
   var startedMs = new Date().getTime();
   try {
     var response = _callProviderJsonObject_(prov, {
@@ -68,7 +72,7 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
       user: String(prompt.user || ''),
       instruction: String(prompt.instruction || ''),
       cache_scaffold: String(prompt.cache_scaffold || '')
-    }, null);
+    }, null, responseSchema);
     var elapsedMs = new Date().getTime() - startedMs;
     var actualProvider = String(response.ai_name || prov.name || '').trim();
     var actualModel = String(response.ai_model || prov.model || '').trim();
@@ -118,6 +122,119 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
       error: String(error || 'provider_call_failed')
     });
   }
+}
+
+function _authoritativeReplaySchemaError_(code) {
+  throw new Error('AUTHORITATIVE_RESPONSE_SCHEMA_INVALID:' + code);
+}
+
+function _authoritativeReplayPlainObject_(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function _authoritativeReplayExactKeys_(value, expected, code) {
+  if (!_authoritativeReplayPlainObject_(value)) _authoritativeReplaySchemaError_(code + '_not_object');
+  var actual = Object.keys(value).sort();
+  var wanted = expected.slice().sort();
+  if (JSON.stringify(actual) !== JSON.stringify(wanted)) _authoritativeReplaySchemaError_(code + '_keys');
+}
+
+function _authoritativeReplayExactArray_(actual, expected, code) {
+  if (!Array.isArray(actual) || JSON.stringify(actual) !== JSON.stringify(expected)) {
+    _authoritativeReplaySchemaError_(code);
+  }
+}
+
+function _authoritativeReplayTokenEnum_(value, expected, code) {
+  if (!Array.isArray(value) || !value.length) _authoritativeReplaySchemaError_(code + '_empty');
+  var seen = {};
+  value.forEach(function(token) {
+    if (typeof token !== 'string' || !/^DRV_[0-9a-f]{20}$/.test(token) || seen[token]) {
+      _authoritativeReplaySchemaError_(code + '_malformed');
+    }
+    seen[token] = true;
+  });
+  _authoritativeReplayExactArray_(value, expected, code + '_context_mismatch');
+}
+
+function _validateAuthoritativeReducedResponseSchema_(schema, promptUser) {
+  var fields = [
+    'primary_driver_token', 'secondary_driver_token', 'final_usdjpy_direction',
+    'reaction_strength', 'confidence', 'primary_thesis', 'secondary_thesis',
+    'reasoning_steps'
+  ];
+  var context;
+  try {
+    context = JSON.parse(String(promptUser || ''));
+  } catch (error) {
+    _authoritativeReplaySchemaError_('prompt_context_json');
+  }
+  _authoritativeReplayExactKeys_(schema, ['type', 'properties', 'required', 'additionalProperties', 'propertyOrdering'], 'top_level');
+  if (schema.type !== 'object' || schema.additionalProperties !== false) {
+    _authoritativeReplaySchemaError_('top_level_contract');
+  }
+  _authoritativeReplayExactArray_(schema.required, fields, 'required_fields');
+  _authoritativeReplayExactArray_(schema.propertyOrdering, fields, 'property_ordering');
+  _authoritativeReplayExactKeys_(schema.properties, fields, 'properties');
+
+  var props = schema.properties;
+  _authoritativeReplayExactKeys_(props.primary_driver_token, ['type', 'enum'], 'primary_driver_token');
+  if (props.primary_driver_token.type !== 'string') _authoritativeReplaySchemaError_('primary_driver_token_type');
+  _authoritativeReplayTokenEnum_(
+    props.primary_driver_token.enum,
+    context.allowed_primary_driver_tokens,
+    'primary_driver_token_enum'
+  );
+
+  _authoritativeReplayExactKeys_(props.secondary_driver_token, ['anyOf'], 'secondary_driver_token');
+  if (!Array.isArray(props.secondary_driver_token.anyOf) || props.secondary_driver_token.anyOf.length !== 2) {
+    _authoritativeReplaySchemaError_('secondary_driver_token_any_of');
+  }
+  var secondaryString = props.secondary_driver_token.anyOf[0];
+  var secondaryNull = props.secondary_driver_token.anyOf[1];
+  _authoritativeReplayExactKeys_(secondaryString, ['type', 'enum'], 'secondary_driver_token_string');
+  _authoritativeReplayExactKeys_(secondaryNull, ['type'], 'secondary_driver_token_null');
+  if (secondaryString.type !== 'string' || secondaryNull.type !== 'null') {
+    _authoritativeReplaySchemaError_('secondary_driver_token_types');
+  }
+  _authoritativeReplayTokenEnum_(
+    secondaryString.enum,
+    context.allowed_secondary_driver_tokens,
+    'secondary_driver_token_enum'
+  );
+
+  _authoritativeReplayExactKeys_(props.final_usdjpy_direction, ['type', 'enum'], 'final_direction');
+  if (props.final_usdjpy_direction.type !== 'string') _authoritativeReplaySchemaError_('final_direction_type');
+  _authoritativeReplayExactArray_(props.final_usdjpy_direction.enum, ['DOWN', 'FLAT', 'NO_CLEAR_DIRECTION', 'UP'], 'final_direction_enum');
+
+  _authoritativeReplayExactKeys_(props.reaction_strength, ['type', 'enum'], 'reaction_strength');
+  if (props.reaction_strength.type !== 'string') _authoritativeReplaySchemaError_('reaction_strength_type');
+  _authoritativeReplayExactArray_(props.reaction_strength.enum, ['MODERATE', 'STRONG', 'WEAK'], 'reaction_strength_enum');
+
+  _authoritativeReplayExactKeys_(props.confidence, ['type', 'minimum', 'maximum'], 'confidence');
+  if (props.confidence.type !== 'number' || props.confidence.minimum !== 0 || props.confidence.maximum !== 1) {
+    _authoritativeReplaySchemaError_('confidence_constraints');
+  }
+  _authoritativeReplayExactKeys_(props.primary_thesis, ['type'], 'primary_thesis');
+  if (props.primary_thesis.type !== 'string') _authoritativeReplaySchemaError_('primary_thesis_type');
+
+  _authoritativeReplayExactKeys_(props.secondary_thesis, ['anyOf'], 'secondary_thesis');
+  if (!Array.isArray(props.secondary_thesis.anyOf) || props.secondary_thesis.anyOf.length !== 2) {
+    _authoritativeReplaySchemaError_('secondary_thesis_any_of');
+  }
+  _authoritativeReplayExactKeys_(props.secondary_thesis.anyOf[0], ['type'], 'secondary_thesis_string');
+  _authoritativeReplayExactKeys_(props.secondary_thesis.anyOf[1], ['type'], 'secondary_thesis_null');
+  if (props.secondary_thesis.anyOf[0].type !== 'string' || props.secondary_thesis.anyOf[1].type !== 'null') {
+    _authoritativeReplaySchemaError_('secondary_thesis_types');
+  }
+
+  _authoritativeReplayExactKeys_(props.reasoning_steps, ['type', 'items', 'minItems', 'maxItems'], 'reasoning_steps');
+  _authoritativeReplayExactKeys_(props.reasoning_steps.items, ['type'], 'reasoning_step_items');
+  if (props.reasoning_steps.type !== 'array' || props.reasoning_steps.items.type !== 'string' ||
+      props.reasoning_steps.minItems !== 2 || props.reasoning_steps.maxItems !== 4) {
+    _authoritativeReplaySchemaError_('reasoning_steps_constraints');
+  }
+  return JSON.parse(JSON.stringify(schema));
 }
 
 function _authoritativeBridgeResult_(metadata, result) {

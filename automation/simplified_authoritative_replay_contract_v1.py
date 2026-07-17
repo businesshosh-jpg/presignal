@@ -14,11 +14,12 @@ from typing import Any, Mapping, Sequence
 
 DIRECTIONS = {"UP", "DOWN", "FLAT", "NO_CLEAR_DIRECTION"}
 STRENGTHS = {"WEAK", "MODERATE", "STRONG"}
-REQUIRED = {
+REDUCED_FIELD_ORDER = (
     "primary_driver_token", "secondary_driver_token", "final_usdjpy_direction",
     "reaction_strength", "confidence", "primary_thesis", "secondary_thesis",
     "reasoning_steps",
-}
+)
+REQUIRED = set(REDUCED_FIELD_ORDER)
 
 
 class ReducedForecastError(ValueError):
@@ -55,6 +56,44 @@ def driver_options(members: Sequence[Mapping[str, Any]]) -> list[dict[str, str]]
     if len({row["token"] for row in options}) != len(options):
         raise ReducedForecastError("DRIVER_TOKEN_COLLISION")
     return options
+
+
+def reduced_output_response_schema(members: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Build a provider schema from the same frozen contract used by validation."""
+    tokens = [option["token"] for option in driver_options(members)]
+    if not tokens:
+        raise ReducedForecastError("DRIVER_TOKEN_ENUM_EMPTY")
+    return {
+        "type": "object",
+        "properties": {
+            "primary_driver_token": {"type": "string", "enum": tokens},
+            "secondary_driver_token": {
+                "anyOf": [
+                    {"type": "string", "enum": tokens},
+                    {"type": "null"},
+                ],
+            },
+            "final_usdjpy_direction": {"type": "string", "enum": sorted(DIRECTIONS)},
+            "reaction_strength": {"type": "string", "enum": sorted(STRENGTHS)},
+            "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "primary_thesis": {"type": "string"},
+            "secondary_thesis": {
+                "anyOf": [
+                    {"type": "string"},
+                    {"type": "null"},
+                ],
+            },
+            "reasoning_steps": {
+                "type": "array",
+                "items": {"type": "string"},
+                "minItems": 2,
+                "maxItems": 4,
+            },
+        },
+        "required": list(REDUCED_FIELD_ORDER),
+        "additionalProperties": False,
+        "propertyOrdering": list(REDUCED_FIELD_ORDER),
+    }
 
 
 def canonical_event_identity(member: Mapping[str, Any]) -> str:

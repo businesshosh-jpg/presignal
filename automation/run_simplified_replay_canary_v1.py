@@ -24,6 +24,7 @@ from automation.simplified_authoritative_replay_contract_v1 import (
     ReducedForecastError,
     driver_options,
     parse_reduced_output_json,
+    reduced_output_response_schema,
     validate_and_resolve,
 )
 
@@ -389,23 +390,11 @@ def _default_prediction_persistor(path: Path, record: Mapping[str, Any]) -> None
     _atomic_write_json(path, record, overwrite=False)
 
 
-def _dynamic_token_enum_schema(tokens: Sequence[str]) -> dict[str, Any]:
-    allowed = list(tokens)
-    return {
-        "primary_driver_token": {"type": "string", "enum": allowed},
-        "secondary_driver_token": {
-            "anyOf": [
-                {"type": "string", "enum": allowed},
-                {"type": "null"},
-            ],
-        },
-    }
-
-
 def _build_reduced_prompt(
     identity: Mapping[str, Any],
     package_state: Mapping[str, Any],
     members: Sequence[Mapping[str, Any]],
+    response_schema: Mapping[str, Any] | None = None,
 ) -> dict[str, str]:
     session_id = str(identity["session_id"])
     session = package_state["sessions"].get(session_id)
@@ -421,7 +410,9 @@ def _build_reduced_prompt(
             raise DurableExecutionError("PACK_A_UNEXPECTED_ENVIRONMENT_REFERENCE")
         historical_environment = None
 
-    tokens = [option["token"] for option in driver_options(members)]
+    schema = dict(response_schema or reduced_output_response_schema(members))
+    token_properties = schema["properties"]
+    tokens = list(token_properties["primary_driver_token"]["enum"])
     context = {
         "task": "simplified_authoritative_usdjpy_replay_forecast",
         "decision_support_only": True,
@@ -433,7 +424,10 @@ def _build_reduced_prompt(
         "driver_options": driver_options(members),
         "allowed_primary_driver_tokens": tokens,
         "allowed_secondary_driver_tokens": tokens,
-        "dynamic_token_enum_schema": _dynamic_token_enum_schema(tokens),
+        "dynamic_token_enum_schema": {
+            "primary_driver_token": token_properties["primary_driver_token"],
+            "secondary_driver_token": token_properties["secondary_driver_token"],
+        },
         "historical_environment_pack": historical_environment,
         "outcome_data_supplied": False,
         "evaluation_data_supplied": False,
@@ -467,8 +461,9 @@ def _bridge_payload(
     prompt: Mapping[str, str],
     *,
     hard_timeout_seconds: int = 300,
+    response_schema: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    return {
+    payload = {
         "provider": identity["provider"],
         "model": identity["model"],
         "authoritative_run_id": run_id,
@@ -479,6 +474,9 @@ def _bridge_payload(
         "hard_timeout_seconds": hard_timeout_seconds,
         "prompt": dict(prompt),
     }
+    if response_schema is not None:
+        payload["response_schema"] = dict(response_schema)
+    return payload
 
 
 def execute_live_identity(
@@ -515,8 +513,14 @@ def execute_live_identity(
     prediction_writer = prediction_persistor or _default_prediction_persistor
     transaction_id = _stable_id("TX", run_id, identity_id)
     invocation_id = _stable_id("INV", run_id, identity_id)
-    prompt = _build_reduced_prompt(frozen_identity, package_state, members)
-    payload = _bridge_payload(run_id, frozen_identity, prompt)
+    response_schema = reduced_output_response_schema(members)
+    prompt = _build_reduced_prompt(frozen_identity, package_state, members, response_schema)
+    payload = _bridge_payload(
+        run_id,
+        frozen_identity,
+        prompt,
+        response_schema=response_schema if frozen_identity["provider"] == "Gemini" else None,
+    )
 
     _reserve_identity(run_path, identity_id, {
         "run_id": run_id,
