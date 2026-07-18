@@ -1,0 +1,25 @@
+{
+  "apps_script_calls": 0,
+  "artifact_file_sha256": {
+    "evaluation_contract.json": "af7ef52ba55d6de20c45680e958433dadbd2a44148604c27353d94641ff1ccf8",
+    "historical_split_manifest.json": "96ee8020bd72181a4e31a14bccc6fa1bea4bf2d24ef7c5e232bc1ffafcf05f54",
+    "implementation_validation_plan.json": "8e6363d1704b88d1945b53d714c24e9c12787586a06cf5d825ff19b0f4ce2cb0",
+    "value_blindness_audit.json": "e0418fef3dcef3705f80bf2fd020e213862dced1e211cea785293955bdaa10f4"
+  },
+  "artifact_fingerprint": "feaf3701477c55c145d299c7e9a1885c183ad84904c3f0c1e50f497b25140e4a",
+  "artifact_fingerprints": {
+    "evaluation_contract.json": "737b5db8d2d1ae268b834fe8e2b544de7e79fde4c705c9df1336a456c23666d0",
+    "historical_split_manifest.json": "dd04813f678e7574ae1ca21019567163c454838daabff50e58972f1e41401e29",
+    "implementation_validation_plan.json": "22e6b03c917d519d53de29e73a4a01804b295d37449ff8bfa7f9b52b9cf59347",
+    "value_blindness_audit.json": "67e3d1b73a2afb4bb48df904f87a45e3de8cf29484bf3d521082e8ecb224e1cd"
+  },
+  "artifact_id": "PRESIGNAL-V2-PACK-AE-CONTRACT-BINDING-20260718T173128Z",
+  "artifact_type": "PACK_AE_CONTRACT_ARTIFACT_BINDING",
+  "evaluation_performed": false,
+  "fingerprint_algorithm": "SHA-256",
+  "fingerprint_scope": "canonical JSON of this artifact with artifact_fingerprint omitted",
+  "frozen_at": "2026-07-18T17:31:28Z",
+  "provider_calls": 0,
+  "source_commit_before_contract_freeze": "6d7783c44d5f8c6974244ec656a3bc8d01b3726f",
+  "spreadsheet_writes": 0
+}

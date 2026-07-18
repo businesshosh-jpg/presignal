@@ -1,0 +1,50 @@
+{
+  "artifact_fingerprint": "22e6b03c917d519d53de29e73a4a01804b295d37449ff8bfa7f9b52b9cf59347",
+  "artifact_id": "PRESIGNAL-V2-PACK-AE-IMPLEMENTATION-VALIDATION-PLAN-20260718T173128Z",
+  "artifact_type": "IMPLEMENTATION_VALIDATION_PLAN",
+  "contract_change_policy": "Any contract revision after development performance is viewed requires a new untouched prospective population. The 65-session holdout cannot be evaluated under a revised contract.",
+  "contract_id": "PRESIGNAL-V2-PACK-AE-EVALUATION-CONTRACT-20260718T173128Z",
+  "development_only_checks": [
+    "pair selection matches split manifest",
+    "category normalization is exhaustive",
+    "NO_CLEAR_DIRECTION and FLAT rules match contract",
+    "session means do not weight sessions by provider count",
+    "bootstrap is deterministic at seed 20260718 for 10000 resamples",
+    "all output component hashes reproduce"
+  ],
+  "evaluation_performed_by_this_plan": false,
+  "fingerprint_algorithm": "SHA-256",
+  "fingerprint_scope": "canonical JSON of this artifact with artifact_fingerprint omitted",
+  "frozen_at": "2026-07-18T17:31:28Z",
+  "holdout_protection": {
+    "holdout_partition_open_count": 1,
+    "holdout_values_must_not_be_loaded_during_development_validation": true,
+    "required_preconditions": [
+      "contract tag verified",
+      "development validation passed",
+      "scoring implementation hash frozen"
+    ]
+  },
+  "sequence": [
+    "verify frozen contract commit and tag",
+    "implement scoring from contract constants without reading holdout values",
+    "unit-test all direction action values and strength normalization",
+    "unit-test session clustering, bootstrap reproducibility, Type 7 percentiles, and decision boundaries with synthetic fixtures",
+    "run scoring only on HISTORICAL_DEVELOPMENT",
+    "validate development artifact construction and reconcile software failures",
+    "freeze scoring implementation hash without changing contract",
+    "verify holdout access gate",
+    "open HISTORICAL_CONFIRMATORY_HOLDOUT exactly once"
+  ],
+  "split_id": "PRESIGNAL-V2-PACK-AE-HISTORICAL-SPLIT-20260718T173128Z",
+  "synthetic_boundary_tests": [
+    "each allowed pair difference -2,-1,0,1,2",
+    "decision interval entirely above zero",
+    "decision interval entirely below zero",
+    "interval touching zero",
+    "mean equal to zero",
+    "partial provider coverage session",
+    "complete three-provider session",
+    "missing required field hard stop"
+  ]
+}

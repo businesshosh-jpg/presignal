@@ -1,0 +1,96 @@
+{
+  "allowed_inputs_read": [
+    {
+      "fields": [
+        "session_id",
+        "session_start_ts"
+      ],
+      "file": "authoritative_sessions.jsonl"
+    },
+    {
+      "fields": [
+        "session_id",
+        "provider",
+        "complete_ae_pair"
+      ],
+      "file": "provider_session_pair_readiness.jsonl"
+    },
+    {
+      "fields": [
+        "session_id",
+        "attachment_status"
+      ],
+      "file": "governed_exclusion_ledger.jsonl"
+    },
+    {
+      "fields": [
+        "population and missingness counts",
+        "artifact bindings"
+      ],
+      "file": "evaluation_readiness_summary.json"
+    },
+    {
+      "fields": [
+        "allowed directions",
+        "allowed strengths",
+        "required fields"
+      ],
+      "file": "reduced_provider_schema_reference.json"
+    },
+    {
+      "fields": [
+        "outcome thresholds",
+        "window and lineage contract"
+      ],
+      "file": "source_contract_configuration.json"
+    },
+    {
+      "fields": [
+        "identities",
+        "fingerprints",
+        "commit",
+        "tag",
+        "deployment versions"
+      ],
+      "file": "checkpoint and Git metadata"
+    }
+  ],
+  "arm_correctness_accessed": false,
+  "artifact_fingerprint": "67e3d1b73a2afb4bb48df904f87a45e3de8cf29484bf3d521082e8ecb224e1cd",
+  "artifact_id": "PRESIGNAL-V2-PACK-AE-VALUE-BLINDNESS-AUDIT-20260718T173128Z",
+  "artifact_type": "VALUE_BLINDNESS_AUDIT",
+  "construction_constraint": "All discretionary rules were supplied by the value-blind freeze request or were exact semantic vocabulary normalization; no observed performance informed them.",
+  "fingerprint_algorithm": "SHA-256",
+  "fingerprint_scope": "canonical JSON of this artifact with artifact_fingerprint omitted",
+  "frozen_at": "2026-07-18T17:31:28Z",
+  "frozen_source_binding": {
+    "attachment_fingerprint": "b4b63940e9052c8be80bb7e57dd423c1094b5679c4496e5bc511187eb21e2abc",
+    "attachment_id": "SIMPLIFIED-REPLAY-OUTCOME-ATTACHMENT-RECOVERED-20260718T162300Z",
+    "branch": "codex-simplified-authoritative-replay",
+    "evaluation_ready_archive_sha256": "579cedcbaa204817cce2fc19af211f069fe99b09b53ae7e7a9030ca1e8b7bd09",
+    "historical_endpoint_deployment_version": 81,
+    "package_fingerprint": "65f95301b996e7cca2265130adb6d93f80c5b508cafe1acf0ea343817e1727b9",
+    "package_id": "SIMPLIFIED-REPLAY-PROD-20260718T010455Z",
+    "readiness_fingerprint": "4a7e23601ca098527390eb64e0955f0690582db03bdabc7089e2f81d96d9a126",
+    "readiness_id": "SIMPLIFIED-REPLAY-EVALUATION-READINESS-RECOVERED-20260718T162600Z",
+    "ready_tag": "presignal-v2-authoritative-evaluation-ready",
+    "ready_tag_target": "6d7783c44d5f8c6974244ec656a3bc8d01b3726f",
+    "replay_deployment_version": 79,
+    "run_binding_sha256": "b0669b29a08ad9b4170a27e841c5a1b1bd79b0aa93d3e137f1f93a71b1844479",
+    "run_id": "SIMPLIFIED-REPLAY-AUTHORITATIVE-20260718T010455Z",
+    "source_commit": "6d7783c44d5f8c6974244ec656a3bc8d01b3726f"
+  },
+  "outcome_conditioned_arm_behavior_accessed": false,
+  "pair_score_differences_accessed": false,
+  "performance_scoring_accessed": false,
+  "prohibited_inputs_not_read": [
+    "Pack A or Pack E correctness",
+    "arm-level action values",
+    "pair-level score differences",
+    "provider performance summaries",
+    "outcome-conditioned arm behavior",
+    "development or holdout performance values"
+  ],
+  "provider_win_rates_accessed": false,
+  "result": "PASS_VALUE_BLIND"
+}

@@ -1,0 +1,2634 @@
+{
+  "artifact_fingerprint": "dd04813f678e7574ae1ca21019567163c454838daabff50e58972f1e41401e29",
+  "artifact_id": "PRESIGNAL-V2-PACK-AE-HISTORICAL-SPLIT-20260718T173128Z",
+  "artifact_type": "DETERMINISTIC_MARKET_SESSION_DEVELOPMENT_HOLDOUT_SPLIT",
+  "assignment_rule": {
+    "final_65_sessions": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+    "first_130_sessions": "HISTORICAL_DEVELOPMENT"
+  },
+  "fingerprint_algorithm": "SHA-256",
+  "fingerprint_scope": "canonical JSON of this artifact with artifact_fingerprint omitted",
+  "frozen_at": "2026-07-18T17:31:28Z",
+  "governed_exclusions": {
+    "partition": "OUTSIDE_DEVELOPMENT_AND_HOLDOUT",
+    "predictions": 261,
+    "session_ids": [
+      "US|2024-05-02|CUSTOM_CONFIG_WINDOW",
+      "US|2024-05-03|CUSTOM_CONFIG_WINDOW",
+      "US|2024-05-04|CUSTOM_CONFIG_WINDOW",
+      "US|2024-05-16|CUSTOM_CONFIG_WINDOW",
+      "US|2024-05-18|CUSTOM_CONFIG_WINDOW",
+      "US|2024-05-19|CUSTOM_CONFIG_WINDOW",
+      "US|2024-05-31|CUSTOM_CONFIG_WINDOW",
+      "US|2024-06-02|CUSTOM_CONFIG_WINDOW",
+      "US|2024-06-03|CUSTOM_CONFIG_WINDOW",
+      "US|2024-06-05|CUSTOM_CONFIG_WINDOW",
+      "US|2024-06-14|CUSTOM_CONFIG_WINDOW",
+      "US|2024-06-30|CUSTOM_CONFIG_WINDOW",
+      "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "US|2024-08-07|CUSTOM_CONFIG_WINDOW",
+      "US|2024-08-21|CUSTOM_CONFIG_WINDOW",
+      "US|2024-08-24|CUSTOM_CONFIG_WINDOW",
+      "US|2024-09-02|CUSTOM_CONFIG_WINDOW",
+      "US|2024-09-12|CUSTOM_CONFIG_WINDOW",
+      "US|2024-09-16|CUSTOM_CONFIG_WINDOW",
+      "US|2024-09-23|CUSTOM_CONFIG_WINDOW",
+      "US|2024-09-24|CUSTOM_CONFIG_WINDOW",
+      "US|2024-09-26|CUSTOM_CONFIG_WINDOW",
+      "US|2024-09-27|CUSTOM_CONFIG_WINDOW",
+      "US|2024-10-01|CUSTOM_CONFIG_WINDOW",
+      "US|2024-10-03|CUSTOM_CONFIG_WINDOW",
+      "US|2024-10-08|CUSTOM_CONFIG_WINDOW",
+      "US|2024-10-09|CUSTOM_CONFIG_WINDOW",
+      "US|2024-10-21|CUSTOM_CONFIG_WINDOW",
+      "US|2024-10-26|CUSTOM_CONFIG_WINDOW",
+      "US|2024-11-04|CUSTOM_CONFIG_WINDOW",
+      "US|2024-11-06|CUSTOM_CONFIG_WINDOW",
+      "US|2024-11-15|CUSTOM_CONFIG_WINDOW",
+      "US|2024-11-16|CUSTOM_CONFIG_WINDOW",
+      "US|2024-11-29|CUSTOM_CONFIG_WINDOW",
+      "US|2024-12-13|CUSTOM_CONFIG_WINDOW",
+      "US|2024-12-23|CUSTOM_CONFIG_WINDOW",
+      "US|2024-12-30|CUSTOM_CONFIG_WINDOW",
+      "US|2025-01-03|CUSTOM_CONFIG_WINDOW",
+      "US|2025-01-04|CUSTOM_CONFIG_WINDOW",
+      "US|2025-01-07|CUSTOM_CONFIG_WINDOW",
+      "US|2025-01-30|CUSTOM_CONFIG_WINDOW",
+      "US|2025-01-31|CUSTOM_CONFIG_WINDOW",
+      "US|2025-02-16|CUSTOM_CONFIG_WINDOW",
+      "US|2025-03-29|CUSTOM_CONFIG_WINDOW"
+    ],
+    "session_ids_sha256": "0ac7488632bf7452812e4e851d7d3e8cc821004f5d987e92edde53c586c08b28",
+    "sessions": 44
+  },
+  "ordered_session_record_hash": "e43bacba891c36128afcd9bbbe412e1ee3059f6d14e6954a14ef13bb40e26591",
+  "ordering_rule": [
+    "evaluation_start_timestamp ASC",
+    "session_id ASC"
+  ],
+  "partition_summary": {
+    "HISTORICAL_CONFIRMATORY_HOLDOUT": {
+      "complete_pairs": 186,
+      "complete_pairs_by_provider": {
+        "Anthropic": 65,
+        "Gemini": 62,
+        "OpenAI": 59
+      },
+      "sessions": 65
+    },
+    "HISTORICAL_DEVELOPMENT": {
+      "complete_pairs": 376,
+      "complete_pairs_by_provider": {
+        "Anthropic": 125,
+        "Gemini": 129,
+        "OpenAI": 122
+      },
+      "sessions": 130
+    }
+  },
+  "performance_values_used": false,
+  "provider_pairs_never_split_across_partitions": true,
+  "session_records": [
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-05-01T07:30:00Z",
+      "order_index": 1,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-01|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "a8114e752f58dc2d2d9d53f84f1fce2e4bb4a3189e131425d714089046b513ea"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-06T07:00:00Z",
+      "order_index": 2,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-06|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f46dbfb2ec32c05194fa48141575661d2c69b7f1462456c8e2d5fc229f129a87"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-05-07T12:55:00Z",
+      "order_index": 3,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-07|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "6ff691c1be2ae3462c3c49fd6c641087f713f7e8d0f819999f1c1a836e72198c"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-08T07:00:00Z",
+      "order_index": 4,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-08|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "125889fdd0722c9f813885f7812f0d3daf51be4d4d731238ce22000a250f3cf5"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-09T12:30:00Z",
+      "order_index": 5,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-09|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "68ad2c78520a8325084814220baa3d914b8b12d6ebb6c78f839e5e9285d2360d"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-10T09:00:00Z",
+      "order_index": 6,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-10|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "a31b8838c786d90816ba7694e34db15fe2fa77687a37492004e71d18a88018fe"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-13T13:00:00Z",
+      "order_index": 7,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-13|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f3c50b2e1e3f41a0e82cf1f42d87c7c899796ba852945f499dd30e9f8f0e2f8b"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-14T04:00:00Z",
+      "order_index": 8,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-14|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "346c6e833dfd1f22aa55349cc5947634b59c0b3f1a466484e91659f309a356bb"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-15T05:30:00Z",
+      "order_index": 9,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-15|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "35e410bd14ef270f24ee8357ecf062bf664efb884faa8d60fab715902bea6324"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-17T07:00:00Z",
+      "order_index": 10,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-17|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "820b287c664a96a65a92d64c69d77eac6ef09d886f35ea5c5e1a18255084848d"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-20T13:00:00Z",
+      "order_index": 11,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-20|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "5335ff360f5a99668088864fc4943295262167836904f9ce6d0a8786e77d9e37"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-21T08:00:00Z",
+      "order_index": 12,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-21|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7183d2cc32e048aa731590e4638589eccf1e1fd358b6705b584de61a12c9dedc"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-22T07:30:00Z",
+      "order_index": 13,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-22|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "bf3d2135b54f1de8b3bf5f0489768fda2f78d2b3c9a189124c8d5327d832d8c6"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-23T12:20:00Z",
+      "order_index": 14,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-23|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "b7c5a324fbb6e1bc5fce7ff17a0999e3ad6d4d0380fa898da0a8db38e83dbd8c"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-24T07:00:00Z",
+      "order_index": 15,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-24|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "ecb692edc699b2f144fc8e640f947d389829113f8fdeee0d66022f355077b8fc"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-27T00:00:00Z",
+      "order_index": 16,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-27|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "64020de0bea1335c36e671ece72489d839a7a2abcb666741caa04be5283caa42"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-28T04:55:00Z",
+      "order_index": 17,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-28|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "03ec9a15ae7810ae8254214d490f96205055bd3caa20c0a7011480dec48c13bc"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-29T11:00:00Z",
+      "order_index": 18,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-29|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "5357b95dabf95a9adfa09aaafc2565b13bb318fb2291b15cfdafaeccd489b010"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-05-30T05:30:00Z",
+      "order_index": 19,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-05-30|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "84b137d3f9c595157bdb7de7e6e6ade89697e4a7889a6cd4bb5826a8b82346a4"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-04T06:00:00Z",
+      "order_index": 20,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-04|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "45700539c308d79e3ba75a47f9fbbff1e593d1f10c69ec3329d263ac072a3d61"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-06T11:30:00Z",
+      "order_index": 21,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-06|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f3d99b6ce0ef4887b8e3c49af5ada912b90560cc84d8ea3c4534788977904d08"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-07T05:30:00Z",
+      "order_index": 22,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-07|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "446e07f0ca2d4f0f23bf5d3297428c18f924926fa33c69a4698eb01d015f4ef2"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-10T07:00:00Z",
+      "order_index": 23,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-10|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "0a30a0aa346a11e8270672e019759b51cf05982fd12a6902a47d66a8d8d643c6"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-11T04:00:00Z",
+      "order_index": 24,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-11|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "064c9a8a2e8f0c88f83e947d8a91a68aa7c56cec233a8b9788152972285c12d6"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-12T05:30:00Z",
+      "order_index": 25,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-12|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "d9ae62ea9a34443e85bd6f9381ea831a7fb9f5bad9190915b841a61f17a15d6a"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-13T12:30:00Z",
+      "order_index": 26,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-13|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "4c930d91c7bae2e72625de7eedb89df31e955bc6b92011363c4d88c14730c525"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-17T09:00:00Z",
+      "order_index": 27,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-17|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "5ad206f9b630ea0324af57de2dd64502029933610430dc60a22ae43cb22d3c42"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-18T01:00:00Z",
+      "order_index": 28,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-18|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "5b46c7a22eb3de02241b7571df5b7ad7b8dc92e387089c3bfeb65aee60159632"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-19T00:00:00Z",
+      "order_index": 29,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-19|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "65df963b9556eb9405465828c926e8fd4b6c562baa7a63410c95ccc1d01b57b2"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-20T00:00:00Z",
+      "order_index": 30,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-20|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "b2c355cbb31d0b106786af8273317bfc93876c92a2667161bf1b415cf454f010"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-21T07:00:00Z",
+      "order_index": 31,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-21|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "2ec242ba2efbd46505e0fc5f2693cece0c632e3705a6823e0f3e744195172b54"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-24T07:00:00Z",
+      "order_index": 32,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-24|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "a4c4e63319272457fea8265608fe4a41cd960cf017c1c0d3a468421f9bfb2082"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-25T07:00:00Z",
+      "order_index": 33,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-25|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "fd9d503acfaeb197a2cf42ee03fba570119754597c88417427b5ec2ecec16f00"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-06-26T07:30:00Z",
+      "order_index": 34,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "INCOMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-26|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "3065498b4ed0174b47095a07beedcc89cd961fda1e3773f5719574500112e3ca"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-27T05:30:00Z",
+      "order_index": 35,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-27|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "dd81fc37bc379d1bf736b6c98b31d0fc4f7a72fa25da4917c1d36525e6d9bfba"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-06-28T07:00:00Z",
+      "order_index": 36,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-06-28|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "bc748b746f9ae800c89192da62ad915482fcdad37bd93814b30260370444c509"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-07-01T13:45:00Z",
+      "order_index": 37,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-01|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "3af13ca6da5acb2fd21d1d9b77f9459155bb0507d89fdf3c47fabdb8a1e0a207"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-02T11:10:00Z",
+      "order_index": 38,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-02|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "9b285379ffc8891df89f57e744c37f5cc8fd8a4cacae0389ebd5061acf8d8ebc"
+    },
+    {
+      "complete_pair_count": 1,
+      "evaluation_start_timestamp": "2024-07-03T05:00:00Z",
+      "order_index": 39,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "INCOMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7ecd2dcd171f1c3e92e5b957ed96f494cc4c55dde89e5cc223debae93331de00"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-04T00:00:00Z",
+      "order_index": 40,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-04|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "14e2dbcbee6f8e24ddc276e544a5be89c074358c6760df90d099f35e64d199c0"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-05T05:30:00Z",
+      "order_index": 41,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "b2d4dd6485be5dcb40a1192b9c4d72e5a3185c41ae6629f4965dc406b0ce60d1"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-08T07:00:00Z",
+      "order_index": 42,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-08|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7fc1c23d3c01f1140c8eb919a39d921199a1fde4eff6da5031d28b24e2969a3b"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-09T10:00:00Z",
+      "order_index": 43,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f07cd398ce3411336aaa0c20ac9be92c11d111e4e769a391492cd7cf6c3ef35f"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-10T04:00:00Z",
+      "order_index": 44,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "59caaaa6c9b2087333c6fa7bbbd4bccbb4ff4384c8c6c15020618d4b9c014c78"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-11T05:30:00Z",
+      "order_index": 45,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f2960797a97dcec56cd1138c4dbdb00239fdcc2570183e9453ced89036afcfaf"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-12T09:00:00Z",
+      "order_index": 46,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-12|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "0e58b652749c85e0846bc6ecc19bc07b7b742abb954861bda220b7f89fa01b2f"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-15T12:30:00Z",
+      "order_index": 47,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-15|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "58936742d200870bd740a2078acd11ffc9d5228ec4366adb56d1f31e80a37b17"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-16T12:30:00Z",
+      "order_index": 48,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "cc374164301beeae00ede5a91ed3afd9377b82548b9d2cc37dd12ad684012526"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-17T07:30:00Z",
+      "order_index": 49,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "048892bba9988fc20806a3ef6867e223dab5a983b80be13bc765e8e80f77f58f"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-19T12:30:00Z",
+      "order_index": 50,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-19|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "20dc5b06728ad1b7d803c09535e15df47242d5ee5501f8d9c9d883f6ad8757d7"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-22T12:30:00Z",
+      "order_index": 51,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-22|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "a3bc1c35fba2b72f522b2ebab843540b4b75144669bf74e0d221a7d8820940f2"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-23T10:00:00Z",
+      "order_index": 52,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-23|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "4ff03ad20020d115bc95bcf26d097e3e87664873f5884fb1707f7b7c34e99bfe"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-24T05:30:00Z",
+      "order_index": 53,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "0820f2b7e255d2bf11cbf2244821100c7656617eccb4b927a05fdd6bdb42f02a"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-25T12:30:00Z",
+      "order_index": 54,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-25|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "6c7764591cc96a9eaedc33347dce841774348546843fa31669378bd167082b40"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-26T07:00:00Z",
+      "order_index": 55,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-26|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7692f8a4ecc512dc68a57cac6e054e6c0a5ec44dfc7edf77643bbd49df202d3b"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-29T14:30:00Z",
+      "order_index": 56,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-29|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "b0859038f852e445ccd78e62be903235e72df11050ea65c9e0b146e184b33e8f"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-30T07:00:00Z",
+      "order_index": 57,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-30|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "70dce51e32c7d14ae2714d7d819eeb239473494acdc6dff0ce20e723c4482f6f"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-07-31T05:30:00Z",
+      "order_index": 58,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-07-31|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "bc38f6fc257feb66f9f43843c2cea86dcf13ce2447da531dfb6c0576b0436e36"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-01T11:30:00Z",
+      "order_index": 59,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-01|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "21133e0a0adf3c86722e3fb337782b91b49149606412afe1d318c4e6f7d428a5"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-02T05:00:00Z",
+      "order_index": 60,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-02|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "e75ed429448bb033d6adff8aa5e306ccc792b87df57fac1febf38518f41be2b8"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-05T07:00:00Z",
+      "order_index": 61,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-05|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "5ce5190617b9a34a8d9ecbd584ebc3c9705c3aa13dbf2c508391e2c1768f544e"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-06T09:40:00Z",
+      "order_index": 62,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-06|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "1748b14dabccc6e41a254776fab02853635b19f45bdf2c38c174aeae1fc0c96b"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-08T07:00:00Z",
+      "order_index": 63,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-08|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f74aaedff1aca14d66ea7cf6044f6ccbdf8f5e0058d33a00b4751dce969caa01"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-09T12:30:00Z",
+      "order_index": 64,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-09|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "8fa3bc346eb7acdbe8df4d71852d908bd4f45be18730a708efd64fcc9124ae94"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-12T04:00:00Z",
+      "order_index": 65,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-12|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "4d46e0c9f2ac5bd318dbc6fcd2ba08fa77233591999933f2a2b3454f60241c53"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-13T10:00:00Z",
+      "order_index": 66,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-13|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "33c20c7ba94aba3328c2f9aa1f0cecca49bc8c5e14c712f165ee9dcc55a58732"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-14T05:30:00Z",
+      "order_index": 67,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-14|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "a01fdce795f671a296d81dda27220d93d5185ab76d58679d51422a49750ad6d2"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-15T12:30:00Z",
+      "order_index": 68,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-15|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "21bc9ad83dbc9a0d94b812f3d32ff849afc6215667ec1dc154a1a0de3e13d63c"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-16T12:30:00Z",
+      "order_index": 69,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-16|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "6cb5f24391f00d0b4a90ac943142f7544e4371b5eefdb2f23e2d103d9c870d10"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-19T07:00:00Z",
+      "order_index": 70,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-19|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "4da16362be7cb8697f1adc652cfc0202c9e8f157a9ef65848a473aba17c6f6b5"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-20T12:55:00Z",
+      "order_index": 71,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-20|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "fd8480d06a752b110c6a74c508f4742b0e8bc88b3ce15746a71db1b3ed974796"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-22T12:30:00Z",
+      "order_index": 72,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-22|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "dfb7bfd0fa0b1d5bc99ae75375777667fcf80654415ae05e610da69cacc472d2"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-23T11:30:00Z",
+      "order_index": 73,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-23|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "74aede76ebae788ee4991204bba303ad34a844a2670f58d1b48152a0c46befd4"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-26T12:30:00Z",
+      "order_index": 74,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-26|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "912d7a4f4347dfb77b941fa658a7179fb513d8278c32762049f56e20dffb14fa"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-27T07:00:00Z",
+      "order_index": 75,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-27|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "dd8da34c5abc00bccd82e7f2b3a2425a3b2e9ffb45c2a1219542fb883aad9aa2"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-28T05:15:00Z",
+      "order_index": 76,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-28|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f69d14fb85142fb230a0dd3e7fa70dfefe8be6a6613b6d03e99d1ea7db830a5c"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-08-29T05:30:00Z",
+      "order_index": 77,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-29|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "1c995312839fe3a770737b546fc106fdfacd0d5e62989db7507f0e91f0c1b591"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-08-30T07:00:00Z",
+      "order_index": 78,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "INCOMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-08-30|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "d2a05e16901674508ca2e7e64deddcd7ff0ae5d0ff78195b140a396cd69aad84"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-03T09:20:00Z",
+      "order_index": 79,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-03|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7a17187b1c4566b2e26869ff1d577864a7f0a77798825139a9e2fa95a457b465"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-04T11:00:00Z",
+      "order_index": 80,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-04|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "bd16149e5ed1377d8a495338272ea29052a4a9224ea4e66d3fc49a8baee680af"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-05T07:00:00Z",
+      "order_index": 81,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-05|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "c77a0f61547f26a19758cef62efb226283b43c846a1249752b4a803564637068"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-09-06T05:30:00Z",
+      "order_index": 82,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-06|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "8a4ce75f713e67134e32f8d9e5ebfc7c1cf225b6a5cbaefb2ffe010263e2c8d9"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-09T07:00:00Z",
+      "order_index": 83,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-09|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "efdf9a5e5e66d79fdd3a4e613afb74438f8eae776a6b0ac3a45fcd1c04b704fb"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-10T04:00:00Z",
+      "order_index": 84,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-10|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f49dd15f84aa41f289e1d1999bb89b40ff964733c39be31286701e3dfb93dbd4"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-11T05:30:00Z",
+      "order_index": 85,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-11|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "623e67023195b9dcca9aea935530426989c12ceadcf8769e7160ddaee6254478"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-13T12:30:00Z",
+      "order_index": 86,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-13|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "a766649589b4f946be7be8314ab1eb29bfe10d582fc0cf045ca25791d7563a21"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-17T12:30:00Z",
+      "order_index": 87,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-17|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "5ceee5196ff0f036b699647571a9e4653e3af7d81c749f95d746e785905718c8"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-18T00:00:00Z",
+      "order_index": 88,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-18|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "35e6dee273dba4454546049906c67064572dbeb38e5868581a033830bfdfd5e1"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-09-19T07:00:00Z",
+      "order_index": 89,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "INCOMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-19|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "115e4a41464e2813137a61698d20f5e4c9a721d948fd5119f4ab7df83107dbd5"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-20T12:30:00Z",
+      "order_index": 90,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-20|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "1dded2e9e8e513319c4637f4e0418d6d30db097635e6b243099c8e0217c62e0d"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-25T07:30:00Z",
+      "order_index": 91,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-25|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "8b2ecf57cee466fe8eb2900390d1716668d34050b3b393fab7899343abf3036b"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-09-30T12:50:00Z",
+      "order_index": 92,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-09-30|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "77e2b0e566d863e6fc59ee3333f16ba829e0de12566d3b26bad5d475401abe2c"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-02T03:00:00Z",
+      "order_index": 93,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-02|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "15fcb00ec44ff8fd77596aaeec9fd18788a0107011d2e2568fdef7d25c212b2f"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-04T05:30:00Z",
+      "order_index": 94,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-04|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "345212e28944450971a044bf0eea49032a6e114bbbe27c60156d6c42484cb203"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-07T07:00:00Z",
+      "order_index": 95,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-07|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "4e3286db10e7be87ce0e877dce61f7cb9ea2fb9814216bc1b68e0c92f6b66ca0"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-10T05:30:00Z",
+      "order_index": 96,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-10|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "d02b73b671d232c38b9ac508af952db230a9eee1008511a41285ea1b16f991a3"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-11T07:45:00Z",
+      "order_index": 97,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-11|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "0252a3c10e4e111762755e337183e71d16d0339a740964cb0f0d8000f6fdc5c8"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-14T00:00:00Z",
+      "order_index": 98,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-14|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7a1482c591e4a143fda777407ec3d85f12beab451da74a6b76074854bb6199ca"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-15T12:30:00Z",
+      "order_index": 99,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-15|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "49c01aec8e438191686c6bc04b691f0acf2764631f4591604cd036f68e5745a4"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-16T11:00:00Z",
+      "order_index": 100,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-16|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "9ee18b84fe123c8113d67c8be90fc3e23d12d7657bb45cbf87da1fdfcec5dbf2"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-17T08:00:00Z",
+      "order_index": 101,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-17|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "50ea9d5c183680666fcadc261e9ebc207cc5ad8a1e3b70c12c9941a618d9a13d"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-18T12:30:00Z",
+      "order_index": 102,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-18|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "4a9546621fb319ff2a396c69a5a533c6a37f7d3a45abb15140893fecac99088a"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-22T10:00:00Z",
+      "order_index": 103,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-22|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "94b3f1fa5e5e020e7fe66b58f6c83f757396c13d6658d2314e554b4d23db7cea"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-10-23T07:30:00Z",
+      "order_index": 104,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "INCOMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-23|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "92ab0d63898853d984f52d1e9f21c9f51b5c753501f1a644e4cb3979de05932c"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-24T11:30:00Z",
+      "order_index": 105,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-24|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "14235db2b4981c8439c5f563b57709d93628dfaedc40e785b072ae609f126f79"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-10-25T07:00:00Z",
+      "order_index": 106,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-25|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "e03adbdd9cc5f257915b775d0e820537b05ff674b3922a9d9fa0028e9069484e"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-28T14:30:00Z",
+      "order_index": 107,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-28|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "45573a837cd20a5a58a66ebbb4ebabfacea695aa42c84e4817d16bc780e09cc0"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-10-29T05:30:00Z",
+      "order_index": 108,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-29|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "bee261231e876ea7e99e731de7372043666c3124eedb517e1de8883ba5a82d30"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-10-31T05:30:00Z",
+      "order_index": 109,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-10-31|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "8162000f1dde115376d2fff8fdf8f28abfefcbcafd896895d489bf669ff1eb9a"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-01T06:30:00Z",
+      "order_index": 110,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-01|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "fa93f02944fb2c71259f122abca575a64fb4fdf598474abc18c32d1b899d460b"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-05T04:00:00Z",
+      "order_index": 111,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-05|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "bc3768149765836d4c36246238b18d476240d04af52c280e14f38349579aa3e8"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-07T09:00:00Z",
+      "order_index": 112,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-07|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "eac8706682868eca898c956aad14ed00eda20144ddfdab67141a92ac1af407a5"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-08T11:00:00Z",
+      "order_index": 113,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-08|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "93a038e56b74f5987abd127feb89dd9ab4f275505bcae3cd5f8da15d22f70a0a"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-11T00:00:00Z",
+      "order_index": 114,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-11|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7c563973c4c98fcc967a451a62e18962d01b91228261cc5e5a6c8b26a644fc4b"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-12T06:00:00Z",
+      "order_index": 115,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-12|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "4f5c858fd6b5fe7150a46e1f939699dcaabb630377daeadd1ca442466ab40bf8"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-13T07:30:00Z",
+      "order_index": 116,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-13|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "2514536f0fcaccf0043b6b09cf76c58cc2533506e5c13bcb65d601e9130ee6c2"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-14T10:00:00Z",
+      "order_index": 117,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-14|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7667816608b048a326869be28b232278877420cf2f3d0a6a99846f496dc0aff6"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-18T15:00:00Z",
+      "order_index": 118,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-18|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "19a52ea7ef5d4faa9f7ee7fe6e32ba7753fff383f2828a562abef95058bb67cf"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-19T12:10:00Z",
+      "order_index": 119,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-19|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "c31895e135022a49658702473ac3cb35785e9ac497003e99b29577ebef3fe769"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-11-20T09:30:00Z",
+      "order_index": 120,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "INCOMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-20|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7f9ffb78f07110f2e6c5ff8cfee2ac9942bb3ea9a95fd2389b3392cda8fb8d78"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-21T09:00:00Z",
+      "order_index": 121,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-21|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "e9d477c98f995d2745648c48a9443da34ce1bab91f15d0c65a82904ade4f800d"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-22T09:00:00Z",
+      "order_index": 122,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-22|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "caf7d6c3aad6d69cea2a513fd9e24549fd586cb9db3a9a5e93c2449e7dc3fc6d"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-11-25T13:30:00Z",
+      "order_index": 123,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-25|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "fac4818cab2615dfcd02198019b3e510877a653e58ffe8f2f6cfa9bb5ee69caf"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-26T09:00:00Z",
+      "order_index": 124,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-26|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "3bd5ea05b18a959303b3d72eab2295c856a712502cc6d562df63742ff9969353"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-11-27T07:30:00Z",
+      "order_index": 125,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-11-27|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "c50077ff028baea2f041b6bab93e79c2b4c5bc052b81ab95ee1d82fecf4be26d"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-02T14:30:00Z",
+      "order_index": 126,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-02|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7e0c33436b513d30dc1dca1192af0878d873accc768ca818ef91d74dc0331c93"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-03T11:00:00Z",
+      "order_index": 127,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-03|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "91a4b1c8234b540b94be236d86c8ea53664f924bf2a17613023da8bf3369fae6"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-04T09:00:00Z",
+      "order_index": 128,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-04|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "85e54091f798da45535b61d063be40b83795794c9074dbc9395a27835f2ab127"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-05T04:00:00Z",
+      "order_index": 129,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-05|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "5210a47b46246f7228d42d1bbfce82ff197e665afacab8822b326e7690b8117e"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-06T07:30:00Z",
+      "order_index": 130,
+      "partition": "HISTORICAL_DEVELOPMENT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-06|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "b4b8931bccc4f10759141a29ce72db1f2ca9599d609d0910d239e128d0cd4dcf"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-09T09:00:00Z",
+      "order_index": 131,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-09|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "a27fd269e7dfd95cd4100694c2bb0cc3b4de99e4d6247a0c1b92664ae8e3a61b"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-10T04:00:00Z",
+      "order_index": 132,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-10|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "936f40f1ec8d89ea7bbfcf62b23b27b3e91c340b6d77b3b9484a24eaa74dfefb"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2024-12-11T04:00:00Z",
+      "order_index": 133,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "INCOMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-11|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "fb4d99f3878181386d4d7957b2fad9191054418164f32e7e03c5839c9d469033"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-12T13:30:00Z",
+      "order_index": 134,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-12|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f349f7b2fe6438eed1ec2c308458ede87c6d9881ba99f71d6b54b7c9373e6aa2"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-16T13:30:00Z",
+      "order_index": 135,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-16|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "de1f5dd3d0ea53d7a34ef0c615b3554ac80c9832c58910a4f76179d126cbb6b6"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-17T13:30:00Z",
+      "order_index": 136,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-17|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "8a376bd96781b98066a3febb43e2a0a38624c64dde94d697bf7e0d12070cc702"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-18T00:00:00Z",
+      "order_index": 137,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-18|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "9b9f78caa6bf60a13291840c3d6941c4821b0f4171509ab8b7a626b4564a5db4"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-19T07:30:00Z",
+      "order_index": 138,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-19|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "2dc877b70b092a49b786f88e9eab518f7d4f70b136dd539ffed52d32943335a4"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-20T09:00:00Z",
+      "order_index": 139,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-20|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "0ba84a0ad920d41dafcacca69b95aee4b9de6cd86c12d5e6be9bf333e5b7bd69"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-24T00:00:00Z",
+      "order_index": 140,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-24|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "ba9dd960a4113cd288a5d4f08a4cbb7e2db3a9338a85b1fb1861c6be92a97a49"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-26T12:00:00Z",
+      "order_index": 141,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-26|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "48f8f8c48377930c6d947136b0f1f0456378b3c17535a99b71413284e923ae69"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-27T07:30:00Z",
+      "order_index": 142,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-27|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "123b7208734843b13d0ebe19d58e6b2dd2abac6a72d581124854404a99821573"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2024-12-31T13:55:00Z",
+      "order_index": 143,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2024-12-31|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "2cd8445e0be00fc56a8f54f5f6a2dd2ecdee286010e2c92fa514de37495cd974"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2025-01-02T10:00:00Z",
+      "order_index": 144,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-02|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7f46031c7bf07a1a4f9fb3caec9b6a7ad9f15c9d9cf264a93f6707f64bafda80"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-06T06:30:00Z",
+      "order_index": 145,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-06|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "d13a6c801d427f19fb7d08db2f26cfd9e799377c020e2720f0804e11bdba6715"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-08T09:00:00Z",
+      "order_index": 146,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-08|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "0e7feb053ed8302f409cfbbc9e545bf9d7932d12b691e4187331bce63143e6a5"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-09T12:30:00Z",
+      "order_index": 147,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-09|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "cdd8588cd3cc19bb7a831e07e8a4b0d18d0ffa7f620c853e0ce592f25368b688"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-10T11:00:00Z",
+      "order_index": 148,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-10|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "e1e1ef1ad44869bec3ae1e4fecd245f94b4e8419637f95500afc84362674eb31"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-13T09:00:00Z",
+      "order_index": 149,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-13|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "d7f31ccaf6a02fa10d7679395cb5c9a2a6e1410cd5547fe21933d0fa41673091"
+    },
+    {
+      "complete_pair_count": 1,
+      "evaluation_start_timestamp": "2025-01-14T11:00:00Z",
+      "order_index": 150,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "INCOMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-14|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "044a9a91c6b5b9a3ce13f9983466dc5eef26b56be1a01ff475a7def3869fc560"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-15T06:00:00Z",
+      "order_index": 151,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-15|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "fca982bfa576ee309c49453e822bff08e905a8f6b90c8f87290b8c92b168384e"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2025-01-16T13:30:00Z",
+      "order_index": 152,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-16|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "894e0467672388954ae76bb2ee2a4c59544cb7aa7321a597057037d58a4d652b"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-17T13:30:00Z",
+      "order_index": 153,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-17|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "a57bcb5bdf6affc6fb4b5a20dae75f4da74d599da984afe4b49c1da17a50ac61"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-20T00:00:00Z",
+      "order_index": 154,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-20|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "9290d5a995a917fc3906459e8600d5e71fd76ea401ab1ccaad3474340d4410a2"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-21T16:30:00Z",
+      "order_index": 155,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-21|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f0631d1feb6cc45bfa787ee91122a232103af458c42b558222e864ad6ef0bdd3"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-22T09:00:00Z",
+      "order_index": 156,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-22|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7101424e5716cd5542a0d0a26b7204f35cba2af8bd8f54267b9e953fe2bee12d"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-24T09:00:00Z",
+      "order_index": 157,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-24|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f48fdd109a7ae790894e5bb30662459ef4307b5477cf70f6fe8a7505a9ea2795"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-27T13:30:00Z",
+      "order_index": 158,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-27|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "157bfb2a926e2456d46795e719708e36d0b986102ef4b83fe651f8da5b2347bd"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-01-28T09:00:00Z",
+      "order_index": 159,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-01-28|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "c2abb03aa6a2157da90639d95d7ff3fb11d41518be17ce9f2a6cf5796d1c40bb"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-03T04:00:00Z",
+      "order_index": 160,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-03|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "ea086253cd6c3e30b0721739cdc7056fb17aed3bef7496921d33ddb9f3767f84"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-04T06:30:00Z",
+      "order_index": 161,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-04|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "dd453555c93e4d342be925e7befd635d7945cc0256675a99d13af6bcaa0c9b20"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-05T09:00:00Z",
+      "order_index": 162,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-05|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f377f2fc86239dcbf9a95171c9d7be8965b0dc66b20bfec6a41edc816904c842"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-06T00:30:00Z",
+      "order_index": 163,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-06|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "2f8c94cde6ae3959cf30e235d31501f870b8f37270e7518e7d342d7c622b787d"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-07T09:00:00Z",
+      "order_index": 164,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-07|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7a8655352a53ade06b25c766ff6ea4c06b882df1c0cffde6357b9eca4e358e61"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-10T09:00:00Z",
+      "order_index": 165,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-10|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "4967ad5e3b25d6b5d701c7528eb703e2f61026bf0cb8c337c3a93ab34db3abf8"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-11T11:00:00Z",
+      "order_index": 166,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-11|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "fe0a38f12b9a59ec3d2ab5139223daf535e557de52924764f13740b8968e1fb5"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-13T13:30:00Z",
+      "order_index": 167,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-13|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "12c5bb1c9d5f6316c805bd56015e9b84a9e7d9d0419af538bb3296ec4228d813"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-14T13:30:00Z",
+      "order_index": 168,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-14|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "280128148e9fbba69947655e8c4f59a96048dc03bd8f3fe14eb46f1eace45b78"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-17T00:00:00Z",
+      "order_index": 169,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-17|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "783659aa91c255ca4cbc10f36fdc2942b70c92ea854f57cddc24c6d8fe6fd497"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-18T13:30:00Z",
+      "order_index": 170,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-18|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "acc35e60bbbd11846bedafaf1eb91efe6b84a43c5613390e71e97d8052e799b0"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-19T12:00:00Z",
+      "order_index": 171,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-19|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "8723a1114826202e5073ddf4ea9ebf832407d30e1b84672c979bb4d4ffba2fcd"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-20T09:00:00Z",
+      "order_index": 172,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-20|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "7193651085bd10f28f4bbf5bcdcab829a431125e88b5eb6fa40561e51d26dbf5"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2025-02-25T09:00:00Z",
+      "order_index": 173,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-25|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "abdecfe062a32dd69aeeacdd762375089d6efa29dec3320f565d7a2bcca3d181"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-26T09:00:00Z",
+      "order_index": 174,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-26|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "879a37493ca9cabac7e4bddff4cc0723c68226e1f332276cc9233d8cf8966b63"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-02-27T08:15:00Z",
+      "order_index": 175,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-27|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "4e1f5d8b99c6864d433c617b7d02c993d0973255df7c3eb27be6e3e0d4bd6170"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2025-02-28T03:15:00Z",
+      "order_index": 176,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-02-28|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "97a764c706ce597bc2c76fc75faba65b1c50a61845c0bc4ed2fd6da33cc62865"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-03T14:45:00Z",
+      "order_index": 177,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-03|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "ba851c70123eeed0debf7cefb3a57ce96b22546afdb95b8506d8192dffc96a70"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-04T06:00:00Z",
+      "order_index": 178,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-04|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "822c606310a67ba44197cdd1468f7e0060d6dd19a3b635b8ec05280d27b2b492"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-05T09:00:00Z",
+      "order_index": 179,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-05|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "d94d68188b2d772dbef05326310465236e74ca166f29f14496caa4e52159fa78"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2025-03-06T07:45:00Z",
+      "order_index": 180,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "INCOMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-06|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "cd501b94a1e6d1ba9c53b5a726f25c46ca3c0999aba76fcd08bf7486df4ffdc8"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-10T08:00:00Z",
+      "order_index": 181,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-10|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "e70862dc28d3c9db7c30bfbd695312917938571ce8b9580e5aadb15e3bc2ea13"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-11T10:00:00Z",
+      "order_index": 182,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-11|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "749f387fa644a49021517517b2be82a73a4fa2f2b40cfcb888141637be468c8f"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-14T13:30:00Z",
+      "order_index": 183,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-14|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "b2bd66bd16e3fef55e10bd9d165fb32fdc52159e8c17ed1224f326cd3fc0faa9"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-17T12:30:00Z",
+      "order_index": 184,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-17|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "bb6d2a4081f02ed3c797ea9f3e84508ca676e02259053c392931206e30db5cd0"
+    },
+    {
+      "complete_pair_count": 2,
+      "evaluation_start_timestamp": "2025-03-18T12:30:00Z",
+      "order_index": 185,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "INCOMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-18|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "74b00357f0137c1e609075009fc94a1191bdb83f8225cb4fd023375b72cb7984"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-19T00:00:00Z",
+      "order_index": 186,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-19|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "6599747eb7c7a2d4b6f89032ed53f6b431f8057b1db1a9b32be21e423d65fd4f"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-20T08:00:00Z",
+      "order_index": 187,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-20|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "ab541274c9c6a9764ca3c528b97f117c7c9ac07e9ead991a5b72b41de5802b0e"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-21T12:30:00Z",
+      "order_index": 188,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-21|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "0d5ba5569346d483ef2a57fdf0477e63d8021920904bbc00ec8951422d84044f"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-24T12:30:00Z",
+      "order_index": 189,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-24|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "f311f07c0e7f0cf8da9cae7682f68e11efcfb420033133e742f43ad5edf28332"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-25T08:00:00Z",
+      "order_index": 190,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-25|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "0ffa4d80c69331060f32538add58563ceab116bf69b3697a5c1ad95b6e06b722"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-26T08:30:00Z",
+      "order_index": 191,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-26|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "453a6c409d4693cfcdc3d3e48fe617daa3b578dcb18b672b3108375980a5600e"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-27T06:30:00Z",
+      "order_index": 192,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-27|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "1eebcd35efc7f3c40e3146c8fec7f9c562e39a6803bf1de1030b89979731501c"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-28T08:00:00Z",
+      "order_index": 193,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-28|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "a5f03493f45c4e494e0075ea8f9fdc6dc250d80843d5907295c3ae29e1cc5569"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-03-31T13:45:00Z",
+      "order_index": 194,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-03-31|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "bd7d6039fccad77033414d3fe228748f3f6c76c53df800e2abe93ca57c01ebbd"
+    },
+    {
+      "complete_pair_count": 3,
+      "evaluation_start_timestamp": "2025-04-01T07:00:00Z",
+      "order_index": 195,
+      "partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+      "provider_coverage": {
+        "Anthropic": "COMPLETE_AE_PAIR",
+        "Gemini": "COMPLETE_AE_PAIR",
+        "OpenAI": "COMPLETE_AE_PAIR"
+      },
+      "session_id": "US|2025-04-01|CUSTOM_CONFIG_WINDOW",
+      "session_record_sha256": "e62c7103c28551d79b6fff2113d0652e1a3acf171bfedccb2b90c2c4f7fd6f02"
+    }
+  ],
+  "source_files": {
+    "authoritative_sessions.jsonl": "3dacd2306440007ebd042b46c391184c8a9574538d8f271d036ae22e9b78a557",
+    "governed_exclusion_ledger.jsonl": "d17908ed0346aae8f88fb2acdfd4ac022b5ee7ba1711f1dd458f3bcb38260d98",
+    "provider_session_pair_readiness.jsonl": "d5a00de233bed9321189ab6bc9ab21ca9b9b44e8c35976b70ca523f5f39d63e2"
+  },
+  "statistical_unit": "MARKET_SESSION"
+}

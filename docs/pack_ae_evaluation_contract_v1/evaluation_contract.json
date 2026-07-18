@@ -1,0 +1,185 @@
+{
+  "artifact_fingerprint": "737b5db8d2d1ae268b834fe8e2b544de7e79fde4c705c9df1336a456c23666d0",
+  "artifact_id": "PRESIGNAL-V2-PACK-AE-EVALUATION-CONTRACT-20260718T173128Z",
+  "artifact_type": "VALUE_BLIND_PACK_AE_EVALUATION_CONTRACT",
+  "categorical_rules": {
+    "DOWN": "actionable; +1 only when canonical realized direction is DOWN, otherwise -1",
+    "FLAT": "actionable; +1 only when canonical realized direction is FLAT, otherwise -1",
+    "NO_CLEAR_DIRECTION": "non-actionable; action value 0 regardless of canonical realized direction; excluded from actionable-accuracy denominator but included in pair action value and coverage",
+    "UP": "actionable; +1 only when canonical realized direction is UP, otherwise -1"
+  },
+  "confidence_calibration": {
+    "decision_gate": false,
+    "historical_descriptive_analysis_allowed_under_this_contract": false,
+    "status": "DEFERRED_TO_PROSPECTIVE_CALIBRATION"
+  },
+  "contract_version": "presignal.pack_ae_evaluation_contract.v1",
+  "decision_rule": {
+    "INSUFFICIENT_EVIDENCE_OF_PACK_E_IMPROVEMENT": "all other outcomes; must not be interpreted as equivalence",
+    "PACK_E_IMPROVES_FORECASTING": "holdout mean session-level difference > 0 and 95% interval lower bound > 0",
+    "PACK_E_UNDERPERFORMS_PACK_A": "holdout mean session-level difference < 0 and 95% interval upper bound < 0",
+    "supporting_analyses_cannot_override_primary": true
+  },
+  "development_partition": {
+    "permitted_uses": [
+      "verify scoring implementation",
+      "validate category normalization",
+      "test artifact construction",
+      "identify software defects"
+    ],
+    "prohibited_uses": [
+      "revise the primary metric after results are viewed",
+      "revise the holdout decision rule after results are viewed",
+      "tune Pack E",
+      "select providers or sessions based on results"
+    ]
+  },
+  "fingerprint_algorithm": "SHA-256",
+  "fingerprint_scope": "canonical JSON of this artifact with artifact_fingerprint omitted",
+  "frozen_at": "2026-07-18T17:31:28Z",
+  "frozen_source_binding": {
+    "attachment_fingerprint": "b4b63940e9052c8be80bb7e57dd423c1094b5679c4496e5bc511187eb21e2abc",
+    "attachment_id": "SIMPLIFIED-REPLAY-OUTCOME-ATTACHMENT-RECOVERED-20260718T162300Z",
+    "branch": "codex-simplified-authoritative-replay",
+    "evaluation_ready_archive_sha256": "579cedcbaa204817cce2fc19af211f069fe99b09b53ae7e7a9030ca1e8b7bd09",
+    "historical_endpoint_deployment_version": 81,
+    "package_fingerprint": "65f95301b996e7cca2265130adb6d93f80c5b508cafe1acf0ea343817e1727b9",
+    "package_id": "SIMPLIFIED-REPLAY-PROD-20260718T010455Z",
+    "readiness_fingerprint": "4a7e23601ca098527390eb64e0955f0690582db03bdabc7089e2f81d96d9a126",
+    "readiness_id": "SIMPLIFIED-REPLAY-EVALUATION-READINESS-RECOVERED-20260718T162600Z",
+    "ready_tag": "presignal-v2-authoritative-evaluation-ready",
+    "ready_tag_target": "6d7783c44d5f8c6974244ec656a3bc8d01b3726f",
+    "replay_deployment_version": 79,
+    "run_binding_sha256": "b0669b29a08ad9b4170a27e841c5a1b1bd79b0aa93d3e137f1f93a71b1844479",
+    "run_id": "SIMPLIFIED-REPLAY-AUTHORITATIVE-20260718T010455Z",
+    "source_commit": "6d7783c44d5f8c6974244ec656a3bc8d01b3726f"
+  },
+  "holdout_access": {
+    "allowed_only_after": [
+      "contract commit and tag are verified",
+      "development-only implementation validation passes without contract change",
+      "scoring implementation hash is frozen"
+    ],
+    "contract_revision_after_development_results": "requires a new untouched prospective population; the historical holdout must not be evaluated under the revised contract",
+    "open_exactly_once": true
+  },
+  "missing_data": {
+    "incomplete_ae_pair": "excluded from paired performance metrics and retained in completeness reconciliation",
+    "missing_canonical_outcome_for_attached_pair": "INTEGRITY_FAILURE; stop evaluation",
+    "missing_required_direction_or_strength_in_complete_pair": "UNEXPECTED_EVALUATION_FAILURE; do not impute or silently drop",
+    "valid_partial_provider_session": "included using all available complete provider pairs"
+  },
+  "overall_accuracy": {
+    "legacy_overall_ok_used": false,
+    "new_composite_created": false,
+    "status": "NOT_DEFINED_FOR_REDUCED_REPLAY"
+  },
+  "performance_values_used_to_construct_contract": false,
+  "population": {
+    "development_partition_sessions": 130,
+    "exclude_incomplete_provider_session_pairs": true,
+    "governed_exclusions_remain_excluded": true,
+    "include_all_complete_exact_ae_provider_session_pairs": true,
+    "include_partial_provider_coverage_sessions": true,
+    "primary_partition": "HISTORICAL_CONFIRMATORY_HOLDOUT",
+    "primary_partition_sessions": 65
+  },
+  "primary_endpoint": {
+    "actionable_directions": [
+      "UP",
+      "DOWN",
+      "FLAT"
+    ],
+    "allowed_pair_differences": [
+      -2,
+      -1,
+      0,
+      1,
+      2
+    ],
+    "forecast_action_value": {
+      "NO_CLEAR_DIRECTION": 0,
+      "correct_actionable_forecast": 1,
+      "incorrect_actionable_forecast": -1
+    },
+    "name": "PAIRED_ACTION_VALUE_DIFFERENCE",
+    "pair_formula": "Pack_E_action_value - Pack_A_action_value",
+    "pooled_pair_mean": "supporting estimate only",
+    "primary_effect": "arithmetic mean of the 65 holdout Market Session statistics",
+    "session_statistic": "arithmetic mean of all available complete provider-pair differences within the Market Session"
+  },
+  "prohibited_post_hoc_changes": [
+    "change primary endpoint",
+    "change action values or category treatment",
+    "change split or exclusions",
+    "change bootstrap seed, resample count, interval, or quantile method",
+    "change decision thresholds",
+    "remove valid pairs or reweight providers",
+    "promote a supporting metric over the primary result"
+  ],
+  "schema_sources": {
+    "outcome_contract_configuration_sha256": "99b5a57538100100a975580735dd616fa036820d55eed656b2e5c2fe9f02c8be",
+    "reduced_provider_schema_sha256": "beef2b7675bd45ea9315e6cd7441fa697adb2fd08b299c92cf80d46b0415c163"
+  },
+  "scientific_question": "Does the shared request-driven Market-State Pack improve Market Session forecast performance compared with no Market-State Pack?",
+  "scientific_status": {
+    "classification": "RETROSPECTIVELY_ASSEMBLED_PRE_ANALYSIS_SPECIFIED_CONFIRMATION",
+    "future_prospective_replication_required": true,
+    "limitation": "The recovered historical population was generated leakage-safely, but this evaluation contract was frozen after outcomes became available and before Pack A/E performance was inspected or scored.",
+    "not_an_original_preregistration": true
+  },
+  "secondary_metrics": {
+    "A_correct_E_wrong": "pairs with A action value +1 and E action value -1",
+    "A_wrong_E_correct": "pairs with A action value -1 and E action value +1",
+    "NO_CLEAR_DIRECTION_rate": "NO_CLEAR_DIRECTION forecasts divided by all forecasts",
+    "actionable_directional_accuracy": "correct actionable forecasts divided by UP/DOWN/FLAT forecasts; report coverage beside accuracy",
+    "actionable_forecast_coverage": "UP/DOWN/FLAT forecasts divided by all forecasts",
+    "complete_three_provider_robustness": "repeat primary statistic and bootstrap on holdout sessions with all three complete pairs; cannot override primary",
+    "forecast_completeness": "descriptive attachment/readiness counts only; not a performance endpoint",
+    "neutral_or_nonunanimous_session_reconciliation": "sessions containing zero differences that satisfy none of the three effect categories; reconciliation only",
+    "provider_specific_action_value_difference": "mean pair difference for each provider with same session-cluster bootstrap; supporting only",
+    "sessions_unanimously_favoring_A": "every available provider pair difference in the session is strictly below zero",
+    "sessions_unanimously_favoring_E": "every available provider pair difference in the session is strictly above zero",
+    "sessions_with_mixed_provider_effects": "at least one provider pair difference above zero and at least one below zero",
+    "strength_accuracy": "exact normalized strength accuracy by arm and paired difference; supporting only"
+  },
+  "statistical_unit": {
+    "independent_unit": "MARKET_SESSION",
+    "provider_pairs_within_session": "clustered and averaged before primary inference",
+    "provider_weighting": "no post-hoc weighting; each available provider pair contributes equally within its session"
+  },
+  "strength_normalization": {
+    "canonical_vocabulary": [
+      "WEAK",
+      "MEDIUM",
+      "STRONG"
+    ],
+    "forecast_vocabulary": [
+      "WEAK",
+      "MODERATE",
+      "STRONG"
+    ],
+    "mapping": {
+      "MODERATE": "MEDIUM",
+      "STRONG": "STRONG",
+      "WEAK": "WEAK"
+    },
+    "primary_decision_gate": false,
+    "strength_accuracy": "exact equality after normalization; supporting metric only"
+  },
+  "uncertainty": {
+    "interval": "two-sided 95% percentile interval",
+    "method": "DETERMINISTIC_MARKET_SESSION_CLUSTER_BOOTSTRAP",
+    "percentiles": [
+      0.025,
+      0.975
+    ],
+    "quantile_algorithm": "Type 7 linear interpolation: h=(B-1)*p, interpolate sorted bootstrap estimates at floor(h) and ceil(h)",
+    "resamples": 10000,
+    "resampling_algorithm": "Python random.Random(seed).randrange(N), repeated N times per resample; selected sessions retain all available complete provider pairs; repeated sessions contribute repeatedly",
+    "resampling_unit": "MARKET_SESSION",
+    "sample_size_per_resample": 65,
+    "seed": 20260718,
+    "statistic": "mean of sampled Market Session mean pair differences"
+  }
+}
