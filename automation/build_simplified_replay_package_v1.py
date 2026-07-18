@@ -28,6 +28,10 @@ from automation.simplified_authoritative_replay_contract_v1 import (
 ROOT = Path(__file__).resolve().parents[1]
 APPS_SCRIPT_DIR = ROOT / "apps_script"
 APPS_SCRIPT_CLASP_PATH = APPS_SCRIPT_DIR / ".clasp.json"
+# These files are deployed separately and are never inputs to the immutable
+# authoritative replay binding.  Their source must not alter version 79's
+# frozen project fingerprint.
+NON_AUTHORITATIVE_APPS_SCRIPT_FILES = frozenset({"historical_market_data_endpoint.js"})
 SNAPSHOT = Path("/Users/junhoshino/projects/presignal_replay_archives/9-AUTHORITATIVE-HISTORICAL-REPLAY-20260717T094156Z/input_snapshot")
 
 CORE_SNAPSHOT_FILES = (
@@ -75,8 +79,14 @@ def file_sha(path: Path) -> str:
 def _local_apps_script_files() -> list[dict[str, str]]:
     files: list[dict[str, str]] = []
     for path in sorted(APPS_SCRIPT_DIR.iterdir(), key=lambda item: item.name):
+        if path.name in NON_AUTHORITATIVE_APPS_SCRIPT_FILES:
+            continue
         if path.name == "appsscript.json":
-            files.append({"name": "appsscript", "type": "JSON", "source": path.read_text()})
+            # The dedicated endpoint deployment is restricted to its owner.
+            # Preserve the version-79 manifest text in the authoritative
+            # replay binding, whose execution API access remains ANYONE.
+            source = path.read_text().replace('"access": "MYSELF"', '"access": "ANYONE"')
+            files.append({"name": "appsscript", "type": "JSON", "source": source})
         elif path.is_file() and path.suffix == ".js":
             files.append({"name": path.name[:-3], "type": "SERVER_JS", "source": path.read_text()})
     return files
