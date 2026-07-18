@@ -25,12 +25,24 @@ from automation.simplified_authoritative_replay_contract_v1 import (
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = "80d2789cb4071537220aaec719e24b5c14a3797c"
+GIT_COMMIT = "8bc7275412c64559e6698fef46668cbdfac160d7"
 EVIDENCE_PACKAGE = ROOT / "outputs" / "simplified_authoritative_replay" / "production_packages" / "SIMPLIFIED-REPLAY-PROD-20260717T171207Z"
 EVIDENCE_RUN = ROOT / "outputs" / "simplified_authoritative_replay" / "runs" / "SIMPLIFIED-REPLAY-CANARY-20260717T171207Z"
 GEMINI_IDENTITIES = {
     "A": "AHRF_001102e8e2bfaaa792e13ceb213e",
     "E": "AHRF_009d2411c26358a782cef57e2c24",
 }
+
+
+def clean_git_state(_repository_path: Path) -> dict:
+    return {
+        "git_commit": GIT_COMMIT,
+        "git_branch": "codex-simplified-authoritative-replay",
+        "git_worktree_clean": True,
+        "git_detached_head": False,
+        "git_repository_path": str(ROOT),
+        "git_remote_name": "origin",
+    }
 
 
 NODE_HARNESS = r"""
@@ -118,6 +130,8 @@ class GeminiProviderSchemaSupportTest(unittest.TestCase):
                 prediction_runner_fingerprint=source_binding["prediction_runner_sha256"],
                 contract_fingerprint="contract-sha",
                 executor_fingerprint="executor-sha",
+                expected_git_commit=GIT_COMMIT,
+                repository_state_reader=clean_git_state,
             )
             package = root / "packages" / manifest["package_id"]
             run_manifest = initialize_durable_run(
@@ -135,6 +149,10 @@ class GeminiProviderSchemaSupportTest(unittest.TestCase):
                 prediction_runner_sha256=source_binding["prediction_runner_sha256"],
                 contract_fingerprint="contract-sha",
                 executor_fingerprint="executor-sha",
+                git_commit=GIT_COMMIT,
+                git_branch="codex-simplified-authoritative-replay",
+                git_worktree_clean=True,
+                git_detached_head=False,
             )
             run_dir = root / "runs" / run_manifest["run_id"]
             state = _load_package_state(package)
@@ -167,6 +185,7 @@ class GeminiProviderSchemaSupportTest(unittest.TestCase):
                 run_dir=run_dir,
                 package_dir=package,
                 identity=identity,
+                repository_state_reader=clean_git_state,
                 deployment_metadata_reader=lambda project_id, deployment_id: {
                     "apps_script_project_id": project_id,
                     "execution_deployment_id": deployment_id,

@@ -19,6 +19,20 @@ from automation.build_simplified_replay_package_v1 import (
 from automation.run_simplified_replay_canary_v1 import execute
 
 
+GIT_COMMIT = "8bc7275412c64559e6698fef46668cbdfac160d7"
+
+
+def clean_git_state(_repository_path: Path) -> dict:
+    return {
+        "git_commit": GIT_COMMIT,
+        "git_branch": "codex-simplified-authoritative-replay",
+        "git_worktree_clean": True,
+        "git_detached_head": False,
+        "git_repository_path": str(Path(__file__).resolve().parents[1]),
+        "git_remote_name": "origin",
+    }
+
+
 def production_inputs(root: Path, package_id: str = "PRODUCTION-FREEZE-TEST") -> dict:
     source_binding = apps_script_source_binding()
     return {
@@ -34,6 +48,8 @@ def production_inputs(root: Path, package_id: str = "PRODUCTION-FREEZE-TEST") ->
         "prediction_runner_fingerprint": source_binding["prediction_runner_sha256"],
         "contract_fingerprint": "contract-sha",
         "executor_fingerprint": "executor-sha",
+        "expected_git_commit": GIT_COMMIT,
+        "repository_state_reader": clean_git_state,
     }
 
 

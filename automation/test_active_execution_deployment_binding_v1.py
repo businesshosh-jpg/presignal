@@ -27,6 +27,18 @@ VERSION = 79
 PROJECT_FINGERPRINT = "1de3a98607124c2ad052a87906daa388bab763850c43f49e4447bd76d4f9f054"
 BRIDGE_SHA256 = "918a58462d69548cad155de231da63dbbcc984607dbc2262e32159211e99ec84"
 RUNNER_SHA256 = "c0f5598deea761a1a55b5c02911e37d2e5e922fa8043e03e62792793800c483b"
+GIT_COMMIT = "8bc7275412c64559e6698fef46668cbdfac160d7"
+
+
+def clean_git_state(_repository_path: Path) -> dict:
+    return {
+        "git_commit": GIT_COMMIT,
+        "git_branch": "codex-simplified-authoritative-replay",
+        "git_worktree_clean": True,
+        "git_detached_head": False,
+        "git_repository_path": str(Path(__file__).resolve().parents[1]),
+        "git_remote_name": "origin",
+    }
 
 
 def read_json(path: Path) -> dict:
@@ -51,11 +63,14 @@ def package_inputs(root: Path, package_id: str = "DEPLOYMENT-BINDING-PACKAGE") -
         "prediction_runner_fingerprint": RUNNER_SHA256,
         "contract_fingerprint": "contract-sha",
         "executor_fingerprint": "executor-sha",
+        "expected_git_commit": GIT_COMMIT,
+        "repository_state_reader": clean_git_state,
     }
 
 
 def init_inputs(package: Path, manifest: dict, run_root: Path, run_id: str = "DEPLOYMENT-BINDING-RUN") -> dict:
     binding = read_json(package / "binding" / "immutable_deployment_binding.json")
+    git_binding = read_json(package / "binding" / "local_git_repository_binding.json")
     return {
         "package_dir": package,
         "durable_run_root": run_root,
@@ -71,6 +86,10 @@ def init_inputs(package: Path, manifest: dict, run_root: Path, run_id: str = "DE
         "prediction_runner_sha256": binding["prediction_runner_sha256"],
         "contract_fingerprint": "contract-sha",
         "executor_fingerprint": "executor-sha",
+        "git_commit": git_binding["git_commit"],
+        "git_branch": git_binding["git_branch"],
+        "git_worktree_clean": git_binding["git_worktree_clean"],
+        "git_detached_head": git_binding["git_detached_head"],
     }
 
 
@@ -125,6 +144,14 @@ def identity_and_members(package: Path, index: int = 0) -> tuple[dict, list[dict
 
 
 class ActiveExecutionDeploymentBindingTest(unittest.TestCase):
+    def setUp(self):
+        patcher = patch(
+            "automation.run_simplified_replay_canary_v1.read_local_git_repository_state",
+            side_effect=clean_git_state,
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def test_committed_source_binding_matches_version_79_constants(self):
         self.assertEqual(apps_script_source_binding(), {
             "apps_script_project_id": PROJECT_ID,

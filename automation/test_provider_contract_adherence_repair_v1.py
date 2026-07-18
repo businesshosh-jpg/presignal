@@ -22,6 +22,7 @@ from automation.simplified_authoritative_replay_contract_v1 import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+GIT_COMMIT = "8bc7275412c64559e6698fef46668cbdfac160d7"
 FAILED_RUN = ROOT / "outputs" / "simplified_authoritative_replay" / "runs" / "SIMPLIFIED-REPLAY-CANARY-20260717T162807Z"
 FAILED_PACKAGE = ROOT / "outputs" / "simplified_authoritative_replay" / "production_packages" / "SIMPLIFIED-REPLAY-PROD-20260717T162728Z"
 FIXTURES = {
@@ -29,6 +30,17 @@ FIXTURES = {
     "anthropic_a": ("AHRF_00ca261e4d74e2480ba89182727a", "fe07e70ca8211ee310c6feac9b7a98afe676d7cd633ff2565d436b1106709e3d"),
     "anthropic_e": ("AHRF_004876309f32b88b1b2c03fe2d5a", "ff77b4c8bd22caf75b9d6dec9d69ff3785eabfae6cb37819722929e585f865ae"),
 }
+
+
+def clean_git_state(_repository_path: Path) -> dict:
+    return {
+        "git_commit": GIT_COMMIT,
+        "git_branch": "codex-simplified-authoritative-replay",
+        "git_worktree_clean": True,
+        "git_detached_head": False,
+        "git_repository_path": str(ROOT),
+        "git_remote_name": "origin",
+    }
 
 
 def package_state(package: Path = FAILED_PACKAGE) -> dict:
@@ -62,6 +74,8 @@ def temporary_package_and_run(root: Path) -> tuple[Path, Path, dict, dict]:
         prediction_runner_fingerprint=source_binding["prediction_runner_sha256"],
         contract_fingerprint="contract-sha",
         executor_fingerprint="executor-sha",
+        expected_git_commit=GIT_COMMIT,
+        repository_state_reader=clean_git_state,
     )
     package = root / "packages" / manifest["package_id"]
     run_manifest = initialize_durable_run(
@@ -79,6 +93,10 @@ def temporary_package_and_run(root: Path) -> tuple[Path, Path, dict, dict]:
         prediction_runner_sha256=source_binding["prediction_runner_sha256"],
         contract_fingerprint="contract-sha",
         executor_fingerprint="executor-sha",
+        git_commit=GIT_COMMIT,
+        git_branch="codex-simplified-authoritative-replay",
+        git_worktree_clean=True,
+        git_detached_head=False,
     )
     return package, root / "runs" / run_manifest["run_id"], manifest, _load_package_state(package)
 
@@ -178,6 +196,7 @@ class ProviderContractAdherenceRepairTest(unittest.TestCase):
                 run_dir=run_dir,
                 package_dir=package,
                 identity=identity,
+                repository_state_reader=clean_git_state,
                 deployment_metadata_reader=lambda project_id, deployment_id: {
                     "apps_script_project_id": project_id,
                     "execution_deployment_id": deployment_id,

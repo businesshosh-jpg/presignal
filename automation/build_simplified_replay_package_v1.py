@@ -8,6 +8,13 @@ import uuid
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
+from automation.local_git_repository_state_v1 import (
+    LocalGitRepositoryError,
+    authoritative_git_binding,
+    normalize_local_git_repository_state,
+    read_local_git_repository_state,
+    require_expected_local_git_state,
+)
 from automation.simplified_authoritative_replay_contract_v1 import (
     DIRECTIONS,
     REQUIRED,
@@ -310,6 +317,7 @@ def _write_production_package(
     scientific_snapshot_path: Path,
     snapshot: Mapping[str, list[dict[str, Any]]],
     deployment_binding: Mapping[str, Any],
+    local_git_provenance: Mapping[str, Any],
     fingerprints: Mapping[str, str],
     counts: Mapping[str, int],
 ) -> None:
@@ -423,6 +431,14 @@ def _write_production_package(
         "deployment_performed": False,
         "binding_source": "operator_supplied_execution_deployment_and_immutable_version",
     })
+    write_json(
+        package_dir / "binding" / "local_git_repository_binding.json",
+        authoritative_git_binding(local_git_provenance),
+    )
+    write_json(
+        package_dir / "provenance" / "local_git_repository.json",
+        dict(local_git_provenance),
+    )
     write_json(package_dir / "fingerprints" / "implementation_fingerprints.json", {
         **dict(fingerprints),
         "all_required_fingerprints_present": True,
@@ -458,7 +474,13 @@ def _whole_package_sha256(package_dir: Path) -> str:
     return digest.hexdigest()
 
 
-def _write_manifest(package_dir: Path, package_id: str, counts: Mapping[str, int], provider_models: Mapping[str, int]) -> dict[str, Any]:
+def _write_manifest(
+    package_dir: Path,
+    package_id: str,
+    counts: Mapping[str, int],
+    provider_models: Mapping[str, int],
+    local_git_provenance: Mapping[str, Any],
+) -> dict[str, Any]:
     manifest = {
         "package_id": package_id,
         "package_mode": "production_freeze",
@@ -467,6 +489,8 @@ def _write_manifest(package_dir: Path, package_id: str, counts: Mapping[str, int
         "outcome_enabled": False,
         "evaluation_enabled": False,
         "native_v2_prediction_path_required": False,
+        "local_git_repository_binding": authoritative_git_binding(local_git_provenance),
+        "local_git_repository_provenance": dict(local_git_provenance),
         "counts": dict(counts),
         "provider_models": dict(provider_models),
         "files": _manifest_file_map(package_dir),
@@ -485,6 +509,15 @@ def verify_package_manifest(package_dir: Path) -> bool:
     current = _manifest_file_map(package_dir)
     if current != manifest.get("files", {}):
         raise ValueError("PACKAGE_MANIFEST_FILE_SET_MISMATCH")
+    if manifest.get("local_git_repository_binding") is not None:
+        git_binding = json.loads((package_dir / "binding" / "local_git_repository_binding.json").read_text())
+        git_provenance = json.loads((package_dir / "provenance" / "local_git_repository.json").read_text())
+        if manifest.get("local_git_repository_binding") != git_binding:
+            raise ValueError("PACKAGE_GIT_BINDING_MANIFEST_MISMATCH")
+        if manifest.get("local_git_repository_provenance") != git_provenance:
+            raise ValueError("PACKAGE_GIT_PROVENANCE_MANIFEST_MISMATCH")
+        if authoritative_git_binding(git_provenance) != git_binding:
+            raise ValueError("PACKAGE_GIT_BINDING_PROVENANCE_MISMATCH")
     return True
 
 
@@ -565,6 +598,9 @@ def freeze_production_package(
     prediction_runner_fingerprint: str,
     contract_fingerprint: str,
     executor_fingerprint: str,
+    expected_git_commit: str,
+    repository_path: Path | str = ROOT,
+    repository_state_reader=None,
     outcome_enabled: bool = False,
     evaluation_enabled: bool = False,
     native_v2_prediction_path_required: bool = False,
@@ -576,6 +612,16 @@ def freeze_production_package(
     final_dir = output_root / package_id
     if final_dir.exists():
         raise ValueError("EXISTING_FINAL_PACKAGE_ID")
+
+    reader = repository_state_reader or read_local_git_repository_state
+    try:
+        observed_git_state = reader(Path(repository_path))
+        local_git_provenance = normalize_local_git_repository_state(observed_git_state, repository_path)
+        local_git_provenance = require_expected_local_git_state(local_git_provenance, expected_git_commit)
+    except LocalGitRepositoryError as error:
+        raise ValueError(str(error)) from error
+    except Exception as error:
+        raise ValueError("LOCAL_GIT_REPOSITORY_UNREADABLE") from error
 
     fingerprints = {
         "bridge_source_fingerprint": bridge_source_fingerprint,
@@ -617,10 +663,11 @@ def freeze_production_package(
             snapshot_path,
             snapshot,
             deployment_binding,
+            local_git_provenance,
             fingerprints,
             counts,
         )
-        manifest = _write_manifest(temp_dir, package_id, counts, provider_models)
+        manifest = _write_manifest(temp_dir, package_id, counts, provider_models, local_git_provenance)
         (temp_dir / "whole_package_sha256.txt").write_text(_whole_package_sha256(temp_dir) + "\n")
         verify_package_manifest(temp_dir)
         verify_whole_package_fingerprint(temp_dir)

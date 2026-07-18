@@ -18,6 +18,20 @@ from automation.run_simplified_replay_canary_v1 import (
 from automation.simplified_authoritative_replay_contract_v1 import driver_options
 
 
+GIT_COMMIT = "8bc7275412c64559e6698fef46668cbdfac160d7"
+
+
+def clean_git_state(_repository_path: Path) -> dict:
+    return {
+        "git_commit": GIT_COMMIT,
+        "git_branch": "codex-simplified-authoritative-replay",
+        "git_worktree_clean": True,
+        "git_detached_head": False,
+        "git_repository_path": str(Path(__file__).resolve().parents[1]),
+        "git_remote_name": "origin",
+    }
+
+
 def package_inputs(root: Path, package_id: str = "PROD-FREEZE-FIXTURE") -> dict:
     source_binding = apps_script_source_binding()
     return {
@@ -33,11 +47,14 @@ def package_inputs(root: Path, package_id: str = "PROD-FREEZE-FIXTURE") -> dict:
         "prediction_runner_fingerprint": source_binding["prediction_runner_sha256"],
         "contract_fingerprint": "contract-sha",
         "executor_fingerprint": "executor-sha",
+        "expected_git_commit": GIT_COMMIT,
+        "repository_state_reader": clean_git_state,
     }
 
 
 def init_inputs(package: Path, package_manifest: dict, run_root: Path, run_id: str = "RUN-FIXTURE") -> dict:
     binding = read_json(package / "binding" / "immutable_deployment_binding.json")
+    git_binding = read_json(package / "binding" / "local_git_repository_binding.json")
     return {
         "package_dir": package,
         "durable_run_root": run_root,
@@ -53,6 +70,10 @@ def init_inputs(package: Path, package_manifest: dict, run_root: Path, run_id: s
         "prediction_runner_sha256": binding["prediction_runner_sha256"],
         "contract_fingerprint": "contract-sha",
         "executor_fingerprint": "executor-sha",
+        "git_commit": git_binding["git_commit"],
+        "git_branch": git_binding["git_branch"],
+        "git_worktree_clean": git_binding["git_worktree_clean"],
+        "git_detached_head": git_binding["git_detached_head"],
     }
 
 
@@ -114,6 +135,12 @@ class DurableLiveExecutionTest(unittest.TestCase):
         )
         patcher.start()
         self.addCleanup(patcher.stop)
+        git_patcher = patch(
+            "automation.run_simplified_replay_canary_v1.read_local_git_repository_state",
+            side_effect=clean_git_state,
+        )
+        git_patcher.start()
+        self.addCleanup(git_patcher.stop)
 
     def test_valid_frozen_package_initializes_durable_run_with_zero_counters(self):
         with tempfile.TemporaryDirectory() as tmp:

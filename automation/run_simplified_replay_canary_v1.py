@@ -23,6 +23,13 @@ from automation.build_simplified_replay_package_v1 import (
     verify_package_manifest,
     verify_whole_package_fingerprint,
 )
+from automation.local_git_repository_state_v1 import (
+    LocalGitRepositoryError,
+    authoritative_git_binding,
+    normalize_local_git_repository_state,
+    read_local_git_repository_state,
+    require_expected_local_git_state,
+)
 from automation.simplified_authoritative_replay_contract_v1 import (
     ReducedForecastError,
     driver_options,
@@ -35,6 +42,7 @@ from automation.simplified_authoritative_replay_contract_v1 import (
 BRIDGE_FUNCTION_NAME = "apiCallAuthoritativeProviderJsonObject"
 BRIDGE_SCHEMA_VERSION = "authoritative_historical_replay_bridge_v1"
 LEDGER_DIRS = (
+    "provenance_verifications",
     "deployment_verifications",
     "invocations",
     "raw_responses",
@@ -52,6 +60,12 @@ DEPLOYMENT_BINDING_FIELDS = (
     "project_fingerprint",
     "bridge_sha256",
     "prediction_runner_sha256",
+)
+LOCAL_GIT_BINDING_FIELDS = (
+    "git_commit",
+    "git_branch",
+    "git_worktree_clean",
+    "git_detached_head",
 )
 TRANSIENT_FAILURES = {
     "timeout",
@@ -179,6 +193,11 @@ def _package_binding(package_dir: Path) -> dict[str, Any]:
     verify_whole_package_fingerprint(package_dir)
     manifest = _read_json(package_dir / "package_manifest.json")
     binding = _read_json(package_dir / "binding" / "immutable_deployment_binding.json")
+    try:
+        git_binding = _read_json(package_dir / "binding" / "local_git_repository_binding.json")
+        git_provenance = _read_json(package_dir / "provenance" / "local_git_repository.json")
+    except (FileNotFoundError, json.JSONDecodeError) as error:
+        raise DurableExecutionError("PACKAGE_LOCAL_GIT_BINDING_MISSING") from error
     fingerprints = _read_json(package_dir / "fingerprints" / "implementation_fingerprints.json")
     missing = [key for key in DEPLOYMENT_BINDING_FIELDS if key not in binding]
     if missing:
@@ -189,13 +208,25 @@ def _package_binding(package_dir: Path) -> dict[str, Any]:
         raise DurableExecutionError("PACKAGE_BRIDGE_FINGERPRINT_MISMATCH")
     if binding["prediction_runner_sha256"] != fingerprints.get("prediction_runner_fingerprint"):
         raise DurableExecutionError("PACKAGE_PREDICTION_RUNNER_FINGERPRINT_MISMATCH")
+    try:
+        normalized_git = normalize_local_git_repository_state(git_provenance, git_provenance.get("git_repository_path") or package_dir)
+        require_expected_local_git_state(normalized_git, git_binding.get("git_commit"))
+    except (LocalGitRepositoryError, AttributeError) as error:
+        raise DurableExecutionError("PACKAGE_LOCAL_GIT_BINDING_INVALID:" + str(error)) from error
+    if authoritative_git_binding(normalized_git) != git_binding:
+        raise DurableExecutionError("PACKAGE_LOCAL_GIT_BINDING_MISMATCH")
     return {
         "package_id": manifest["package_id"],
         "whole_package_fingerprint": (package_dir / "whole_package_sha256.txt").read_text().strip(),
         **{key: binding[key] for key in DEPLOYMENT_BINDING_FIELDS},
+        **{key: git_binding[key] for key in LOCAL_GIT_BINDING_FIELDS},
         "contract_fingerprint": fingerprints["contract_fingerprint"],
         "executor_fingerprint": fingerprints["executor_fingerprint"],
     }
+
+
+def _package_git_provenance(package_dir: Path) -> dict[str, Any]:
+    return _read_json(package_dir / "provenance" / "local_git_repository.json")
 
 
 def _assert_binding(expected: Mapping[str, Any], actual: Mapping[str, Any]) -> None:
@@ -232,6 +263,10 @@ def initialize_durable_run(
     prediction_runner_sha256: str,
     contract_fingerprint: str,
     executor_fingerprint: str,
+    git_commit: str,
+    git_branch: str | None,
+    git_worktree_clean: bool,
+    git_detached_head: bool,
 ) -> dict[str, Any]:
     if not run_id or Path(run_id).name != run_id:
         raise DurableExecutionError("RUN_ID_INVALID")
@@ -253,9 +288,14 @@ def initialize_durable_run(
         "prediction_runner_sha256": prediction_runner_sha256,
         "contract_fingerprint": contract_fingerprint,
         "executor_fingerprint": executor_fingerprint,
+        "git_commit": git_commit,
+        "git_branch": git_branch,
+        "git_worktree_clean": git_worktree_clean,
+        "git_detached_head": git_detached_head,
     }
     actual_binding = _package_binding(package_path)
     _assert_binding(expected_binding, actual_binding)
+    git_provenance = _package_git_provenance(package_path)
 
     root.mkdir(parents=True, exist_ok=True)
     temp_dir = root / f".{run_id}.tmp-{uuid.uuid4().hex}"
@@ -268,6 +308,8 @@ def initialize_durable_run(
             "package_dir": str(package_path),
             "binding": dict(expected_binding),
             "binding_sha256": _sha256(expected_binding),
+            "local_git_repository_provenance": git_provenance,
+            "local_git_repository_provenance_sha256": _sha256(git_provenance),
             "bridge_function_name": BRIDGE_FUNCTION_NAME,
             "bridge_schema_version": BRIDGE_SCHEMA_VERSION,
             "provider_calls_enabled": True,
@@ -363,6 +405,13 @@ def _verify_run_binding(run_dir: Path, package_dir: Path) -> dict[str, Any]:
     if manifest.get("binding_sha256") != _sha256(binding):
         raise DurableExecutionError("RUN_DEPLOYMENT_BINDING_IMMUTABILITY_VIOLATION")
     _assert_binding(binding, _package_binding(package_dir))
+    run_git_provenance = manifest.get("local_git_repository_provenance")
+    if not isinstance(run_git_provenance, dict) or manifest.get("local_git_repository_provenance_sha256") != _sha256(run_git_provenance):
+        raise DurableExecutionError("RUN_LOCAL_GIT_PROVENANCE_IMMUTABILITY_VIOLATION")
+    if run_git_provenance != _package_git_provenance(package_dir):
+        raise DurableExecutionError("PACKAGE_RUN_GIT_PROVENANCE_MISMATCH")
+    if authoritative_git_binding(run_git_provenance) != {key: binding.get(key) for key in LOCAL_GIT_BINDING_FIELDS}:
+        raise DurableExecutionError("PACKAGE_RUN_GIT_BINDING_MISMATCH")
     return binding
 
 
@@ -373,6 +422,75 @@ def _write_deployment_verification(run_dir: Path, record: Mapping[str, Any]) -> 
     durable_record = {"verification_id": record_id, **dict(record)}
     _atomic_write_json(_record_path(run_dir, "deployment_verifications", record_id), durable_record, overwrite=False)
     return durable_record
+
+
+def _write_provenance_verification(run_dir: Path, record: Mapping[str, Any]) -> dict[str, Any]:
+    ledger = _ledger(run_dir, "provenance_verifications")
+    sequence = len(list(ledger.glob("*.json"))) + 1
+    record_id = f"PROVENANCE_VERIFY_{sequence:06d}"
+    durable_record = {"verification_id": record_id, **dict(record)}
+    _atomic_write_json(_record_path(run_dir, "provenance_verifications", record_id), durable_record, overwrite=False)
+    return durable_record
+
+
+def _verify_local_git_repository(
+    run_dir: Path,
+    binding: Mapping[str, Any],
+    repository_state_reader: Callable[[Path], Mapping[str, Any]] | None,
+) -> dict[str, Any]:
+    manifest = _run_manifest(run_dir)
+    provenance = manifest["local_git_repository_provenance"]
+    repository_path = Path(provenance["git_repository_path"])
+    reader = repository_state_reader or read_local_git_repository_state
+    base = {
+        "verification_timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "repository_path": str(repository_path),
+        "expected_git_commit": binding["git_commit"],
+        "expected_git_branch": binding["git_branch"],
+        "expected_detached_head": binding["git_detached_head"],
+        "package_run_git_binding_match": True,
+    }
+    try:
+        observed_raw = reader(repository_path)
+        observed = normalize_local_git_repository_state(observed_raw, repository_path)
+    except Exception as error:
+        classification = str(error) if isinstance(error, LocalGitRepositoryError) else "LOCAL_GIT_REPOSITORY_UNREADABLE"
+        record = _write_provenance_verification(run_dir, {
+            **base,
+            "observed_git_commit": None,
+            "observed_git_branch": None,
+            "observed_detached_head": None,
+            "tracked_worktree_clean": None,
+            "verification_status": "FAIL",
+            "failure_classification": classification,
+            "metadata_digest": _sha256({"error_type": type(error).__name__, "error": str(error)}),
+        })
+        raise DurableExecutionError(record["failure_classification"]) from error
+
+    failure = ""
+    if Path(observed["git_repository_path"]) != repository_path.resolve():
+        failure = "LOCAL_GIT_REPOSITORY_PATH_MISMATCH"
+    elif observed["git_commit"] != binding["git_commit"]:
+        failure = "LOCAL_GIT_HEAD_MISMATCH"
+    elif observed["git_worktree_clean"] is not True:
+        failure = "LOCAL_GIT_TRACKED_WORKTREE_DIRTY"
+    elif observed["git_detached_head"] != binding["git_detached_head"]:
+        failure = "LOCAL_GIT_DETACHED_HEAD_MISMATCH"
+    elif observed["git_branch"] != binding["git_branch"]:
+        failure = "LOCAL_GIT_BRANCH_MISMATCH"
+    record = _write_provenance_verification(run_dir, {
+        **base,
+        "observed_git_commit": observed["git_commit"],
+        "observed_git_branch": observed["git_branch"],
+        "observed_detached_head": observed["git_detached_head"],
+        "tracked_worktree_clean": observed["git_worktree_clean"],
+        "verification_status": "FAIL" if failure else "PASS",
+        "failure_classification": failure,
+        "metadata_digest": _sha256(observed),
+    })
+    if failure:
+        raise DurableExecutionError(failure)
+    return record
 
 
 def _verify_active_execution_deployment(
@@ -648,6 +766,7 @@ def execute_live_identity(
     parser_fn: Callable[[Mapping[str, Any], Sequence[Mapping[str, Any]], Mapping[str, Any]], dict[str, Any]] | None = None,
     raw_response_persistor: Callable[[Path, Mapping[str, Any]], None] | None = None,
     prediction_persistor: Callable[[Path, Mapping[str, Any]], None] | None = None,
+    repository_state_reader: Callable[[Path], Mapping[str, Any]] | None = None,
     deployment_metadata_reader: Callable[[str, str], Mapping[str, Any]] | None = None,
     max_retries: int = 1,
 ) -> dict[str, Any]:
@@ -658,13 +777,14 @@ def execute_live_identity(
     identity_id = str(identity.get("forecast_identity") or "")
     if not identity_id:
         raise DurableExecutionError("FORECAST_IDENTITY_MISSING")
-    if _accepted_path(run_path, identity_id).exists():
-        raise DurableExecutionError("IDENTITY_ALREADY_ACCEPTED")
 
     run_binding = _verify_run_binding(run_path, package_path)
+    _verify_local_git_repository(run_path, run_binding, repository_state_reader)
     _verify_active_execution_deployment(run_path, run_binding, deployment_metadata_reader)
     package_state = _load_package_state(package_path)
     frozen_identity = _verify_identity_eligibility(package_state, identity)
+    if _accepted_path(run_path, identity_id).exists():
+        raise DurableExecutionError("IDENTITY_ALREADY_ACCEPTED")
     members = package_state["members_by_session"].get(frozen_identity["session_id"], [])
     if not members:
         raise DurableExecutionError("IDENTITY_SESSION_MEMBERS_MISSING")
