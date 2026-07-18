@@ -1,0 +1,55 @@
+{
+  "apps_script_calls": 0,
+  "artifact_fingerprint": "4a5b14390a69567826d6f663c5c87e651eb0e829ce833e66e9f7a79cee7a4d78",
+  "artifact_id": "PRESIGNAL-V2-PACK-AE-SCORER-BINDING-20260718T174530Z",
+  "artifact_type": "PACK_AE_SCORING_IMPLEMENTATION_SOURCE_BINDING",
+  "bootstrap": {
+    "interpolation": "TYPE_7",
+    "interval": "TWO_SIDED_95_PERCENT_PERCENTILE",
+    "resamples": 10000,
+    "resampling_unit": "MARKET_SESSION",
+    "seed": 20260718
+  },
+  "confirmatory_conclusion_produced": false,
+  "created_at": "2026-07-18T17:45:30Z",
+  "development_population_reconciliation": {
+    "complete_pairs": 376,
+    "complete_pairs_by_provider": {
+      "Anthropic": 125,
+      "Gemini": 129,
+      "OpenAI": 122
+    },
+    "development_sessions": 130,
+    "prediction_rows_scored": 752
+  },
+  "development_validation_artifact": {
+    "artifact_fingerprint": "f4a80ef3464d82812ce0eb968ab7527468fe0f970514cce92fd2a9a99835fe00",
+    "artifact_id": "PRESIGNAL-V2-PACK-AE-DEVELOPMENT-VALIDATION-20260718T174530Z"
+  },
+  "fingerprint_algorithm": "SHA-256",
+  "fingerprint_scope": "canonical JSON of this artifact with artifact_fingerprint omitted",
+  "frozen_contract_changed": false,
+  "frozen_contract_fingerprint": "737b5db8d2d1ae268b834fe8e2b544de7e79fde4c705c9df1336a456c23666d0",
+  "frozen_split_manifest_fingerprint": "dd04813f678e7574ae1ca21019567163c454838daabff50e58972f1e41401e29",
+  "frozen_value_blindness_audit_fingerprint": "67e3d1b73a2afb4bb48df904f87a45e3de8cf29484bf3d521082e8ecb224e1cd",
+  "holdout_access_confirmation": {
+    "hard_partition_guard": "HoldoutAccessError",
+    "holdout_attachment_rows_deserialized": 0,
+    "holdout_canonical_rows_deserialized": 0,
+    "holdout_evaluation_performed": false,
+    "holdout_prediction_files_opened": 0
+  },
+  "provider_calls": 0,
+  "scorer_source_file_hashes": {
+    "automation/pack_ae_scoring_v1.py": "a0a66bcfdf1fc879c7e8202049a0ce8e5f0395d2996ade9913ac0159c0ddcd93",
+    "automation/test_pack_ae_scoring_v1.py": "f870bcdeb590a3ddf0b10058a078ecac4388312a00095bf92702e59b53c4b59f"
+  },
+  "source_commit_before_implementation": "3fc98f0e5f1afd0d6d3d9dea9426a0e374d43328",
+  "spreadsheet_writes": 0,
+  "test_result": {
+    "errors": 0,
+    "failures": 0,
+    "status": "PASS",
+    "tests_run": 88
+  }
+}
