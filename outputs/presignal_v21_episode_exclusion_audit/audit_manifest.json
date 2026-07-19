@@ -1,0 +1,39 @@
+{
+  "audit_fingerprint": "sha256:1d18c73db78c996ea3e8206236575631b93eae7e07008075d20a299195b9dfc0",
+  "audited_rows": 70,
+  "batch_conflict_causes": {
+    "STALE_BATCH_ID": 48
+  },
+  "batch_conflict_groups": 6,
+  "batch_conflict_rows": 48,
+  "decision": "TARGETED_EVENT_LINEAGE_REPAIR_REQUIRED",
+  "duplicate_member_classifications": {
+    "DUPLICATE_EVENT_INSIDE_ONE_BATCH": 17,
+    "LEGITIMATE_DISTINCT_EVENT_WITH_COLLIDING_EVENT_ID": 4
+  },
+  "duplicate_member_rows": 21,
+  "episode_population_fingerprint": "sha256:f8d3bc72660ad9e0aaa6fb448508c3bc0e9ef08df83b907e00d6ecdc347d0a2d",
+  "invalid_timestamp_rows": 1,
+  "recommended_dispositions": {
+    "ELIGIBLE_AFTER_TARGETED_REPAIR": 69,
+    "KEEP_EXCLUDED": 1
+  },
+  "repairable_exclusions": 69,
+  "row_count_reconciliation": {
+    "affected_row_locator_or_excel_row": "Excel header row 1",
+    "builder_count": 4315,
+    "canonical_physical_data_row_count": 4315,
+    "count_difference_reason": "Migration counted the Event worksheet used range including header row 1 (A1:V4316); the builder counts only 4,315 non-empty data rows (Excel rows 2-4316).",
+    "migration_count": 4316,
+    "physical_rows_including_header": 4316
+  },
+  "scientifically_justified_exclusions": 1,
+  "source_workbook_sha256_after": "5cf15d673079a6582655772ae5b69eb3bb56f0bb2f7172e26c8111a8ec6fb85f",
+  "source_workbook_sha256_before": "5cf15d673079a6582655772ae5b69eb3bb56f0bb2f7172e26c8111a8ec6fb85f",
+  "validation": {
+    "ledger_unique": true,
+    "no_consumed_row_in_ledger": true,
+    "original_exclusions_accounted_for": true,
+    "source_workbook_unchanged": true
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "cell_type": "string",
+  "deterministic_repair_possible": true,
+  "event_id": "76e2-097a-2eaa-e672",
+  "event_row_locator": null,
+  "indicator_name": "Initial Jobless Claims (Nov/02)",
+  "likely_cause": "An exact duplicate physical row has literal 'member' in release_ts while Excel row 2460 has numeric release_ts 45603.5625; all other populated fields match.",
+  "locator_status": "UNAVAILABLE_DUE_TO_INVALID_RELEASE_TS",
+  "matching_authoritative_row_numbers": [
+    2460
+  ],
+  "other_populated_fields": {
+    "batch_id": "df96-5a9e-50ae-c1c6",
+    "confidence_level": "medium",
+    "consensus_value": "221",
+    "country": "US",
+    "event_id": "76e2-097a-2eaa-e672",
+    "genre": "Labor",
+    "importance": "Medium",
+    "indicator_name": "Initial Jobless Claims (Nov/02)",
+    "object": "econ_event",
+    "prev_revision": "218",
+    "release_status": "released",
+    "released_ts": "45603.5625",
+    "released_value": "221",
+    "resolution_method": "direct",
+    "source_cal": "FMP",
+    "source_provider": "FMP",
+    "type": "member"
+  },
+  "raw_release_ts": "member",
+  "source_row_number": 4316
+}

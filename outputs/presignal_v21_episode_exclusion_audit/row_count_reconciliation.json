@@ -1,0 +1,8 @@
+{
+  "affected_row_locator_or_excel_row": "Excel header row 1",
+  "builder_count": 4315,
+  "canonical_physical_data_row_count": 4315,
+  "count_difference_reason": "Migration counted the Event worksheet used range including header row 1 (A1:V4316); the builder counts only 4,315 non-empty data rows (Excel rows 2-4316).",
+  "migration_count": 4316,
+  "physical_rows_including_header": 4316
+}
