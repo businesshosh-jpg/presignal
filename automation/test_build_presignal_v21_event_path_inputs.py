@@ -79,5 +79,24 @@ class EventPathInputTests(unittest.TestCase):
         self.assertNotIn("google_clients",source)
         self.assertNotIn("run_script_function",source)
 
+    def test_only_validated_parsed_attention_can_select_an_episode(self):
+        parsed={"status":"parsed","attention_label":"SECONDARY_DRIVER","step5_lineage_status":"VALID_FOR_STEP5"}
+        self.assertTrue(inputs.usable_attention(parsed))
+        self.assertFalse(inputs.usable_attention({**parsed,"status":"provider_contract_error","attention_label":"NO_SIGNAL"}))
+        self.assertFalse(inputs.usable_attention({**parsed,"status":"provider_omitted_event","attention_label":"NO_SIGNAL"}))
+        self.assertFalse(inputs.usable_attention({**parsed,"step5_lineage_status":"PRESERVED_NOT_SELECTABLE"}))
+
+    def test_exported_attention_population_is_order_independent(self):
+        artifact=inputs.ROOT/"outputs"/"presignal_v21_attention_preservation"/"authoritative_attention_map.jsonl"
+        if not artifact.exists():
+            self.skipTest("Google history export has not been generated")
+        state=inputs.load_frozen_package(attention_artifact=artifact)
+        episodes=inputs.rows(inputs.EPISODES)
+        roles=inputs.rows(inputs.ROLES)
+        first=inputs.build_episode_inputs(episodes,state,roles)
+        second=inputs.build_episode_inputs(list(reversed(episodes)),state,roles)
+        for key in ("parent","attention","requests","packs","unavailable","pack_a","pack_e"):
+            self.assertEqual(inputs.fingerprint(first[key]),inputs.fingerprint(second[key]),key)
+
 
 if __name__ == "__main__": unittest.main()

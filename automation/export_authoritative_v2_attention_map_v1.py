@@ -12,13 +12,19 @@ import argparse
 import hashlib
 import json
 import subprocess
+import sys
 import tarfile
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from automation.google_clients import build_sheets_service, get_sheet_values, load_credentials
+
 OUTPUT = ROOT / "outputs" / "presignal_v21_attention_preservation"
 PACKAGE = (
     ROOT
@@ -54,6 +60,24 @@ REQUIRED_LINEAGE = {
     "forecast_cutoff_ts",
     "raw_output",
 }
+GOOGLE_SPREADSHEET_ID = "1jxcZotbzJKcAzrK0VhxetYX6hp5DPXCCIA0J6B6RUy0"
+GOOGLE_WORKSHEET_NAME = "Session_Attention_Map_History"
+REQUESTED_GOOGLE_WORKSHEET_GID = 1865169058
+# The supplied URL GID resolves to Market_Sessions.  This is the verified GID
+# of the explicitly named historical Attention worksheet in that spreadsheet.
+GOOGLE_WORKSHEET_GID = 1528972154
+GOOGLE_SPREADSHEET_URL = (
+    "https://docs.google.com/spreadsheets/d/"
+    + GOOGLE_SPREADSHEET_ID
+    + "/edit?gid=1528972154#gid=1528972154"
+)
+GOOGLE_REQUIRED_HEADERS = {
+    "history_capture_ts", "replay_id", "source_sheet", "source_row_hash", "capture_phase",
+    "capture_status", "generated_ts", "attention_run_id", "session_id", "provider", "model",
+    "event_id", "attention_label", "raw_output", "status", "error_message",
+    "source_session_sheet", "source_member_sheet",
+}
+GOOGLE_ALLOWED_STATUSES = {"parsed", "provider_contract_error", "provider_omitted_event"}
 
 
 class PreservationError(ValueError):
@@ -238,6 +262,245 @@ def export_records(records: Iterable[Mapping[str, Any]], output: Path) -> dict[s
     return manifest
 
 
+def read_jsonl(path: Path) -> list[dict[str, Any]]:
+    return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+
+
+def normalize_google_values(values: list[list[Any]]) -> tuple[list[str], list[dict[str, str]]]:
+    if not values:
+        raise PreservationError("EMPTY_GOOGLE_WORKSHEET")
+    headers = [str(value).strip() for value in values[0]]
+    if len(headers) != len(set(headers)):
+        raise PreservationError("DUPLICATE_GOOGLE_HEADERS")
+    missing = sorted(GOOGLE_REQUIRED_HEADERS - set(headers))
+    if missing:
+        raise PreservationError("MISSING_GOOGLE_HEADERS:" + ",".join(missing))
+    rows = []
+    for source_row in values[1:]:
+        padded = list(source_row) + [""] * (len(headers) - len(source_row))
+        row = {header: "" if value is None else str(value) for header, value in zip(headers, padded)}
+        if any(value.strip() for value in row.values()):
+            rows.append(row)
+    return headers, rows
+
+
+def google_content_fingerprint(headers: list[str], rows: Iterable[Mapping[str, str]]) -> str:
+    normalized = sorted(({header: str(row.get(header, "")) for header in headers} for row in rows), key=canonical)
+    return fingerprint({"headers": headers, "rows": normalized})
+
+
+def strip_json_fence(raw_output: str) -> str:
+    value = raw_output.strip()
+    if value.startswith("```json"):
+        value = value[len("```json"):].strip()
+    if value.startswith("```"):
+        value = value[3:].strip()
+    if value.endswith("```"):
+        value = value[:-3].strip()
+    return value
+
+
+def parse_raw_attention(raw_output: str) -> dict[str, Any] | None:
+    try:
+        value = json.loads(strip_json_fence(raw_output))
+    except (TypeError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def historical_state(package: Path = PACKAGE) -> dict[str, Any]:
+    """Read the verified frozen snapshot used to prove historical cutoff lineage."""
+    from automation.build_simplified_replay_package_v1 import verify_package_manifest, verify_whole_package_fingerprint
+
+    if not verify_package_manifest(package) or not verify_whole_package_fingerprint(package):
+        raise PreservationError("FROZEN_PACKAGE_FINGERPRINT_MISMATCH")
+    sessions = {row["session_id"]: row for row in read_jsonl(package / "snapshot" / "authoritative_sessions.jsonl")}
+    members: dict[str, set[str]] = {}
+    for row in read_jsonl(package / "snapshot" / "authoritative_session_members.jsonl"):
+        members.setdefault(row["session_id"], set()).add(row["event_id"])
+    provider_models = {(row["provider"], row["model"]) for row in read_jsonl(package / "snapshot" / "authoritative_forecast_population.jsonl")}
+    return {"sessions": sessions, "members": members, "provider_models": provider_models, "package": package.name}
+
+
+def is_iso_before_or_equal(left: str, right: str) -> bool:
+    try:
+        return datetime.fromisoformat(left.replace("Z", "+00:00")) <= datetime.fromisoformat(right.replace("Z", "+00:00"))
+    except ValueError:
+        return False
+
+
+def validate_google_history_row(row: Mapping[str, str], state: Mapping[str, Any]) -> dict[str, Any]:
+    """Preserve the original row while deriving only immutable validation metadata."""
+    exported = dict(row)
+    status = exported.get("status", "")
+    problems = []
+    if exported.get("source_sheet") != "Session_Attention_Map":
+        problems.append("SOURCE_SHEET_NOT_DEDICATED_ATTENTION_MAP")
+    if exported.get("capture_status") != "CAPTURED":
+        problems.append("CAPTURE_NOT_CONFIRMED")
+    if status not in GOOGLE_ALLOWED_STATUSES:
+        problems.append("UNKNOWN_STATUS")
+    if not exported.get("source_row_hash"):
+        problems.append("MISSING_SOURCE_ROW_HASH")
+    session = state["sessions"].get(exported.get("session_id", ""))
+    if not session:
+        problems.append("SESSION_NOT_IN_FROZEN_SNAPSHOT")
+    else:
+        exported["forecast_cutoff_ts"] = session["forecast_cutoff"]
+        exported["forecast_cutoff_source"] = "frozen_authoritative_session_snapshot"
+        if exported.get("event_id") not in state["members"].get(exported["session_id"], set()):
+            problems.append("EVENT_NOT_IN_EXACT_FROZEN_SESSION")
+        if (exported.get("provider"), exported.get("model")) not in state["provider_models"]:
+            problems.append("PROVIDER_MODEL_NOT_IN_FROZEN_POPULATION")
+        if not is_iso_before_or_equal(session["forecast_cutoff"], exported.get("release_ts", "")):
+            problems.append("CUTOFF_NOT_BEFORE_SOURCE_RELEASE")
+    raw = parse_raw_attention(exported.get("raw_output", ""))
+    raw_valid = False
+    if status == "parsed":
+        if exported.get("attention_label") not in ALLOWED_LABELS:
+            problems.append("UNKNOWN_ATTENTION_LABEL")
+        if not raw or raw.get("object") != "session_attention_map" or raw.get("session_id") != exported.get("session_id"):
+            problems.append("PARSED_RAW_OUTPUT_NOT_DEDICATED_ATTENTION_MAP")
+        else:
+            item = next((item for item in raw.get("attention_items", []) if item.get("event_id") == exported.get("event_id")), None)
+            if not item or item.get("attention_label") != exported.get("attention_label"):
+                problems.append("PARSED_RAW_OUTPUT_FIELD_MISMATCH")
+            else:
+                raw_valid = True
+    elif status == "provider_omitted_event":
+        if not raw or raw.get("object") != "session_attention_map" or raw.get("session_id") != exported.get("session_id"):
+            problems.append("OMISSION_RAW_OUTPUT_NOT_DEDICATED_ATTENTION_MAP")
+        elif any(item.get("event_id") == exported.get("event_id") for item in raw.get("attention_items", [])):
+            problems.append("OMITTED_EVENT_PRESENT_IN_RAW_OUTPUT")
+        else:
+            raw_valid = True
+    else:
+        # Contract-error raw output is evidence of failure, not a candidate classification.
+        raw_valid = bool(exported.get("raw_output"))
+    exported["raw_output_validation"] = "VALID" if raw_valid else "UNAVAILABLE"
+    exported["historical_pre_release_lineage"] = (
+        "PROVEN_BY_FROZEN_CUTOFF_AND_PRE_RELEASE_PAYLOAD" if session and "CUTOFF_NOT_BEFORE_SOURCE_RELEASE" not in problems else "UNAVAILABLE"
+    )
+    exported["step5_lineage_status"] = (
+        "VALID_FOR_STEP5" if status == "parsed" and raw_valid and not problems else "PRESERVED_NOT_SELECTABLE"
+    )
+    exported["validation_errors"] = sorted(problems)
+    exported["source_object"] = "session_attention_map"
+    exported["source_spreadsheet_id"] = GOOGLE_SPREADSHEET_ID
+    exported["source_worksheet_gid"] = str(GOOGLE_WORKSHEET_GID)
+    exported["source_worksheet_name"] = GOOGLE_WORKSHEET_NAME
+    return exported
+
+
+def deduplicate_google_records(records: Iterable[Mapping[str, Any]]) -> tuple[list[dict[str, Any]], int]:
+    by_identity: dict[tuple[str, ...], dict[str, Any]] = {}
+    exact_duplicates = 0
+    for record in records:
+        identity = tuple(str(record.get(key, "")) for key in ("attention_run_id", "session_id", "provider", "model", "event_id"))
+        if not all(identity):
+            raise PreservationError("MISSING_ATTENTION_IDENTITY")
+        previous = by_identity.get(identity)
+        if previous is None:
+            by_identity[identity] = dict(record)
+        elif canonical(previous) == canonical(record):
+            exact_duplicates += 1
+        else:
+            raise PreservationError("CONFLICTING_ATTENTION_IDENTITY")
+    return [by_identity[key] for key in sorted(by_identity)], exact_duplicates
+
+
+def retrieve_google_history(service=None) -> tuple[list[str], list[dict[str, str]], dict[str, Any]]:
+    """Perform the sole permitted external operation: a Sheets values read."""
+    if service is None:
+        service = build_sheets_service(load_credentials(interactive=False))
+    metadata = service.spreadsheets().get(
+        spreadsheetId=GOOGLE_SPREADSHEET_ID,
+        fields="spreadsheetId,sheets.properties",
+    ).execute()
+    properties = [sheet["properties"] for sheet in metadata.get("sheets", [])]
+    if not any(prop.get("title") == GOOGLE_WORKSHEET_NAME and prop.get("sheetId") == GOOGLE_WORKSHEET_GID for prop in properties):
+        raise PreservationError("GOOGLE_WORKSHEET_IDENTITY_MISMATCH")
+    headers, rows = normalize_google_values(get_sheet_values(service, GOOGLE_SPREADSHEET_ID, "'Session_Attention_Map_History'"))
+    return headers, rows, {"spreadsheet_id": metadata.get("spreadsheetId"), "worksheet_count": len(properties)}
+
+
+def export_google_history(output: Path = OUTPUT, service=None) -> dict[str, Any]:
+    headers, source_rows, metadata = retrieve_google_history(service)
+    state = historical_state()
+    validated = [validate_google_history_row(row, state) for row in source_rows]
+    exported, exact_duplicates = deduplicate_google_records(validated)
+    source_fingerprint = google_content_fingerprint(headers, source_rows)
+    for row in exported:
+        row["source_content_fingerprint"] = source_fingerprint
+        row["export_version"] = "presignal_v2_attention_history_export_v1"
+        row["export_row_fingerprint"] = fingerprint({key: value for key, value in row.items() if key != "export_row_fingerprint"})
+    output.mkdir(parents=True, exist_ok=True)
+    (output / "authoritative_attention_map.jsonl").write_text("".join(canonical(row) + "\n" for row in exported))
+    statuses = Counter(row["status"] for row in exported)
+    unavailable = [row for row in exported if row["step5_lineage_status"] != "VALID_FOR_STEP5"]
+    (output / "authoritative_attention_map_unavailable_ledger.jsonl").write_text("".join(canonical(row) + "\n" for row in unavailable))
+    export_fingerprint = fingerprint(exported)
+    source_manifest = {
+        "spreadsheet_id": GOOGLE_SPREADSHEET_ID,
+        "spreadsheet_url": GOOGLE_SPREADSHEET_URL,
+        "worksheet_name": GOOGLE_WORKSHEET_NAME,
+        "worksheet_gid": GOOGLE_WORKSHEET_GID,
+        "requested_worksheet_gid": REQUESTED_GOOGLE_WORKSHEET_GID,
+        "requested_gid_resolution": "Market_Sessions",
+        "retrieval_timestamp": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "header_fields": headers,
+        "source_row_count": len(source_rows),
+        "non_empty_source_row_count": len(source_rows),
+        "source_content_fingerprint": source_fingerprint,
+        "export_schema_version": "presignal_v2_attention_history_export_v1",
+        "exporter_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        "google_metadata": metadata,
+    }
+    manifest = {
+        "export_status": "AUTHORITATIVE_ATTENTION_SOURCE",
+        "record_count": len(exported),
+        "export_fingerprint": export_fingerprint,
+        "source_content_fingerprint": source_fingerprint,
+        "exact_duplicates_deduplicated": exact_duplicates,
+        "status_counts": dict(sorted(statuses.items())),
+        "step5_selectable_records": sum(row["step5_lineage_status"] == "VALID_FOR_STEP5" for row in exported),
+    }
+    reconciliation = {
+        "total_authoritative_captured_rows": len(source_rows),
+        "successful_parsed_rows": statuses["parsed"],
+        "provider_contract_error_rows": statuses["provider_contract_error"],
+        "provider_omitted_event_rows": statuses["provider_omitted_event"],
+        "invalid_or_unavailable_rows": len(source_rows) - sum(statuses.values()),
+        "equation_holds": len(source_rows) == sum(statuses.values()),
+        "sessions": len({row["session_id"] for row in exported}),
+        "attention_runs": len({row["attention_run_id"] for row in exported}),
+        "events": len({row["event_id"] for row in exported}),
+        "providers": sorted({row["provider"] for row in exported}),
+        "models": sorted({row["model"] for row in exported}),
+        "label_counts": dict(sorted(Counter(row["attention_label"] for row in exported).items())),
+        "status_counts": dict(sorted(statuses.items())),
+        "duplicate_source_row_hashes": len(exported) - len({row["source_row_hash"] for row in exported}),
+        "step5_lineage_status_counts": dict(sorted(Counter(row["step5_lineage_status"] for row in exported).items())),
+    }
+    (output / "attention_google_sheet_source_manifest.json").write_text(json.dumps(source_manifest, indent=2, sort_keys=True) + "\n")
+    (output / "authoritative_attention_map_manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    (output / "authoritative_attention_map_reconciliation.json").write_text(json.dumps(reconciliation, indent=2, sort_keys=True) + "\n")
+    inventory = inspect_sources() + [candidate(
+        source_path=GOOGLE_SPREADSHEET_URL, source_type="google_sheet_history_export", source_commit="",
+        source_run_id="multiple_attention_runs", source_file_hash=source_fingerprint,
+        candidate_object_type="SESSION_ATTENTION_MAP_HISTORY", dedicated=True, session=True, provider=True,
+        model=True, cutoff=True, raw=True, parser=True, accepted=True, reason="", decision="AUTHORITATIVE_ATTENTION_SOURCE",
+    )]
+    (output / "attention_source_inventory.json").write_text(json.dumps(sorted(inventory, key=lambda row: row["source_path"]), indent=2, sort_keys=True) + "\n")
+    (output / "attention_source_decision.json").write_text(json.dumps({
+        "decision": "V2_1_FROZEN_ATTENTION_EXPORT_VALIDATED",
+        "accepted_authoritative_sources": 1,
+        "source_content_fingerprint": source_fingerprint,
+        "external_calls": {"provider": 0, "acquisition": 0, "market_data": 0, "apps_script": 0, "google_sheets_writes": 0},
+    }, indent=2, sort_keys=True) + "\n")
+    return {**manifest, "source_manifest": source_manifest, "reconciliation": reconciliation}
+
+
 def run_inventory(output: Path = OUTPUT) -> dict[str, Any]:
     inventory = inspect_sources()
     decision = {
@@ -257,8 +520,10 @@ def run_inventory(output: Path = OUTPUT) -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Fail-closed v2 Session Attention Map preservation export.")
     parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--source", choices=("inventory", "google"), default="inventory")
     args = parser.parse_args()
-    print(json.dumps(run_inventory(args.output), sort_keys=True))
+    result = export_google_history(args.output) if args.source == "google" else run_inventory(args.output)
+    print(json.dumps(result, sort_keys=True))
 
 
 if __name__ == "__main__":
