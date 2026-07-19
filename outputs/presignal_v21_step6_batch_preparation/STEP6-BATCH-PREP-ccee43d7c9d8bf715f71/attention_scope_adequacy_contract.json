@@ -1,0 +1,22 @@
+{
+  "cannot_affect": [
+    "forecast acceptance",
+    "Outcome attachment",
+    "evaluation",
+    "scoring"
+  ],
+  "fields": [
+    "episode_id",
+    "provider",
+    "model",
+    "attention_scope_adequate",
+    "dominant_member_identifiable",
+    "joint_member_interpretation_possible",
+    "reinforcement_or_conflict_interpretable",
+    "missing_attention_concept",
+    "ordinary_forecast_uncertainty_only",
+    "extension_candidate",
+    "review_reason"
+  ],
+  "timing": "post-forecast, pre-architecture-decision"
+}

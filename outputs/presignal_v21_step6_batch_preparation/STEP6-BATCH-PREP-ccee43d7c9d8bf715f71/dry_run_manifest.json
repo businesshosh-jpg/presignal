@@ -1,0 +1,14 @@
+{
+  "acquisition_calls": 0,
+  "apps_script_calls": 0,
+  "batch_contract_fingerprint": "sha256:7b3f015f34e61c0877096f6da4a077ab4bee8e6d964c82a1da2beaf0f80f10ca",
+  "eligible_population_fingerprint": "sha256:3813f5c7e4a335ac8cb1563f2755590674e1962d536bafa122c04eb3f8c4e306",
+  "google_sheets_writes": 0,
+  "market_data_calls": 0,
+  "mode": "dry-run",
+  "preparation_run_id": "STEP6-BATCH-PREP-ccee43d7c9d8bf715f71",
+  "production_changes": 0,
+  "provider_calls": 0,
+  "result": "PASS",
+  "workbook_changes": 0
+}

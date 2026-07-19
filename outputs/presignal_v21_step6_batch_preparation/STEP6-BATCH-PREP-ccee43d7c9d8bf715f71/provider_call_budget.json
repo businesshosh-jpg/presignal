@@ -1,0 +1,29 @@
+{
+  "eligible_pairs": 21,
+  "hard_stops": [
+    "more than two accepted forecasts per pair",
+    "duplicate accepted arm",
+    "request mutation between retries",
+    "model substitution",
+    "calls exceed budget",
+    "leakage detected"
+  ],
+  "initial_accepted_calls_per_pair": 2,
+  "intended_accepted_call_budget": 42,
+  "maximum_authorized_provider_calls": 84,
+  "maximum_calls_per_pair": 4,
+  "maximum_retries_per_arm": 1,
+  "retry_allowed_only_for": [
+    "proven transport failure",
+    "no valid scientific response",
+    "no accepted forecast",
+    "identical frozen request fingerprint"
+  ],
+  "retry_forbidden_for": [
+    "malformed scientific output",
+    "low confidence",
+    "incorrect direction",
+    "provider disagreement",
+    "valid inconvenient content"
+  ]
+}

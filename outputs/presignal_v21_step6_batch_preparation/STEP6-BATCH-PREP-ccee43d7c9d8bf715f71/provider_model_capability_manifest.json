@@ -1,0 +1,33 @@
+{
+  "capabilities": [
+    {
+      "bridge_fingerprint": "sha256:918a58462d69548cad155de231da63dbbcc984607dbc2262e32159211e99ec84",
+      "exact_requested_model_is_enforced": true,
+      "live_call_performed": false,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "provider_known_to_bridge": true,
+      "static_status": "STATIC_CAPABLE"
+    },
+    {
+      "bridge_fingerprint": "sha256:918a58462d69548cad155de231da63dbbcc984607dbc2262e32159211e99ec84",
+      "exact_requested_model_is_enforced": true,
+      "live_call_performed": false,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "provider_known_to_bridge": true,
+      "static_status": "STATIC_CAPABLE"
+    },
+    {
+      "bridge_fingerprint": "sha256:918a58462d69548cad155de231da63dbbcc984607dbc2262e32159211e99ec84",
+      "exact_requested_model_is_enforced": true,
+      "live_call_performed": false,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "provider_known_to_bridge": true,
+      "static_status": "STATIC_CAPABLE"
+    }
+  ],
+  "provider_calls": 0,
+  "static_only": true
+}

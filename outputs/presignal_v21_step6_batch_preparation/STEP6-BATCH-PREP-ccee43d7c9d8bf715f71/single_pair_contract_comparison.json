@@ -1,0 +1,11 @@
+{
+  "batch_contract_matches_single_pair": true,
+  "reference_run": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step6_single_pair/STEP6-SINGLE-20260719T175850564590Z",
+  "reference_validation": {
+    "provider_calls": 0,
+    "run_id": "STEP6-SINGLE-20260719T175850564590Z",
+    "stable_validation_fingerprint": "sha256:017d16e2a0b1c40dfad84eb51cc46775e17ce327b7142b82320c06125089d793",
+    "valid": true
+  },
+  "scientific_contract_change": false
+}

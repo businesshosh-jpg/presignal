@@ -1,0 +1,39 @@
+{
+  "batch_run_id": "STEP6-BATCH-f718192a7566138c3fda",
+  "execution_layout": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step6_batch/STEP6-BATCH-f718192a7566138c3fda/pairs/<pair_id>",
+  "immutable_identities": {
+    "accepted_forecast_identity": "ACC_<sha256(provider_request_identity,prediction_fingerprint)>",
+    "arm_execution_id": "ARM_<sha256(pair_execution_id,arm,request_fingerprint)>",
+    "batch_run_id": "sha256(batch_contract_fingerprint + eligible_population_fingerprint)",
+    "pair_execution_id": "PAIR_<sha256(episode,session,provider,model,cutoff)>",
+    "provider_request_identity": "REQ_<sha256(arm_execution_id,request_fingerprint)>"
+  },
+  "resume_rules": [
+    "FORECAST_ACCEPTED or later skips provider dispatch for that arm.",
+    "A frozen request fingerprint may not change on retry or resume.",
+    "An accepted response, Prediction, Path, or freeze record is immutable.",
+    "Outcome attachment is rejected before both arm states are FORECAST_ACCEPTED.",
+    "Duplicate batch_run_id with a different manifest fingerprint is HARD_STOPPED."
+  ],
+  "states": [
+    "NOT_STARTED",
+    "PREFLIGHTED",
+    "REQUEST_FROZEN",
+    "CALL_STARTED",
+    "TRANSPORT_FAILED",
+    "RESPONSE_RECEIVED",
+    "PARSE_FAILED",
+    "FORECAST_ACCEPTED",
+    "OUTCOME_ATTACHED",
+    "EVALUATED",
+    "COMPLETE",
+    "HARD_STOPPED"
+  ],
+  "terminal_states": [
+    "COMPLETE",
+    "EVALUATED",
+    "FORECAST_ACCEPTED",
+    "HARD_STOPPED",
+    "OUTCOME_ATTACHED"
+  ]
+}

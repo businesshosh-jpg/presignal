@@ -1,0 +1,43 @@
+{
+  "batch_run_id": "STEP6-BATCH-f718192a7566138c3fda",
+  "eligible_pair_ids": [
+    "PAIR_1f51bcb04e2c6b76c81d",
+    "PAIR_cfeaad94dde469828290",
+    "PAIR_7e91e5f436c8c1afe71b",
+    "PAIR_027be891ac7a5333c77a",
+    "PAIR_801360fe6a8e1269b9d1",
+    "PAIR_0864138040f9b5faaf30",
+    "PAIR_02261ac72d6eb624a0c0",
+    "PAIR_314b8a89037f4b70526d",
+    "PAIR_0abc8c91b6f6c4068c40",
+    "PAIR_9300355a60d6c24b23ca",
+    "PAIR_290f4abd2ebd36bd197b",
+    "PAIR_0182fce529349eef3d1a",
+    "PAIR_8581530fd5c53054f092",
+    "PAIR_9dd5048c231d9907bc16",
+    "PAIR_8080d0f613eb31f4ef5e",
+    "PAIR_2fbef875457dbadcac96",
+    "PAIR_22d1e9b99b0045ba5fe1",
+    "PAIR_2f7a6ea58818c27ef7ad",
+    "PAIR_32858aab54ae58e7a391",
+    "PAIR_4fe2e36fbb1a1852dccf",
+    "PAIR_82d00a876762a42ea14b"
+  ],
+  "eligible_population_fingerprint": "sha256:3813f5c7e4a335ac8cb1563f2755590674e1962d536bafa122c04eb3f8c4e306",
+  "execution_order": "sha256(pair_id) final-hex parity: even PACK_A then PACK_E; odd reverse",
+  "future_execution_root": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step6_batch",
+  "future_pair_layout": {
+    "arms": [
+      "pack_a",
+      "pack_e"
+    ],
+    "evaluation": [
+      "evaluation_pack_a.json",
+      "evaluation_pack_e.json"
+    ],
+    "outcome": "outcome_reference.json",
+    "pair_manifest": "pairs/<pair_id>/pair_manifest.json"
+  },
+  "outcome_isolation": "Identity only in preflight; outcome contents cannot enter prompts/requests and attach only after both accepted forecasts.",
+  "preparation_run_id": "STEP6-BATCH-PREP-ccee43d7c9d8bf715f71"
+}

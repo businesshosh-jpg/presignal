@@ -1,0 +1,47 @@
+{
+  "all_prevented_or_hard_stopped": true,
+  "defects": [
+    {
+      "affected_provider_model": "Gemini/gemini-2.5-flash-lite",
+      "classification": "NON_SCIENTIFIC_BATCH_CONTROL",
+      "defect_id": "D1",
+      "failure_stage": "candidate_selection",
+      "hard_stop_condition": "No provider payload is written for non-FORECAST selection.",
+      "implemented_prevention": "Require original provider_episode_selection=FORECAST before preflight.",
+      "preflight_test": "EPISODE_NOT_SELECTED_FOR_FORECAST",
+      "root_cause": "A NO_SIGNAL/CONTEXT_ONLY pair entered the directional forecast candidate list."
+    },
+    {
+      "affected_provider_model": "Gemini/gemini-2.5-flash-lite",
+      "classification": "NON_SCIENTIFIC_BATCH_CONTROL",
+      "defect_id": "D2",
+      "failure_stage": "transport_parser",
+      "hard_stop_condition": "Unknown wrapper is PARSE_FAILED and cannot be accepted.",
+      "implemented_prevention": "Freeze the tested parser normalization and assert its fingerprint.",
+      "preflight_test": "PARSER_FINGERPRINT_MATCH",
+      "root_cause": "Dedicated forecast was returned in a forecast/response_contract transport envelope."
+    },
+    {
+      "affected_provider_model": "Gemini/gemini-2.5-flash-lite",
+      "classification": "NON_SCIENTIFIC_BATCH_CONTROL",
+      "defect_id": "D3",
+      "failure_stage": "provider_output_contract",
+      "hard_stop_condition": "Malformed scientific output is PARSE_FAILED; no retry for a valid-but-inconvenient response.",
+      "implemented_prevention": "Freeze strict top-level prompt contract and frozen parser/Prediction Path validation.",
+      "preflight_test": "STRICT_PROMPT_CONTENT_AND_PARSER_REGRESSION",
+      "root_cause": "Earlier prompt allowed missing confidence, signed magnitude bounds, and extra response metadata."
+    },
+    {
+      "affected_provider_model": "all",
+      "classification": "NON_SCIENTIFIC_BATCH_CONTROL",
+      "defect_id": "D4",
+      "failure_stage": "model_lineage",
+      "hard_stop_condition": "actual provider/model mismatch rejects the arm.",
+      "implemented_prevention": "Freeze bridge fingerprint and static exact requested-model enforcement check.",
+      "preflight_test": "STATIC_EXACT_MODEL_ENFORCEMENT",
+      "root_cause": "Exact requested model must not be silently substituted by a provider route."
+    }
+  ],
+  "known_defect_count": 4,
+  "provider_calls": 0
+}

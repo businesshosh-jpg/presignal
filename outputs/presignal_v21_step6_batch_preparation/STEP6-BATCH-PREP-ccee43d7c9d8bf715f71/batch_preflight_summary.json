@@ -1,0 +1,19 @@
+{
+  "counts_by_category": {
+    "ATTENTION_NOT_FULLY_PARSED": 2,
+    "BATCH_ELIGIBLE": 21,
+    "IGNORE_SELECTION": 9,
+    "OUTCOME_UNAVAILABLE": 3,
+    "WATCH_SELECTION": 69
+  },
+  "eligible_pairs": 21,
+  "eligible_same_time_clusters": 9,
+  "eligible_standalones": 12,
+  "eligible_unique_episodes": 12,
+  "excluded_pairs": 83,
+  "preflight_attempted": 21,
+  "preflight_failed": 0,
+  "preflight_passed": 21,
+  "provider_calls": 0,
+  "total_step5_pairs": 104
+}

@@ -1,0 +1,7 @@
+{
+  "eligible_pairs_checked": 21,
+  "leakage_fields_exposed": 0,
+  "outcome_contents_in_prompts": 0,
+  "outcome_contents_in_requests": 0,
+  "passed": true
+}

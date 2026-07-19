@@ -1,0 +1,154 @@
+{
+  "orders": [
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_1f51bcb04e2c6b76c81d"
+    },
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_cfeaad94dde469828290"
+    },
+    {
+      "order": [
+        "PACK_A",
+        "PACK_E"
+      ],
+      "pair_id": "PAIR_7e91e5f436c8c1afe71b"
+    },
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_027be891ac7a5333c77a"
+    },
+    {
+      "order": [
+        "PACK_A",
+        "PACK_E"
+      ],
+      "pair_id": "PAIR_801360fe6a8e1269b9d1"
+    },
+    {
+      "order": [
+        "PACK_A",
+        "PACK_E"
+      ],
+      "pair_id": "PAIR_0864138040f9b5faaf30"
+    },
+    {
+      "order": [
+        "PACK_A",
+        "PACK_E"
+      ],
+      "pair_id": "PAIR_02261ac72d6eb624a0c0"
+    },
+    {
+      "order": [
+        "PACK_A",
+        "PACK_E"
+      ],
+      "pair_id": "PAIR_314b8a89037f4b70526d"
+    },
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_0abc8c91b6f6c4068c40"
+    },
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_9300355a60d6c24b23ca"
+    },
+    {
+      "order": [
+        "PACK_A",
+        "PACK_E"
+      ],
+      "pair_id": "PAIR_290f4abd2ebd36bd197b"
+    },
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_0182fce529349eef3d1a"
+    },
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_8581530fd5c53054f092"
+    },
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_9dd5048c231d9907bc16"
+    },
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_8080d0f613eb31f4ef5e"
+    },
+    {
+      "order": [
+        "PACK_A",
+        "PACK_E"
+      ],
+      "pair_id": "PAIR_2fbef875457dbadcac96"
+    },
+    {
+      "order": [
+        "PACK_A",
+        "PACK_E"
+      ],
+      "pair_id": "PAIR_22d1e9b99b0045ba5fe1"
+    },
+    {
+      "order": [
+        "PACK_A",
+        "PACK_E"
+      ],
+      "pair_id": "PAIR_2f7a6ea58818c27ef7ad"
+    },
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_32858aab54ae58e7a391"
+    },
+    {
+      "order": [
+        "PACK_E",
+        "PACK_A"
+      ],
+      "pair_id": "PAIR_4fe2e36fbb1a1852dccf"
+    },
+    {
+      "order": [
+        "PACK_A",
+        "PACK_E"
+      ],
+      "pair_id": "PAIR_82d00a876762a42ea14b"
+    }
+  ],
+  "pack_a_first": 10,
+  "pack_e_first": 11,
+  "rule": "sha256(pair_id) final-hex parity: even PACK_A then PACK_E; odd reverse"
+}

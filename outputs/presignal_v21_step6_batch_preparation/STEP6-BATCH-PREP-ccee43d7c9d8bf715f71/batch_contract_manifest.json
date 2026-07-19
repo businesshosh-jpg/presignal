@@ -1,0 +1,52 @@
+{
+  "batch_contract_fingerprint": "sha256:7b3f015f34e61c0877096f6da4a077ab4bee8e6d964c82a1da2beaf0f80f10ca",
+  "contract_version": "presignal_event_path_contract_v1",
+  "fingerprints": {
+    "evaluation": "sha256:9cf3c3c57d060492bbd5e9900980b9bf3aaf915c385e3369055ba348a572937d",
+    "outcome_attachment": "sha256:ef727551f1d9c1d0e5dae4169799a5f195c80676ad42e65c8393a198e28cbd08",
+    "parser": "sha256:a748d2758c754c8a0b4fd3a7668f6db72b83547f16e5b19262c39aaabf5503b4",
+    "prediction_path_schema": "sha256:4250e5c045d3a6691cad9ef728f3392bcfb76f02758d3f24956417e847c4e4f6",
+    "prediction_schema": "sha256:fde799a76d49af8040bfcd75bf7385dc8dd7491b08921c6b6a2847883be44a77",
+    "prompt_template": "sha256:a3d66799dd118b1b611d11608de12026d39da76b245ed4af3a82c96feae50d28",
+    "provider_bridge": "sha256:918a58462d69548cad155de231da63dbbcc984607dbc2262e32159211e99ec84",
+    "system_prompt": "sha256:1173c347c9377ed1a2ad35c62314fc0c112bc81801894a622450b7cd0f00eabc"
+  },
+  "generation_settings": {
+    "max_output_tokens": "existing_bridge_default",
+    "seed": "not_supported_by_existing_bridge",
+    "temperature": "existing_bridge_default"
+  },
+  "object": "presignal_step6_controlled_batch_contract",
+  "outcome_attachment_order": [
+    "BOTH_FORECASTS_ACCEPTED_AND_FROZEN",
+    "ATTACH_SAME_OUTCOME_IDENTITY",
+    "EVALUATE_BOTH_ARMS"
+  ],
+  "parser_transport_normalizations": [
+    "markdown_json_fence",
+    "forecast_response_contract_envelope",
+    "known_non_scientific_transport_metadata"
+  ],
+  "permitted_prompt_differences": [
+    "information_arm",
+    "information_pack",
+    "information_pack_fingerprint"
+  ],
+  "primary_endpoint": "EPISODE_REACTION_DIRECTION_15M",
+  "reference_validation_fingerprint": "sha256:017d16e2a0b1c40dfad84eb51cc46775e17ce327b7142b82320c06125089d793",
+  "required_horizons": [
+    5,
+    15,
+    30,
+    60
+  ],
+  "runner_commit": "c9606c9ec7515946348c4e922aac5b86c30b10ba",
+  "single_pair_execution_git_head": "8e57652d002b6791d96328fbaa5c8273fdfd4e62",
+  "single_pair_reference_run_id": "STEP6-SINGLE-20260719T175850564590Z",
+  "supported_providers": [
+    "Anthropic",
+    "Gemini",
+    "OpenAI"
+  ],
+  "version": "presignal_step6_controlled_batch_prepare_v1"
+}
