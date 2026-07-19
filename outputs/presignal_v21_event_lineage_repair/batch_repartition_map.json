@@ -1,0 +1,194 @@
+[
+  {
+    "batch_id_method": "LEGACY_V2_BATCH_ID",
+    "country": "US",
+    "event_row_locators": [
+      "ER_1e65952d1a166b3b29ef",
+      "ER_c25055cb5f15736b8d43"
+    ],
+    "legacy_batch_id_candidate": "3ca6-146e-c3fe-4b56",
+    "member_count": 2,
+    "normalized_utc_minute": "2024-07-03T07:30:00Z",
+    "original_batch_id": "3ca6-146e-c3fe-4b56",
+    "repaired_batch_id": "3ca6-146e-c3fe-4b56",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "SHA256_LINEAGE_EXTENSION",
+    "country": "US",
+    "event_row_locators": [
+      "ER_1d09b777caca663e981c",
+      "ER_2e0f4ab6d2477f827537",
+      "ER_40437b8922f7c554cfe6",
+      "ER_460618e5b8276e1a51cf",
+      "ER_f5966d79eb100ca3da15"
+    ],
+    "legacy_batch_id_candidate": "3ca6-146e-c3fe-4b56",
+    "member_count": 5,
+    "normalized_utc_minute": "2024-08-30T14:00:00Z",
+    "original_batch_id": "3ca6-146e-c3fe-4b56",
+    "repaired_batch_id": "d115-0175-8e86-e036",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "LEGACY_V2_BATCH_ID",
+    "country": "US",
+    "event_row_locators": [
+      "ER_03064a002859c1251911",
+      "ER_0450b55e99b9d0208909",
+      "ER_2085f0969772f93cc43c",
+      "ER_23c720301f5a1ac22cef",
+      "ER_5538d7b0f56db104ad87",
+      "ER_576a2c0dc0b09b067e2a",
+      "ER_5eed069793dc38163e8e",
+      "ER_7ce6aec8c484cea5a8ab",
+      "ER_a22bbb09792b2f85bdce",
+      "ER_c80003c8b5aa59c9739b",
+      "ER_ef4f31b3b0f6c803b346"
+    ],
+    "legacy_batch_id_candidate": "5fbb-dc7f-d607-4c53",
+    "member_count": 11,
+    "normalized_utc_minute": "2024-08-09T12:30:00Z",
+    "original_batch_id": "5fbb-dc7f-d607-4c53",
+    "repaired_batch_id": "5fbb-dc7f-d607-4c53",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "SHA256_LINEAGE_EXTENSION",
+    "country": "US",
+    "event_row_locators": [
+      "ER_7c97ac96c7a1251ef7b9",
+      "ER_7e9c91ce8571a0b32734"
+    ],
+    "legacy_batch_id_candidate": "5fbb-dc7f-d607-4c53",
+    "member_count": 2,
+    "normalized_utc_minute": "2025-02-07T09:00:00Z",
+    "original_batch_id": "5fbb-dc7f-d607-4c53",
+    "repaired_batch_id": "03e3-75f2-6e25-c9e4",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "LEGACY_V2_BATCH_ID",
+    "country": "US",
+    "event_row_locators": [
+      "ER_24af2ea71699bad4687c",
+      "ER_2b75aaf9ec9edafb23f3"
+    ],
+    "legacy_batch_id_candidate": "811d-8e79-a931-d145",
+    "member_count": 2,
+    "normalized_utc_minute": "2024-07-25T20:30:00Z",
+    "original_batch_id": "811d-8e79-a931-d145",
+    "repaired_batch_id": "811d-8e79-a931-d145",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "SHA256_LINEAGE_EXTENSION",
+    "country": "US",
+    "event_row_locators": [
+      "ER_413648b74345f14db100",
+      "ER_43d59b1012fd871da45a",
+      "ER_506856c64a8a46f0a3b3",
+      "ER_551da9e139597a9de09b",
+      "ER_874b6d8e6a5806f8168a",
+      "ER_95690ec854e7035f1d15",
+      "ER_ab0877e3fab14f917775",
+      "ER_b2cdffb790ce7bebba8a",
+      "ER_c78991450a8f5ca3d148",
+      "ER_e6efc9941884b3f2d4e2",
+      "ER_fffceee4ce09af2421ea"
+    ],
+    "legacy_batch_id_candidate": "811d-8e79-a931-d145",
+    "member_count": 11,
+    "normalized_utc_minute": "2025-01-23T17:00:00Z",
+    "original_batch_id": "811d-8e79-a931-d145",
+    "repaired_batch_id": "8dec-4e1d-92af-9baf",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "LEGACY_V2_BATCH_ID",
+    "country": "US",
+    "event_row_locators": [
+      "ER_caef3631ca3de2cd7ef7",
+      "ER_e23f0be0b1f3d6caad72"
+    ],
+    "legacy_batch_id_candidate": "98b9-c165-12bd-8cc1",
+    "member_count": 2,
+    "normalized_utc_minute": "2024-07-18T20:30:00Z",
+    "original_batch_id": "98b9-c165-12bd-8cc1",
+    "repaired_batch_id": "98b9-c165-12bd-8cc1",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "SHA256_LINEAGE_EXTENSION",
+    "country": "US",
+    "event_row_locators": [
+      "ER_7514e80c85c1d9c4efdc",
+      "ER_c7893a0fa99f98c6c7b0"
+    ],
+    "legacy_batch_id_candidate": "98b9-c165-12bd-8cc1",
+    "member_count": 2,
+    "normalized_utc_minute": "2025-01-16T17:00:00Z",
+    "original_batch_id": "98b9-c165-12bd-8cc1",
+    "repaired_batch_id": "4005-821b-aab0-854d",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "LEGACY_V2_BATCH_ID",
+    "country": "US",
+    "event_row_locators": [
+      "ER_058f70132bb107f57aa4",
+      "ER_31fb4ebba16d9e6deea5",
+      "ER_39c98e2eef58b8bb1f62",
+      "ER_c2a77e377d570f9fc01b",
+      "ER_f1c906a26b593f5adc6a"
+    ],
+    "legacy_batch_id_candidate": "b476-29fe-150e-75a6",
+    "member_count": 5,
+    "normalized_utc_minute": "2024-12-03T00:00:00Z",
+    "original_batch_id": "d5bb-da7f-e407-f253",
+    "repaired_batch_id": "b476-29fe-150e-75a6",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "LEGACY_V2_BATCH_ID",
+    "country": "US",
+    "event_row_locators": [
+      "ER_a5e3afa69e1dd3e256f0",
+      "ER_f2b857ef8560c86745c0"
+    ],
+    "legacy_batch_id_candidate": "d5bb-da7f-e407-f253",
+    "member_count": 2,
+    "normalized_utc_minute": "2025-01-31T20:30:00Z",
+    "original_batch_id": "d5bb-da7f-e407-f253",
+    "repaired_batch_id": "d5bb-da7f-e407-f253",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "LEGACY_V2_BATCH_ID",
+    "country": "US",
+    "event_row_locators": [
+      "ER_15745fc7944b16aa41d6",
+      "ER_7554f4e99e1af8df0bd3"
+    ],
+    "legacy_batch_id_candidate": "dc79-3225-dd7d-de81",
+    "member_count": 2,
+    "normalized_utc_minute": "2024-08-08T20:30:00Z",
+    "original_batch_id": "dc79-3225-dd7d-de81",
+    "repaired_batch_id": "dc79-3225-dd7d-de81",
+    "repaired_type": "member"
+  },
+  {
+    "batch_id_method": "SHA256_LINEAGE_EXTENSION",
+    "country": "US",
+    "event_row_locators": [
+      "ER_45e46b25fd05d239c101",
+      "ER_47eedebe98e35bef8b0e"
+    ],
+    "legacy_batch_id_candidate": "dc79-3225-dd7d-de81",
+    "member_count": 2,
+    "normalized_utc_minute": "2025-02-06T17:00:00Z",
+    "original_batch_id": "dc79-3225-dd7d-de81",
+    "repaired_batch_id": "6ba3-0b63-735d-116f",
+    "repaired_type": "member"
+  }
+]

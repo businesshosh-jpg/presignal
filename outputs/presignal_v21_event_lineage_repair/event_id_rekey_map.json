@@ -1,0 +1,58 @@
+[
+  {
+    "event_row_locator": "ER_078f5922b56b04350bd5",
+    "excel_row": 1400,
+    "indicator_name": "CFTC Gold Speculative net positions",
+    "lineage_seed": {
+      "country": "US",
+      "release_minute": "2024-08-16T12:30:00Z",
+      "source_cal": "FMP",
+      "source_provider": "FMP",
+      "source_series_id": ""
+    },
+    "new_event_id": "3a9a-e578-5f7d-95e3",
+    "old_event_id": "070b-5b8f-0497-0223"
+  },
+  {
+    "event_row_locator": "ER_67ef78d75f0e2be3da06",
+    "excel_row": 4130,
+    "indicator_name": "Export Prices MoM (Feb)",
+    "lineage_seed": {
+      "country": "US",
+      "release_minute": "2025-03-18T12:30:00Z",
+      "source_cal": "FMP",
+      "source_provider": "FMP",
+      "source_series_id": ""
+    },
+    "new_event_id": "a622-5dc0-7e50-cad0",
+    "old_event_id": "bfaa-bba2-b392-a77a"
+  },
+  {
+    "event_row_locator": "ER_93aa2fceef709621ae37",
+    "excel_row": 4127,
+    "indicator_name": "Building Permits MoM (Feb)",
+    "lineage_seed": {
+      "country": "US",
+      "release_minute": "2025-03-18T12:30:00Z",
+      "source_cal": "FMP",
+      "source_provider": "FMP",
+      "source_series_id": ""
+    },
+    "new_event_id": "02b0-b832-bf72-d638",
+    "old_event_id": "bfaa-bba2-b392-a77a"
+  },
+  {
+    "event_row_locator": "ER_f6f0cf00e3f1c9096e3c",
+    "excel_row": 1410,
+    "indicator_name": "CFTC Natural Gas speculative net positions",
+    "lineage_seed": {
+      "country": "US",
+      "release_minute": "2024-08-16T12:30:00Z",
+      "source_cal": "FMP",
+      "source_provider": "FMP",
+      "source_series_id": ""
+    },
+    "new_event_id": "fc14-3e8f-8475-a528",
+    "old_event_id": "070b-5b8f-0497-0223"
+  }
+]

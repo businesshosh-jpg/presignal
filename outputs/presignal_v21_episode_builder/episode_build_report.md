@@ -2,24 +2,24 @@
 
 - builder: `automation/build_presignal_v21_episodes.py`
 - source_workbook: `presignal_main.xlsx`
-- source_workbook_sha256: `5cf15d673079a6582655772ae5b69eb3bb56f0bb2f7172e26c8111a8ec6fb85f`
+- source_workbook_sha256: `0ba085bdf1358bb90db5feafe0b52102ce3b5b2397405c56ae804befb5f34eee`
 - event_rows: `4315`
-- valid_source_rows: `4245`
-- episodes: `1668`
+- valid_source_rows: `4314`
+- episodes: `1682`
 - standalone_episodes: `931`
-- batch_episodes: `737`
-- consumed_rows: `4245`
-- duplicate_event_id_values: `144`
-- duplicate_event_id_row_excess: `148`
+- batch_episodes: `751`
+- consumed_rows: `4314`
+- duplicate_event_id_values: `142`
+- duplicate_event_id_row_excess: `146`
 - duplicate_source_row_locators: `0`
-- batch_membership_conflicts: `48`
+- batch_membership_conflicts: `0`
 - episode_id_collisions: `0`
 - invalid_contract_rows: `0`
 - unresolved_lineage_rows: `0`
 - determinism: `{'repeated_run': 'PASS', 'input_order_shuffle': 'PASS', 'generated_timestamps_excluded_from_population_fingerprint': True}`
 - event_row_locator_rule: `ER_ + SHA-256 canonical JSON of event_id, batch_id, country, indicator_name, UTC release_ts, source_cal, source_provider, source_series_id, type (first 20 hex characters)`
 - member_ordering_rule: `release_ts, event_row_locator, indicator_name, event_id`
-- episode_population_fingerprint: `sha256:f8d3bc72660ad9e0aaa6fb448508c3bc0e9ef08df83b907e00d6ecdc347d0a2d`
+- episode_population_fingerprint: `sha256:5ec65defd43f02aee3cef30c8c141f7643b62a5a6c7dec26b5883cf55ba8a08c`
 - contract_version: `presignal_event_path_contract_v1`
 - schema_version: `2.1.0`
 
@@ -33,11 +33,9 @@
 
 ## Dispositions
 
-- CONSUMED: 4245
-- EXCLUDED: 70
+- CONSUMED: 4314
+- EXCLUDED: 1
 
 ## Exclusions and Errors
 
-- BATCH_RELEASE_MINUTE_CONFLICT: 48
-- DUPLICATE_MEMBER_EVENT_ID: 21
 - INVALID_RELEASE_TS: 1

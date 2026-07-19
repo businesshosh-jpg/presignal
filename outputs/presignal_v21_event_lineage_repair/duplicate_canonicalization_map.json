@@ -1,0 +1,138 @@
+[
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_071788ca7c7e4d083b48",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_071788ca7c7e4d083b48",
+    "excel_row": 1404,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_10d2bb96f80d14894760",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_10d2bb96f80d14894760",
+    "excel_row": 1403,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_192c1781d3dfdf9e8b6b",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_192c1781d3dfdf9e8b6b",
+    "excel_row": 1405,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_2834752d69424870ed0f",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_2834752d69424870ed0f",
+    "excel_row": 1409,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_42b06aa0bc8661eef9a3",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_42b06aa0bc8661eef9a3",
+    "excel_row": 1406,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_60d8c900a63cba4761f8",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_60d8c900a63cba4761f8",
+    "excel_row": 1407,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_6fb926e61b7d3e0e1b58",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_6fb926e61b7d3e0e1b58",
+    "excel_row": 4126,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_73da5c1132603087d8f4",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_73da5c1132603087d8f4",
+    "excel_row": 1402,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_a1bd1463b860a8032905",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_a1bd1463b860a8032905",
+    "excel_row": 4132,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_abc25ae325a3c2b70cb1",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_abc25ae325a3c2b70cb1",
+    "excel_row": 4131,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_b0acf9d04fabcfee615c",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_b0acf9d04fabcfee615c",
+    "excel_row": 4129,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_b314f8c76193511ae868",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_b314f8c76193511ae868",
+    "excel_row": 4125,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_bfcba985144a72b895ed",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_bfcba985144a72b895ed",
+    "excel_row": 1399,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_c5a1f243da284f3dd38d",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_c5a1f243da284f3dd38d",
+    "excel_row": 1411,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_c7e25a2b43ceca792627",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_c7e25a2b43ceca792627",
+    "excel_row": 1401,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_e0ab8d2e655ad131f2a4",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_e0ab8d2e655ad131f2a4",
+    "excel_row": 1408,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  },
+  {
+    "action": "REMAIN_ACTIVE_UNCHANGED",
+    "canonical_event_row_locator": "ER_f552d15339a6c86802fb",
+    "duplicate_of_event_row_locator": "",
+    "event_row_locator": "ER_f552d15339a6c86802fb",
+    "excel_row": 4128,
+    "reason": "This row is a unique active member of a batch blocked by another pair's raw event_id collision. It is canonical to itself; no physical row is deactivated because doing so would remove a distinct catalyst."
+  }
+]

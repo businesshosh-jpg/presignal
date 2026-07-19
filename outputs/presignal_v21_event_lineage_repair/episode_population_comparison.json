@@ -1,0 +1,177 @@
+{
+  "new": {
+    "batch_episodes": 751,
+    "consumed_rows": 4314,
+    "episode_population_fingerprint": "sha256:5ec65defd43f02aee3cef30c8c141f7643b62a5a6c7dec26b5883cf55ba8a08c",
+    "episodes": 1682,
+    "error_rows": 0,
+    "excluded_by_reason": {
+      "INVALID_RELEASE_TS": 1
+    },
+    "excluded_rows": 1,
+    "standalone_episodes": 931
+  },
+  "new_episode_memberships": [
+    {
+      "episode_id": "EP_BATCH_31e1f4a830314d8e813c",
+      "member_event_count": 2,
+      "member_event_ids": [
+        "43ba-7072-c9e2-500a",
+        "22f3-c657-0d1f-f74b"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_333073378c6b25a4c176",
+      "member_event_count": 2,
+      "member_event_ids": [
+        "5e08-c668-9728-d048",
+        "3ec1-2fcd-11e5-e509"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_3b545266d43ff05e0058",
+      "member_event_count": 5,
+      "member_event_ids": [
+        "7021-b1ad-34c5-f969",
+        "a469-5955-c32d-e1f1",
+        "3cbb-157f-c707-5153",
+        "dd41-3c4d-fa65-1789",
+        "c465-f921-6299-00cd"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_46f25bb256c736aac2e5",
+      "member_event_count": 2,
+      "member_event_ids": [
+        "a2d6-44de-88ee-6f06",
+        "c21d-db79-0e31-5a45"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_57824760af8ef54cb53e",
+      "member_event_count": 13,
+      "member_event_ids": [
+        "d502-d11a-c94a-bd92",
+        "5211-2add-dc75-66d9",
+        "cc73-61d7-8c9f-4ccb",
+        "44c2-7dda-f00a-9b52",
+        "2338-c9d8-1718-0af8",
+        "3eb0-2ef0-0f70-e030",
+        "fc14-3e8f-8475-a528",
+        "b010-f0d0-7250-3490",
+        "fa41-b54d-2b65-5c89",
+        "2a44-2574-1bd4-0d64",
+        "382c-da3c-1e5c-048c",
+        "b33b-19ff-e787-1bd3",
+        "3a9a-e578-5f7d-95e3"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_58779b464d9bc4b1c1a4",
+      "member_event_count": 2,
+      "member_event_ids": [
+        "a3e1-526d-af85-bb29",
+        "2099-a7c5-b61d-4ba1"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_72f15101e924c6397520",
+      "member_event_count": 5,
+      "member_event_ids": [
+        "a961-99ed-7b05-4ca9",
+        "05a8-4988-d148-9ce8",
+        "006e-0596-0fe6-1f5e",
+        "0066-052e-0ebe-1d16",
+        "aa88-a8e8-a5a8-a0c8"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_7ca10c5c4fac3ddc5c28",
+      "member_event_count": 2,
+      "member_event_ids": [
+        "cdb0-71f0-ba70-a730",
+        "46c3-97e7-3a2f-2d9b"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_8ab6aa8af78711c71fee",
+      "member_event_count": 2,
+      "member_event_ids": [
+        "ce30-7870-ccf0-cbb0",
+        "4b68-d448-e608-80a8"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_ab563e7c81d56a3b7f1d",
+      "member_event_count": 8,
+      "member_event_ids": [
+        "a1bf-36b3-609b-1f77",
+        "a622-5dc0-7e50-cad0",
+        "7ed2-70aa-545a-29e2",
+        "02b0-b832-bf72-d638",
+        "34e7-afbb-a563-15df",
+        "1af1-5e3d-e4d5-aeb9",
+        "1fd9-9e05-9a5d-14e1",
+        "bac2-7bda-fe0a-4152"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_b5c0c544ec07bbf0b950",
+      "member_event_count": 2,
+      "member_event_ids": [
+        "8dd1-339d-7f35-7099",
+        "c26e-df96-19e6-715e"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_c0ddcf9b7207a5838956",
+      "member_event_count": 11,
+      "member_event_ids": [
+        "84ac-bcbc-2cdc-d50c",
+        "f894-9f84-ed64-e234",
+        "ace0-c760-fc60-4be0",
+        "6ca6-846e-b3fe-fb56",
+        "fce6-d7ae-8d3e-1d96",
+        "841f-b593-187b-acd7",
+        "460f-8ec3-202b-fa47",
+        "80a7-887b-9823-af9f",
+        "c5ef-0d23-9b8b-7127",
+        "a5d4-6bc4-f7a4-4974",
+        "9dad-01c9-ca01-f655"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_c1cc0e24ef6d91ddd6e1",
+      "member_event_count": 2,
+      "member_event_ids": [
+        "cab0-4af0-4b70-cc30",
+        "d530-d370-cff0-cab0"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_db51fa391af387999a39",
+      "member_event_count": 11,
+      "member_event_ids": [
+        "bce0-9760-4c60-dbe0",
+        "cd1e-6a86-a556-7d8e",
+        "8efe-42e6-aab6-c66e",
+        "ab2e-b156-bda6-d01e",
+        "b156-015e-a16e-9186",
+        "ca44-4574-3bd4-ad64",
+        "aa87-a8db-a583-a07f",
+        "d09d-97f9-26b1-7cc5",
+        "a678-7418-0f58-7838",
+        "f199-44c5-eb1d-e4a1",
+        "ef5f-27d3-98bb-4217"
+      ]
+    }
+  ],
+  "old": {
+    "batch_episodes": 737,
+    "consumed_rows": 4245,
+    "episode_population_fingerprint": "sha256:f8d3bc72660ad9e0aaa6fb448508c3bc0e9ef08df83b907e00d6ecdc347d0a2d",
+    "episodes": 1668,
+    "excluded_rows": 70,
+    "standalone_episodes": 931
+  }
+}
