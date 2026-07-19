@@ -1,0 +1,22 @@
+{
+  "contract_name": "evaluation_contract_v1",
+  "system_version": "presignal_v2.1",
+  "contract_version": "presignal_event_path_contract_v1",
+  "schema_version": "2.1.0",
+  "object": "EVALUATION",
+  "field_order": ["object", "schema_version", "system_version", "evaluation_id", "run_id", "prediction_id", "outcome_id", "episode_id", "provider", "model", "information_arm", "direction_5m_ok", "direction_15m_ok", "direction_30m_ok", "direction_60m_ok", "magnitude_15m_error", "reversal_ok", "no_signal_ok", "primary_endpoint_name", "primary_endpoint_value", "overall_path_score", "evaluation_note", "evaluation_contract_version", "evaluation_fingerprint", "generated_ts", "status", "error_message"],
+  "required_fields": "ALL_FIELDS; unavailable and NO_SIGNAL conditions control nullability", "nullable_fields": ["direction and magnitude fields for unavailable Outcome, provider error, or valid NO_SIGNAL", "primary_endpoint_value for unavailable Outcome, provider error, or valid NO_SIGNAL", "error_message unless status is UNAVAILABLE or INVALID"],
+  "field_types": {"string": ["object", "schema_version", "system_version", "evaluation_id", "run_id", "prediction_id", "outcome_id", "episode_id", "provider", "model", "information_arm", "primary_endpoint_name", "evaluation_note", "evaluation_contract_version", "evaluation_fingerprint", "generated_ts", "status", "error_message"], "boolean_nullable": ["direction_5m_ok", "direction_15m_ok", "direction_30m_ok", "direction_60m_ok", "reversal_ok", "no_signal_ok", "primary_endpoint_value"], "nonnegative_number_nullable": ["magnitude_15m_error"], "probability_nullable": ["overall_path_score"]},
+  "identity_rule": "evaluation_id = EVL_<sha256(prediction_id, outcome_id, contract_version)[:20]>. It attaches exactly one Prediction to the canonical Outcome for that Prediction's Episode.",
+  "primary_endpoint": {"name": "EPISODE_REACTION_DIRECTION_15M", "definition": "The predicted 15-minute Episode direction equals the canonical realized 15-minute direction under the shared 1-pip FLAT rule.", "co_primary_endpoints": "prohibited"},
+  "supporting_endpoints": ["EPISODE_REACTION_DIRECTION_5M", "EPISODE_REACTION_DIRECTION_30M", "EPISODE_REACTION_DIRECTION_60M", "EPISODE_REACTION_MAGNITUDE_15M", "EPISODE_REVERSAL", "COMPLETE_PATH", "NO_SIGNAL_QUALITY"],
+  "direction_scoring": "UP, DOWN, and FLAT score true only on equality. UNCERTAIN is not a correct actionable directional forecast. Unavailable Outcomes and provider errors yield null, never false.",
+  "magnitude_rule": "magnitude_15m_error is zero when abs(realized_pips_15m) lies in the inclusive predicted 15-minute [expected_pips_min, expected_pips_max] interval; otherwise it is distance to the nearest boundary.",
+  "reversal_rule": "reversal_ok is equality of predicted and realized reversal_flag when both are available.",
+  "no_signal_rule": "A valid no-signal scores true only when all four realized directions are FLAT and max(abs(max_up_pips), abs(max_down_pips)) < 1.0. It is otherwise false; it is not a free pass for an absent forecast.",
+  "complete_path_rule": "overall_path_score is the unweighted mean of available 5/15/30/60 direction correctness values. Magnitude and reversal are separate supporting fields, not weighted into this v1 score.",
+  "intervening_event_rule": "intervening_event_flag is report-only; it does not automatically exclude a row from v1 endpoints.",
+  "ae_comparison_boundary": ["same Episode", "same provider", "same model", "same forecast target", "same cutoff", "same Outcome", "one BASELINE", "one FULL_CONTEXT"],
+  "fingerprint_inputs": ["all fields except run_id", "generated_ts", "status", "error_message", "evaluation_note", "evaluation_fingerprint"],
+  "immutable_fields": ["schema_version", "system_version", "evaluation_id", "prediction_id", "outcome_id", "episode_id", "provider", "model", "information_arm", "evaluation_contract_version"]
+}
