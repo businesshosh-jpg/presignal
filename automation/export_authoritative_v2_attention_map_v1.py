@@ -14,7 +14,7 @@ import json
 import subprocess
 import sys
 import tarfile
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Mapping
@@ -329,6 +329,10 @@ def is_iso_before_or_equal(left: str, right: str) -> bool:
         return False
 
 
+def is_sha256_hex(value: str) -> bool:
+    return len(value) == 64 and all(character in "0123456789abcdef" for character in value.lower())
+
+
 def validate_google_history_row(row: Mapping[str, str], state: Mapping[str, Any]) -> dict[str, Any]:
     """Preserve the original row while deriving only immutable validation metadata."""
     exported = dict(row)
@@ -342,6 +346,8 @@ def validate_google_history_row(row: Mapping[str, str], state: Mapping[str, Any]
         problems.append("UNKNOWN_STATUS")
     if not exported.get("source_row_hash"):
         problems.append("MISSING_SOURCE_ROW_HASH")
+    elif not is_sha256_hex(exported["source_row_hash"]):
+        problems.append("INVALID_SOURCE_ROW_HASH")
     session = state["sessions"].get(exported.get("session_id", ""))
     if not session:
         problems.append("SESSION_NOT_IN_FROZEN_SNAPSHOT")
@@ -465,6 +471,10 @@ def export_google_history(output: Path = OUTPUT, service=None) -> dict[str, Any]
         "status_counts": dict(sorted(statuses.items())),
         "step5_selectable_records": sum(row["step5_lineage_status"] == "VALID_FOR_STEP5" for row in exported),
     }
+    parsed_labels: dict[tuple[str, str], set[str]] = defaultdict(set)
+    for row in exported:
+        if row["status"] == "parsed" and row["step5_lineage_status"] == "VALID_FOR_STEP5":
+            parsed_labels[(row["session_id"], row["event_id"])].add(row["attention_label"])
     reconciliation = {
         "total_authoritative_captured_rows": len(source_rows),
         "successful_parsed_rows": statuses["parsed"],
@@ -480,6 +490,10 @@ def export_google_history(output: Path = OUTPUT, service=None) -> dict[str, Any]
         "label_counts": dict(sorted(Counter(row["attention_label"] for row in exported).items())),
         "status_counts": dict(sorted(statuses.items())),
         "duplicate_source_row_hashes": len(exported) - len({row["source_row_hash"] for row in exported}),
+        "invalid_source_row_hashes": sum(not is_sha256_hex(row["source_row_hash"]) for row in exported),
+        "raw_output_validation_counts": dict(sorted(Counter(row["raw_output_validation"] for row in exported).items())),
+        "historical_pre_release_lineage_counts": dict(sorted(Counter(row["historical_pre_release_lineage"] for row in exported).items())),
+        "provider_disagreement_event_count": sum(len(labels) > 1 for labels in parsed_labels.values()),
         "step5_lineage_status_counts": dict(sorted(Counter(row["step5_lineage_status"] for row in exported).items())),
     }
     (output / "attention_google_sheet_source_manifest.json").write_text(json.dumps(source_manifest, indent=2, sort_keys=True) + "\n")

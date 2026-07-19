@@ -98,7 +98,7 @@ class AuthoritativeAttentionExportTests(unittest.TestCase):
         raw = json.dumps({"object": "session_attention_map", "session_id": "S-1", "attention_items": [{"event_id": "E-1", "attention_label": "SECONDARY_DRIVER"}]})
         row = {
             "source_sheet": "Session_Attention_Map", "capture_status": "CAPTURED", "status": "parsed",
-            "source_row_hash": "hash-1", "session_id": "S-1", "event_id": "E-1", "provider": "OpenAI",
+            "source_row_hash": "a" * 64, "session_id": "S-1", "event_id": "E-1", "provider": "OpenAI",
             "model": "gpt", "release_ts": "2024-05-01T07:30:00Z", "attention_label": "SECONDARY_DRIVER",
             "raw_output": raw, "attention_run_id": "run-1",
         }
@@ -107,6 +107,8 @@ class AuthoritativeAttentionExportTests(unittest.TestCase):
         self.assertEqual(validated["forecast_cutoff_ts"], "2024-05-01T07:20:00Z")
         error = attention.validate_google_history_row({**row, "status": "provider_contract_error", "raw_output": "broken", "attention_label": "NO_SIGNAL"}, state)
         self.assertEqual(error["step5_lineage_status"], "PRESERVED_NOT_SELECTABLE")
+        bad_hash = attention.validate_google_history_row({**row, "source_row_hash": "not-a-hash"}, state)
+        self.assertIn("INVALID_SOURCE_ROW_HASH", bad_hash["validation_errors"])
         with self.assertRaisesRegex(attention.PreservationError, "CONFLICTING_ATTENTION_IDENTITY"):
             attention.deduplicate_google_records([validated, {**validated, "attention_reason": "conflict"}])
 
