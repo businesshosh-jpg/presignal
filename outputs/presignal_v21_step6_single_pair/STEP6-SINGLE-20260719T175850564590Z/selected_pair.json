@@ -1,0 +1,64 @@
+{
+  "availability_attempts": [
+    {
+      "actual_model": "gemini-2.5-flash-lite",
+      "bridge_status": "ok",
+      "candidate": {
+        "attention_variation": {
+          "channels": 3,
+          "labels": 3,
+          "ranks": 6,
+          "reasons": 6
+        },
+        "eligible": true,
+        "episode_id": "EP_BATCH_4bf004a6c160d4763e06",
+        "ineligibility_reasons": [],
+        "member_count": 6,
+        "model": "gemini-2.5-flash-lite",
+        "pack_a_fingerprint": null,
+        "pack_a_input_fingerprint": "sha256:ac751e4eb40002c53bb0abe167e00d8e4116cb1c33c7db956a3b3e9c9e063a06",
+        "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+        "pack_e_input_fingerprint": "sha256:85c79063ecddb8ea6281bc9dde18782c83cec75176e360a871cf6e189a66528d",
+        "preference": {
+          "attention_variation": true,
+          "multi_member": true
+        },
+        "provider": "Gemini",
+        "same_time_cluster_flag": true
+      },
+      "first_arm": "PACK_A"
+    }
+  ],
+  "execution_order": [
+    "PACK_A",
+    "PACK_E"
+  ],
+  "generation_settings": {
+    "max_output_tokens": "existing_bridge_default",
+    "seed": "not_supported_by_existing_bridge",
+    "temperature": "existing_bridge_default"
+  },
+  "selected_candidate": {
+    "attention_variation": {
+      "channels": 3,
+      "labels": 3,
+      "ranks": 6,
+      "reasons": 6
+    },
+    "eligible": true,
+    "episode_id": "EP_BATCH_4bf004a6c160d4763e06",
+    "ineligibility_reasons": [],
+    "member_count": 6,
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_fingerprint": null,
+    "pack_a_input_fingerprint": "sha256:ac751e4eb40002c53bb0abe167e00d8e4116cb1c33c7db956a3b3e9c9e063a06",
+    "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+    "pack_e_input_fingerprint": "sha256:85c79063ecddb8ea6281bc9dde18782c83cec75176e360a871cf6e189a66528d",
+    "preference": {
+      "attention_variation": true,
+      "multi_member": true
+    },
+    "provider": "Gemini",
+    "same_time_cluster_flag": true
+  }
+}

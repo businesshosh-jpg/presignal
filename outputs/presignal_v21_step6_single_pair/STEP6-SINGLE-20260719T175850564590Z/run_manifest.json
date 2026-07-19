@@ -1,0 +1,57 @@
+{
+  "apps_script_calls": 2,
+  "candidate_selection_fingerprint": "sha256:2700accc6e0806f21996d2530d1de4d09af3844b580e57759b1fe899f2349180",
+  "contract_version": "presignal_event_path_contract_v1",
+  "created_ts": "2026-07-19T17:59:07.155199Z",
+  "decision": "V2_1_STEP6_SINGLE_HISTORICAL_PAIR_VALIDATED",
+  "evaluation_fingerprints": {
+    "PACK_A": "sha256:d2659b04cf3b5140a5b04b0cc972caf32aea12828e1e4c3a82b4434036915a8e",
+    "PACK_E": "sha256:52e30b3ab019cb43bf60dc01f85d821c6c2204a7d768e973bbd14a059edd4802"
+  },
+  "execution_order": [
+    "PACK_A",
+    "PACK_E"
+  ],
+  "forecast_freeze_timestamps": {
+    "PACK_A": "2026-07-19T17:58:59.108Z",
+    "PACK_E": "2026-07-19T17:59:07.082Z"
+  },
+  "git_head": "8e57652d002b6791d96328fbaa5c8273fdfd4e62",
+  "google_sheets_writes": 0,
+  "outcome_attachment_ts": "2026-07-19T17:59:07.131065Z",
+  "outcome_id": "OUT_898dc74b6e1f23e7361f",
+  "prediction_fingerprints": {
+    "PACK_A": "sha256:8ca8bc30af327b156d7ff7a0b6b54a0822e95e9431c4839b6ca3d6d2355a9206",
+    "PACK_E": "sha256:b48127b6e9250748b8538677012a87e63471d9a668dccd89a6eb3ea4feb64142"
+  },
+  "prediction_path_fingerprints": {
+    "PACK_A": "sha256:de17bc2adf0755517d4b389101645cb4e19a8e742dd0e1348a978e55577f2972",
+    "PACK_E": "sha256:3c217449cc9265a01201d88080b2f3f78367287698454a2e75d740184a31eb05"
+  },
+  "provider_calls": 2,
+  "run_id": "STEP6-SINGLE-20260719T175850564590Z",
+  "selected_pair": {
+    "attention_variation": {
+      "channels": 3,
+      "labels": 3,
+      "ranks": 6,
+      "reasons": 6
+    },
+    "eligible": true,
+    "episode_id": "EP_BATCH_4bf004a6c160d4763e06",
+    "ineligibility_reasons": [],
+    "member_count": 6,
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_fingerprint": null,
+    "pack_a_input_fingerprint": "sha256:ac751e4eb40002c53bb0abe167e00d8e4116cb1c33c7db956a3b3e9c9e063a06",
+    "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+    "pack_e_input_fingerprint": "sha256:85c79063ecddb8ea6281bc9dde18782c83cec75176e360a871cf6e189a66528d",
+    "preference": {
+      "attention_variation": true,
+      "multi_member": true
+    },
+    "provider": "Gemini",
+    "same_time_cluster_flag": true
+  },
+  "workbook_writes": 0
+}

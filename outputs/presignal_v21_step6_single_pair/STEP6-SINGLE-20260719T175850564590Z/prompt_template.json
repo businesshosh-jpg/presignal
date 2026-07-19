@@ -1,0 +1,9 @@
+{
+  "allowed_prompt_differences": [
+    "information_arm",
+    "information_pack",
+    "information_pack_fingerprint"
+  ],
+  "instruction": "Canonical prompt text is identical except the explicitly permitted context fields.",
+  "version": "presignal_event_path_contract_v1_single_pair_validation"
+}

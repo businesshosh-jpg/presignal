@@ -1,0 +1,2385 @@
+{
+  "assessed_candidates": [
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 5,
+        "reasons": 5
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_08270f992a13e29e770f",
+      "ineligibility_reasons": [],
+      "member_count": 5,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:ff409083200f5fc74b189dc058ce1c3109b1d11f5f554e05072b45506ebbd15e",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:5da349acbea6cb158adb97a3e6a0913a70c28d9b8d0566bc464101e84cb420be",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 2,
+        "labels": 2,
+        "ranks": 2,
+        "reasons": 5
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_08270f992a13e29e770f",
+      "ineligibility_reasons": [],
+      "member_count": 5,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:b20ae54dcb5b9fa2e01fc7b30ce783d2c41bf48883ea0f92b23847607d258a8c",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:279e4bbd1e893647158ed87a08803c55bc006fb691bd64fc90875e08f2811713",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 2,
+        "labels": 2,
+        "ranks": 2,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_3ab6f1ef5dbf7144a015",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:fb64db3cd461c3509e99792aaeea18d00c23e30bb8561a3fb203ff525fe2aaaa",
+      "pack_e_fingerprint": "934ba8fb6740bd7cc9ad20f0a04918ac94ab84b8913a87230d7159e23ea7e1a0",
+      "pack_e_input_fingerprint": "sha256:d58d575a19924b86eba49e1dee7f493041ecba530347244d8b1b8c8bc23f6806",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 2,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_48e817a6f98121eb04dd",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:38a8038e276fa1af14c5e6061e69a67e40d0650e66b75114bf7951ac4784c28e",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:ae7aaadf989a06c9abe0a775c4f8af307713789faf30d45fa73f06d89be2f6a4",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 2,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_48e817a6f98121eb04dd",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:6311bd08945be46edf042c51caa1e61333673bbff18f2526e9654cabd8740a58",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:b72de80901d081936b37581537449824c5b610727cac923efbc183b91f2cd28f",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_48e817a6f98121eb04dd",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:d9111bbfc69383e6b0e49e76359006d09fe92cd939ecf25b4f6e1bcd98111aaa",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:bf2e4711e059e15614320cff73b5cd128652f7f9e38facf23f95e64570b3485c",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 3,
+        "labels": 3,
+        "ranks": 6,
+        "reasons": 6
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_4bf004a6c160d4763e06",
+      "ineligibility_reasons": [],
+      "member_count": 6,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:ac751e4eb40002c53bb0abe167e00d8e4116cb1c33c7db956a3b3e9c9e063a06",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:85c79063ecddb8ea6281bc9dde18782c83cec75176e360a871cf6e189a66528d",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 4,
+        "labels": 4,
+        "ranks": 6,
+        "reasons": 6
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_4bf004a6c160d4763e06",
+      "ineligibility_reasons": [],
+      "member_count": 6,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:da49d2ded08417d5f99fb8e71faecd22e7abaf855d7cc86f4d73914366069a48",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:e65bbf5becfc28bbea9957d13461f48d58200b723449ff8b175c79b03bf15d12",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 2,
+        "labels": 3,
+        "ranks": 6,
+        "reasons": 7
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_4c1237b4fdba265e575f",
+      "ineligibility_reasons": [],
+      "member_count": 7,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:fa81f436ae38fd800b4f24c2ef4209f5fc7bc51fc67d1507c39a32a1d2bb604b",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:6070774ac04818a055c7346320ab3d41f9d3d479ca18547fcb12bf7a2763a5d1",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 2,
+        "labels": 4,
+        "ranks": 7,
+        "reasons": 7
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_4c1237b4fdba265e575f",
+      "ineligibility_reasons": [],
+      "member_count": 7,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:2237a228e95b224e5f8bb1302bef6777005a90a757d9a860ca18e464c5f5f7ce",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:82dcbdd10a087c88057dc30f60a88962e49edea56d21ed2b95aaa91f40756ead",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": false,
+      "episode_id": "EP_BATCH_4c1237b4fdba265e575f",
+      "ineligibility_reasons": [
+        "ATTENTION_MEMBER_LINEAGE_INCOMPLETE"
+      ],
+      "member_count": 7,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:bbc2fc5f647bba2690eed4861d0f6bf933b19510613a5408673358ab9d7e876c",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:1e9cd197dbb643dde341845b8a8740be7f87290347d3461e956c1f3e210fccd9",
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 2,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_6093cabe3597480c5572",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:45bbd4f05903761167ba2c168212384a6e0ac754e2b13b951e90fe43480c645e",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:aeb599a98b625c16dd1aca7bf57b6d0c10c9864635a307dbf687b7cae4451587",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": false,
+      "episode_id": "EP_BATCH_6093cabe3597480c5572",
+      "ineligibility_reasons": [
+        "ATTENTION_MEMBER_LINEAGE_INCOMPLETE"
+      ],
+      "member_count": 2,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:8fb06a9c66d335764a7feb18bc08a48cef5c5cc0567fc15ad9a23e093208a579",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:0b7510424435df4164b576ecbc059c6eba04c0eee236bfd9f681acd01b1c3ad0",
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 2,
+        "labels": 2,
+        "ranks": 2,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_63d3f1dd76f85e6cde91",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:c0765dcf90670cf7a1d53dff26c01f83d4466316fe4bde866c409acbd41dcae5",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:cdf0548f35a3c2a985025e151eeb0aa6068bc2f6a067ea391ff026a0939a851a",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_6bf769aa6603093027fc",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:7c98ddddbd5c87c3f2aedf9a4928abc02ac0bcd1569cc56633a2ba7b4a2404b5",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:24a01a1a9bfc8aaeb87951d96b27a9a0f8447f9a6c019caa7d1581b084849532",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 2,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_6bf769aa6603093027fc",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:8afd101c4ec97e51d3e8385e7799e4c282a2c82b4d26470981b5a1c41fb4327a",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:7542fdbfd4bbc651bc715ffe440cbe667aea48d3e1693edc563417a8f8695141",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": false,
+      "episode_id": "EP_BATCH_6bf769aa6603093027fc",
+      "ineligibility_reasons": [
+        "ATTENTION_MEMBER_LINEAGE_INCOMPLETE"
+      ],
+      "member_count": 2,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:9ed24141122aa80199fcbec4350c35c8f47f1cd6ee4f6da0248fa26309537f33",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:9e2d83c465d31365374513cd4b19587b9847d68b441e23f6d2242e0c158a1381",
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 2,
+        "ranks": 3,
+        "reasons": 3
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_6fb320e5e8c5931f2373",
+      "ineligibility_reasons": [],
+      "member_count": 3,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:3535b122037e3a4dc52966a16d9ba417f40d26f9c7fbe816fd96c7f261569861",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:2205b4bc1aeb277204907d691edda997e5074f3946c8ed70d3bf10bbd0802768",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 3,
+        "ranks": 3,
+        "reasons": 3
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_6fb320e5e8c5931f2373",
+      "ineligibility_reasons": [],
+      "member_count": 3,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:163f75b445a0716af198c0b4d0316f98795bf3ac8918b46cbc8fd94e7fc39e3d",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:98d565ed3586ad092e2f162508bb7bcacddb3bb3afc68e88e1209435e3ab24fc",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 2,
+        "labels": 3,
+        "ranks": 3,
+        "reasons": 3
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_6fb320e5e8c5931f2373",
+      "ineligibility_reasons": [],
+      "member_count": 3,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:c37a0341bb7b54e2078e6454458ecd0ce745e7c2f67f6e0e1e77a0edfdfa0d00",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:d95b9bb5993131fe021c087d9d42c306766ad6b11affc32c0e82220f77aff188",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 2,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_80bbf91b9afbc592880f",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:75ffaef684b6ed8010ed622237b20b8e23228b06bf4d3d28d7c07859f5053fbc",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:5ccec9fc8005ad0994ced9702ca36c79f1dc9c13bb4040494401a6282858dbfb",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 2,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_80bbf91b9afbc592880f",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:5fd4c8f2e6d10d8edeb7b3be42acdf34a38b16a1f5dda38e0b843f42589c1275",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:11062dd7500616cf321c02c9c066dd62b20b353ec8aa49801173ab136f9e3e7f",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_80bbf91b9afbc592880f",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:5bf2bdd90be8aecd568588d9efac4bf0b069a2f9ca64316af6925003ef24f135",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:7628b9effc2e9a66390dcc60017b101e03ede801b0e6a35afad09b50a136a64e",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 2,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_8404086a6b19bc560100",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:bf05a8a7302130bbb684976ae847a135c4f01b4f06d588a94d6111d5de68d98d",
+      "pack_e_fingerprint": "934ba8fb6740bd7cc9ad20f0a04918ac94ab84b8913a87230d7159e23ea7e1a0",
+      "pack_e_input_fingerprint": "sha256:ffb8c562329d6a1a8f7922819820e47e3b25d74f939e0a52fe7c23bc7c0ba323",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 2,
+        "labels": 2,
+        "ranks": 11,
+        "reasons": 11
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_a170305f20ad150c2335",
+      "ineligibility_reasons": [],
+      "member_count": 11,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:b1eb21dfdabf680de5b2096bdee06e8ddd931467bb4c5d89ff421c784c30dffd",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:d1197b990647c7ad6bc0d1efa14212a58e5d8272dcaab7972a1af2e0a73d649f",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 3,
+        "labels": 2,
+        "ranks": 11,
+        "reasons": 11
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_a170305f20ad150c2335",
+      "ineligibility_reasons": [],
+      "member_count": 11,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:833fea34e00b761f72616ec165083ec82f3ff0686178679b8087f88dd5d50ce3",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:0cba61e113f4ec0e6ef7f287c340f390749e143919fe129b1fc82cbe721734c8",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 5,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_a90c49838577260dbb1d",
+      "ineligibility_reasons": [],
+      "member_count": 5,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:cf8f1c83a7352772090589938ba1963eb43f4ceaf6e5cef716850bb20ebb2b25",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:83c0a31d80b3e680f0210d3182d2c25b7e7b78eac24ed3d379951a4099259758",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": false,
+      "episode_id": "EP_BATCH_a90c49838577260dbb1d",
+      "ineligibility_reasons": [
+        "ATTENTION_MEMBER_LINEAGE_INCOMPLETE"
+      ],
+      "member_count": 5,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:3fb11747c5a8fbbf2f68d6c33c46e63e3b2c8c1c272f5766d7fe91d31031e29c",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:9467af561bccdfe7909a93fc60e94b5d34c432f0f6e1c051b1057f40e737b74e",
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 2,
+        "ranks": 3,
+        "reasons": 3
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_aab7ce7c7901d502b1c3",
+      "ineligibility_reasons": [],
+      "member_count": 3,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:34f35db7cacd1a5534a5e099f913f87649693927cb736389cc197c3e0efc7207",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:7a3d5831951a23356c21fe5a037c8b8643de9d3f3078b5e658e32113ce05fd0f",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": false,
+      "episode_id": "EP_BATCH_aab7ce7c7901d502b1c3",
+      "ineligibility_reasons": [
+        "ATTENTION_MEMBER_LINEAGE_INCOMPLETE"
+      ],
+      "member_count": 3,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:9d397315778af41b39864f67b6203c51fb56732e4f2d4ccf5b01adcfdbaa9dac",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:370c8157192a861831c06134e3d7124042469a7668dd9e7de823462582eea8a1",
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 2,
+        "labels": 3,
+        "ranks": 11,
+        "reasons": 11
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_abe9bddef79b4d517245",
+      "ineligibility_reasons": [],
+      "member_count": 11,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:653b35265a65c53e6121205c5b847779d37c3e72736d8f5352d94e817a4a9170",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:3c06618907e7c6a73b676cc75f0f3fcdcbce466f59b617530c2fa9e03e9ee1cd",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 3,
+        "labels": 3,
+        "ranks": 3,
+        "reasons": 3
+      },
+      "eligible": false,
+      "episode_id": "EP_BATCH_abe9bddef79b4d517245",
+      "ineligibility_reasons": [
+        "ATTENTION_MEMBER_LINEAGE_INCOMPLETE"
+      ],
+      "member_count": 11,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:c33bad54acac45af95e63c245530a8ba59510bfeb16a374ccf7589bed26a91fb",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:41f72ac37910085d6588b8e1733b5fbf236c3c03f1a62d7ae41210d672720a81",
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 2,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_bd5b0d22e01fddb86cf1",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:40407da5ad2f0fa9f18ad6dcbc56965eeeda3d9135fdc5778e66dd2df7eccd20",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:361d974cf0c498bf78a5379d3bbc890897491c5db3deee4b27d89eea3e35a859",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_bd5b0d22e01fddb86cf1",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:965e214d2606a81fd1d5c83ba4f15ce5418eb9fabdff237003af15226f97051e",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:54f9107ce7a9194b13c1a997808266e56dc720e32f1612154207d81af6789cfc",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 2,
+        "ranks": 2,
+        "reasons": 2
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_bf3a75847eb5d686778c",
+      "ineligibility_reasons": [],
+      "member_count": 2,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:cc4234744ef828c3027bb03eaae1b2d8e19a98fa61c3124602c0f67d8440d0bf",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:bffe20859ac817d24229eb3c445cc68f2ba715d3e9e442337c8601ed4117ab70",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": false,
+      "episode_id": "EP_BATCH_bf3a75847eb5d686778c",
+      "ineligibility_reasons": [
+        "ATTENTION_MEMBER_LINEAGE_INCOMPLETE"
+      ],
+      "member_count": 2,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:8525a1a9a9bb1f30558c2f2cff0dcef05d721fcce3dac8982cee94eaff049c0f",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:db76c328471650a24f8b3dfa5ae54ddd259b69d28e21f7b0219c1110ab464b35",
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 2,
+        "labels": 2,
+        "ranks": 9,
+        "reasons": 9
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_d58a2eed4f90361931ea",
+      "ineligibility_reasons": [],
+      "member_count": 9,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:05fd6a9cb88b3f0b61a9021942820868b09c5a852194f3b210da5dd5c76a8094",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:dcdd5227bbdd393ecb7f2370fa37ad56d45df9ca0b1e211478133e90b9fbb474",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 3,
+        "labels": 3,
+        "ranks": 3,
+        "reasons": 9
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_d58a2eed4f90361931ea",
+      "ineligibility_reasons": [],
+      "member_count": 9,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:2f671503d65792d222d6a58510b3b459acdadf9eec1765153165b7b1941e1eb1",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:8e25ffa5e487b5dd5270da8767177830b9b0fb2724c5fc71ee389773b8784f8b",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 4,
+        "labels": 3,
+        "ranks": 15,
+        "reasons": 15
+      },
+      "eligible": true,
+      "episode_id": "EP_BATCH_ecfa4606e8dced27ecd0",
+      "ineligibility_reasons": [],
+      "member_count": 15,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:a28a39d6e5d74bea7f299f4ed9d3b98b8883e02fef3e7de5bd7fbda883124f11",
+      "pack_e_fingerprint": "934ba8fb6740bd7cc9ad20f0a04918ac94ab84b8913a87230d7159e23ea7e1a0",
+      "pack_e_input_fingerprint": "sha256:3debfcce4da1fd6761d0642bd4b849b00e47ab78edb5cab2a99c9d634fd55c39",
+      "preference": {
+        "attention_variation": true,
+        "multi_member": true
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 4,
+        "labels": 3,
+        "ranks": 8,
+        "reasons": 8
+      },
+      "eligible": false,
+      "episode_id": "EP_BATCH_ecfa4606e8dced27ecd0",
+      "ineligibility_reasons": [
+        "ATTENTION_MEMBER_LINEAGE_INCOMPLETE"
+      ],
+      "member_count": 15,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:3743cc1cd6f7c4b713d76b21e54deba7890e55b354b4486bde127edfa02cc2f1",
+      "pack_e_fingerprint": "934ba8fb6740bd7cc9ad20f0a04918ac94ab84b8913a87230d7159e23ea7e1a0",
+      "pack_e_input_fingerprint": "sha256:e1b949b33558de5f579e09cc365d0a114f3042d411a5f3ad942ddda31e0ce423",
+      "provider": "OpenAI",
+      "same_time_cluster_flag": true
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_109d364ec5543cf0adf3",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:7f26c39fa76d8b9babcf15f3e59a8ea4836c8e6a8b3be7b6062fe7b2fa838723",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:c8eaf4e42670c0750ff545decf35c4eeacfe189b1d9ec808412f937f223b51df",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_109d364ec5543cf0adf3",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:de164a8798db55e4c233d685615784ead85c877c094c7b3ca21864c000fa76eb",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:3d9cdc30fe4a517f1588cff2e4e13ef0650b91d2b5d4f5528ca8faa036fb456c",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_1990950e20318cd96a78",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:189a2876c0cfb7906031e836b328b4c4d8c12bccaadf036f6579f25c6fa7dd1c",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:acf46bc668f2ea9393e2622101edc321cb81a6c9841bfcd25a34f6fc1e754a62",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_1990950e20318cd96a78",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:5f483913eacfa9f6d90b522f66171d371e324cffe662928452abe6be2eea3cf0",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:512fcf1bb01560a9ea078c040d8eec86f123bde1b3e0d15c2d2838a9c6e6be1b",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_1b999628b864d9bebb06",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:b27e4aa504f7c88b685a0b7b0c72104e8d11c6df3baf4a6822d4b49d84d47cee",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:ea7181f616fca49e7abf76f13c769d4db411c4df2aa1808b04a65a64425b94bd",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_1b999628b864d9bebb06",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:19e946cc3fd3388950b78cb534c779d65d5c65e44e0e7c3f96b5b3a305b521b1",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:7c4ad4aa0b0b2e0611340f170c47281b7f8ccab8c08b7352f37434d06a536eff",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_215b3ad9f1a74ffd53d8",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:4444a869417dd7ca48d37e1dd1a52b9679788619eecfc277189c34e291605619",
+      "pack_e_fingerprint": "934ba8fb6740bd7cc9ad20f0a04918ac94ab84b8913a87230d7159e23ea7e1a0",
+      "pack_e_input_fingerprint": "sha256:a2b3e832dff417e40d7ae0facc71f94f4484adee587927e89d2a2a07ed03a6c6",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_215b3ad9f1a74ffd53d8",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:89eca964175bc8e00d395e43510e227fec7354c409412d595ad7a833275ba310",
+      "pack_e_fingerprint": "934ba8fb6740bd7cc9ad20f0a04918ac94ab84b8913a87230d7159e23ea7e1a0",
+      "pack_e_input_fingerprint": "sha256:ac8ab81e35d97aac3bde982b8b205ac7bf643e675d555c99111f3af9a621ba6c",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_289d79cbd732c9337d5e",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:1668264b50d1d5ff54d9f35e81f3e7657b65741ea8e0986218ff387adbe07f38",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:f349ab1ca88355f527e8184f740d8cff1bc7cd42ea79dfd35d7cd754882828b1",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_2d777c70a07c631e5f03",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:6f38b88f82e1d31947a2623b04e218fcec0668802f0bc7a8471ddff43f9084ab",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:baa329a63c3a78d43cd0eae2aa8864c23acf3fb92b2c489ab661c5d2644f48e4",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_2d777c70a07c631e5f03",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:ecf86ba17318ae752eb89994bc14372838a3d50fdff6ed1b75ef696a98d63c54",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:87e9e3d378c02a7ee4b033c3772652c4b64ba9bae6281873b3a6556535ebb678",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_2da84a7c7be737e01abb",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:5f12233c7ab8de1126e998df422a4638f29ee8eabacce2b889ea5490b89a05f8",
+      "pack_e_fingerprint": "934ba8fb6740bd7cc9ad20f0a04918ac94ab84b8913a87230d7159e23ea7e1a0",
+      "pack_e_input_fingerprint": "sha256:3959a7c31b8e1d88f350a1e942d32660db79cac59b8b24dc5a70d62c15c92eb4",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_3ae230535bdb433af7ca",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:1fa5d6b49ed6c137ea4d6ee4921bdc34ee48df529d343e195aae244fdce2b2ca",
+      "pack_e_fingerprint": "81243912079b8256df8cd48abc37328272ebb2019eabb0d6ad5591cfd3823350",
+      "pack_e_input_fingerprint": "sha256:4f76436db6c1dcc18971e2b866981e0819031a2254859297a9a5c721c31749f1",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_3ae230535bdb433af7ca",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:ba3da149198d9d33d29b2bcfce62064153a14ca553ce1c04b6484f078a6bf289",
+      "pack_e_fingerprint": "81243912079b8256df8cd48abc37328272ebb2019eabb0d6ad5591cfd3823350",
+      "pack_e_input_fingerprint": "sha256:58548c8985e3407c5d55b059e28e9f350b9e9efda345553126dfb01e48b6f002",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_3ae230535bdb433af7ca",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:c9bb1d90eebbb4ccd75bdaf94403009d5afc8ccf3d90fc7d7fbcb8b614f9cd85",
+      "pack_e_fingerprint": "81243912079b8256df8cd48abc37328272ebb2019eabb0d6ad5591cfd3823350",
+      "pack_e_input_fingerprint": "sha256:93448007506a04e99293de01e29e82f04941bb9bafea394670699c5243498a86",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_697fa043068a1f61838f",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:07b762b1351fca0a6aa428f92a2453917c434913e90f2e5d81ee3cf748575b88",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:31f28735fb1e1c490a6dde573ee5638e633eb01aa6247258b9798d78c07843ed",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_697fa043068a1f61838f",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:5bda20a09e57b5dca1ddc4dc3227480a468a398bae2a8a1b853e59968b20a6cc",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:e238436418b89db4566d5380d668dbaf5fe1a396938a43948631450ba645173c",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_697fa043068a1f61838f",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:dcd27d4a51774db3d2e8a6e5ec2a593f4f65168cf5aba57a9ea5b4153122b479",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:64ffa12d155da723975eb7ccc94d1d48d2e4959cb20754841863df78d5af94c6",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": false,
+      "episode_id": "EP_EVENT_757e72165d3ec05306a6",
+      "ineligibility_reasons": [
+        "OUTCOME_NOT_AVAILABLE"
+      ],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:a61aa321f80ce322802dbecf6e337bad29c6b378f84d880a674531a7a1a940a5",
+      "pack_e_fingerprint": "e6e8bc107df70f683c03fde854b4fb17a11236b7b0ccb6c1a91017b309056900",
+      "pack_e_input_fingerprint": "sha256:bbd22e5d1b7c1578aafa14b72661bc0b05c46ba6c5074c858929b3abb7dd9a56",
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": false,
+      "episode_id": "EP_EVENT_757e72165d3ec05306a6",
+      "ineligibility_reasons": [
+        "OUTCOME_NOT_AVAILABLE"
+      ],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:bada338be664363c4dcc0292776f4104efbce1f473217a9486bd0b0d779d50eb",
+      "pack_e_fingerprint": "e6e8bc107df70f683c03fde854b4fb17a11236b7b0ccb6c1a91017b309056900",
+      "pack_e_input_fingerprint": "sha256:f89591dfc6da108421930a8349a8852bc79b658087d3f72b5d1a7f69a99e9f1c",
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": false,
+      "episode_id": "EP_EVENT_757e72165d3ec05306a6",
+      "ineligibility_reasons": [
+        "OUTCOME_NOT_AVAILABLE"
+      ],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:0a7ab56c4d17040f882d7a4f9ab3d9c50bfc67a2e9b2b6a5b4547493c295958e",
+      "pack_e_fingerprint": "e6e8bc107df70f683c03fde854b4fb17a11236b7b0ccb6c1a91017b309056900",
+      "pack_e_input_fingerprint": "sha256:29a3df2fcf36d0d765b4c866d88f4ab8acc775c36eda76113cdb4aad2d6106d1",
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_774e1799852b55225c4d",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:db70938fde88a83335e7e78886229fc5f9ca9aa3cbddd88ef4f6ce091b775042",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:e90654e6dce59cf3c6bcb734649720cf954f5e7fc4651ce24bbd7b4c398c2a44",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_774e1799852b55225c4d",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:3439c478a61b4e59e45d5a80a47274feeee80b3aa5b6c76726853f8baabbc84c",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:6b1c986aaf4c15d1deb4a7e271d17085e94242037c33670342cc52cabcf85e66",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_7986424afa3d00c5daac",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:3dcc6cc723742070519d959c8cf00b580d3ae17e8a87ed8a8f4d6dcf59d6d797",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:fcf89156e3233726a9ac8a67a3f418e05c5cd00c5dde20397149ee518e696ddf",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_7986424afa3d00c5daac",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:37cb7dcf29ea8b203da041bd1e8bea40a1e6ff00bc8fbd409b744b6ba7e8c1af",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:dec6b4a898ec50c3ede9f32f354f7760bdcde119ea9c04c862155d5339da60a7",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_7a801944634936ebd5da",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:8e7da5bbdd1b9eb378518fbd3ae2a04c29a83792ad096526c43ed86bc17ccbf3",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:104ac3ff487773746f92798117f85d7f1d5632993d45fd914cbe9034f77588a3",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_7a801944634936ebd5da",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:ef8926921fbdb8fb1f61944a6dbd93f21a12554b8cad6c73c742586fd89bec4d",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:b9099b21875a587a0902820b0aa5f8abbb49483674902d8ac29251bb65bb102a",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_870dc1a1acc371a30f04",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:2c9a4d3b6aff3386e663239cd87eae1470f1d008f88265f3be96296ed5e4a93e",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:0a5e648ab31f493a92535f654bc4a88cdb801a6f6beb38ef46e7f9ec6a136a15",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_870dc1a1acc371a30f04",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:7d15129a4d2da097b0ae9012f09b427e846814172db4c0238c664e7d30e11e4b",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:b8be0869bee5f770ab8a993e66339c2f32365f72b079aeac7efbebc0657eba09",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_8bc767084ef42d158136",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:f06521dc26102a1d6580592d4155c2e834ae5d311e7fd9d9b562cd2ec235228d",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:5dd88ce6c77b0375797c84bd4f2bf816f6a9a5b2a10e958661a8f6524dd23212",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_8bc767084ef42d158136",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:14ace53f01ca4ce52f478d8fd101d27dbdd7d1bae9417b20c8e0745b3f07124f",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:fbf1d8e9418527fdc3d191a551ded53b944c791e865211f8cf3e6cd1d28596a5",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_9004d680f10f1ff4abd4",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:14bdf4dc7d5fdd8dd897d36d3cbbeee962712ae033ff5ff9b107ec97a68933e0",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:7d1367a2ff9d6a5b326caefba00b829ea89bacfd86a3e0cd19f370817ff352c8",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_9004d680f10f1ff4abd4",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:cee818038ab701d243079e998896a3c37f0a99e47409997b3c51451b4a64d4e7",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:b3274fc1cd45500074c4edff5f92e9eb5e34d49b92d281f4e0bb1fa008232d50",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_92769da428b1a43350e5",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:db00bc497e779f5ec0eb63ac6289fc14bd3bac434302041109767f6102f0a917",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:8f524b0e8f1e93b18b6504609a1e5e74e23036874db798154f68f7e2f20b75c2",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_92769da428b1a43350e5",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:591afe479b044a2925bf06310535305975c512a34fe4a234b19de8310bef5d49",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:05e28dc4013247bde83aab4933bbe543fbefe59e808665bce58634c23379ac12",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_9d3109bf76341fad0d60",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:b011db7d1fc8d50a2f62dd1475ee7b4ba5101b2022cfb03880c3f56d340eb432",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:42eef1e8f451f61adc3f6ec5b21f6c437b3e921f6a750ec17cb69cb097f4f331",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_9d3109bf76341fad0d60",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:85a5c62fefccdd70a00eedb71774699249c9c331e135499a0999508067c98ace",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:6d734cc071a9c02fad99b09def4ff91d6be891a1776cb7c708f53658ea10f16b",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_9d3109bf76341fad0d60",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:f099c59d2d9b7507bbe9b5ae2944f1ba5dff934fd442f02dc90e897644899836",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:33e4484ca5e9ad5bddf9df8b7f2a9e999f9390f892b4145a676f7adcff0026a8",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_9e85bde7d758fd2971c8",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:52f8c9a411832eec740b7001d211ccb09f804a21b31f81a0b6ff626ea22ac6c1",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:abca13d37f2f376e38b2f9d915df756851ade74d578d8ca50ce7fa93b7b7a345",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_9e85bde7d758fd2971c8",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:98aa5a7b31f31d95e16db4dd74994e8477c7c9f076a8d61e68b7c6843ebcb481",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:5ea4afddff7bb5366fcae2590bd818d2515faf416059f79ed78da472c81671a1",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_b7dfc476aa8eebf6d2a5",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:eb42f2d53c60023cc30b015097a95472a76f700765f60f0549af3582a8e4c159",
+      "pack_e_fingerprint": "81243912079b8256df8cd48abc37328272ebb2019eabb0d6ad5591cfd3823350",
+      "pack_e_input_fingerprint": "sha256:bc7a81be0d48b4b2890f7df04c3aae267a6bc1e70e81cb5bbe6b17964ef0932d",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_b7dfc476aa8eebf6d2a5",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:4005a7293903234cdbc6056e645730bc2d0d1471275644facfce68f3ef77498c",
+      "pack_e_fingerprint": "81243912079b8256df8cd48abc37328272ebb2019eabb0d6ad5591cfd3823350",
+      "pack_e_input_fingerprint": "sha256:98cca8443e8c7d943b0a2e5ff6f8a3a77307162ba618e2bf7d9d8e8efd550aa2",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_b7dfc476aa8eebf6d2a5",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:09b9ebf6ef0fcce9e1ab953156ecbc1c192eeeba66bce634d1925bb9cca866d9",
+      "pack_e_fingerprint": "81243912079b8256df8cd48abc37328272ebb2019eabb0d6ad5591cfd3823350",
+      "pack_e_input_fingerprint": "sha256:bdc6b6f8c9b00deb5742952196d95fb10b06e911d83656fa60c07c6a23fad6fe",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_c2b9489ba70fbe313d6f",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:ef1c0acb2b13dbfda4f0249cf9e3d69877a8f3e7ebd6c4237f9db3b41e9f5610",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:39be09d159af71b635c3413a67b73ae60bea4d66e48b7b26c3fc472e10ac8e80",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_c2b9489ba70fbe313d6f",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:8ee627cf3756c3e7bbc33564916a4e931602d6decb03791adddc4d5df3f2c1e9",
+      "pack_e_fingerprint": "1ddeaf226a94ae6fb725307cee3a411fb1389402a8e5a9ba5e2a3f22b7031b5c",
+      "pack_e_input_fingerprint": "sha256:40166b3f61e0efd8f67cde92de79dfcb8e0fed5a82831ac92ae59feda03fc33a",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_c3809c42357fe21e8416",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:85f04f246bd30ef7e64f1187349851b947d5685a757a3d2b267323e35d15d0a5",
+      "pack_e_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+      "pack_e_input_fingerprint": "sha256:00944e966bec5bca820ddd9e705cdfb678b48efed4e206f8e73a0f86fc1495e5",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_ccf7e8031b0d9b2e2443",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:964d764b016d3daa8249c3da74152b9e2e3f22b7f6b0fadf29b16114c5ec6641",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:cb56040cc9436026b29c03f15478886d57e705b447c8d28adc555246027de081",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_ccf7e8031b0d9b2e2443",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:cea79dcb0378cabf631937bad8895600a208235d3d955f3f6a398c0342252ca9",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:a6b24f372ec635a8c3b4b8cad87a9532ff2d340dc102c2dd9c2c71cac1b5452b",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_d5499dc406b408c2068e",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:3a21f6f84911b1e074bcd19e1997ec238b953e0cb679550cf1276b44ea018bbc",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:ace378a3a9bad51231bcc10714d3080667853cf00f4df09fc6db8def23a4ee57",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_d5499dc406b408c2068e",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:1be23dffb61843e0502b5c718f7e613f8f5ea7f15144c4d0c4227a687920302b",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:a6b1c7b33e4ffda4120ab9464467d85fc752bd0c46a4cfdc5ede2e813daf60e5",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_e069cc379a86f04d74f1",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:aa6b465148ee6474b3247973b2f6c80551b9d883c96113ca0f602125184bd2ed",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:d6fee73f23cabc8f827ff90b7a178245e28bf74f2a1df3024faead10ede845a9",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_e069cc379a86f04d74f1",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:c77b449971aab63625f3eecfb434c0465797d36545ecfdb173757059c741d7ee",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:b11188c2b136c00d0edc320b049c96b0c0fc4986d470a85a9b6965a69c2acc43",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_e069cc379a86f04d74f1",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:0dfdddcf8e283bd37a574fc96fad16a62ac958118b1b0eec685d2eff7efcd618",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:1f4f50f0c7c14595b320ee803a66c899e7b1d73ae2b86c7aa22ee789dac881ab",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_f2862037fd8c6ab5315a",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:d1718c5a876637f148b6ad60b8e03e5d8bb0fd7b86821b03c718ffb504404386",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:35aadf0c72632369a1a0b50fcf3eba695d5d1bcc1c58892ec7dde22053a99d95",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_f2862037fd8c6ab5315a",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:0fe1a26335e6977291d40c552c7e29a488ebf3d2e58202240b29af46fceb81a2",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:fbca31fc4b96c2baa7a960dbbfdc78c1d67351a2c0f04997171e693c6fae66be",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_f2862037fd8c6ab5315a",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:b6acd903808963c5a7a71c8da0925bea53d5f688ad22b532f9c13baa7ad55463",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:7f024f331bf5ff5f02e19b8269cab86bb673a7acdff5d620bf5164fa54ffdb1a",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_f9fce28bff98f2e1ce21",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:ffa931ef0596099297cf56faa8e7530fce72fa3d326daaf2c8084f74b941fcaa",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:6ec3a4c372970d0adb76c2ea8d772549c1e9f1934558dd639d8b2a7749d98fa5",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_f9fce28bff98f2e1ce21",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:472a25f815573a863ed6cc7e3e617ed81bc0cd3f89ed85ab1f819ea12ce22b44",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:3892c62d26770dadc0ed7b2513606b1fe5ad57f15cac1c6b0ad2152ea6c0d9b7",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_f9fce28bff98f2e1ce21",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:cbb210c948fa35a6f911a8e3e06b3366dbddfa30acb701d7ced92cbfaee19254",
+      "pack_e_fingerprint": "4893bde17454ba1ab86b849b64a49240cb6126a88e89589fea27ff4b0b303349",
+      "pack_e_input_fingerprint": "sha256:e364ede9afb8c5392beca2bd6890ba04ca529c77e3441c955dfc81639d17295e",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_fb7707e6f5f8217b0f79",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:b6b372e45c2763b13fa05c87280b664614f8b14064149e579cf1ba1560a98c4a",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:f2153c8dd414a6b447ae8b977cee5dedc786399e6ac620dc1b103b718cecfdc4",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_fb7707e6f5f8217b0f79",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:c94494548cc636d8e8f35a11bf756b541a99888da7c5a7bbd7cf13479412f3d8",
+      "pack_e_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+      "pack_e_input_fingerprint": "sha256:89d27d997964eb6ce59c82c25aa3a057503911be1c7bc7fef16316b551ead09f",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_fbb37fea272c4e76546e",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "claude-haiku-4-5",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:c643d014f8855f89b4381fac3d0384097cf36a06a0a7c11d29916046be3bf337",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:7cd09fad3add792f80b2e772605e88bbb6e61b788a32e82a418660f2f23544ee",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Anthropic",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_fbb37fea272c4e76546e",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:9c0d7622dc1f7ab0a5dd8666d927a4f4c6582f47e72d03e3f641059931eac70b",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:f69ee355511becdf51790ba96eeb0dd9358d9423a12b812f87480001ba4867c8",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "Gemini",
+      "same_time_cluster_flag": false
+    },
+    {
+      "attention_variation": {
+        "channels": 1,
+        "labels": 1,
+        "ranks": 1,
+        "reasons": 1
+      },
+      "eligible": true,
+      "episode_id": "EP_EVENT_fbb37fea272c4e76546e",
+      "ineligibility_reasons": [],
+      "member_count": 1,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_fingerprint": null,
+      "pack_a_input_fingerprint": "sha256:6e72998b566aa73a252669fd44c692828a744a89f3ceab8600b51ebdf92bfad9",
+      "pack_e_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+      "pack_e_input_fingerprint": "sha256:8c495fa52a7a83755bdb8df585763071a07e6694cebe6d15e66e6955f600bc79",
+      "preference": {
+        "attention_variation": false,
+        "multi_member": false
+      },
+      "provider": "OpenAI",
+      "same_time_cluster_flag": false
+    }
+  ],
+  "criteria": [
+    "exact lineage",
+    "exact configured provider/model callable",
+    "nonempty distinct Pack A/E",
+    "available deterministic Outcome",
+    "complete parsed member Attention",
+    "multi-member preference",
+    "attention-variation preference",
+    "episode/provider/model tie-break"
+  ],
+  "eligible_count": 93
+}

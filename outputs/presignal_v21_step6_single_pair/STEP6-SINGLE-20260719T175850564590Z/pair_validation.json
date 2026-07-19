@@ -1,0 +1,21 @@
+{
+  "attention_scope_decision": "ADEQUATE",
+  "contract_ae_pair_valid": true,
+  "leakage_fields_exposed": 0,
+  "outcome_attached_after_forecast_freeze": true,
+  "outcome_valid": true,
+  "prompt_symmetry": {
+    "allowed_differences": [
+      "information_arm",
+      "information_pack",
+      "information_pack_fingerprint"
+    ],
+    "differences": [
+      "information_arm",
+      "information_pack",
+      "information_pack_fingerprint"
+    ],
+    "passed": true
+  },
+  "same_outcome_identity": true
+}
