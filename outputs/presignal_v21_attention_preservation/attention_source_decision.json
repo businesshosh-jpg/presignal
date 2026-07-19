@@ -1,0 +1,17 @@
+{
+  "accepted_authoritative_sources": 0,
+  "candidate_count": 10,
+  "candidate_decisions": {
+    "INSUFFICIENT_LINEAGE": 8,
+    "NON_AUTHORITATIVE_ATTENTION_LIKE_METADATA": 2
+  },
+  "decision": "V2_1_FROZEN_ATTENTION_LINEAGE_NOT_RECOVERABLE",
+  "external_calls": {
+    "acquisition": 0,
+    "apps_script": 0,
+    "google_sheets_writes": 0,
+    "market_data": 0,
+    "provider": 0
+  },
+  "reason": "No exact Session_Attention_Map rows or exact immutable raw responses are present in the authorized local frozen artifacts or Git history."
+}
