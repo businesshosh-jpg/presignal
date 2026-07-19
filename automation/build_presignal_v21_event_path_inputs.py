@@ -275,7 +275,14 @@ def run(mode: str, output: Path = OUTPUT, attention_artifact: Path | None = None
         decision="V2_1_STEP5_TARGETED_COMPATIBILITY_REPAIR_REQUIRED"
     manifest={"decision":decision,"mode":mode,"package":state["package"],"counts":counts,"unavailable_by_reason":dict(sorted(unavailable.items())),"pack_a_input_fingerprint":fingerprint(result["pack_a"]),"pack_e_input_fingerprint":fingerprint(result["pack_e"]),"attention_export_available":state["attention_available"],"attention_artifact":state["attention_artifact"],"external_calls":{"provider":0,"acquisition":0,"market_data":0,"apps_script":0,"google_sheets_writes":0}}
     write_json(output/"step5_manifest.json",manifest)
-    report="# Step 5 v2 Information Infrastructure Reuse\n\nDecision: `{}`\n\nThe adapter reads the verified frozen v2 package and never regenerates Attention, requests, acquisition, or Packs. Historical Pack A/E inputs require exact member-level Attention lineage. The package preserves requests and Packs but lacks an Attention Map export, so affected historical Episodes remain unavailable rather than inferred from request labels.\n\n- Counts: `{}`\n- Unavailable: `{}`\n".format(manifest["decision"],counts,dict(sorted(unavailable.items())))
+    attention_description = (
+        "The adapter reads the verified frozen v2 package plus the explicitly supplied authoritative Attention export. "
+        "Only original parsed records with exact session, Event, provider/model, raw-response, and cutoff lineage can select an Episode. "
+        "Provider errors and omissions remain preserved but unavailable."
+        if attention_artifact else
+        "The package preserves requests and Packs but lacks an Attention Map export, so affected historical Episodes remain unavailable rather than inferred from request labels."
+    )
+    report="# Step 5 v2 Information Infrastructure Reuse\n\nDecision: `{}`\n\nThe adapter never regenerates Attention, requests, acquisition, or Packs. Historical Pack A/E inputs require exact member-level Attention lineage. {}\n\n- Counts: `{}`\n- Unavailable: `{}`\n".format(manifest["decision"],attention_description,counts,dict(sorted(unavailable.items())))
     (output/"step5_report.md").write_text(report)
     return manifest
 
