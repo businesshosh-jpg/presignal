@@ -63,6 +63,15 @@ class EventPathInputTests(unittest.TestCase):
             ledger=[json.loads(line) for line in (Path(first_dir)/"compatibility_unavailable_ledger.jsonl").read_text().splitlines()]
             self.assertEqual(len({row["episode_id"] for row in ledger}),1682)
 
+    def test_shuffled_episode_population_has_identical_compatibility_content(self):
+        state=inputs.load_frozen_package()
+        episodes=inputs.rows(inputs.EPISODES)
+        roles=inputs.rows(inputs.ROLES)
+        first=inputs.build_episode_inputs(episodes,state,roles)
+        second=inputs.build_episode_inputs(list(reversed(episodes)),state,roles)
+        for key in ("parent","attention","requests","packs","unavailable","pack_a","pack_e"):
+            self.assertEqual(inputs.fingerprint(first[key]),inputs.fingerprint(second[key]),key)
+
     def test_prospective_interface_is_pure_and_no_duplicate_transport(self):
         result=inputs.adapt_prospective_outputs(episodes=[episode()],attention_records=[{}],request_records=[{}],shared_pack_records=[{}],provider_models={"Mock":"mock"})
         self.assertEqual(result["external_calls"],0)
