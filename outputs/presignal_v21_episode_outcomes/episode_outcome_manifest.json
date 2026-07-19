@@ -1,0 +1,54 @@
+{
+  "component_roles": {
+    "PRIMARY_COMPONENT": 1682,
+    "SECONDARY_COMPONENT": 820,
+    "SUPPORTING_COMPONENT": 1812
+  },
+  "coverage": {
+    "15": 1574,
+    "30": 1574,
+    "5": 1574,
+    "60": 1574,
+    "anchor": 1574,
+    "max_excursion": 1574
+  },
+  "decision": "V2_1_DETERMINISTIC_EPISODE_AND_OUTCOME_LAYER_VALIDATED",
+  "episodes": 1682,
+  "intervening_event_outcomes": 639,
+  "market_data_cached_days": 265,
+  "market_data_calls_this_build": 0,
+  "market_data_endpoint": {
+    "deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+    "function": "apiFetchGovernedHistoricalUsdJpyObservation",
+    "path": "apps_script/historical_market_data_endpoint.js"
+  },
+  "market_data_provider_counts": {
+    "UNAVAILABLE": 22,
+    "eodhd": 7,
+    "tiingo": 1653
+  },
+  "outcome_population_fingerprint": "sha256:8e8cfe4fdd8ecbbeb6e9ae2ca1e75c5e0e3466f95e0ed05e6abd9fac79f23f6a",
+  "outcome_terminal_dispositions": {
+    "AVAILABLE": 1574,
+    "PARTIAL": 72,
+    "UNAVAILABLE": 36
+  },
+  "preview_workbook_sha256": "e694aa04344fd14ceb941972f8d874844aa0bbba54d0ce319b059b0e74555e86",
+  "reversals_detected": 666,
+  "source_workbook_sha256_before": "0ba085bdf1358bb90db5feafe0b52102ce3b5b2397405c56ae804befb5f34eee",
+  "validation": {
+    "contract_valid_outcomes": 1574,
+    "errors": 0,
+    "one_outcome_per_episode": true,
+    "one_role_per_consumed_event": true,
+    "outcome_ids_unique": true
+  },
+  "workbook_change_audit": {
+    "event_sheet_changed": false,
+    "logical_cells_changed_by_sheet": {
+      "Episode": 33640,
+      "Outcome": 52848
+    },
+    "non_episode_outcome_sheets_changed": 0
+  }
+}

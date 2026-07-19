@@ -110,10 +110,12 @@ class PreSignalV21WorkbookTests(unittest.TestCase):
             self.assertTrue(all(header), name)
 
     def test_fresh_tables_have_headers_only(self):
-        fresh = {"SeriesMap_Suggestions", "Episode", "Information", "Prediction", "Prediction_Path", "Outcome", "Evaluation", "Session_Map", "Run_Log"}
+        fresh = {"SeriesMap_Suggestions", "Information", "Prediction", "Prediction_Path", "Evaluation", "Session_Map", "Run_Log"}
         for sheet in self.main["sheets"]:
             if sheet["name"] in fresh:
                 self.assertEqual(sheet["row_count"], 1, sheet["name"])
+        populated = {sheet["name"]: sheet["row_count"] for sheet in self.main["sheets"] if sheet["name"] in {"Episode", "Outcome"}}
+        self.assertEqual(populated, {"Episode": 1683, "Outcome": 1683})
         self.assertTrue(all(sheet["row_count"] == 1 for sheet in self.research["sheets"]))
 
     def test_reusable_row_counts_reconcile(self):

@@ -381,6 +381,15 @@ def existing_repair_manifest():
     return load_json(path) if path.exists() else None
 
 
+def validated_outcome_update(source_sha, repair_manifest):
+    """Permit only the later validated Episode/Outcome population on repaired Events."""
+    path = ROOT / "outputs" / "presignal_v21_episode_outcomes" / "episode_outcome_manifest.json"
+    if not path.exists():
+        return False
+    outcome_manifest = load_json(path)
+    return outcome_manifest.get("source_workbook_sha256_before") == repair_manifest.get("repaired_workbook_sha256") and outcome_manifest.get("preview_workbook_sha256") == source_sha
+
+
 def reuse_validated_repair(source, destination, manifest):
     """A repaired source is an idempotent no-op; retain the validated evidence."""
     _, rows = builder.xlsx_event_rows(source)
@@ -394,7 +403,10 @@ def reuse_validated_repair(source, destination, manifest):
     if destination != OUTPUT:
         for name in ("event_lineage_repair_ledger.jsonl", "batch_repartition_map.json", "event_id_rekey_map.json", "duplicate_canonicalization_map.json", "workbook_change_audit.json", "episode_population_comparison.json", "repair_manifest.json", "repair_report.md"):
             shutil.copyfile(OUTPUT / name, destination / name)
-    return manifest
+    reused = dict(manifest)
+    reused["repaired_workbook_sha256"] = sha(source)
+    reused["reused_validated_event_lineage"] = True
+    return reused
 
 
 def repair(source=SOURCE, destination=OUTPUT, promote=False):
@@ -404,7 +416,7 @@ def repair(source=SOURCE, destination=OUTPUT, promote=False):
     source_sha = sha(source)
     if source_sha != audit_manifest["source_workbook_sha256_before"]:
         previous = existing_repair_manifest()
-        if previous and source_sha == previous.get("repaired_workbook_sha256"):
+        if previous and (source_sha == previous.get("repaired_workbook_sha256") or validated_outcome_update(source_sha, previous)):
             return reuse_validated_repair(source, destination, previous)
         raise RepairError("SOURCE_WORKBOOK_FINGERPRINT_MISMATCH")
     audit_manifest, headers, rows, plans, batch_map, rekey_map, duplicate_map = planned_repairs(source)
