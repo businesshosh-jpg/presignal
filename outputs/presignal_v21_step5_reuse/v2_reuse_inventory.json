@@ -1,0 +1,189 @@
+[
+  {
+    "component": "Market Session identity and membership",
+    "concrete_incompatibility": "",
+    "current_input_identity": "Market Session",
+    "current_output_identity": "exact session membership",
+    "existing_callable_entrypoint": "load_frozen_package",
+    "existing_implementation_path": "snapshot/authoritative_sessions.jsonl; snapshot/authoritative_session_members.jsonl",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": false,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Session Attention Map capture",
+    "concrete_incompatibility": "authoritative package has no attention export",
+    "current_input_identity": "Session member",
+    "current_output_identity": "member attention",
+    "existing_callable_entrypoint": "read_attention_records",
+    "existing_implementation_path": "frozen package attention export",
+    "minimal_repair_required": "export exact frozen attention records",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": false
+  },
+  {
+    "component": "Attention parsing and validation",
+    "concrete_incompatibility": "implementation not present in current repository",
+    "current_input_identity": "provider raw attention",
+    "current_output_identity": "attention labels",
+    "existing_callable_entrypoint": "parse_attention_records",
+    "existing_implementation_path": "frozen v2 attention parser",
+    "minimal_repair_required": "restore/bind existing v2 callable without semantic change",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": false
+  },
+  {
+    "component": "Session Information Request capture",
+    "concrete_incompatibility": "",
+    "current_input_identity": "Market Session/provider",
+    "current_output_identity": "normalized requests",
+    "existing_callable_entrypoint": "load_frozen_package",
+    "existing_implementation_path": "snapshot/authoritative_requests.jsonl",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Request normalization",
+    "concrete_incompatibility": "source normalizer module absent; frozen normalized output is preserved",
+    "current_input_identity": "request wording",
+    "current_output_identity": "normalized key",
+    "existing_callable_entrypoint": "read normalized request rows",
+    "existing_implementation_path": "snapshot/authoritative_requests.jsonl.normalized_information_key",
+    "minimal_repair_required": "restore/bind existing v2 callable without semantic change",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Information Requirement handling",
+    "concrete_incompatibility": "",
+    "current_input_identity": "provider request",
+    "current_output_identity": "requirement lineage",
+    "existing_callable_entrypoint": "read normalized request rows",
+    "existing_implementation_path": "snapshot/authoritative_requests.jsonl",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Request fulfillment classification",
+    "concrete_incompatibility": "",
+    "current_input_identity": "normalized request",
+    "current_output_identity": "item status",
+    "existing_callable_entrypoint": "read shared pack",
+    "existing_implementation_path": "snapshot/authoritative_pack_references.jsonl.items",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Deterministic and computed acquisition",
+    "concrete_incompatibility": "",
+    "current_input_identity": "request",
+    "current_output_identity": "acquisition/source lineage",
+    "existing_callable_entrypoint": "read shared pack",
+    "existing_implementation_path": "snapshot/authoritative_pack_references.jsonl.items",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Permitted provisional acquisition",
+    "concrete_incompatibility": "",
+    "current_input_identity": "request",
+    "current_output_identity": "provisional label",
+    "existing_callable_entrypoint": "read shared pack",
+    "existing_implementation_path": "snapshot/authoritative_pack_references.jsonl.items",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Shared Pack construction",
+    "concrete_incompatibility": "",
+    "current_input_identity": "session requests",
+    "current_output_identity": "shared Pack E",
+    "existing_callable_entrypoint": "read shared pack",
+    "existing_implementation_path": "snapshot/authoritative_pack_references.jsonl",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Pack A and Pack E definitions",
+    "concrete_incompatibility": "",
+    "current_input_identity": "session/provider",
+    "current_output_identity": "Pack A/E identity",
+    "existing_callable_entrypoint": "load_frozen_package",
+    "existing_implementation_path": "assignments/pack_assignments.jsonl; snapshot/authoritative_pack_references.jsonl",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Cutoff and historical as-of validation",
+    "concrete_incompatibility": "",
+    "current_input_identity": "session/pack",
+    "current_output_identity": "leakage-safe lineage",
+    "existing_callable_entrypoint": "validate_cutoff_and_pack",
+    "existing_implementation_path": "snapshot/authoritative_sessions.jsonl; authoritative_pack_references.jsonl",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Source and provenance validation",
+    "concrete_incompatibility": "",
+    "current_input_identity": "frozen package",
+    "current_output_identity": "verified reader",
+    "existing_callable_entrypoint": "verify_package_manifest; verify_whole_package_fingerprint",
+    "existing_implementation_path": "automation/build_simplified_replay_package_v1.py",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": false,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Provider/model adapters",
+    "concrete_incompatibility": "",
+    "current_input_identity": "session/provider",
+    "current_output_identity": "provider/model",
+    "existing_callable_entrypoint": "load_frozen_package",
+    "existing_implementation_path": "assignments/provider_model_assignments.jsonl",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Retry, timeout, duplicate, terminal controls",
+    "concrete_incompatibility": "not invoked by Step 5",
+    "current_input_identity": "forecast identity",
+    "current_output_identity": "terminal ledger",
+    "existing_callable_entrypoint": "PackageState/reconcile_completion",
+    "existing_implementation_path": "automation/run_phase9_authoritative_historical_replay_v0.py",
+    "minimal_repair_required": "restore/bind existing v2 callable without semantic change",
+    "requires_narrow_episode_adapter": false,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Frozen historical artifact readers",
+    "concrete_incompatibility": "",
+    "current_input_identity": "package",
+    "current_output_identity": "verified snapshot",
+    "existing_callable_entrypoint": "verify_package_manifest; verify_whole_package_fingerprint",
+    "existing_implementation_path": "automation/build_simplified_replay_package_v1.py",
+    "minimal_repair_required": "",
+    "requires_narrow_episode_adapter": false,
+    "reusable_as_is": true
+  },
+  {
+    "component": "Prospective collection interfaces",
+    "concrete_incompatibility": "live v2 entrypoints are not present locally",
+    "current_input_identity": "v2 output records",
+    "current_output_identity": "Episode inputs",
+    "existing_callable_entrypoint": "adapt_prospective_outputs",
+    "existing_implementation_path": "v2 prospective output contract",
+    "minimal_repair_required": "restore/bind existing v2 callable without semantic change",
+    "requires_narrow_episode_adapter": true,
+    "reusable_as_is": false
+  }
+]

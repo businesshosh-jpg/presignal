@@ -1,0 +1,28 @@
+{
+  "attention_export_available": false,
+  "counts": {
+    "attention_compatible_episodes": 0,
+    "exact_parent_session_matches": 1316,
+    "fully_step_6_ready_episodes": 0,
+    "information_request_compatible_episodes": 1316,
+    "pack_a_compatible_episodes": 1316,
+    "pack_e_compatible_episodes": 1316,
+    "total_episodes": 1682
+  },
+  "decision": "V2_1_STEP5_TARGETED_COMPATIBILITY_REPAIR_REQUIRED",
+  "external_calls": {
+    "acquisition": 0,
+    "apps_script": 0,
+    "google_sheets_writes": 0,
+    "market_data": 0,
+    "provider": 0
+  },
+  "mode": "compatibility",
+  "pack_a_input_fingerprint": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "pack_e_input_fingerprint": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "package": "SIMPLIFIED-REPLAY-PROD-20260718T010455Z",
+  "unavailable_by_reason": {
+    "ATTENTION_MAP_MISSING": 1316,
+    "NO_EXACT_PARENT_SESSION": 366
+  }
+}
