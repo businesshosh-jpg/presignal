@@ -1,0 +1,181 @@
+{
+  "freeze_name": "presignal_v2.0_market_session_experiment",
+  "freeze_status": "PASS",
+  "frozen_commit": "fe6fbbe779c4d0808a3271c333e4b2f00f25016f",
+  "git_tag": "presignal-v2.0-frozen",
+  "branch_at_freeze": "codex-simplified-authoritative-replay",
+  "created_ts": "2026-07-19T12:25:40Z",
+  "scientific_decision": "INSUFFICIENT_EVIDENCE_OF_PACK_E_IMPROVEMENT",
+  "scientific_interpretation": "Under the frozen v2.0 Market Session forecast and evaluation contract, there was insufficient evidence that Pack E improved forecasting performance over Pack A.",
+  "population_counts": {
+    "candidate_sessions": 249,
+    "replayed_sessions": 239,
+    "usable_sessions": 195,
+    "attached_predictions": 1145,
+    "exact_pack_a_e_pairs": 562
+  },
+  "holdout_counts": {
+    "holdout_sessions": 65,
+    "holdout_pairs": 186,
+    "pairs_by_provider": {
+      "Anthropic": 65,
+      "Gemini": 62,
+      "OpenAI": 59
+    }
+  },
+  "Pack_A_metrics": {
+    "mean_action_value": -0.00256410256410256,
+    "direction_accuracy": 0.4945054945054945,
+    "direction_accuracy_display": "49.45%"
+  },
+  "Pack_E_metrics": {
+    "mean_action_value": -0.010256410256410258,
+    "direction_accuracy": 0.4838709677419355,
+    "direction_accuracy_display": "48.39%"
+  },
+  "difference_metrics": {
+    "pack_e_minus_pack_a_mean_action_value": -0.007692307692307693,
+    "primary_metric": "mean Market Session-level Pack E minus Pack A paired action-value difference",
+    "independent_unit": "MARKET_SESSION"
+  },
+  "confidence_interval": {
+    "lower": -0.23852564102564097,
+    "upper": 0.2282051282051282,
+    "resamples": 10000,
+    "seed": 20260718,
+    "resampling_unit": "MARKET_SESSION"
+  },
+  "session_scorer_files": [
+    {
+      "path": "automation/pack_ae_scoring_v1.py",
+      "frozen_git_blob": "fd7c2379e7e3eb57b5a140af071e105659e66d5b",
+      "sha256_at_frozen_commit": "a0a66bcfdf1fc879c7e8202049a0ce8e5f0395d2996ade9913ac0159c0ddcd93"
+    },
+    {
+      "path": "apps_script/market_scoring.js",
+      "frozen_git_blob": "5d1072f9914b4b4d50ca903186c844180e914a48"
+    },
+    {
+      "path": "apps_script/evaluation_report.js",
+      "frozen_git_blob": "d6b1242098f6d655c53007f0e2e59f19e2cd6e2e"
+    },
+    {
+      "path": "automation/test_pack_ae_scoring_v1.py",
+      "frozen_git_blob": "9baba9ef9e616ee6f80e45cb6987c1cf5c0dc897"
+    }
+  ],
+  "session_contract_files": [
+    {
+      "path": "automation/simplified_authoritative_replay_contract_v1.py",
+      "frozen_git_blob": "88c137c4ae22b084a4bb8d0f8e9c95cad409c206",
+      "sha256_at_frozen_commit": "cde921c21a057afe4410e6f66d45505a1f5c7d74ec830bb2a7be12c6951241ab"
+    },
+    {
+      "path": "docs/pack_ae_evaluation_contract_v1/evaluation_contract.json",
+      "frozen_git_blob": "bc1e1efb687c49e35d207d9a13442c08860d3e68",
+      "sha256_at_frozen_commit": "af7ef52ba55d6de20c45680e958433dadbd2a44148604c27353d94641ff1ccf8"
+    },
+    {
+      "path": "docs/pack_ae_evaluation_contract_v1/historical_split_manifest.json",
+      "frozen_git_blob": "b9ce2734744c8e0bab5f5e610968f9613127b5d9",
+      "sha256_at_frozen_commit": "96ee8020bd72181a4e31a14bccc6fa1bea4bf2d24ef7c5e232bc1ffafcf05f54"
+    }
+  ],
+  "Pack_A_E_definition_files": [
+    {
+      "path": "automation/freeze_pack_ae_evaluation_contract_v1.py",
+      "frozen_git_blob": "de329bce4e0f381ab635ad351157c937150b6769",
+      "sha256_at_frozen_commit": "78e48b65ba1772bfc1cf25ba01f337b11be0142d5fbddb403e6dff0f4a2353bc"
+    },
+    {
+      "path": "docs/pack_ae_evaluation_contract_v1/binding_manifest.json",
+      "frozen_git_blob": "83dd5486a9ec1fb9bca454cddef7e7b81549d1f8",
+      "sha256_at_frozen_commit": "5c5c601cf921a564c2fd2d052b669d60719107ebe8cd3448a6cb5a5c22da12c5"
+    },
+    {
+      "path": "docs/pack_ae_scoring_v1/scorer_binding.json",
+      "frozen_git_blob": "f595791e7dc8bcc7842e101408a19123ca910788",
+      "sha256_at_frozen_commit": "4b1f29000e5831e2840a6f5304e0c48886eb2434b1994a04ef32a9bc17797996"
+    }
+  ],
+  "historical_replay_directories": [
+    "outputs/simplified_authoritative_replay/production_packages",
+    "outputs/simplified_authoritative_replay/runs/SIMPLIFIED-REPLAY-AUTHORITATIVE-20260718T010455Z",
+    "outputs/simplified_authoritative_replay/canonical_outcomes/SIMPLIFIED-REPLAY-CANONICAL-OUTCOMES-RECOVERED-20260718T162300Z",
+    "outputs/simplified_authoritative_replay/outcome_attachments/SIMPLIFIED-REPLAY-OUTCOME-ATTACHMENT-RECOVERED-20260718T162300Z",
+    "outputs/simplified_authoritative_replay/evaluation_readiness/SIMPLIFIED-REPLAY-EVALUATION-READINESS-RECOVERED-20260718T162600Z",
+    "outputs/simplified_authoritative_replay/historical_coverage_audits/PRESIGNAL-V2-HISTORICAL-REPLAY-COVERAGE-AUDIT-20260719T021256Z"
+  ],
+  "authoritative_result_files": [
+    {
+      "path": "outputs/simplified_authoritative_replay/evaluations/PRESIGNAL-V2-PACK-AE-CONFIRMATORY-HOLDOUT-EVALUATION-20260718T180602Z/scientific_result_summary.json",
+      "sha256": "40380792d89baa9893783c0f1e3f91d188621135e7c7807adab02469f9f2307f",
+      "artifact_fingerprint": "a95d0f78f7dbfdf7d544347ad70aa71581fa7eebf9e60bb996fe02eb15a9b17b"
+    },
+    {
+      "path": "outputs/simplified_authoritative_replay/evaluations/PRESIGNAL-V2-PACK-AE-CONFIRMATORY-HOLDOUT-EVALUATION-20260718T180602Z/confirmatory_holdout_evaluation.json",
+      "sha256": "a1c58127eca43350d63d6e1d83949ff6d23f097108785242a41950ab11ebc95f",
+      "verified_against": "artifact_manifest.json"
+    },
+    {
+      "path": "outputs/simplified_authoritative_replay/evaluations/PRESIGNAL-V2-PACK-AE-CONFIRMATORY-HOLDOUT-EVALUATION-20260718T180602Z/holdout_opening_audit.json",
+      "sha256": "d08d9d620c8c1ec23de34da2a076dab1314f38da2c806d5627c11c68177175b0",
+      "verified_against": "artifact_manifest.json"
+    }
+  ],
+  "workbook_files": [
+    {
+      "name": "auto_eeresults_predictions.xlsx",
+      "location": "legacy external workbook; no local copy was accessed or modified",
+      "legacy_google_sheet_id": "1_gZGnd6h3VzdiBvGBHRSxn78KW8tsOi2UEc6Y_Sc23Q"
+    },
+    {
+      "name": "presignal_research_diagnostics.xlsx",
+      "location": "legacy external workbook; no local copy was accessed or modified",
+      "legacy_google_sheet_id": "1jxcZotbzJKcAzrK0VhxetYX6hp5DPXCCIA0J6B6RUy0"
+    },
+    {
+      "name": "diagnostics archive workbook",
+      "location": "legacy external workbook; no local copy was accessed or modified",
+      "legacy_google_sheet_id": "12hi1rugE_F-MhlupgmL13BIagerzA8CZkm1sk_nHPSg"
+    }
+  ],
+  "Google_Sheets_references_if_already_configured": {
+    "source": "existing repository configuration only; no Google API call was made",
+    "legacy_main": "1_gZGnd6h3VzdiBvGBHRSxn78KW8tsOi2UEc6Y_Sc23Q",
+    "legacy_diagnostics": "1jxcZotbzJKcAzrK0VhxetYX6hp5DPXCCIA0J6B6RUy0",
+    "legacy_archive": "12hi1rugE_F-MhlupgmL13BIagerzA8CZkm1sk_nHPSg"
+  },
+  "source_fingerprints": {
+    "frozen_commit": "fe6fbbe779c4d0808a3271c333e4b2f00f25016f",
+    "frozen_commit_tree": "verified through exact Git object paths listed above",
+    "frozen_split_manifest_artifact_fingerprint": "dd04813f678e7574ae1ca21019567163c454838daabff50e58972f1e41401e29"
+  },
+  "artifact_fingerprints": {
+    "confirmatory_scientific_summary": "a95d0f78f7dbfdf7d544347ad70aa71581fa7eebf9e60bb996fe02eb15a9b17b",
+    "confirmatory_evaluation": "0fec54226bd6fb2cafa9e609398e9dfaf26dd8d03240e6dfa83a21ec93efde29",
+    "confirmatory_artifact_manifest": "7365680731d2fb5f986c967821edb336ba5c9cfe083ba3464d409330c016622a",
+    "historical_coverage_audit": "ac9a18b480b6d019925315386cadd2b44b3d0c7df1e7a9a54ed0eb7dda2f253f",
+    "canonical_outcomes": "986e707aaf1f95ae729d7f84b0969cb08906722fa350b049f4da8e2a87b9d9b0",
+    "outcome_attachment": "b4b63940e9052c8be80bb7e57dd423c1094b5679c4496e5bc511187eb21e2abc",
+    "evaluation_readiness": "4a7e23601ca098527390eb64e0955f0690582db03bdabc7089e2f81d96d9a126"
+  },
+  "missing_assets": [],
+  "preservation_warnings": [
+    "Legacy workbooks are recorded from existing configuration only and were intentionally not opened, modified, or written during this preservation task.",
+    "The v2.0 conclusion is limited to the frozen Market Session forecast and evaluation contract; it is not an Event-Path result and does not disprove the v2.1 Event-Path hypothesis.",
+    "No replay, rescore, provider call, market-data call, Apps Script call, or Google Sheets operation occurred."
+  ],
+  "validation_results": {
+    "frozen_commit_exists": "PASS",
+    "tag_targets_frozen_commit": "PASS",
+    "authoritative_result_reconciles": "PASS",
+    "confirmatory_result_file_hashes": "PASS",
+    "scorer_and_contract_identified_at_frozen_commit": "PASS",
+    "pack_a_e_definitions_identified": "PASS",
+    "replay_artifacts_located": "PASS",
+    "legacy_workbooks_preserved_without_access": "PASS",
+    "frozen_code_diff_from_commit": "PASS",
+    "external_operations": "NONE"
+  }
+}
