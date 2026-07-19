@@ -1,0 +1,47 @@
+{
+  "attention_runs": 8,
+  "duplicate_source_row_hashes": 0,
+  "equation_holds": true,
+  "events": 148,
+  "historical_pre_release_lineage_counts": {
+    "PROVEN_BY_FROZEN_CUTOFF_AND_PRE_RELEASE_PAYLOAD": 444
+  },
+  "invalid_or_unavailable_rows": 0,
+  "invalid_source_row_hashes": 0,
+  "label_counts": {
+    "CONTEXT_ONLY": 79,
+    "IGNORE": 48,
+    "NO_SIGNAL": 185,
+    "PRIMARY_DRIVER": 34,
+    "SECONDARY_DRIVER": 64,
+    "WATCHLIST": 34
+  },
+  "models": [
+    "claude-haiku-4-5",
+    "gemini-2.5-flash-lite",
+    "gpt-4o-mini-2024-07-18"
+  ],
+  "provider_contract_error_rows": 117,
+  "provider_disagreement_event_count": 59,
+  "provider_omitted_event_rows": 62,
+  "providers": [
+    "Anthropic",
+    "Gemini",
+    "OpenAI"
+  ],
+  "raw_output_validation_counts": {
+    "VALID": 444
+  },
+  "sessions": 8,
+  "status_counts": {
+    "parsed": 265,
+    "provider_contract_error": 117,
+    "provider_omitted_event": 62
+  },
+  "step5_lineage_status_counts": {
+    "PRESERVED_NOT_SELECTABLE": 189,
+    "VALID_FOR_STEP5": 255
+  },
+  "successful_parsed_rows": 265,
+  "total_authoritative_captured_rows": 444
+}

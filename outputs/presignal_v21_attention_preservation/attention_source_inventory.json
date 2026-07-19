@@ -178,5 +178,23 @@
     "source_path": "git:e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f:automation/build_session_attention_map_v0.py",
     "source_run_id": "",
     "source_type": "historical_dedicated_attention_capture_implementation"
+  },
+  {
+    "accepted_or_rejected": "ACCEPTED",
+    "candidate_object_type": "SESSION_ATTENTION_MAP_HISTORY",
+    "cutoff_binding_proven": true,
+    "dedicated_attention_capture_proven": true,
+    "model_binding_proven": true,
+    "parser_or_schema_available": true,
+    "provider_binding_proven": true,
+    "raw_lineage_available": true,
+    "rejection_reason": "",
+    "session_binding_proven": true,
+    "source_commit": "",
+    "source_decision": "AUTHORITATIVE_ATTENTION_SOURCE",
+    "source_file_hash": "sha256:bc58a6aa2ce7cbb852e7a2e73a52f458fdf9b851e3aa89d1bd133634b0431398",
+    "source_path": "https://docs.google.com/spreadsheets/d/1jxcZotbzJKcAzrK0VhxetYX6hp5DPXCCIA0J6B6RUy0/edit?gid=1528972154#gid=1528972154",
+    "source_run_id": "multiple_attention_runs",
+    "source_type": "google_sheet_history_export"
   }
 ]

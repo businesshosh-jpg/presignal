@@ -1,0 +1,13 @@
+{
+  "exact_duplicates_deduplicated": 0,
+  "export_fingerprint": "sha256:3c79264267429f992886dbf37d4ddb8c041930bbcf096fbce8368b6c8d5ffc63",
+  "export_status": "AUTHORITATIVE_ATTENTION_SOURCE",
+  "record_count": 444,
+  "source_content_fingerprint": "sha256:bc58a6aa2ce7cbb852e7a2e73a52f458fdf9b851e3aa89d1bd133634b0431398",
+  "status_counts": {
+    "parsed": 265,
+    "provider_contract_error": 117,
+    "provider_omitted_event": 62
+  },
+  "step5_selectable_records": 255
+}
