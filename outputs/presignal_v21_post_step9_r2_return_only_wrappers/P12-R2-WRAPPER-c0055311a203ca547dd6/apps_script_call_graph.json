@@ -1,0 +1,37 @@
+{
+  "records": [
+    {
+      "entrypoint": "build_session_attention_map_v0",
+      "reachable_write_capable_tokens": [
+        "_write_rows(",
+        "_ensure_sheet(",
+        "_upsert_registry_rows(",
+        "build_sheets_service("
+      ],
+      "return_only_call_graph_isolated": false,
+      "source_path": "automation/build_session_attention_map_v0.py",
+      "stage": "ATTENTION"
+    },
+    {
+      "entrypoint": "build",
+      "reachable_write_capable_tokens": [
+        "build_sheets_service("
+      ],
+      "return_only_call_graph_isolated": false,
+      "source_path": "automation/build_true_shared_market_state_pack_e_v0.py",
+      "stage": "PACK"
+    },
+    {
+      "entrypoint": "build_session_information_requests_v0",
+      "reachable_write_capable_tokens": [
+        "_write_rows(",
+        "_ensure_sheet(",
+        "_upsert_registry_rows(",
+        "build_sheets_service("
+      ],
+      "return_only_call_graph_isolated": false,
+      "source_path": "automation/build_session_information_requests_v0.py",
+      "stage": "REQUESTS"
+    }
+  ]
+}

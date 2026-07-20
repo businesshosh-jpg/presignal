@@ -1,0 +1,4 @@
+{
+  "performed": false,
+  "reason": "The archived builders entangle scientific construction with mutable worksheet reads, mandatory worksheet writes, and registry mutation. Automatic extraction would create a divergent scientific implementation or restore obsolete builders wholesale."
+}

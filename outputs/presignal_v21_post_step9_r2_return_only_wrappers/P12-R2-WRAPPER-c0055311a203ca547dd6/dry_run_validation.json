@@ -1,0 +1,7 @@
+{
+  "acquisition_calls": 0,
+  "note": "Static contract validation only; no wrapper invocation is safe.",
+  "passed": true,
+  "provider_calls": 0,
+  "writes": 0
+}

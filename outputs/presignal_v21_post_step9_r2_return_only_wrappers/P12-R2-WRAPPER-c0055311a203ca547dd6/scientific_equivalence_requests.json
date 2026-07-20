@@ -1,0 +1,5 @@
+{
+  "executed": false,
+  "passed": false,
+  "reason": "No no-write wrapper exists to compare against the archived builders without introducing a new implementation."
+}

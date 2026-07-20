@@ -1,12 +1,6 @@
 {
-  "adapter_fingerprint": "sha256:552236a8f7812c26a32c4926568ac36b1e6d246c4b2a1448f0b437211be372e7",
+  "decision": "V2_1_POST_STEP9_R2_WRITE_ISOLATION_VALIDATION_FAILED",
   "external_calls": 0,
-  "previous_artifact": "live_lineage_capability_initial.json",
-  "safe_binding_available": false,
-  "source_entrypoints": [
-    "build_session_attention_map_v0",
-    "build",
-    "build_session_information_requests_v0"
-  ],
-  "status": "V2_1_POST_STEP9_R1_DEPLOYED_ENTRYPOINT_WRITE_ISOLATION_REQUIRED"
+  "previous_artifact": "live_lineage_capability_r1.json",
+  "status": "BLOCKED_WRITE_ISOLATION"
 }

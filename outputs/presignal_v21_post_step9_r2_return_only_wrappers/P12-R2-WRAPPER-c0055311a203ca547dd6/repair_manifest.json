@@ -1,0 +1,156 @@
+{
+  "archived_builder_inventory": [
+    {
+      "accepted": false,
+      "current_deployed_equivalent": "NONE",
+      "entrypoint": "build_session_attention_map_v0",
+      "entrypoint_present": true,
+      "input_schema": [
+        "validated Market_Sessions",
+        "Market_Session_Members",
+        "Config provider routes"
+      ],
+      "output_schema": [
+        "Session_Attention_Map MAP_HEADERS",
+        "Session_Attention_Response_Audit AUDIT_HEADERS",
+        "Session_Attention_Summary SUMMARY_HEADERS"
+      ],
+      "rejection_reason": "NO_SAFE_DEPLOYED_RETURN_ONLY_NO_WRITE_BINDING",
+      "source_commit": "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f",
+      "source_file_fingerprint": "sha256:1f7bc5aad9eb5f3533b43f8723f3e0f7b90f9586361099a0a733cf1bb3fdec08",
+      "source_path": "automation/build_session_attention_map_v0.py",
+      "stage": "ATTENTION",
+      "write_behavior": "always writes Session_Attention_Map, audit, summary, and registry rows, including dry-run and mock modes"
+    },
+    {
+      "accepted": false,
+      "current_deployed_equivalent": "NONE",
+      "entrypoint": "build",
+      "entrypoint_present": true,
+      "input_schema": [
+        "Market_State_Pack_Shadow",
+        "Market_Session_Members",
+        "Market_State_Pack_Candidates",
+        "Market_State_Pack_Acquisition_Backlog",
+        "source bundles"
+      ],
+      "output_schema": [
+        "local Pack E artifacts and acquisition manifests"
+      ],
+      "rejection_reason": "NO_SAFE_DEPLOYED_RETURN_ONLY_NO_WRITE_BINDING",
+      "source_commit": "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f",
+      "source_file_fingerprint": "sha256:ceec2555014a15c6cc29ac754a17901afd94985022e03ae1ecca0f0760b40627",
+      "source_path": "automation/build_true_shared_market_state_pack_e_v0.py",
+      "stage": "PACK",
+      "write_behavior": "reads mutable sheet state and fixed historical audit inputs; writes local artifacts; no explicit session/cutoff/run binding and no Pack A return surface"
+    },
+    {
+      "accepted": false,
+      "current_deployed_equivalent": "NONE",
+      "entrypoint": "build_session_information_requests_v0",
+      "entrypoint_present": true,
+      "input_schema": [
+        "validated Market_Sessions",
+        "Market_Session_Members",
+        "Session_Attention_Map",
+        "Config provider routes"
+      ],
+      "output_schema": [
+        "Session_Information_Requests REQUEST_HEADERS",
+        "Information_Requirement_Library LIBRARY_HEADERS",
+        "Session_Information_Response_Audit AUDIT_HEADERS"
+      ],
+      "rejection_reason": "NO_SAFE_DEPLOYED_RETURN_ONLY_NO_WRITE_BINDING",
+      "source_commit": "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f",
+      "source_file_fingerprint": "sha256:64192eceae06ad65f36c3c9b3b657bd77b66882a6cb688ac2b45bf8e8b2bcf44",
+      "source_path": "automation/build_session_information_requests_v0.py",
+      "stage": "REQUESTS",
+      "write_behavior": "always writes request, library, audit, summary, and registry rows, including dry-run and mock modes"
+    }
+  ],
+  "archived_source_commit": "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f",
+  "call_graph": [
+    {
+      "entrypoint": "build_session_attention_map_v0",
+      "reachable_write_capable_tokens": [
+        "_write_rows(",
+        "_ensure_sheet(",
+        "_upsert_registry_rows(",
+        "build_sheets_service("
+      ],
+      "return_only_call_graph_isolated": false,
+      "source_path": "automation/build_session_attention_map_v0.py",
+      "stage": "ATTENTION"
+    },
+    {
+      "entrypoint": "build",
+      "reachable_write_capable_tokens": [
+        "build_sheets_service("
+      ],
+      "return_only_call_graph_isolated": false,
+      "source_path": "automation/build_true_shared_market_state_pack_e_v0.py",
+      "stage": "PACK"
+    },
+    {
+      "entrypoint": "build_session_information_requests_v0",
+      "reachable_write_capable_tokens": [
+        "_write_rows(",
+        "_ensure_sheet(",
+        "_upsert_registry_rows(",
+        "build_sheets_service("
+      ],
+      "return_only_call_graph_isolated": false,
+      "source_path": "automation/build_session_information_requests_v0.py",
+      "stage": "REQUESTS"
+    }
+  ],
+  "capability_endpoint": {
+    "available": false,
+    "reason": "No current Apps Script operation exposes return-only Attention, Request, or shared-Pack lineage."
+  },
+  "classification": "NON_SCIENTIFIC_RETURN_ONLY_WRAPPER_ISOLATION",
+  "decision": "V2_1_POST_STEP9_R2_WRITE_ISOLATION_VALIDATION_FAILED",
+  "deployed_interface": {
+    "current_source_paths": [
+      "apps_script/automation_api.js",
+      "apps_script/authoritative_provider_bridge.js"
+    ],
+    "forecast_bridge_scope": "forecast-only package-bound bridge; not an Attention, Request, or Pack builder",
+    "function_presence": {
+      "apiCallAuthoritativeProviderJsonObject": true,
+      "apiRunPipelineWindow": true,
+      "session_attention_map_return_only": false,
+      "session_information_requests_return_only": false,
+      "shared_market_state_pack_return_only": false
+    },
+    "reason": "No return-only/no-write callable exposes the three required v2 lineage stages with explicit prospective session, cutoff, provider/model, and run identities.",
+    "safe_lineage_entrypoints_available": false
+  },
+  "external_calls": {
+    "acquisition": 0,
+    "apps_script": 0,
+    "google_sheets_writes": 0,
+    "market_data": 0,
+    "provider": 0
+  },
+  "historical_artifacts_changed": false,
+  "pure_logic_extraction": {
+    "performed": false,
+    "reason": "The archived builders entangle scientific construction with mutable worksheet reads, mandatory worksheet writes, and registry mutation. Automatic extraction would create a divergent scientific implementation or restore obsolete builders wholesale."
+  },
+  "repair_run_id": "P12-R2-WRAPPER-c0055311a203ca547dd6",
+  "runtime_write_isolation": {
+    "executed": false,
+    "passed": false,
+    "reason": "Invoking the only identified live paths would violate the no-production-write boundary."
+  },
+  "scientific_equivalence": {
+    "executed": false,
+    "passed": false,
+    "reason": "No no-write wrapper exists to compare against the archived builders without introducing a new implementation."
+  },
+  "static_write_isolation": {
+    "passed": false,
+    "reason": "Every identified builder reaches mutable worksheet or registry write tokens."
+  }
+}

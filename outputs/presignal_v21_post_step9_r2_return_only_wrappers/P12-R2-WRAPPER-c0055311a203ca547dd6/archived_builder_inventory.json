@@ -1,0 +1,71 @@
+{
+  "records": [
+    {
+      "accepted": false,
+      "current_deployed_equivalent": "NONE",
+      "entrypoint": "build_session_attention_map_v0",
+      "entrypoint_present": true,
+      "input_schema": [
+        "validated Market_Sessions",
+        "Market_Session_Members",
+        "Config provider routes"
+      ],
+      "output_schema": [
+        "Session_Attention_Map MAP_HEADERS",
+        "Session_Attention_Response_Audit AUDIT_HEADERS",
+        "Session_Attention_Summary SUMMARY_HEADERS"
+      ],
+      "rejection_reason": "NO_SAFE_DEPLOYED_RETURN_ONLY_NO_WRITE_BINDING",
+      "source_commit": "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f",
+      "source_file_fingerprint": "sha256:1f7bc5aad9eb5f3533b43f8723f3e0f7b90f9586361099a0a733cf1bb3fdec08",
+      "source_path": "automation/build_session_attention_map_v0.py",
+      "stage": "ATTENTION",
+      "write_behavior": "always writes Session_Attention_Map, audit, summary, and registry rows, including dry-run and mock modes"
+    },
+    {
+      "accepted": false,
+      "current_deployed_equivalent": "NONE",
+      "entrypoint": "build",
+      "entrypoint_present": true,
+      "input_schema": [
+        "Market_State_Pack_Shadow",
+        "Market_Session_Members",
+        "Market_State_Pack_Candidates",
+        "Market_State_Pack_Acquisition_Backlog",
+        "source bundles"
+      ],
+      "output_schema": [
+        "local Pack E artifacts and acquisition manifests"
+      ],
+      "rejection_reason": "NO_SAFE_DEPLOYED_RETURN_ONLY_NO_WRITE_BINDING",
+      "source_commit": "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f",
+      "source_file_fingerprint": "sha256:ceec2555014a15c6cc29ac754a17901afd94985022e03ae1ecca0f0760b40627",
+      "source_path": "automation/build_true_shared_market_state_pack_e_v0.py",
+      "stage": "PACK",
+      "write_behavior": "reads mutable sheet state and fixed historical audit inputs; writes local artifacts; no explicit session/cutoff/run binding and no Pack A return surface"
+    },
+    {
+      "accepted": false,
+      "current_deployed_equivalent": "NONE",
+      "entrypoint": "build_session_information_requests_v0",
+      "entrypoint_present": true,
+      "input_schema": [
+        "validated Market_Sessions",
+        "Market_Session_Members",
+        "Session_Attention_Map",
+        "Config provider routes"
+      ],
+      "output_schema": [
+        "Session_Information_Requests REQUEST_HEADERS",
+        "Information_Requirement_Library LIBRARY_HEADERS",
+        "Session_Information_Response_Audit AUDIT_HEADERS"
+      ],
+      "rejection_reason": "NO_SAFE_DEPLOYED_RETURN_ONLY_NO_WRITE_BINDING",
+      "source_commit": "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f",
+      "source_file_fingerprint": "sha256:64192eceae06ad65f36c3c9b3b657bd77b66882a6cb688ac2b45bf8e8b2bcf44",
+      "source_path": "automation/build_session_information_requests_v0.py",
+      "stage": "REQUESTS",
+      "write_behavior": "always writes request, library, audit, summary, and registry rows, including dry-run and mock modes"
+    }
+  ]
+}

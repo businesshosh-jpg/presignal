@@ -1,0 +1,5 @@
+{
+  "decision": "V2_1_POST_STEP9_R2_WRITE_ISOLATION_VALIDATION_FAILED",
+  "reason": "Every identified builder reaches mutable worksheet or registry write tokens.",
+  "resolved": false
+}

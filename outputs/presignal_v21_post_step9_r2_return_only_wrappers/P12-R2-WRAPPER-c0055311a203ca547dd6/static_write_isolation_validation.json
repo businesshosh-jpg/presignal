@@ -1,0 +1,4 @@
+{
+  "passed": false,
+  "reason": "Every identified builder reaches mutable worksheet or registry write tokens."
+}

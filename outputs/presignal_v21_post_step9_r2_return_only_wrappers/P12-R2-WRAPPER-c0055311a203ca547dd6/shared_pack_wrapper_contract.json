@@ -1,0 +1,20 @@
+{
+  "api_version": "NOT_IMPLEMENTED",
+  "operation": "shared_pack",
+  "required_envelope": [
+    "api_version",
+    "operation",
+    "study_id",
+    "collection_run_id",
+    "session_id",
+    "provider",
+    "model",
+    "information_cutoff_ts",
+    "stage_run_id",
+    "idempotency_key",
+    "request_fingerprint",
+    "dry_run",
+    "input_payload"
+  ],
+  "status": "BLOCKED_WRITE_ISOLATION"
+}
