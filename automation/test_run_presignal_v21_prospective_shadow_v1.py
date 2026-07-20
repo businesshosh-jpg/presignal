@@ -37,8 +37,10 @@ class ProspectiveShadowPreparationTests(unittest.TestCase):
         with self.assertRaisesRegex(shadow.ProspectiveShadowError, "ATTENTION_INCOMPLETE"): shadow.validate_pair(a, e, study=self.study)
         a, e = shadow.fixture_pair(); a["information_requests"] = []
         with self.assertRaisesRegex(shadow.ProspectiveShadowError, "PACK_A_EMPTY"): shadow.validate_pair(a, e, study=self.study)
-        a, e = shadow.fixture_pair(); a["forecast_cutoff_ts"] = e["forecast_cutoff_ts"] = a["release_ts"]
-        with self.assertRaisesRegex(shadow.ProspectiveShadowError, "CUTOFF_NOT_BEFORE_RELEASE"): shadow.validate_pair(a, e, study=self.study)
+        a, e = shadow.fixture_pair()
+        for arm in (a, e):
+            arm["forecast_cutoff_ts"] = arm["information_cutoff_ts"] = arm["release_ts"]
+        with self.assertRaisesRegex(shadow.ProspectiveShadowError, "TIMING_SEMANTICS_ORDER"): shadow.validate_pair(a, e, study=self.study)
         a, e = shadow.fixture_pair(); a["released_value"] = 1
         with self.assertRaisesRegex(Exception, "FORBIDDEN_LEAKAGE_FIELD"): shadow.validate_pair(a, e, study=self.study)
         a, e = shadow.fixture_pair()
@@ -51,6 +53,17 @@ class ProspectiveShadowPreparationTests(unittest.TestCase):
         self.assertEqual(ready["resume_action"], "SKIP_ACCEPTED_PACK_A")
         self.assertIn("OUTCOME_CONTENTS_UNAVAILABLE", ready["outcome_isolation"])
         self.assertEqual(ready["provider_calls"], 0)
+
+    def test_information_cutoff_and_forecast_deadline_are_distinct(self) -> None:
+        a, e = shadow.fixture_pair()
+        ready = shadow.validate_pair(a, e, study=self.study)
+        self.assertEqual(ready["information_cutoff_ts"], "2030-01-01T12:00:00Z")
+        self.assertEqual(ready["prompt_freeze_ts"], "2030-01-01T12:01:00Z")
+        self.assertEqual(ready["forecast_freeze_deadline_ts"], "2030-01-01T12:04:00Z")
+        a, e = shadow.fixture_pair()
+        a["provider_call_started_ts"] = e["provider_call_started_ts"] = "2030-01-01T12:04:00Z"
+        with self.assertRaisesRegex(shadow.ProspectiveShadowError, "PROVIDER_CALL_OUTSIDE_FROZEN_WINDOW"):
+            shadow.validate_pair(a, e, study=self.study)
 
     def test_dry_run_and_execute_hard_stop(self) -> None:
         results = shadow.dry_run(self.study)

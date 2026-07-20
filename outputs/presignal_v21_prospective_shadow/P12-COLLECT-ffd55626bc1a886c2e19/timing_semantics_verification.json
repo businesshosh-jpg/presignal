@@ -1,0 +1,13 @@
+{
+  "archived_preparation_unchanged": true,
+  "archived_timing_semantics": "AMBIGUOUS",
+  "classification": "NON_SCIENTIFIC_EXECUTION_CONTROL",
+  "compatibility_rule": "forecast_cutoff_ts remains a legacy alias of information_cutoff_ts only; it cannot serve as the forecast deadline.",
+  "control_version": "P12_TIMING_SEMANTICS_CONTROL_V1",
+  "forecast_freeze_deadline_ts": "Latest permitted accepted forecast time, strictly before scheduled release.",
+  "information_cutoff_ts": "Latest timestamp allowed in Attention, Requests, and Packs.",
+  "live_execution_allowed_only_with_this_control": true,
+  "prompt_freeze_ts": "Timestamp at which the exact cutoff-safe prompt is frozen.",
+  "required_order": "information_cutoff_ts <= prompt_freeze_ts <= provider_call_started_ts < forecast_freeze_ts < scheduled_release_ts; forecast_freeze_ts must be < forecast_freeze_deadline_ts.",
+  "scheduled_release_ts": "Planned Episode release time."
+}

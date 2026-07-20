@@ -1,0 +1,18 @@
+{
+  "direct_session_forecast_status": "RETAIN_ACTIVE_REFERENCE_BASELINE",
+  "frozen_historical_tag": "presignal-v2.1-event-path-contract-v1-frozen",
+  "frozen_historical_tag_target": "e8cd4f3fa2f3d7c1b2e624e32f1aea0a6c9866c0",
+  "p12_boundary": {
+    "arms": 72,
+    "episodes": 12,
+    "pairs": 36
+  },
+  "passed": true,
+  "preparation_fingerprint": "sha256:a7cfe811af8cbc9cfd8f49572cba575c152361c296df96c2b420252181c9f038",
+  "preparation_run_id": "PSS-PREP-df3dc4da1484d5344456",
+  "prospective_contract": {
+    "fingerprint": "sha256:a40c0ee570cde5c1e52e4b90d256ff5552411631d4a6224b1683b629fb69775a",
+    "version": "presignal_event_path_contract_v1_flat_stage_prospective_v1"
+  },
+  "study_id": "PSS_8a6e8ca69c195cf9defc"
+}

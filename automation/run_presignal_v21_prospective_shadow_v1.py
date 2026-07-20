@@ -120,7 +120,7 @@ def study_manifest(authorization: Mapping[str, Any]) -> dict[str, Any]:
         "providers_models": [{"provider": provider, "model": model} for provider, model in PROVIDERS],
         "eligibility": "FORECAST selection, parsed complete Attention, valid requests and distinct Pack A/E, exact cutoff, no leakage, unique Episode identity.",
         "attention_mapping": step5.ATTENTION_TO_SELECTION,
-        "cutoff_policy": "Session forecast_cutoff_ts is frozen before the earliest Episode release and is identical across paired Pack A/E prompts. Attention, Requests, and Packs must be frozen at or before it.",
+        "cutoff_policy": "information_cutoff_ts is frozen before the earliest Episode release and is identical across paired Pack A/E prompts. Attention, Requests, and Packs must be frozen at or before information_cutoff_ts. prompt_freeze_ts freezes the already cutoff-safe provider-visible prompt; forecast_freeze_deadline_ts is a separate, strictly pre-release acceptance deadline.",
         "arm_order_rule": "PACK_A first iff sha256(provider_episode_pair_id) final hex digit is even; otherwise PACK_E first.",
         "primary_endpoint": "15-minute direction correctness",
         "secondary_endpoints": ["5-minute direction correctness", "30-minute direction correctness", "60-minute direction correctness", "numeric path score", "reversal/path validity", "paired completion", "Attention adequacy"],
@@ -163,7 +163,7 @@ def fixture_pair(*, selection: str = "FORECAST", members: int = 1, provider: str
     episode_id = "EP_BATCH_PROSPECTIVE" if members > 1 else "EP_EVENT_PROSPECTIVE"
     member_rows = [{"event_id": "EVP_" + str(index), "indicator_name": "Prospective indicator " + str(index), "structural_component_role": "STRUCTURAL_PRIMARY" if index == 0 else "STRUCTURAL_SECONDARY"} for index in range(members)]
     attention = [{"event_id": item["event_id"], "indicator_name": item["indicator_name"], "attention_label": "PRIMARY_DRIVER" if index == 0 else "SECONDARY_DRIVER", "attention_rank": index + 1, "attention_reason": "prospective fixture", "expected_market_channel": "rates", "driver_role": "driver", "confidence": 0.7, "attention_run_id": "PATTN_FIXTURE", "session_id": "PROS_SESSION_1", "provider": provider, "model": model, "forecast_cutoff_ts": "2030-01-01T12:00:00Z", "status": "parsed", "source_kind": "prospective"} for index, item in enumerate(member_rows)]
-    base = {"episode_id": episode_id, "provider": provider, "model": model, "source_session_id": "PROS_SESSION_1", "country": "US", "release_ts": "2030-01-01T12:05:00Z", "forecast_cutoff_ts": "2030-01-01T12:00:00Z", "episode_members": member_rows, "structural_component_roles": [{"event_id": item["event_id"], "component_role": item["structural_component_role"]} for item in member_rows], "provider_attention_map": attention, "provider_episode_selection": selection, "information_requests": [{"information_key": "rates", "reason": "prospective fixture", "source_session_id": "PROS_SESSION_1"}], "scheduled_release_ts": "2030-01-01T12:05:00Z", "attention_generated_ts": "2030-01-01T11:55:00Z", "requests_generated_ts": "2030-01-01T11:57:00Z", "pack_freeze_ts": "2030-01-01T11:59:00Z"}
+    base = {"episode_id": episode_id, "provider": provider, "model": model, "source_session_id": "PROS_SESSION_1", "country": "US", "release_ts": "2030-01-01T12:05:00Z", "forecast_cutoff_ts": "2030-01-01T12:00:00Z", "information_cutoff_ts": "2030-01-01T12:00:00Z", "prompt_freeze_ts": "2030-01-01T12:01:00Z", "forecast_freeze_deadline_ts": "2030-01-01T12:04:00Z", "episode_members": member_rows, "structural_component_roles": [{"event_id": item["event_id"], "component_role": item["structural_component_role"]} for item in member_rows], "provider_attention_map": attention, "provider_episode_selection": selection, "information_requests": [{"information_key": "rates", "reason": "prospective fixture", "source_session_id": "PROS_SESSION_1"}], "scheduled_release_ts": "2030-01-01T12:05:00Z", "attention_generated_ts": "2030-01-01T11:55:00Z", "requests_generated_ts": "2030-01-01T11:57:00Z", "pack_freeze_ts": "2030-01-01T11:59:00Z"}
     a = {**base, "information_arm": "PACK_A", "shared_market_state_pack": None, "pack_id": "PACK_A_PROVIDER_REQUESTS", "pack_fingerprint": None}
     e = {**base, "information_arm": "PACK_E", "shared_market_state_pack": {"pack_id": "PACK_E_SHARED", "pack_fingerprint": "sha256:prospective-pack-e", "items": [{"information_key": "rates", "value": "as_of_cutoff", "source_timestamp": "2030-01-01T11:58:00Z"}]}, "pack_id": "PACK_E_SHARED", "pack_fingerprint": "sha256:prospective-pack-e"}
     a["input_fingerprint"], e["input_fingerprint"] = sha256(a), sha256(e)
@@ -172,7 +172,7 @@ def fixture_pair(*, selection: str = "FORECAST", members: int = 1, provider: str
 
 def validate_pair(arm_a: Mapping[str, Any], arm_e: Mapping[str, Any], *, study: Mapping[str, Any], seen_episodes: set[str] | None = None, resume_state: Mapping[str, Any] | None = None) -> dict[str, Any]:
     if arm_a.get("information_arm") != "PACK_A" or arm_e.get("information_arm") != "PACK_E": raise ProspectiveShadowError("PAIR_ARM_IDENTITY")
-    identity_fields = ("episode_id", "provider", "model", "source_session_id", "forecast_cutoff_ts", "release_ts")
+    identity_fields = ("episode_id", "provider", "model", "source_session_id", "forecast_cutoff_ts", "information_cutoff_ts", "prompt_freeze_ts", "forecast_freeze_deadline_ts", "release_ts")
     if any(arm_a.get(key) != arm_e.get(key) for key in identity_fields): raise ProspectiveShadowError("PAIR_IDENTITY_MISMATCH")
     if arm_a.get("provider_episode_selection") != "FORECAST":
         return {"status": "NOT_FORECAST_SELECTED", "selection": arm_a.get("provider_episode_selection"), "provider_calls": 0}
@@ -184,10 +184,13 @@ def validate_pair(arm_a: Mapping[str, Any], arm_e: Mapping[str, Any], *, study: 
     pack_e = arm_e.get("shared_market_state_pack")
     if not isinstance(pack_e, Mapping) or not pack_e.get("items"): raise ProspectiveShadowError("PACK_E_EMPTY")
     if canonical_json(arm_a.get("shared_market_state_pack")) == canonical_json(pack_e): raise ProspectiveShadowError("PACKS_IDENTICAL")
-    cutoff, release = utc(str(arm_a["forecast_cutoff_ts"])), utc(str(arm_a["release_ts"]))
-    if cutoff >= release: raise ProspectiveShadowError("CUTOFF_NOT_BEFORE_RELEASE")
+    information_cutoff, prompt_freeze, forecast_deadline, release = (utc(str(arm_a[key])) for key in ("information_cutoff_ts", "prompt_freeze_ts", "forecast_freeze_deadline_ts", "release_ts"))
+    if utc(str(arm_a["forecast_cutoff_ts"])) != information_cutoff: raise ProspectiveShadowError("LEGACY_CUTOFF_ALIAS_MISMATCH")
+    if not information_cutoff <= prompt_freeze < forecast_deadline < release: raise ProspectiveShadowError("TIMING_SEMANTICS_ORDER")
     for timestamp in (arm_a["attention_generated_ts"], arm_a["requests_generated_ts"], arm_a["pack_freeze_ts"]):
-        if utc(timestamp) > cutoff: raise ProspectiveShadowError("POST_CUTOFF_WORKFLOW_ARTIFACT")
+        if utc(timestamp) > information_cutoff: raise ProspectiveShadowError("POST_CUTOFF_WORKFLOW_ARTIFACT")
+    if arm_a.get("provider_call_started_ts") and not prompt_freeze <= utc(str(arm_a["provider_call_started_ts"])) < forecast_deadline:
+        raise ProspectiveShadowError("PROVIDER_CALL_OUTSIDE_FROZEN_WINDOW")
     step5.reject_leakage(arm_a); step5.reject_leakage(arm_e)
     pair_ids = identities(study["study_id"], arm_a["source_session_id"], arm_a["episode_id"], arm_a["provider"], arm_a["model"])
     context_a = prospective.prospective_context(arm_a, prospective.PROSPECTIVE_CONTRACT_VERSION)
@@ -201,7 +204,7 @@ def validate_pair(arm_a: Mapping[str, Any], arm_e: Mapping[str, Any], *, study: 
     if resume_state and resume_state.get("arms", {}).get("PACK_A") == "FORECAST_ACCEPTED": resume_action = "SKIP_ACCEPTED_PACK_A"
     elif resume_state and resume_state.get("state") == "FORECASTS_FROZEN": resume_action = "WAIT_FOR_RELEASE_OUTCOME"
     else: resume_action = "READY_FOR_FUTURE_EXECUTION"
-    return {"status": "FORECAST_READY", "identities": pair_ids, "arm_order": arm_order(pair_ids["provider_episode_pair_id"]), "prompt_diff": diff, "prompt_fingerprints": {"PACK_A": sha256(prompt_a), "PACK_E": sha256(prompt_e)}, "request_fingerprints": {"PACK_A": sha256(payload_a), "PACK_E": sha256(payload_e)}, "prompt_freeze_ts": arm_a["pack_freeze_ts"], "forecast_must_complete_before": arm_a["forecast_cutoff_ts"], "release_ts": arm_a["release_ts"], "outcome_isolation": "OUTCOME_CONTENTS_UNAVAILABLE_UNTIL_AFTER_BOTH_FORECASTS_FROZEN_AND_RELEASE_OCCURRED", "resume_action": resume_action, "provider_calls": 0}
+    return {"status": "FORECAST_READY", "identities": pair_ids, "arm_order": arm_order(pair_ids["provider_episode_pair_id"]), "prompt_diff": diff, "prompt_fingerprints": {"PACK_A": sha256(prompt_a), "PACK_E": sha256(prompt_e)}, "request_fingerprints": {"PACK_A": sha256(payload_a), "PACK_E": sha256(payload_e)}, "information_cutoff_ts": arm_a["information_cutoff_ts"], "prompt_freeze_ts": arm_a["prompt_freeze_ts"], "forecast_freeze_deadline_ts": arm_a["forecast_freeze_deadline_ts"], "release_ts": arm_a["release_ts"], "outcome_isolation": "OUTCOME_CONTENTS_UNAVAILABLE_UNTIL_AFTER_BOTH_FORECASTS_FROZEN_AND_RELEASE_OCCURRED", "resume_action": resume_action, "provider_calls": 0}
 
 
 def contracts(study: Mapping[str, Any]) -> dict[str, Any]:
@@ -211,7 +214,7 @@ def contracts(study: Mapping[str, Any]) -> dict[str, Any]:
         "population_boundary_manifest.json": {"boundaries": STAGES, "episode_counting_unit": "unique Episode IDs", "provider_rows_do_not_inflate_episode_count": True},
         "episode_accrual_contract.json": {"admission_rule": "An Episode accrues exactly once when admitted to the immutable prospective study manifest, independent of provider count, resume, or source refresh.", "report_separately": ["admitted unique Episodes", "forecasted provider/Episode pairs", "complete paired observations", "accepted forecast arms", "evaluated pairs"]},
         "eligibility_contract.json": {"forecast_required_selection": "FORECAST", "non_forecast_records": ["WATCH", "IGNORE", "NO_SIGNAL"], "requirements": ["valid Session", "deterministic Episode", "exact release", "paired identical cutoff", "parsed complete Attention", "valid Requests", "distinct Pack A/E", "exact provider/model", "prospective contract", "no leakage", "unique Episode"]},
-        "cutoff_and_freeze_contract.json": {"cutoff_rule": study["cutoff_policy"], "required_timestamps": ["scheduled_release_ts", "forecast_cutoff_ts", "attention_generated_ts", "requests_generated_ts", "pack_freeze_ts", "prompt_freeze_ts", "forecast_call_ts", "forecast_freeze_ts", "release_observed_ts", "outcome_generated_ts", "evaluation_ts"], "timing_states": TIMING_STATES, "hard_stops": ["forecast call or freeze at or after cutoff", "released actuals in forecast input", "Outcome attached before both forecasts freeze"]},
+        "cutoff_and_freeze_contract.json": {"cutoff_rule": study["cutoff_policy"], "required_timestamps": ["scheduled_release_ts", "forecast_cutoff_ts", "information_cutoff_ts", "attention_generated_ts", "requests_generated_ts", "pack_freeze_ts", "prompt_freeze_ts", "provider_call_started_ts", "forecast_freeze_deadline_ts", "forecast_freeze_ts", "release_observed_ts", "outcome_generated_ts", "evaluation_ts"], "required_order": "information_cutoff_ts <= prompt_freeze_ts <= provider_call_started_ts < forecast_freeze_ts < scheduled_release_ts; forecast_freeze_ts must also be < forecast_freeze_deadline_ts", "timing_states": TIMING_STATES, "hard_stops": ["provider call starts before prompt freeze or at/after forecast freeze deadline", "forecast freeze at/after forecast freeze deadline or scheduled release", "released actuals in forecast input", "Outcome attached before both forecasts freeze"]},
         "attention_workflow_contract.json": {"reused_system": "existing v2 build_attention_map() output through Step 5 adapt_prospective_outputs", "new_session_required": True, "historical_answers_prohibited": True, "mapping": step5.ATTENTION_TO_SELECTION, "structural_roles": "neutral metadata only"},
         "pack_workflow_contract.json": {"reused_systems": ["existing v2 build_information_requests()", "existing v2 build_shared_market_state_pack()"], "pack_a": "provider-owned requested information", "pack_e": "full shared session Pack E, identical across providers", "post_cutoff_items_prohibited": True},
         "paired_prompt_contract.json": {"same_fields": ["provider", "model", "Episode", "members", "cutoff", "Attention", "generation settings", "schema", "horizons", "Outcome identity"], "permitted_differences": sorted(single.ALLOWED_PROMPT_DIFFERENCES), "prompt_freeze_before_calls": True},
@@ -243,7 +246,10 @@ def dry_run(study: Mapping[str, Any]) -> list[dict[str, Any]]:
     bad_attention_a, bad_attention_e = fixture_pair(); bad_attention_a["provider_attention_map"] = bad_attention_a["provider_attention_map"][:0]; scenarios.append(("incomplete_attention", bad_attention_a, bad_attention_e, None, "ATTENTION_INCOMPLETE"))
     empty_a, empty_e = fixture_pair(); empty_a["information_requests"] = []; scenarios.append(("empty_pack_a", empty_a, empty_e, None, "PACK_A_EMPTY"))
     identical_a, identical_e = fixture_pair(); identical_a["shared_market_state_pack"] = identical_e["shared_market_state_pack"]; scenarios.append(("identical_packs", identical_a, identical_e, None, "PACKS_IDENTICAL"))
-    cutoff_a, cutoff_e = fixture_pair(); cutoff_a["forecast_cutoff_ts"] = cutoff_e["forecast_cutoff_ts"] = cutoff_a["release_ts"]; scenarios.append(("invalid_cutoff", cutoff_a, cutoff_e, None, "CUTOFF_NOT_BEFORE_RELEASE"))
+    cutoff_a, cutoff_e = fixture_pair()
+    for arm in (cutoff_a, cutoff_e):
+        arm["forecast_cutoff_ts"] = arm["information_cutoff_ts"] = arm["release_ts"]
+    scenarios.append(("invalid_cutoff", cutoff_a, cutoff_e, None, "TIMING_SEMANTICS_ORDER"))
     leak_a, leak_e = fixture_pair(); leak_a["released_value"] = 1; scenarios.append(("post_cutoff_leakage", leak_a, leak_e, None, "FORBIDDEN_LEAKAGE_FIELD"))
     unavailable_a, unavailable_e = fixture_pair(provider="Unavailable", model="missing-model"); scenarios.append(("model_unavailable", unavailable_a, unavailable_e, None, "MODEL_UNAVAILABLE"))
     resume_a, resume_e = fixture_pair(); scenarios.append(("resume_after_pack_a", resume_a, resume_e, {"arms": {"PACK_A": "FORECAST_ACCEPTED"}}, None))

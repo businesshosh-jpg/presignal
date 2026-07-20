@@ -1,0 +1,37 @@
+{
+  "authorization": {
+    "direct_session_forecast_status": "RETAIN_ACTIVE_REFERENCE_BASELINE",
+    "frozen_historical_tag": "presignal-v2.1-event-path-contract-v1-frozen",
+    "frozen_historical_tag_target": "e8cd4f3fa2f3d7c1b2e624e32f1aea0a6c9866c0",
+    "p12_boundary": {
+      "arms": 72,
+      "episodes": 12,
+      "pairs": 36
+    },
+    "passed": true,
+    "preparation_fingerprint": "sha256:a7cfe811af8cbc9cfd8f49572cba575c152361c296df96c2b420252181c9f038",
+    "preparation_run_id": "PSS-PREP-df3dc4da1484d5344456",
+    "prospective_contract": {
+      "fingerprint": "sha256:a40c0ee570cde5c1e52e4b90d256ff5552411631d4a6224b1683b629fb69775a",
+      "version": "presignal_event_path_contract_v1_flat_stage_prospective_v1"
+    },
+    "study_id": "PSS_8a6e8ca69c195cf9defc"
+  },
+  "checkpoint_decision": "TARGETED_NON_SCIENTIFIC_REPAIR_REQUIRED",
+  "collection_run_id": "P12-COLLECT-ffd55626bc1a886c2e19",
+  "execution_enablement": "BLOCKED_UNTIL_LIVE_V2_LINEAGE_ENTRYPOINTS_ARE_BOUND",
+  "external_calls": {
+    "acquisition": 0,
+    "apps_script": 0,
+    "attention": 0,
+    "forecast": 0,
+    "google_sheets_writes": 0,
+    "information_request": 0,
+    "market_data": 0
+  },
+  "mode": "execute",
+  "scientific_contract_changes": 0,
+  "status": "V2_1_P12_TARGETED_NON_SCIENTIFIC_REPAIR_REQUIRED",
+  "study_id": "PSS_8a6e8ca69c195cf9defc",
+  "timing_control_fingerprint": "sha256:28eefa874f6b419771ae910d5c107230a1ccaf27f0861720dfd45896239f0eef"
+}
