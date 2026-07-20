@@ -1,0 +1,8 @@
+{
+  "affected_responses": 6,
+  "decision": "V2_1_STEP7_TARGETED_OUTPUT_CONTRACT_REPAIR_REQUIRED",
+  "exact_defect": "Repeated PATH_NEUTRAL_PIP_RANGE rejections for FLAT prediction-path stages.",
+  "historical_rejected_outputs": "REMAIN_EXCLUDED",
+  "smallest_future_facing_repair": "Add a prospective provider-output constraint and validation example requiring expected_pips_min = expected_pips_max = 0 whenever expected_direction = FLAT; do not relax the frozen parser or repair historical outputs.",
+  "why_not_scale_unchanged": "The repeated mechanical output-contract violation materially reduced paired completion, while the observed arm difference remains uncertain under Episode clustering and missingness bounds."
+}

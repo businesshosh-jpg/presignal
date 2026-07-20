@@ -1,0 +1,7 @@
+{
+  "both_accepted": 14,
+  "exact_paired_completion_mcnemar_p_value": 0.625,
+  "neither_accepted": 3,
+  "pack_a_only_accepted": 1,
+  "pack_e_only_accepted": 3
+}

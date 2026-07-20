@@ -1,0 +1,16 @@
+{
+  "analysis_fingerprint": "sha256:f1dc8c8fb0e445eac14beeb99b17cd05cecdd1d5443e7f7c44c6cb69b88b9b92",
+  "analysis_run_id": "STEP7-PAIRED-1dbbf399d2f73793e4f3",
+  "analysis_version": "presignal_v21_episode_cluster_paired_analysis_v1",
+  "batch_contract_fingerprint": "sha256:7b3f015f34e61c0877096f6da4a077ab4bee8e6d964c82a1da2beaf0f80f10ca",
+  "batch_run_id": "STEP6-BATCH-f718192a7566138c3fda",
+  "decision": "V2_1_STEP7_TARGETED_OUTPUT_CONTRACT_REPAIR_REQUIRED",
+  "external_calls": {
+    "acquisition": 0,
+    "apps_script": 0,
+    "google_sheets_writes": 0,
+    "market_data": 0,
+    "provider": 0
+  },
+  "frozen_contract_tag_target": "e8cd4f3fa2f3d7c1b2e624e32f1aea0a6c9866c0"
+}

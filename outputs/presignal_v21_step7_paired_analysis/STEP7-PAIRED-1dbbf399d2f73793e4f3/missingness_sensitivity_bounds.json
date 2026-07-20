@@ -1,0 +1,13 @@
+{
+  "best_case_pack_a_difference": 0.3333333333333333,
+  "complete_case_observed_difference": 0.14285714285714285,
+  "denominator_approved_pairs": 21,
+  "effect_sign_survives_bounds": false,
+  "known_pack_a_correct": 6,
+  "known_pack_e_correct": 5,
+  "neutral_midpoint_descriptive_difference": 0.09523809523809523,
+  "note": "Bounds preserve all accepted-arm primary scores derived from frozen Prediction and Outcome artifacts; only unaccepted arms vary.",
+  "unknown_pack_a_scores": 6,
+  "unknown_pack_e_scores": 4,
+  "worst_case_pack_a_difference": -0.14285714285714285
+}

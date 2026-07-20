@@ -1,0 +1,69 @@
+{
+  "horizons": [
+    {
+      "both_correct": 1,
+      "both_incorrect": 10,
+      "conservative_95pct_difference_interval": [
+        -0.19747325779574199,
+        0.5337686280510409
+      ],
+      "exact_mcnemar_two_sided_p_value": 0.25,
+      "horizon_min": 5,
+      "multiplicity": "SECONDARY_EXPLORATORY_UNADJUSTED",
+      "pack_a_accuracy": 0.2857142857142857,
+      "pack_a_correct": 4,
+      "pack_a_only_correct": 3,
+      "pack_e_accuracy": 0.07142857142857142,
+      "pack_e_correct": 1,
+      "pack_e_only_correct": 0,
+      "pair_count": 14,
+      "paired_risk_difference_pack_a_minus_pack_e": 0.21428571428571427
+    },
+    {
+      "both_correct": 2,
+      "both_incorrect": 10,
+      "conservative_95pct_difference_interval": [
+        -0.4001784387390711,
+        0.4001784387390711
+      ],
+      "exact_mcnemar_two_sided_p_value": 1.0,
+      "horizon_min": 30,
+      "multiplicity": "SECONDARY_EXPLORATORY_UNADJUSTED",
+      "pack_a_accuracy": 0.21428571428571427,
+      "pack_a_correct": 3,
+      "pack_a_only_correct": 1,
+      "pack_e_accuracy": 0.21428571428571427,
+      "pack_e_correct": 3,
+      "pack_e_only_correct": 1,
+      "pair_count": 14,
+      "paired_risk_difference_pack_a_minus_pack_e": 0.0
+    },
+    {
+      "both_correct": 4,
+      "both_incorrect": 7,
+      "conservative_95pct_difference_interval": [
+        -0.39854777991618484,
+        0.5106462366679512
+      ],
+      "exact_mcnemar_two_sided_p_value": 1.0,
+      "horizon_min": 60,
+      "multiplicity": "SECONDARY_EXPLORATORY_UNADJUSTED",
+      "pack_a_accuracy": 0.42857142857142855,
+      "pack_a_correct": 6,
+      "pack_a_only_correct": 2,
+      "pack_e_accuracy": 0.35714285714285715,
+      "pack_e_correct": 5,
+      "pack_e_only_correct": 1,
+      "pair_count": 14,
+      "paired_risk_difference_pack_a_minus_pack_e": 0.07142857142857142
+    }
+  ],
+  "multiplicity_note": "Secondary endpoints are exploratory and do not override the primary endpoint.",
+  "reversal_path_validity": {
+    "label": "SECONDARY_EXPLORATORY",
+    "pack_a_available": 9,
+    "pack_a_true": 5,
+    "pack_e_available": 10,
+    "pack_e_true": 4
+  }
+}

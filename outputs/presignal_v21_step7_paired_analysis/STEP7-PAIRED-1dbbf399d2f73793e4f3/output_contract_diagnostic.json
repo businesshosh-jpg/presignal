@@ -1,0 +1,16 @@
+{
+  "decision_basis": "Six repeated FLAT-stage pip-range violations are a prospective output-contract prevention candidate; all historical rejections remain excluded.",
+  "diagnostic_category_counts": {
+    "INVALID_ENUM": 3,
+    "OTHER_EXPLICIT_REASON": 7
+  },
+  "frozen_rejection_reason_counts": {
+    "PATH_NEUTRAL_PIP_RANGE": 6,
+    "PATH_PIPS_MIN": 1,
+    "PREDICTION_REVERSAL_FLAG": 3
+  },
+  "future_targeted_repair_candidates": {
+    "PROSPECTIVE_FLAT_STAGE_ZERO_PIP_CONSTRAINT": 6
+  },
+  "rejected_response_count": 10
+}

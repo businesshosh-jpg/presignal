@@ -1,0 +1,23 @@
+{
+  "cluster_pair_counts": {
+    "EP_BATCH_4bf004a6c160d4763e06": 2,
+    "EP_BATCH_4c1237b4fdba265e575f": 1,
+    "EP_BATCH_6fb320e5e8c5931f2373": 2,
+    "EP_BATCH_abe9bddef79b4d517245": 1,
+    "EP_BATCH_ecfa4606e8dced27ecd0": 1,
+    "EP_EVENT_1990950e20318cd96a78": 1,
+    "EP_EVENT_697fa043068a1f61838f": 1,
+    "EP_EVENT_9d3109bf76341fad0d60": 3,
+    "EP_EVENT_d5499dc406b408c2068e": 1,
+    "EP_EVENT_fbb37fea272c4e76546e": 1
+  },
+  "method": "EXACT_EPISODE_LEVEL_LABEL_SWAP_ENUMERATION",
+  "null_distribution_max": 0.2857142857142857,
+  "null_distribution_min": -0.2857142857142857,
+  "observed_clustered_mean_difference": 0.14285714285714285,
+  "possible_permutations": 1024,
+  "statistic": "mean_paired_difference_pack_a_minus_pack_e",
+  "two_sided_p_value": 0.625,
+  "unique_episode_clusters": 10,
+  "value_key": "primary"
+}

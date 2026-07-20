@@ -1,0 +1,16 @@
+{
+  "cluster_permutation_p_value": 0.625,
+  "evidence_classification": "INDETERMINATE_DUE_TO_MISSINGNESS_OR_SMALL_SAMPLE",
+  "limitations": [
+    "Only 12 unique Episodes were approved and the complete comparative population has 14 provider/Episode pairs.",
+    "Provider rows sharing an Episode share the same market Outcome and are not independent market events.",
+    "Missingness is arm-asymmetric and the all-approved sensitivity bounds cross zero.",
+    "Primary endpoint scoring includes non-directional no-signal responses as not correct directional forecasts."
+  ],
+  "pack_superiority_claim": "NOT_SUPPORTED",
+  "primary_effect": 0.14285714285714285,
+  "primary_uncertainty": [
+    -0.33268285425419064,
+    0.5568797677577234
+  ]
+}

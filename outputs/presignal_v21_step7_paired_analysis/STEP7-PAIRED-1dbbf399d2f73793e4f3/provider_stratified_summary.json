@@ -1,0 +1,59 @@
+{
+  "label": "DESCRIPTIVE_ONLY_NOT_PROVIDER_SUPERIORITY",
+  "providers": [
+    {
+      "approved_pairs": 6,
+      "complete_pairs": 5,
+      "model": "claude-haiku-4-5",
+      "pack_a_15m_correct": 0,
+      "pack_a_accepted_forecasts": 6,
+      "pack_a_path_mean": 0.25,
+      "pack_a_rejections": 0,
+      "pack_e_15m_correct": 1,
+      "pack_e_accepted_forecasts": 5,
+      "pack_e_path_mean": 0.375,
+      "pack_e_rejections": 1,
+      "paired_discordance": {
+        "pack_a_only": 0,
+        "pack_e_only": 1
+      },
+      "provider": "Anthropic"
+    },
+    {
+      "approved_pairs": 8,
+      "complete_pairs": 6,
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_15m_correct": 5,
+      "pack_a_accepted_forecasts": 6,
+      "pack_a_path_mean": 0.625,
+      "pack_a_rejections": 2,
+      "pack_e_15m_correct": 2,
+      "pack_e_accepted_forecasts": 7,
+      "pack_e_path_mean": 0.2916666666666667,
+      "pack_e_rejections": 1,
+      "paired_discordance": {
+        "pack_a_only": 3,
+        "pack_e_only": 0
+      },
+      "provider": "Gemini"
+    },
+    {
+      "approved_pairs": 7,
+      "complete_pairs": 3,
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_15m_correct": 1,
+      "pack_a_accepted_forecasts": 3,
+      "pack_a_path_mean": 0.375,
+      "pack_a_rejections": 4,
+      "pack_e_15m_correct": 1,
+      "pack_e_accepted_forecasts": 5,
+      "pack_e_path_mean": 0.375,
+      "pack_e_rejections": 2,
+      "paired_discordance": {
+        "pack_a_only": 0,
+        "pack_e_only": 0
+      },
+      "provider": "OpenAI"
+    }
+  ]
+}

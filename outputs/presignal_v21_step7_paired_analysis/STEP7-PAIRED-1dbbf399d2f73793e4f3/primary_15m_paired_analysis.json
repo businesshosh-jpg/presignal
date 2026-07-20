@@ -1,0 +1,19 @@
+{
+  "both_correct": 3,
+  "both_incorrect": 7,
+  "conservative_95pct_difference_interval": [
+    -0.33268285425419064,
+    0.5568797677577234
+  ],
+  "exact_mcnemar_two_sided_p_value": 0.625,
+  "horizon_min": 15,
+  "pack_a_accuracy": 0.42857142857142855,
+  "pack_a_correct": 6,
+  "pack_a_only_correct": 3,
+  "pack_e_accuracy": 0.2857142857142857,
+  "pack_e_correct": 4,
+  "pack_e_only_correct": 1,
+  "pair_count": 14,
+  "paired_risk_difference_pack_a_minus_pack_e": 0.14285714285714285,
+  "primary_scoring_rule": "Only direction_15m_ok == true is correct; false and null no-signal direction endpoints are not correct directional forecasts."
+}
