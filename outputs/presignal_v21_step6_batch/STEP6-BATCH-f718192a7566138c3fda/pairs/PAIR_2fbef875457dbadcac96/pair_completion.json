@@ -1,0 +1,22 @@
+{
+  "arms": {
+    "PACK_A": {
+      "accepted_forecast_identity": "ACC_30262f3db166249c20d3",
+      "attempt_count": 1,
+      "prediction_fingerprint": "sha256:eab86d74b2c0c9f6726f209c1245f07a77f4f684eae9a9ae3b6a2beb67a7d35f",
+      "provider_request_identity": "REQ_ad42d99c7cc5d64d4cc1",
+      "request_fingerprint": "sha256:9225d77b070cbcc5ced38d0975027d45a1cf8b5ec41fa7a31d997e4438c51717",
+      "state": "FORECAST_ACCEPTED"
+    },
+    "PACK_E": {
+      "accepted_forecast_identity": "ACC_b5f565b79390ae70a7fb",
+      "attempt_count": 1,
+      "prediction_fingerprint": "sha256:5f0ffe7a321b332bc8f1a27fd14133fa7f6c1b6ed59f3ada80a398c1641f3dc2",
+      "provider_request_identity": "REQ_4feadd1aad0a1b7c77d0",
+      "request_fingerprint": "sha256:fdeb24d326bf0d660d6bf2b607fc0db33db2aaf50c70a104cb7cc506816ee19c",
+      "state": "FORECAST_ACCEPTED"
+    }
+  },
+  "completion": "COMPLETE_PAIRED",
+  "pair_id": "PAIR_2fbef875457dbadcac96"
+}

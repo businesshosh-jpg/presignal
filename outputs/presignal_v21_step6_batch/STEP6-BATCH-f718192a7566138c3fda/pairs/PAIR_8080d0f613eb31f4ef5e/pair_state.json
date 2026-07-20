@@ -1,0 +1,22 @@
+{
+  "accepted_forecast_count": 1,
+  "arms": {
+    "PACK_A": {
+      "attempt_count": 1,
+      "error": "PATH_NEUTRAL_PIP_RANGE",
+      "provider_request_identity": "REQ_0542cc7fa451d251e4ee",
+      "request_fingerprint": "sha256:fc608c460cab5b7f6e7629d7f79414571e33b3e05573c4040b634c6ad21017b0",
+      "state": "PARSE_FAILED"
+    },
+    "PACK_E": {
+      "accepted_forecast_identity": "ACC_a5780e3c9c027ce15949",
+      "attempt_count": 1,
+      "prediction_fingerprint": "sha256:bf1e2d33b25328bf364747fece36fc726c95c93ecacec6b37903f8b573a61706",
+      "provider_request_identity": "REQ_b60a1b089e1e82292ad9",
+      "request_fingerprint": "sha256:711c2fe106d620fcecb1fb32f5b256a091a1a2a8290c2fb8d1c5cc257b9a316f",
+      "state": "FORECAST_ACCEPTED"
+    }
+  },
+  "provider_call_count": 2,
+  "state": "INCOMPLETE_PACK_A"
+}

@@ -1,0 +1,16 @@
+{
+  "arm_order": [
+    "PACK_A",
+    "PACK_E"
+  ],
+  "episode_id": "EP_EVENT_9d3109bf76341fad0d60",
+  "model": "gpt-4o-mini-2024-07-18",
+  "outcome_identity": "OUT_e5e1931a5196f655eb4b",
+  "pair_id": "PAIR_2f7a6ea58818c27ef7ad",
+  "provider": "OpenAI",
+  "session_id": "US|2024-05-14|CUSTOM_CONFIG_WINDOW",
+  "source_input_row_fingerprints": {
+    "pack_a": "sha256:f099c59d2d9b7507bbe9b5ae2944f1ba5dff934fd442f02dc90e897644899836",
+    "pack_e": "sha256:33e4484ca5e9ad5bddf9df8b7f2a9e999f9390f892b4145a676f7adcff0026a8"
+  }
+}

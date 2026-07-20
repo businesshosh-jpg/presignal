@@ -10,6 +10,7 @@ from automation import run_presignal_v21_event_path_batch_v1 as batch
 
 
 PREP = batch.PREPARATION_ROOT / "STEP6-BATCH-PREP-ccee43d7c9d8bf715f71"
+EXECUTION = batch.EXECUTION_ROOT / "STEP6-BATCH-f718192a7566138c3fda"
 
 
 class ControlledBatchTests(unittest.TestCase):
@@ -51,6 +52,12 @@ class ControlledBatchTests(unittest.TestCase):
         self.assertEqual(frozen["required_horizons"], [5, 15, 30, 60])
         self.assertTrue(frozen["batch_contract_fingerprint"].startswith("sha256:"))
 
+    def test_approved_preparation_requires_the_frozen_population(self) -> None:
+        _, frozen, eligible_manifest, eligible = batch.approved_preparation("STEP6-BATCH-PREP-ccee43d7c9d8bf715f71")
+        self.assertEqual(frozen["batch_contract_fingerprint"], "sha256:7b3f015f34e61c0877096f6da4a077ab4bee8e6d964c82a1da2beaf0f80f10ca")
+        self.assertEqual(eligible_manifest["fingerprint"], batch.sha256(eligible))
+        self.assertEqual(len(eligible), 21)
+
     def test_known_transport_defects_are_prevented_or_hard_stopped(self) -> None:
         defects = batch.known_transport_defects()
         self.assertEqual({row["defect_id"] for row in defects}, {"D1", "D2", "D3", "D4"})
@@ -69,6 +76,8 @@ class ControlledBatchTests(unittest.TestCase):
         self.assertEqual(batch.can_dispatch_arm(accepted, "PACK_A", "same", budget), (False, "ACCEPTED_ARM_ALREADY_FROZEN"))
         mutated = {"accepted_forecast_count": 0, "provider_call_count": 0, "arms": {"PACK_A": {"state": "TRANSPORT_FAILED", "request_fingerprint": "old"}}}
         self.assertEqual(batch.can_dispatch_arm(mutated, "PACK_A", "new", budget), (False, "REQUEST_MUTATION_BETWEEN_ATTEMPTS"))
+        malformed = {"accepted_forecast_count": 0, "provider_call_count": 1, "arms": {"PACK_A": {"state": "PARSE_FAILED", "request_fingerprint": "same"}}}
+        self.assertEqual(batch.can_dispatch_arm(malformed, "PACK_A", "same", budget), (False, "MALFORMED_SCIENTIFIC_OUTPUT_NO_RETRY"))
         self.assertEqual(batch.can_dispatch_arm({"arms": {}}, "PACK_A", "new", budget), (True, "DISPATCH_ALLOWED"))
 
     def test_outcome_attachment_requires_both_frozen_forecasts(self) -> None:
@@ -97,6 +106,24 @@ class ControlledBatchTests(unittest.TestCase):
         reverse = [batch.arm_order(row["pair_id"]) for row in reversed(eligible)]
         self.assertEqual(sorted(forward), sorted(reverse))
         self.assertLessEqual(abs(sum(row[0] == "PACK_A" for row in forward) - sum(row[0] == "PACK_E" for row in forward)), 1)
+
+    def test_completed_batch_preserves_the_frozen_execution_controls(self) -> None:
+        state = json.loads((EXECUTION / "batch_state.json").read_text())
+        completion = json.loads((EXECUTION / "batch_completion_summary.json").read_text())
+        budget = [json.loads(line) for line in (EXECUTION / "call_budget_ledger.jsonl").read_text().splitlines()]
+        self.assertEqual(state["batch_contract_fingerprint"], "sha256:7b3f015f34e61c0877096f6da4a077ab4bee8e6d964c82a1da2beaf0f80f10ca")
+        self.assertEqual(completion["approved_pairs"], 21)
+        self.assertEqual(completion["provider_calls"], 42)
+        self.assertEqual(completion["accepted_forecasts"], 32)
+        self.assertEqual(completion["complete_paired"], 14)
+        self.assertEqual(budget[0]["maximum_authorized_provider_calls"], 84)
+        self.assertTrue(budget[0]["within_authorized_budget"])
+
+    def test_reconstruction_uses_no_provider_calls_and_preserves_completed_pairs(self) -> None:
+        reconstructed = batch.reconstruct_batch("STEP6-BATCH-f718192a7566138c3fda")
+        self.assertEqual(reconstructed["provider_calls"], 0)
+        self.assertEqual(reconstructed["completed_pairs_reconstructed"], 14)
+        self.assertTrue(reconstructed["valid"])
 
 
 if __name__ == "__main__":

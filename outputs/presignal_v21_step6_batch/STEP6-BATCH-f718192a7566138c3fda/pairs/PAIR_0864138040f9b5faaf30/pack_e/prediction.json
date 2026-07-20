@@ -1,0 +1,83 @@
+{
+  "completion_tokens": 1366,
+  "confidence": 0.7,
+  "episode_id": "EP_BATCH_6fb320e5e8c5931f2373",
+  "error_message": null,
+  "expected_initial_direction": "DOWN",
+  "expected_path_summary": "Initial jobless claims data is expected to be slightly worse than consensus, leading to a short-term downward pressure on USD/JPY due to increased expectations of Federal Reserve rate cuts. However, this might be tempered by the overall trend of the US dollar and the broader labor market context.",
+  "expected_reversal_flag": true,
+  "expected_reversal_horizon_min": 15,
+  "forecast_created_ts": "2026-07-19T23:56:34.487Z",
+  "forecast_cutoff_ts": "2024-05-09T12:20:00Z",
+  "information_arm": "FULL_CONTEXT",
+  "information_used": [
+    {
+      "normalized_information_key": "event_consensus_detail|initial_jobless_claims_actual_vs_consensus",
+      "reason": "Deviation from expectations moves markets."
+    },
+    {
+      "normalized_information_key": "usdjpy_trend|usdjpy_recent_price_action",
+      "reason": "Establishes current market momentum."
+    },
+    {
+      "normalized_information_key": "dxy|dxy_index_level_and_trend",
+      "reason": "Dollar strength is a key USDJPY driver."
+    },
+    {
+      "normalized_information_key": "treasury_yields|treasury_yield_2yr_10yr_30yr",
+      "reason": "Key driver for FX and policy expectations."
+    },
+    {
+      "normalized_information_key": "fed_expectations|fed_funds_futures_implied_probability",
+      "reason": "Market pricing of future Fed policy."
+    }
+  ],
+  "invalidation_condition": "Significant deviation from consensus in Initial Jobless Claims, or a strong upward revision to US interest rate expectations.",
+  "latency_ms": null,
+  "missing_information": [
+    {
+      "normalized_information_key": "fed_expectations|fed_daly_speech_content_on_rate_path_and_inflation",
+      "reason": "FED_EXPECTATIONS_REMAINS_OUTSIDE_FROZEN_PACK_SCOPE"
+    },
+    {
+      "normalized_information_key": "fed_expectations|sentiment_on_fed_interest_rate_expectations",
+      "reason": "FED_EXPECTATIONS_REMAINS_OUTSIDE_FROZEN_PACK_SCOPE"
+    },
+    {
+      "normalized_information_key": "labor_market_trend|initial_jobless_claims_vs_consensus_miss_beat_detail",
+      "reason": "DETERMINISTIC_INPUT_MISSING"
+    },
+    {
+      "normalized_information_key": "market_positioning|market_positioning_data_for_usdjpy_traders",
+      "reason": "INTERPRETIVE_JUDGMENT_REMAINS_WITH_FORECAST_PROVIDER"
+    },
+    {
+      "normalized_information_key": "risk_sentiment|s_p_500_and_risk_on_risk_off_sentiment_tone",
+      "reason": "INTERPRETIVE_JUDGMENT_REMAINS_WITH_FORECAST_PROVIDER"
+    },
+    {
+      "normalized_information_key": "treasury_yields|treasury_yield_2yr_10yr_30yr",
+      "reason": "HISTORICAL_SOURCE_NOT_CONFIGURED"
+    }
+  ],
+  "model": "gemini-2.5-flash-lite",
+  "no_signal_flag": false,
+  "no_signal_reason": null,
+  "object": "PREDICTION",
+  "pack_fingerprint": "43c289536effdf6c434ca033aa7f57b778fc6f98c61a2e6669b6b138816f8d8d",
+  "pack_id": "PACK_E_SHARED",
+  "prediction_fingerprint": "sha256:9ba91fba7c98fceeb452547e9ae631593e2a3a9e989f80be6d44dcfae3035ecc",
+  "prediction_id": "PRD_a003abde465a078a3f7a",
+  "prediction_target_id": "EP_BATCH_6fb320e5e8c5931f2373",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "aa17-a32b-9553-808f",
+  "prompt_tokens": 23795,
+  "provider": "Gemini",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": null,\n  \"confidence\": 0.7,\n  \"expected_initial_direction\": \"DOWN\",\n  \"expected_reversal_flag\": true,\n  \"expected_reversal_horizon_min\": 15,\n  \"expected_path_summary\": \"Initial jobless claims data is expected to be slightly worse than consensus, leading to a short-term downward pressure on USD/JPY due to increased expectations of Federal Reserve rate cuts. However, this might be tempered by the overall trend of the US dollar and the broader labor market context.\",\n  \"information_used\": [\n    {\n      \"normalized_information_key\": \"event_consensus_detail|initial_jobless_claims_actual_vs_consensus\",\n      \"reason\": \"Deviation from expectations moves markets.\"\n    },\n    {\n      \"normalized_information_key\": \"usdjpy_trend|usdjpy_recent_price_action\",\n      \"reason\": \"Establishes current market momentum.\"\n    },\n    {\n      \"normalized_information_key\": \"dxy|dxy_index_level_and_trend\",\n      \"reason\": \"Dollar strength is a key USDJPY driver.\"\n    },\n    {\n      \"normalized_information_key\": \"treasury_yields|treasury_yield_2yr_10yr_30yr\",\n      \"reason\": \"Key driver for FX and policy expectations.\"\n    },\n    {\n      \"normalized_information_key\": \"fed_expectations|fed_funds_futures_implied_probability\",\n      \"reason\": \"Market pricing of future Fed policy.\"\n    }\n  ],\n  \"missing_information\": [\n    {\n      \"normalized_information_key\": \"fed_expectations|fed_daly_speech_content_on_rate_path_and_inflation\",\n      \"reason\": \"FED_EXPECTATIONS_REMAINS_OUTSIDE_FROZEN_PACK_SCOPE\"\n    },\n    {\n      \"normalized_information_key\": \"fed_expectations|sentiment_on_fed_interest_rate_expectations\",\n      \"reason\": \"FED_EXPECTATIONS_REMAINS_OUTSIDE_FROZEN_PACK_SCOPE\"\n    },\n    {\n      \"normalized_information_key\": \"labor_market_trend|initial_jobless_claims_vs_consensus_miss_beat_detail\",\n      \"reason\": \"DETERMINISTIC_INPUT_MISSING\"\n    },\n    {\n      \"normalized_information_key\": \"market_positioning|market_positioning_data_for_usdjpy_traders\",\n      \"reason\": \"INTERPRETIVE_JUDGMENT_REMAINS_WITH_FORECAST_PROVIDER\"\n    },\n    {\n      \"normalized_information_key\": \"risk_sentiment|s_p_500_and_risk_on_risk_off_sentiment_tone\",\n      \"reason\": \"INTERPRETIVE_JUDGMENT_REMAINS_WITH_FORECAST_PROVIDER\"\n    },\n    {\n      \"normalized_information_key\": \"treasury_yields|treasury_yield_2yr_10yr_30yr\",\n      \"reason\": \"HISTORICAL_SOURCE_NOT_CONFIGURED\"\n    }\n  ],\n  \"invalidation_condition\": \"Significant deviation from consensus in Initial Jobless Claims, or a strong upward revision to US interest rate expectations.\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 10,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.6,\n      \"reversal_probability\": 0.4,\n      \"stage_reason\": \"Initial jobless claims data slightly worse than expected puts downward pressure on USD/JPY.\",\n      \"invalidation_condition\": \"Actual claims are significantly better than consensus.\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 10,\n      \"expected_pips_max\": 15,\n      \"stage_confidence\": 0.65,\n      \"continuation_probability\": 0.55,\n      \"reversal_probability\": 0.45,\n      \"stage_reason\": \"Sustained downward pressure as market digests the labor data and its implications for Fed policy.\",\n      \"invalidation_condition\": \"USD strength increases unexpectedly or Treasury yields rise sharply.\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"FLAT\",\n      \"expected_pips_min\": 0,\n      \"expected_pips_max\": 0,\n      \"stage_confidence\": 0.6,\n      \"continuation_probability\": 0.4,\n      \"reversal_probability\": 0.6,\n      \"stage_reason\": \"Market consolidates as initial reaction fades; focus shifts to broader economic outlook and upcoming events.\",\n      \"invalidation_condition\": \"New economic data points to stronger US growth, increasing USD/JPY.\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 15,\n      \"stage_confidence\": 0.65,\n      \"continuation_probability\": 0.55,\n      \"reversal_probability\": 0.45,\n      \"stage_reason\": \"Rebound as the initial reaction to jobless claims subsides and the general strength of the US dollar, coupled with yield dynamics, takes hold.\",\n      \"invalidation_condition\": \"Significant dovish shift in Fed expectations or weakening US data.\"\n    }\n  ]\n}",
+  "run_id": "STEP6-BATCH-f718192a7566138c3fda",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [],
+  "session_id": "US|2024-05-09|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}

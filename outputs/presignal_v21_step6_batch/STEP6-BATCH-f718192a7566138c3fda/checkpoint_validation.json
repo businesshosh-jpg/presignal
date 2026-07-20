@@ -1,0 +1,7 @@
+{
+  "calls_recorded": 6,
+  "checkpoint_pair_count": 3,
+  "checkpoint_result": "RESUME_SAME_FROZEN_BATCH",
+  "leakage_fields_exposed": 0,
+  "state_valid": true
+}

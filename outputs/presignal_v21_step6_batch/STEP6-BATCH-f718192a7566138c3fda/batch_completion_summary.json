@@ -1,0 +1,12 @@
+{
+  "accepted_forecasts": 32,
+  "approved_pairs": 21,
+  "complete_paired": 14,
+  "hard_stopped": 0,
+  "incomplete_both": 3,
+  "incomplete_pack_a": 3,
+  "incomplete_pack_e": 1,
+  "initial_calls": 42,
+  "provider_calls": 42,
+  "transport_retries": 0
+}

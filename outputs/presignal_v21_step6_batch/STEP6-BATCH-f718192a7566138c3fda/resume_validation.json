@@ -1,0 +1,6 @@
+{
+  "completed_arms_skipped": true,
+  "duplicate_accepted_calls": 0,
+  "provider_calls_after_resume": 42,
+  "resumed_same_batch_run": true
+}

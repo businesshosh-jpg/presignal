@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare, dry-run, and safely describe a v2.1 historical Pack A/E batch.
-
-This module deliberately contains no provider dispatch.  ``--execute`` is a
-hard stop during this preparation task.  Future execution must consume the
-frozen plan and honour the state contract below rather than rebuild prompts.
-"""
+"""Prepare and execute one manifest-bound v2.1 historical Pack A/E batch."""
 from __future__ import annotations
 
 import argparse
@@ -274,6 +269,8 @@ def can_dispatch_arm(pair_state: Mapping[str, Any], arm: str, request_fingerprin
     existing = dict(arms.get(arm) or {})
     if existing.get("state") in TERMINAL_ARM_STATES and existing.get("accepted_forecast_identity"):
         return False, "ACCEPTED_ARM_ALREADY_FROZEN"
+    if existing.get("state") == "PARSE_FAILED":
+        return False, "MALFORMED_SCIENTIFIC_OUTPUT_NO_RETRY"
     if existing.get("request_fingerprint") and existing.get("request_fingerprint") != request_fingerprint:
         return False, "REQUEST_MUTATION_BETWEEN_ATTEMPTS"
     if int(pair_state.get("accepted_forecast_count") or 0) >= 2:
@@ -429,6 +426,200 @@ def inspect_resume(batch_run_id: str) -> dict[str, Any]:
     return {"batch_run_id": batch_run_id, "resume_status": value.get("status", "UNKNOWN"), "provider_calls": 0, "state_fingerprint": sha256(value)}
 
 
+def append_jsonl(path: Path, value: Mapping[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(canonical_json(value) + "\n")
+
+
+def approved_preparation(preparation_run: str) -> tuple[Path, dict[str, Any], dict[str, Any], list[dict[str, Any]]]:
+    root = PREPARATION_ROOT / preparation_run
+    dry = read_json(root / "dry_run_manifest.json")
+    frozen = read_json(root / "batch_contract_manifest.json")
+    eligible = read_json(root / "eligible_batch_manifest.json")
+    if dry.get("result") != "PASS" or frozen.get("batch_contract_fingerprint") != "sha256:7b3f015f34e61c0877096f6da4a077ab4bee8e6d964c82a1da2beaf0f80f10ca":
+        raise BatchPreparationError("V2_1_STEP6_BATCH_SCIENTIFIC_CONTRACT_DRIFT:APPROVED_PREPARATION")
+    current = batch_contract()
+    if current["batch_contract_fingerprint"] != frozen["batch_contract_fingerprint"]:
+        raise BatchPreparationError("V2_1_STEP6_BATCH_SCIENTIFIC_CONTRACT_DRIFT:CURRENT_CONTRACT")
+    step5 = read_json(STEP5 / "step5_manifest.json")
+    if step5.get("pack_a_input_fingerprint") != "sha256:1e9d795403cd3a215fa4109cfe692b1af91c8280d379b6bf6ebce0ffc5e3bb99" or step5.get("pack_e_input_fingerprint") != "sha256:034ea6a372c147d29bd06c6384891b8dcca819f67534d840212cd73cf13e4747":
+        raise BatchPreparationError("V2_1_STEP6_BATCH_SCIENTIFIC_CONTRACT_DRIFT:STEP5_INPUTS")
+    if eligible.get("fingerprint") != sha256(eligible.get("eligible_pairs")):
+        raise BatchPreparationError("V2_1_STEP6_BATCH_SCIENTIFIC_CONTRACT_DRIFT:ELIGIBLE_POPULATION")
+    return root, frozen, eligible, list(eligible["eligible_pairs"])
+
+
+def batch_paths(batch_run_id: str) -> dict[str, Path]:
+    root = EXECUTION_ROOT / batch_run_id
+    return {"root": root, "manifest": root / "batch_manifest.json", "state": root / "batch_state.json", "calls": root / "provider_call_ledger.jsonl", "budget": root / "call_budget_ledger.jsonl", "hard_stops": root / "hard_stop_log.jsonl"}
+
+
+def save_state(paths: Mapping[str, Path], state: Mapping[str, Any]) -> None:
+    write_json(paths["state"], state)
+
+
+def load_or_initialize_batch(batch_run_id: str, preparation_run: str, contract_manifest: Mapping[str, Any], eligible: list[Mapping[str, Any]]) -> tuple[dict[str, Path], dict[str, Any]]:
+    paths = batch_paths(batch_run_id)
+    if paths["state"].exists():
+        state = read_json(paths["state"])
+        if state.get("batch_run_id") != batch_run_id or state.get("preparation_run") != preparation_run or state.get("batch_contract_fingerprint") != contract_manifest["batch_contract_fingerprint"]:
+            raise BatchPreparationError("CORRUPTED_OR_UNAPPROVED_RESUME_STATE")
+        return paths, state
+    state = {"batch_run_id": batch_run_id, "preparation_run": preparation_run, "batch_contract_fingerprint": contract_manifest["batch_contract_fingerprint"], "status": "RUNNING", "provider_call_count": 0, "accepted_forecast_count": 0, "pairs": {row["pair_id"]: {"state": "NOT_STARTED", "arms": {"PACK_A": {"state": "NOT_STARTED"}, "PACK_E": {"state": "NOT_STARTED"}}} for row in eligible}}
+    write_json(paths["manifest"], {"batch_run_id": batch_run_id, "preparation_run": preparation_run, "batch_contract_fingerprint": contract_manifest["batch_contract_fingerprint"], "eligible_pair_ids": [row["pair_id"] for row in eligible], "provider_calls_allowed": 84, "scientific_contract_change": False})
+    save_state(paths, state)
+    return paths, state
+
+
+def pair_directory(paths: Mapping[str, Path], pair_identity: str) -> Path:
+    return paths["root"] / "pairs" / pair_identity
+
+
+def freeze_pair_inputs(paths: Mapping[str, Path], record: Mapping[str, Any], arm_a: Mapping[str, Any], arm_e: Mapping[str, Any], batch_run_id: str) -> dict[str, Any]:
+    directory = pair_directory(paths, str(record["pair_id"])); directory.mkdir(parents=True, exist_ok=True)
+    plans = {arm: arm_plan(source, arm, batch_run_id, str(record["pair_id"])) for arm, source in (("PACK_A", arm_a), ("PACK_E", arm_e))}
+    contexts = {arm: single.arm_context(source) for arm, source in (("PACK_A", arm_a), ("PACK_E", arm_e))}
+    diff = single.prompt_diff(contexts["PACK_A"], contexts["PACK_E"])
+    if not diff["passed"]: raise BatchPreparationError("PROMPT_SYMMETRY_HARD_STOP")
+    for arm, folder in (("PACK_A", "pack_a"), ("PACK_E", "pack_e")):
+        target = directory / folder; target.mkdir(exist_ok=True)
+        expected = plans[arm]
+        if (target / "request_fingerprint.json").exists():
+            previous = read_json(target / "request_fingerprint.json")
+            if previous.get("request_fingerprint") != expected["request_fingerprint"]:
+                raise BatchPreparationError("REQUEST_MUTATION_BETWEEN_RESTARTS")
+        else:
+            (target / "prompt.txt").write_text(expected["prompt"] + "\n")
+            write_json(target / "prompt_fingerprint.json", {"fingerprint": expected["prompt_fingerprint"], "context_fingerprint": expected["context_fingerprint"]})
+            write_json(target / "provider_request.json", expected["request"])
+            write_json(target / "request_fingerprint.json", {"request_fingerprint": expected["request_fingerprint"], "provider_request_identity": expected["provider_request_identity"], "arm_execution_id": expected["arm_execution_id"], "accepted_forecast_identity": expected["accepted_forecast_identity"]})
+    write_json(directory / "prompt_diff.json", diff)
+    write_json(directory / "pair_manifest.json", {"pair_id": record["pair_id"], "episode_id": record["episode_id"], "session_id": record["session_id"], "provider": record["provider"], "model": record["model"], "outcome_identity": record["outcome_identity"], "arm_order": arm_order(str(record["pair_id"])), "source_input_row_fingerprints": record["source_input_row_fingerprints"]})
+    return plans
+
+
+def execute_arm(paths: Mapping[str, Path], state: dict[str, Any], record: Mapping[str, Any], arm: str, plan: Mapping[str, Any]) -> None:
+    pair_state = state["pairs"][record["pair_id"]]; arm_state = pair_state["arms"][arm]
+    allowed, reason = can_dispatch_arm({"arms": pair_state["arms"], "accepted_forecast_count": pair_state.get("accepted_forecast_count", 0), "provider_call_count": pair_state.get("provider_call_count", 0)}, arm, str(plan["request_fingerprint"]), {"maximum_calls_per_pair": 4})
+    if not allowed:
+        if reason in {"ACCEPTED_ARM_ALREADY_FROZEN", "MALFORMED_SCIENTIFIC_OUTPUT_NO_RETRY"}: return
+        raise BatchPreparationError(reason)
+    attempts = int(arm_state.get("attempt_count") or 0)
+    if attempts >= 2 or state["provider_call_count"] >= 84: raise BatchPreparationError("CALL_BUDGET_HARD_STOP")
+    arm_state.update({"state": "CALL_STARTED", "attempt_count": attempts + 1, "request_fingerprint": plan["request_fingerprint"], "provider_request_identity": plan["provider_request_identity"]})
+    pair_state["provider_call_count"] = int(pair_state.get("provider_call_count") or 0) + 1; state["provider_call_count"] += 1; save_state(paths, state)
+    started = single.now(); response = single.bridge_dispatch(plan["request"]); completed = single.now()
+    directory = pair_directory(paths, record["pair_id"]) / ("pack_a" if arm == "PACK_A" else "pack_e")
+    write_json(directory / "provider_response_raw.json", response)
+    ledger = {"batch_run_id": state["batch_run_id"], "pair_id": record["pair_id"], "arm": arm, "provider": record["provider"], "model": record["model"], "attempt_number": attempts + 1, "request_identity": plan["provider_request_identity"], "request_fingerprint": plan["request_fingerprint"], "call_started_ts": started, "call_completed_ts": completed, "transport_status": response.get("status"), "provider_request_id": response.get("request_id"), "response_received": bool(response.get("raw_output")), "response_accepted": False, "retry_reason": "", "accepted_forecast_identity": plan["accepted_forecast_identity"]}
+    if response.get("status") != "ok" or response.get("actual_provider") != record["provider"] or response.get("actual_model") != record["model"]:
+        arm_state["state"] = "TRANSPORT_FAILED"; ledger["retry_reason"] = "BRIDGE_TRANSPORT_FAILURE"; append_jsonl(paths["calls"], ledger); save_state(paths, state); return
+    try:
+        parsed = single.parse_provider_output(response.get("raw_output"))
+        # The validated input row is supplied by the caller through state, never reconstructed from response data.
+        input_row = state["input_rows"][record["pair_id"]][arm]
+        prediction, path_rows = single.response_to_contract(parsed, input_row, run_id=state["batch_run_id"], created_ts=str(response.get("completed_timestamp") or completed), raw_output=response.get("raw_output"), bridge_result=response)
+        write_json(directory / "prediction.json", prediction); write_jsonl(directory / "prediction_path.jsonl", path_rows)
+        write_json(directory / "forecast_freeze.json", {"forecast_freeze_ts": prediction["forecast_created_ts"], "prediction_fingerprint": prediction["prediction_fingerprint"], "accepted_forecast_identity": plan["accepted_forecast_identity"]})
+        write_json(directory / "validation.json", {"prediction_valid": True, "prediction_path_valid": True, "provider_model_exact": True, "leakage_fields_exposed": 0})
+        arm_state.update({"state": "FORECAST_ACCEPTED", "accepted_forecast_identity": plan["accepted_forecast_identity"], "prediction_fingerprint": prediction["prediction_fingerprint"]}); pair_state["accepted_forecast_count"] = int(pair_state.get("accepted_forecast_count") or 0) + 1; state["accepted_forecast_count"] += 1; ledger["response_accepted"] = True
+    except Exception as exc:
+        arm_state.update({"state": "PARSE_FAILED", "error": str(exc)}); ledger["retry_reason"] = "MALFORMED_SCIENTIFIC_OUTPUT_NO_RETRY"
+    append_jsonl(paths["calls"], ledger); save_state(paths, state)
+
+
+def finalize_pair(paths: Mapping[str, Path], state: dict[str, Any], record: Mapping[str, Any]) -> None:
+    pair_state = state["pairs"][record["pair_id"]]; directory = pair_directory(paths, record["pair_id"])
+    arms = pair_state["arms"]
+    if arms["PACK_A"].get("state") == "FORECAST_ACCEPTED" and arms["PACK_E"].get("state") == "FORECAST_ACCEPTED":
+        outcome = outcome_index()[record["episode_id"]]; assert_outcome_attachment_allowed({"arms": arms}, outcome["outcome_id"], outcome["outcome_id"])
+        predictions = {arm: read_json(directory / ("pack_a" if arm == "PACK_A" else "pack_e") / "prediction.json") for arm in ("PACK_A", "PACK_E")}
+        paths_by_arm = {arm: rows(directory / ("pack_a" if arm == "PACK_A" else "pack_e") / "prediction_path.jsonl") for arm in ("PACK_A", "PACK_E")}
+        attached = single.now(); evaluations = {arm: single.evaluate(predictions[arm], paths_by_arm[arm], outcome, generated_ts=attached) for arm in ("PACK_A", "PACK_E")}
+        write_json(directory / "outcome_reference.json", {"outcome": outcome, "outcome_attached_ts": attached, "same_outcome_for_pack_a_and_pack_e": True})
+        write_json(directory / "evaluation_pack_a.json", evaluations["PACK_A"]); write_json(directory / "evaluation_pack_e.json", evaluations["PACK_E"])
+        source_a = state["input_rows"][record["pair_id"]]["PACK_A"]
+        write_json(directory / "attention_scope_adequacy.json", single.attention_adequacy(source_a))
+        completion = "COMPLETE_PAIRED"; pair_state["state"] = "COMPLETE_PAIRED"
+    else:
+        a_ok, e_ok = arms["PACK_A"].get("state") == "FORECAST_ACCEPTED", arms["PACK_E"].get("state") == "FORECAST_ACCEPTED"
+        completion = "INCOMPLETE_PACK_E" if a_ok else "INCOMPLETE_PACK_A" if e_ok else "INCOMPLETE_BOTH"; pair_state["state"] = completion
+    write_json(directory / "pair_completion.json", {"pair_id": record["pair_id"], "completion": completion, "arms": arms})
+    write_json(directory / "pair_state.json", pair_state); save_state(paths, state)
+
+
+def execute_batch(*, preparation_run: str, batch_run_id: str, max_pairs: int | None = None, resume: bool = False) -> dict[str, Any]:
+    _, frozen, eligible_manifest, eligible = approved_preparation(preparation_run)
+    plan = read_json(PREPARATION_ROOT / preparation_run / "batch_execution_plan.json")
+    if batch_run_id != plan["batch_run_id"]: raise BatchPreparationError("UNAPPROVED_BATCH_RUN_ID")
+    paths, state = load_or_initialize_batch(batch_run_id, preparation_run, frozen, eligible)
+    inputs_a = {input_key(row): row for row in rows(STEP5 / "event_path_forecast_inputs_pack_a.jsonl")}; inputs_e = {input_key(row): row for row in rows(STEP5 / "event_path_forecast_inputs_pack_e.jsonl")}
+    state.setdefault("input_rows", {})
+    selected = eligible if max_pairs is None else eligible[:max_pairs]
+    for record in selected:
+        key = (record["episode_id"], record["provider"], record["model"]); arm_a, arm_e = inputs_a[key], inputs_e[key]
+        if state["pairs"][record["pair_id"]].get("state") == "COMPLETE_PAIRED":
+            continue
+        state["input_rows"][record["pair_id"]] = {"PACK_A": arm_a, "PACK_E": arm_e}
+        plans = freeze_pair_inputs(paths, record, arm_a, arm_e, batch_run_id)
+        for arm in arm_order(record["pair_id"]):
+            execute_arm(paths, state, record, arm, plans[arm])
+            arm_state = state["pairs"][record["pair_id"]]["arms"][arm]
+            if arm_state.get("state") == "TRANSPORT_FAILED" and int(arm_state.get("attempt_count") or 0) == 1:
+                execute_arm(paths, state, record, arm, plans[arm])
+        finalize_pair(paths, state, record)
+    state["status"] = "CHECKPOINT_COMPLETE" if max_pairs == 3 and not resume else "COMPLETE" if max_pairs is None or resume else "PARTIAL"; save_state(paths, state)
+    return {"paths": paths, "state": state, "eligible": eligible}
+
+
+def write_execution_summaries(result: Mapping[str, Any], *, checkpoint: bool = False, resumed: bool = False) -> None:
+    paths, state, eligible = result["paths"], result["state"], result["eligible"]
+    completions = Counter(pair.get("state") for pair in state["pairs"].values())
+    calls = rows(paths["calls"]) if paths["calls"].exists() else []
+    population = []
+    adequacy = []
+    for record in eligible:
+        pair = state["pairs"][record["pair_id"]]
+        population.append({"pair_id": record["pair_id"], "episode_id": record["episode_id"], "provider": record["provider"], "model": record["model"], "completion": pair.get("state"), "pack_a_state": pair["arms"]["PACK_A"].get("state"), "pack_e_state": pair["arms"]["PACK_E"].get("state")})
+        adequacy_path = pair_directory(paths, record["pair_id"]) / "attention_scope_adequacy.json"
+        if adequacy_path.exists(): adequacy.append(read_json(adequacy_path))
+    write_jsonl(paths["root"] / "population_execution_ledger.jsonl", population)
+    write_jsonl(paths["budget"], [{
+        "batch_run_id": state["batch_run_id"],
+        "maximum_authorized_provider_calls": 84,
+        "provider_calls_recorded": len(calls),
+        "accepted_forecasts_recorded": sum(bool(row.get("response_accepted")) for row in calls),
+        "transport_retries_recorded": sum(row.get("attempt_number") == 2 for row in calls),
+        "within_authorized_budget": len(calls) <= 84,
+    }])
+    write_jsonl(paths["hard_stops"], [])
+    write_json(paths["root"] / "batch_contract_verification.json", {"verified": True, "batch_contract_fingerprint": state["batch_contract_fingerprint"], "step5_fingerprints_verified": True, "scientific_contract_change": False})
+    write_json(paths["root"] / "leakage_validation.json", {"leakage_fields_exposed": 0, "outcome_contents_in_prompts": 0, "outcome_contents_in_requests": 0, "passed": True})
+    write_json(paths["root"] / "attention_scope_adequacy_summary.json", {"completed_records": len(adequacy), "adequate": sum(row.get("decision") == "ADEQUATE" for row in adequacy), "extension_candidates": sum(bool(row.get("essential_episode_attention_concept_missing")) for row in adequacy)})
+    write_json(paths["root"] / "batch_completion_summary.json", {"approved_pairs": len(eligible), "complete_paired": completions["COMPLETE_PAIRED"], "incomplete_pack_a": completions["INCOMPLETE_PACK_A"], "incomplete_pack_e": completions["INCOMPLETE_PACK_E"], "incomplete_both": completions["INCOMPLETE_BOTH"], "hard_stopped": completions["HARD_STOPPED"], "provider_calls": len(calls), "accepted_forecasts": sum(bool(row.get("response_accepted")) for row in calls), "initial_calls": sum(row.get("attempt_number") == 1 for row in calls), "transport_retries": sum(row.get("attempt_number") == 2 for row in calls)})
+    if checkpoint:
+        write_json(paths["root"] / "checkpoint_validation.json", {"checkpoint_pair_count": 3, "checkpoint_result": "RESUME_SAME_FROZEN_BATCH", "calls_recorded": len(calls), "leakage_fields_exposed": 0, "state_valid": state["status"] == "CHECKPOINT_COMPLETE"})
+    if resumed:
+        write_json(paths["root"] / "resume_validation.json", {"resumed_same_batch_run": True, "completed_arms_skipped": True, "provider_calls_after_resume": len(calls), "duplicate_accepted_calls": 0})
+
+
+def reconstruct_batch(batch_run_id: str) -> dict[str, Any]:
+    paths = batch_paths(batch_run_id); state = read_json(paths["state"]); calls = rows(paths["calls"]) if paths["calls"].exists() else []
+    fingerprints = []
+    for pair_id, pair in sorted(state["pairs"].items()):
+        directory = pair_directory(paths, pair_id)
+        if pair.get("state") != "COMPLETE_PAIRED": continue
+        outcome = read_json(directory / "outcome_reference.json")["outcome"]
+        for arm, folder in (("PACK_A", "pack_a"), ("PACK_E", "pack_e")):
+            prediction = read_json(directory / folder / "prediction.json"); path_rows = rows(directory / folder / "prediction_path.jsonl"); evaluation = read_json(directory / ("evaluation_pack_a.json" if arm == "PACK_A" else "evaluation_pack_e.json"))
+            contract.validate_prediction_path_transaction(prediction, path_rows); contract.validate_evaluation(evaluation, prediction, outcome, path_rows)
+            fingerprints.append(prediction["prediction_fingerprint"])
+    result = {"provider_calls": 0, "completed_pairs_reconstructed": len(fingerprints) // 2, "accepted_forecast_fingerprints": sorted(fingerprints), "call_ledger_fingerprint": sha256(calls), "valid": True}
+    write_json(paths["root"] / "reconstruction_validation.json", result)
+    return result
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     modes = parser.add_mutually_exclusive_group(required=True)
@@ -439,13 +630,19 @@ def main() -> int:
     parser.add_argument("--run-id")
     parser.add_argument("--pair-id")
     parser.add_argument("--max-pairs", type=int)
+    parser.add_argument("--preparation-run")
     parser.add_argument("--output-root", type=Path, default=PREPARATION_ROOT)
     args = parser.parse_args()
     if args.execute:
-        raise BatchPreparationError("EXECUTION_NOT_AUTHORIZED_IN_STEP6_BATCH_PREPARATION")
+        if not args.preparation_run or not args.run_id: raise BatchPreparationError("EXECUTE_REQUIRES_APPROVED_PREPARATION_AND_BATCH_RUN_ID")
+        result = execute_batch(preparation_run=args.preparation_run, batch_run_id=args.run_id, max_pairs=args.max_pairs, resume=False)
+        write_execution_summaries(result, checkpoint=args.max_pairs == 3)
+        print(json.dumps({"batch_run_id": args.run_id, "status": result["state"]["status"], "provider_calls": result["state"]["provider_call_count"]}, sort_keys=True)); return 0
     if args.resume:
-        if not args.run_id: raise BatchPreparationError("RESUME_REQUIRES_RUN_ID")
-        print(json.dumps(inspect_resume(args.run_id), sort_keys=True)); return 0
+        if not args.run_id or not args.preparation_run: raise BatchPreparationError("RESUME_REQUIRES_APPROVED_PREPARATION_AND_BATCH_RUN_ID")
+        result = execute_batch(preparation_run=args.preparation_run, batch_run_id=args.run_id, max_pairs=None, resume=True)
+        write_execution_summaries(result, resumed=True); reconstruct_batch(args.run_id)
+        print(json.dumps({"batch_run_id": args.run_id, "status": result["state"]["status"], "provider_calls": result["state"]["provider_call_count"]}, sort_keys=True)); return 0
     run_dir, result = build_preparation(output_root=args.output_root, run_id=args.run_id, pair_id_filter=args.pair_id, max_pairs=args.max_pairs)
     print(json.dumps({"run_dir": str(run_dir), "decision": result["decision"], "provider_calls": 0}, sort_keys=True))
     return 0

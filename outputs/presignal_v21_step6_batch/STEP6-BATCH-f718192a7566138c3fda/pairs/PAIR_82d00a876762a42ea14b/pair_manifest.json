@@ -1,0 +1,16 @@
+{
+  "arm_order": [
+    "PACK_A",
+    "PACK_E"
+  ],
+  "episode_id": "EP_EVENT_fbb37fea272c4e76546e",
+  "model": "claude-haiku-4-5",
+  "outcome_identity": "OUT_d006657c5e9070824099",
+  "pair_id": "PAIR_82d00a876762a42ea14b",
+  "provider": "Anthropic",
+  "session_id": "US|2024-05-09|CUSTOM_CONFIG_WINDOW",
+  "source_input_row_fingerprints": {
+    "pack_a": "sha256:c643d014f8855f89b4381fac3d0384097cf36a06a0a7c11d29916046be3bf337",
+    "pack_e": "sha256:7cd09fad3add792f80b2e772605e88bbb6e61b788a32e82a418660f2f23544ee"
+  }
+}

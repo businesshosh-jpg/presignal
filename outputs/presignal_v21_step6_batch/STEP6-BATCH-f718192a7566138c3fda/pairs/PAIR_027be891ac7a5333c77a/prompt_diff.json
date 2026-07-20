@@ -1,0 +1,13 @@
+{
+  "allowed_differences": [
+    "information_arm",
+    "information_pack",
+    "information_pack_fingerprint"
+  ],
+  "differences": [
+    "information_arm",
+    "information_pack",
+    "information_pack_fingerprint"
+  ],
+  "passed": true
+}

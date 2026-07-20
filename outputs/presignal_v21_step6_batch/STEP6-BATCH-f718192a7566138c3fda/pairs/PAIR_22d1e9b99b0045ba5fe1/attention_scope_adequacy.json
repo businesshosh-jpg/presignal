@@ -1,0 +1,35 @@
+{
+  "decision": "ADEQUATE",
+  "dominant_member_event_ids": [
+    "ed20-0aa0-45a0-9e20"
+  ],
+  "dominant_member_identifiable": true,
+  "episode_id": "EP_EVENT_9d3109bf76341fad0d60",
+  "episode_selected_as": "FORECAST",
+  "essential_episode_attention_concept_missing": [],
+  "joint_same_time_interpretation_supported": true,
+  "member_attention_evidence": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": "12",
+      "attention_reason": "Fed Chair Powell's speeches are highly influential on monetary policy outlook and market sentiment.",
+      "attention_run_id": "session_attention_v0_20260702T025850Z",
+      "confidence": "",
+      "driver_role": "primary",
+      "event_id": "ed20-0aa0-45a0-9e20",
+      "expected_market_channel": "fed_path",
+      "forecast_cutoff_ts": "2024-05-14T03:50:00Z",
+      "indicator_name": "Fed Chair Powell Speech",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-05-14|CUSTOM_CONFIG_WINDOW"
+    }
+  ],
+  "member_labels_and_ranks_available": true,
+  "model": "gemini-2.5-flash-lite",
+  "provider": "Gemini",
+  "rationale": "Preserved member labels, ranks, reasons, channels, and exact membership provide sufficient causal orientation without treating structural roles as causal truth.",
+  "reasons_and_channels_useful": true,
+  "reinforcement_or_conflict_interpretable": true,
+  "would_episode_attention_field_materially_change_task": false
+}

@@ -1,0 +1,92 @@
+{
+  "completion_tokens": 1377,
+  "confidence": 0.75,
+  "episode_id": "EP_EVENT_d5499dc406b408c2068e",
+  "error_message": null,
+  "expected_initial_direction": "DOWN",
+  "expected_path_summary": "The Fed Cook speech is a primary driver and is expected to influence Fed path expectations. Given the context of other information requests, particularly regarding Fed rate cut expectations and Treasury yields, a speech from a Fed official on monetary policy is likely to introduce volatility and potential shifts in market sentiment. The initial expectation is for a downward movement in USDJPY, possibly driven by interpretations of the speech leading to a less hawkish stance or increased expectations for rate cuts. However, the speech could also lead to a reversal as markets digest new information about the Fed's policy outlook.",
+  "expected_reversal_flag": true,
+  "expected_reversal_horizon_min": 30,
+  "forecast_created_ts": "2026-07-20T00:01:39.530Z",
+  "forecast_cutoff_ts": "2024-05-08T06:50:00Z",
+  "information_arm": "BASELINE",
+  "information_used": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": "24",
+      "attention_reason": "Fed official speeches, especially on monetary policy, are key drivers of USDJPY via Fed path expectations.",
+      "driver_role": "primary",
+      "expected_market_channel": "fed_path",
+      "indicator_name": "Fed Cook Speech",
+      "request_rank": null
+    },
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": null,
+      "attention_reason": "Influences monetary policy divergence.",
+      "driver_role": null,
+      "expected_market_channel": "fed_path",
+      "indicator_name": "Fed rate cut expectations",
+      "request_rank": 2
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": null,
+      "attention_reason": "Key driver for USDJPY.",
+      "driver_role": null,
+      "expected_market_channel": "treasury_yields",
+      "indicator_name": "Treasury yields movements",
+      "request_rank": 1
+    },
+    {
+      "attention_label": null,
+      "attention_rank": null,
+      "attention_reason": "Establishes current momentum.",
+      "driver_role": null,
+      "expected_market_channel": "usdjpy_direction",
+      "indicator_name": "USDJPY recent price action",
+      "request_rank": 4
+    },
+    {
+      "attention_label": null,
+      "attention_rank": null,
+      "attention_reason": "Measures USD strength broadly.",
+      "driver_role": null,
+      "expected_market_channel": "usd_direction",
+      "indicator_name": "DXY movements",
+      "request_rank": 3
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": null,
+      "attention_reason": "Affects safe-haven flows.",
+      "driver_role": null,
+      "expected_market_channel": "risk_sentiment",
+      "indicator_name": "Market risk sentiment",
+      "request_rank": 5
+    }
+  ],
+  "invalidation_condition": "The speech content does not provide significant new information regarding the Fed's monetary policy stance or future path.",
+  "latency_ms": null,
+  "missing_information": [],
+  "model": "gemini-2.5-flash-lite",
+  "no_signal_flag": false,
+  "no_signal_reason": null,
+  "object": "PREDICTION",
+  "pack_fingerprint": null,
+  "pack_id": "BASELINE_NO_PACK",
+  "prediction_fingerprint": "sha256:0b8dc0382ca37005912246dbec75654af63e92413c7ba4d8d9548c5916fb75ea",
+  "prediction_id": "PRD_5a8c7a9b99373d8b219a",
+  "prediction_target_id": "EP_EVENT_d5499dc406b408c2068e",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "f141-404d-de65-cb89",
+  "prompt_tokens": 8151,
+  "provider": "Gemini",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": null,\n  \"confidence\": 0.75,\n  \"expected_initial_direction\": \"DOWN\",\n  \"expected_reversal_flag\": true,\n  \"expected_reversal_horizon_min\": 30,\n  \"expected_path_summary\": \"The Fed Cook speech is a primary driver and is expected to influence Fed path expectations. Given the context of other information requests, particularly regarding Fed rate cut expectations and Treasury yields, a speech from a Fed official on monetary policy is likely to introduce volatility and potential shifts in market sentiment. The initial expectation is for a downward movement in USDJPY, possibly driven by interpretations of the speech leading to a less hawkish stance or increased expectations for rate cuts. However, the speech could also lead to a reversal as markets digest new information about the Fed's policy outlook.\",\n  \"information_used\": [\n    {\n      \"indicator_name\": \"Fed Cook Speech\",\n      \"attention_label\": \"PRIMARY_DRIVER\",\n      \"attention_rank\": \"24\",\n      \"driver_role\": \"primary\",\n      \"expected_market_channel\": \"fed_path\",\n      \"attention_reason\": \"Fed official speeches, especially on monetary policy, are key drivers of USDJPY via Fed path expectations.\",\n      \"request_rank\": null\n    },\n    {\n      \"indicator_name\": \"Fed rate cut expectations\",\n      \"attention_label\": \"PRIMARY_DRIVER\",\n      \"attention_rank\": null,\n      \"driver_role\": null,\n      \"expected_market_channel\": \"fed_path\",\n      \"attention_reason\": \"Influences monetary policy divergence.\",\n      \"request_rank\": 2\n    },\n    {\n      \"indicator_name\": \"Treasury yields movements\",\n      \"attention_label\": \"SECONDARY_DRIVER\",\n      \"attention_rank\": null,\n      \"driver_role\": null,\n      \"expected_market_channel\": \"treasury_yields\",\n      \"attention_reason\": \"Key driver for USDJPY.\",\n      \"request_rank\": 1\n    },\n    {\n      \"indicator_name\": \"USDJPY recent price action\",\n      \"attention_label\": null,\n      \"attention_rank\": null,\n      \"driver_role\": null,\n      \"expected_market_channel\": \"usdjpy_direction\",\n      \"attention_reason\": \"Establishes current momentum.\",\n      \"request_rank\": 4\n    },\n    {\n      \"indicator_name\": \"DXY movements\",\n      \"attention_label\": null,\n      \"attention_rank\": null,\n      \"driver_role\": null,\n      \"expected_market_channel\": \"usd_direction\",\n      \"attention_reason\": \"Measures USD strength broadly.\",\n      \"request_rank\": 3\n    },\n    {\n      \"indicator_name\": \"Market risk sentiment\",\n      \"attention_label\": \"SECONDARY_DRIVER\",\n      \"attention_rank\": null,\n      \"driver_role\": null,\n      \"expected_market_channel\": \"risk_sentiment\",\n      \"attention_reason\": \"Affects safe-haven flows.\",\n      \"request_rank\": 5\n    }\n  ],\n  \"missing_information\": [],\n  \"invalidation_condition\": \"The speech content does not provide significant new information regarding the Fed's monetary policy stance or future path.\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 15,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.6,\n      \"reversal_probability\": 0.4,\n      \"stage_reason\": \"Initial market reaction to Fed Cook's speech, potentially interpreting it as dovish.\",\n      \"invalidation_condition\": \"The speech is perceived as hawkish or neutral, contrary to initial expectations.\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 10,\n      \"expected_pips_max\": 25,\n      \"stage_confidence\": 0.65,\n      \"continuation_probability\": 0.55,\n      \"reversal_probability\": 0.45,\n      \"stage_reason\": \"Sustained downward momentum as markets continue to price in the implications of the speech.\",\n      \"invalidation_condition\": \"Conflicting data or statements emerge, or the market starts to re-evaluate the speech's impact.\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 20,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.45,\n      \"reversal_probability\": 0.55,\n      \"stage_reason\": \"Potential reversal as markets digest the full implications, or alternative factors (e.g., Treasury yields) gain prominence.\",\n      \"invalidation_condition\": \"The initial downward move is confirmed as the dominant trend without significant counter-arguments.\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 15,\n      \"expected_pips_max\": 35,\n      \"stage_confidence\": 0.6,\n      \"continuation_probability\": 0.5,\n      \"reversal_probability\": 0.5,\n      \"stage_reason\": \"Reversal trend solidifies, potentially driven by a re-pricing of Fed policy expectations or other macroeconomic factors.\",\n      \"invalidation_condition\": \"The market continues to trend in the initial downward direction, or the reversal is short-lived.\"\n    }\n  ]\n}",
+  "run_id": "STEP6-BATCH-f718192a7566138c3fda",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [],
+  "session_id": "US|2024-05-08|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}

@@ -1,0 +1,16 @@
+{
+  "arm_order": [
+    "PACK_A",
+    "PACK_E"
+  ],
+  "episode_id": "EP_EVENT_9d3109bf76341fad0d60",
+  "model": "gemini-2.5-flash-lite",
+  "outcome_identity": "OUT_e5e1931a5196f655eb4b",
+  "pair_id": "PAIR_22d1e9b99b0045ba5fe1",
+  "provider": "Gemini",
+  "session_id": "US|2024-05-14|CUSTOM_CONFIG_WINDOW",
+  "source_input_row_fingerprints": {
+    "pack_a": "sha256:85a5c62fefccdd70a00eedb71774699249c9c331e135499a0999508067c98ace",
+    "pack_e": "sha256:6d734cc071a9c02fad99b09def4ff91d6be891a1776cb7c708f53658ea10f16b"
+  }
+}

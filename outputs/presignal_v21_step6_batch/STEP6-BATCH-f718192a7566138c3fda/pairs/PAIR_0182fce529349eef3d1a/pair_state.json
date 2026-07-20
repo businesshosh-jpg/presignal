@@ -1,0 +1,20 @@
+{
+  "arms": {
+    "PACK_A": {
+      "attempt_count": 1,
+      "error": "PATH_NEUTRAL_PIP_RANGE",
+      "provider_request_identity": "REQ_8eccfa5572007c4614d4",
+      "request_fingerprint": "sha256:20f5bea4fc59db629a833dcc26a05e624b55240c2341914b776ec9b26863039c",
+      "state": "PARSE_FAILED"
+    },
+    "PACK_E": {
+      "attempt_count": 1,
+      "error": "PATH_NEUTRAL_PIP_RANGE",
+      "provider_request_identity": "REQ_8981d534276bc3a74fa4",
+      "request_fingerprint": "sha256:967261a852995800cda3af9a450229ecb0d2444111d7461935ce68a9024247e0",
+      "state": "PARSE_FAILED"
+    }
+  },
+  "provider_call_count": 2,
+  "state": "INCOMPLETE_BOTH"
+}

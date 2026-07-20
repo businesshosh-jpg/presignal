@@ -1,0 +1,30 @@
+{
+  "batch_contract_fingerprint": "sha256:7b3f015f34e61c0877096f6da4a077ab4bee8e6d964c82a1da2beaf0f80f10ca",
+  "batch_run_id": "STEP6-BATCH-f718192a7566138c3fda",
+  "eligible_pair_ids": [
+    "PAIR_1f51bcb04e2c6b76c81d",
+    "PAIR_cfeaad94dde469828290",
+    "PAIR_7e91e5f436c8c1afe71b",
+    "PAIR_027be891ac7a5333c77a",
+    "PAIR_801360fe6a8e1269b9d1",
+    "PAIR_0864138040f9b5faaf30",
+    "PAIR_02261ac72d6eb624a0c0",
+    "PAIR_314b8a89037f4b70526d",
+    "PAIR_0abc8c91b6f6c4068c40",
+    "PAIR_9300355a60d6c24b23ca",
+    "PAIR_290f4abd2ebd36bd197b",
+    "PAIR_0182fce529349eef3d1a",
+    "PAIR_8581530fd5c53054f092",
+    "PAIR_9dd5048c231d9907bc16",
+    "PAIR_8080d0f613eb31f4ef5e",
+    "PAIR_2fbef875457dbadcac96",
+    "PAIR_22d1e9b99b0045ba5fe1",
+    "PAIR_2f7a6ea58818c27ef7ad",
+    "PAIR_32858aab54ae58e7a391",
+    "PAIR_4fe2e36fbb1a1852dccf",
+    "PAIR_82d00a876762a42ea14b"
+  ],
+  "preparation_run": "STEP6-BATCH-PREP-ccee43d7c9d8bf715f71",
+  "provider_calls_allowed": 84,
+  "scientific_contract_change": false
+}

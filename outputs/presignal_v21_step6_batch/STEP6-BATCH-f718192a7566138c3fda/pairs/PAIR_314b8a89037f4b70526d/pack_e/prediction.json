@@ -1,0 +1,126 @@
+{
+  "completion_tokens": 1613,
+  "confidence": 0.75,
+  "episode_id": "EP_BATCH_abe9bddef79b4d517245",
+  "error_message": null,
+  "expected_initial_direction": "DOWN",
+  "expected_path_summary": "The inflation data indicates a potential cooling trend, which could lead to a USDJPY downtrend. However, the retail sales data suggests consumer resilience, which might temper the downward move.",
+  "expected_reversal_flag": false,
+  "expected_reversal_horizon_min": null,
+  "forecast_created_ts": "2026-07-19T23:57:16.235Z",
+  "forecast_cutoff_ts": "2024-05-15T05:20:00Z",
+  "information_arm": "FULL_CONTEXT",
+  "information_used": [
+    {
+      "attention_label": "CONTEXT_ONLY",
+      "attention_rank": "22",
+      "confidence": "0.5",
+      "driver_role": "context",
+      "expected_market_channel": "growth_outlook",
+      "indicator_name": "Retail Sales YoY (Apr)"
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": "21",
+      "confidence": "0.8",
+      "driver_role": "secondary",
+      "expected_market_channel": "growth_outlook",
+      "indicator_name": "Retail Sales MoM (Apr)"
+    },
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": "17",
+      "confidence": "0.9",
+      "driver_role": "primary",
+      "expected_market_channel": "inflation_expectations",
+      "indicator_name": "Inflation Rate YoY (Apr)"
+    },
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": "16",
+      "confidence": "0.9",
+      "driver_role": "primary",
+      "expected_market_channel": "inflation_expectations",
+      "indicator_name": "Inflation Rate MoM (Apr)"
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": "19",
+      "confidence": "0.8",
+      "driver_role": "secondary",
+      "expected_market_channel": "growth_outlook",
+      "indicator_name": "Retail Sales Ex Autos MoM (Apr)"
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": "13",
+      "confidence": "0.7",
+      "driver_role": "secondary",
+      "expected_market_channel": "inflation_expectations",
+      "indicator_name": "CPI s.a (Apr)"
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": "18",
+      "confidence": "0.7",
+      "driver_role": "secondary",
+      "expected_market_channel": "growth_outlook",
+      "indicator_name": "NY Empire State Manufacturing Index (May)"
+    },
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": "15",
+      "confidence": "0.9",
+      "driver_role": "primary",
+      "expected_market_channel": "inflation_expectations",
+      "indicator_name": "Core Inflation Rate YoY (Apr)"
+    },
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": "14",
+      "confidence": "0.9",
+      "driver_role": "primary",
+      "expected_market_channel": "inflation_expectations",
+      "indicator_name": "Core Inflation Rate MoM (Apr)"
+    },
+    {
+      "attention_label": "CONTEXT_ONLY",
+      "attention_rank": "20",
+      "confidence": "0.5",
+      "driver_role": "context",
+      "expected_market_channel": "growth_outlook",
+      "indicator_name": "Retail Sales Ex Gas/Autos MoM (Apr)"
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": "12",
+      "confidence": "0.7",
+      "driver_role": "secondary",
+      "expected_market_channel": "inflation_expectations",
+      "indicator_name": "CPI (Apr)"
+    }
+  ],
+  "invalidation_condition": "A significant deviation in upcoming economic data from expected trends, or unexpected geopolitical events.",
+  "latency_ms": null,
+  "missing_information": "No significant missing information that would prevent a forecast.",
+  "model": "gemini-2.5-flash-lite",
+  "no_signal_flag": false,
+  "no_signal_reason": null,
+  "object": "PREDICTION",
+  "pack_fingerprint": "c7181ba72000b018a6b0e3c3ab31d78bdd016d2ab185e5cc97055ec06777c259",
+  "pack_id": "PACK_E_SHARED",
+  "prediction_fingerprint": "sha256:79bf30d7e0cab1a85cbf55dce610ffbde4d2ab443a52182e479097862d181783",
+  "prediction_id": "PRD_e7f68ca8f346380e2d3f",
+  "prediction_target_id": "EP_BATCH_abe9bddef79b4d517245",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "e56b-a66f-2877-6b83",
+  "prompt_tokens": 32037,
+  "provider": "Gemini",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": null,\n  \"confidence\": 0.75,\n  \"expected_initial_direction\": \"DOWN\",\n  \"expected_reversal_flag\": false,\n  \"expected_reversal_horizon_min\": null,\n  \"expected_path_summary\": \"The inflation data indicates a potential cooling trend, which could lead to a USDJPY downtrend. However, the retail sales data suggests consumer resilience, which might temper the downward move.\",\n  \"information_used\": [\n    {\n      \"indicator_name\": \"Retail Sales YoY (Apr)\",\n      \"attention_rank\": \"22\",\n      \"attention_label\": \"CONTEXT_ONLY\",\n      \"confidence\": \"0.5\",\n      \"driver_role\": \"context\",\n      \"expected_market_channel\": \"growth_outlook\"\n    },\n    {\n      \"indicator_name\": \"Retail Sales MoM (Apr)\",\n      \"attention_rank\": \"21\",\n      \"attention_label\": \"SECONDARY_DRIVER\",\n      \"confidence\": \"0.8\",\n      \"driver_role\": \"secondary\",\n      \"expected_market_channel\": \"growth_outlook\"\n    },\n    {\n      \"indicator_name\": \"Inflation Rate YoY (Apr)\",\n      \"attention_rank\": \"17\",\n      \"attention_label\": \"PRIMARY_DRIVER\",\n      \"confidence\": \"0.9\",\n      \"driver_role\": \"primary\",\n      \"expected_market_channel\": \"inflation_expectations\"\n    },\n    {\n      \"indicator_name\": \"Inflation Rate MoM (Apr)\",\n      \"attention_rank\": \"16\",\n      \"attention_label\": \"PRIMARY_DRIVER\",\n      \"confidence\": \"0.9\",\n      \"driver_role\": \"primary\",\n      \"expected_market_channel\": \"inflation_expectations\"\n    },\n    {\n      \"indicator_name\": \"Retail Sales Ex Autos MoM (Apr)\",\n      \"attention_rank\": \"19\",\n      \"attention_label\": \"SECONDARY_DRIVER\",\n      \"confidence\": \"0.8\",\n      \"driver_role\": \"secondary\",\n      \"expected_market_channel\": \"growth_outlook\"\n    },\n    {\n      \"indicator_name\": \"CPI s.a (Apr)\",\n      \"attention_rank\": \"13\",\n      \"attention_label\": \"SECONDARY_DRIVER\",\n      \"confidence\": \"0.7\",\n      \"driver_role\": \"secondary\",\n      \"expected_market_channel\": \"inflation_expectations\"\n    },\n    {\n      \"indicator_name\": \"NY Empire State Manufacturing Index (May)\",\n      \"attention_rank\": \"18\",\n      \"attention_label\": \"SECONDARY_DRIVER\",\n      \"confidence\": \"0.7\",\n      \"driver_role\": \"secondary\",\n      \"expected_market_channel\": \"growth_outlook\"\n    },\n    {\n      \"indicator_name\": \"Core Inflation Rate YoY (Apr)\",\n      \"attention_rank\": \"15\",\n      \"attention_label\": \"PRIMARY_DRIVER\",\n      \"confidence\": \"0.9\",\n      \"driver_role\": \"primary\",\n      \"expected_market_channel\": \"inflation_expectations\"\n    },\n    {\n      \"indicator_name\": \"Core Inflation Rate MoM (Apr)\",\n      \"attention_rank\": \"14\",\n      \"attention_label\": \"PRIMARY_DRIVER\",\n      \"confidence\": \"0.9\",\n      \"driver_role\": \"primary\",\n      \"expected_market_channel\": \"inflation_expectations\"\n    },\n    {\n      \"indicator_name\": \"Retail Sales Ex Gas/Autos MoM (Apr)\",\n      \"attention_rank\": \"20\",\n      \"attention_label\": \"CONTEXT_ONLY\",\n      \"confidence\": \"0.5\",\n      \"driver_role\": \"context\",\n      \"expected_market_channel\": \"growth_outlook\"\n    },\n    {\n      \"indicator_name\": \"CPI (Apr)\",\n      \"attention_rank\": \"12\",\n      \"attention_label\": \"SECONDARY_DRIVER\",\n      \"confidence\": \"0.7\",\n      \"driver_role\": \"secondary\",\n      \"expected_market_channel\": \"inflation_expectations\"\n    }\n  ],\n  \"missing_information\": \"No significant missing information that would prevent a forecast.\",\n  \"invalidation_condition\": \"A significant deviation in upcoming economic data from expected trends, or unexpected geopolitical events.\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 15,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.7,\n      \"reversal_probability\": 0.3,\n      \"stage_reason\": \"Initial reaction to cooling inflation data, outweighing mixed retail sales signals.\",\n      \"invalidation_condition\": \"If retail sales data shows unexpected strength, this could reverse.\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 10,\n      \"expected_pips_max\": 30,\n      \"stage_confidence\": 0.75,\n      \"continuation_probability\": 0.75,\n      \"reversal_probability\": 0.25,\n      \"stage_reason\": \"Sustained downward pressure from inflation concerns, with some tempering from resilient consumer spending data.\",\n      \"invalidation_condition\": \"Stronger than expected consumer demand could limit further downside.\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 15,\n      \"expected_pips_max\": 45,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.7,\n      \"reversal_probability\": 0.3,\n      \"stage_reason\": \"Market continues to price in lower inflation expectations, leading to a weaker USD.\",\n      \"invalidation_condition\": \"Any unexpected hawkish commentary from Fed officials could shift sentiment.\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 20,\n      \"expected_pips_max\": 60,\n      \"stage_confidence\": 0.65,\n      \"continuation_probability\": 0.65,\n      \"reversal_probability\": 0.35,\n      \"stage_reason\": \"The impact of inflation data is expected to dominate, pushing USDJPY lower, but consumer resilience may cap significant losses.\",\n      \"invalidation_condition\": \"Strong upside surprises in any future economic indicators could trigger a reversal.\"\n    }\n  ]\n}",
+  "run_id": "STEP6-BATCH-f718192a7566138c3fda",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [],
+  "session_id": "US|2024-05-15|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}
