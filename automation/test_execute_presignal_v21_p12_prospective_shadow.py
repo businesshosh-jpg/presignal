@@ -28,7 +28,7 @@ class P12ProspectiveShadowExecutionTests(unittest.TestCase):
     def test_missing_live_lineage_blocks_before_any_external_call(self) -> None:
         capability = p12.live_lineage_capability()
         self.assertFalse(capability["passed"])
-        self.assertEqual(capability["blocker"], "LIVE_V2_PROSPECTIVE_LINEAGE_ENTRYPOINTS_UNAVAILABLE")
+        self.assertEqual(capability["blocker"], "V2_1_POST_STEP9_R1_DEPLOYED_ENTRYPOINT_WRITE_ISOLATION_REQUIRED")
         self.assertEqual(capability["external_calls"], 0)
 
     def test_blocked_preflight_is_deterministic_and_preserves_empty_population(self) -> None:

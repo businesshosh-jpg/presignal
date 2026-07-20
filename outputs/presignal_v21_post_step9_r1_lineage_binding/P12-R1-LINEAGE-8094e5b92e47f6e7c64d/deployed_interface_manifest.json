@@ -1,0 +1,16 @@
+{
+  "current_source_paths": [
+    "apps_script/automation_api.js",
+    "apps_script/authoritative_provider_bridge.js"
+  ],
+  "forecast_bridge_scope": "forecast-only package-bound bridge; not an Attention, Request, or Pack builder",
+  "function_presence": {
+    "apiCallAuthoritativeProviderJsonObject": true,
+    "apiRunPipelineWindow": true,
+    "session_attention_map_return_only": false,
+    "session_information_requests_return_only": false,
+    "shared_market_state_pack_return_only": false
+  },
+  "reason": "No return-only/no-write callable exposes the three required v2 lineage stages with explicit prospective session, cutoff, provider/model, and run identities.",
+  "safe_lineage_entrypoints_available": false
+}

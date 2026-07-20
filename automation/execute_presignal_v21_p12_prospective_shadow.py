@@ -22,6 +22,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from automation import presignal_v21_prospective_flat_contract_v1 as prospective
+from automation import presignal_v21_prospective_lineage_adapter_v1 as lineage_adapter
 
 PREPARATION_ROOT = ROOT / "outputs" / "presignal_v21_prospective_shadow_preparation" / "PSS-PREP-df3dc4da1484d5344456"
 OUTPUT_ROOT = ROOT / "outputs" / "presignal_v21_prospective_shadow"
@@ -30,13 +31,6 @@ PREPARATION_FINGERPRINT = "sha256:a7cfe811af8cbc9cfd8f49572cba575c152361c296df96
 FROZEN_TAG = "presignal-v2.1-event-path-contract-v1-frozen"
 FROZEN_TAG_TARGET = "e8cd4f3fa2f3d7c1b2e624e32f1aea0a6c9866c0"
 TIMING_CONTROL_VERSION = "P12_TIMING_SEMANTICS_CONTROL_V1"
-LIVE_ENTRYPOINTS = (
-    "build_attention_map",
-    "build_information_requests",
-    "build_shared_market_state_pack",
-)
-
-
 class P12ShadowError(RuntimeError):
     """A P12 scientific authorization or operational invariant failed."""
 
@@ -135,19 +129,17 @@ def timing_semantics_control() -> dict[str, Any]:
 
 
 def live_lineage_capability() -> dict[str, Any]:
-    python_sources = list((ROOT / "automation").glob("*.py"))
-    apps_sources = list((ROOT / "apps_script").glob("*.js"))
-    source_text = "\n".join(path.read_text(errors="replace") for path in python_sources + apps_sources)
-    resolved = {name: ("def " + name + "(") in source_text or ("function " + name + "(") in source_text for name in LIVE_ENTRYPOINTS}
-    bridge = "function apiCallAuthoritativeProviderJsonObject(" in source_text
-    missing = [name for name, present in resolved.items() if not present]
+    inventory = lineage_adapter.source_inventory()
+    deployed = lineage_adapter.deployed_interface_manifest()
     return {
-        "provider_bridge_available": bridge,
-        "required_v2_live_lineage_entrypoints": list(LIVE_ENTRYPOINTS),
-        "entrypoint_resolution": resolved,
-        "passed": not missing,
-        "blocker": "LIVE_V2_PROSPECTIVE_LINEAGE_ENTRYPOINTS_UNAVAILABLE" if missing else "",
-        "smallest_repair": "Bind the existing deployed v2 Session Attention Map, Information Request, and shared Market-State Pack entrypoints to one local prospective adapter, preserving their current output shapes, run identities, and provenance. Do not introduce a new Attention, Request, or Pack architecture.",
+        "provider_bridge_available": deployed["function_presence"]["apiCallAuthoritativeProviderJsonObject"],
+        "required_v2_live_lineage_entrypoints": [row["entrypoint"] for row in inventory],
+        "entrypoint_resolution": {row["entrypoint"]: row["entrypoint_present"] for row in inventory},
+        "passed": False,
+        "blocker": "V2_1_POST_STEP9_R1_DEPLOYED_ENTRYPOINT_WRITE_ISOLATION_REQUIRED",
+        "smallest_repair": "Deploy or expose three return-only/no-write v2 wrappers that accept explicit prospective session, provider/model, cutoff, and run identities, return raw and parsed lineage records, and do not read stale worksheet state or write production sheets.",
+        "source_commit": lineage_adapter.SOURCE_COMMIT,
+        "source_inventory_fingerprint": lineage_adapter.sha256(inventory),
         "external_calls": 0,
     }
 

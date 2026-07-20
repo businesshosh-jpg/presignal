@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "reason": "NO_SAFE_DEPLOYED_RETURN_ONLY_NO_WRITE_BINDING",
+  "source_output_schema": [
+    "Session_Information_Requests REQUEST_HEADERS",
+    "Information_Requirement_Library LIBRARY_HEADERS",
+    "Session_Information_Response_Audit AUDIT_HEADERS"
+  ]
+}

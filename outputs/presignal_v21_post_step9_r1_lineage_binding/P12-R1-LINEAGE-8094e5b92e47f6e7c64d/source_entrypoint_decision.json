@@ -1,0 +1,8 @@
+{
+  "classification": "NON_SCIENTIFIC_PROSPECTIVE_LINEAGE_INTEGRATION",
+  "decision": "V2_1_POST_STEP9_R1_DEPLOYED_ENTRYPOINT_WRITE_ISOLATION_REQUIRED",
+  "external_calls": 0,
+  "safe_binding_available": false,
+  "smallest_repair": "Deploy or expose three return-only/no-write v2 wrappers that accept explicit prospective session, provider/model, cutoff, and run identities, return raw and parsed lineage records, and do not read stale worksheet state or write production sheets.",
+  "source_entrypoints_identified": true
+}

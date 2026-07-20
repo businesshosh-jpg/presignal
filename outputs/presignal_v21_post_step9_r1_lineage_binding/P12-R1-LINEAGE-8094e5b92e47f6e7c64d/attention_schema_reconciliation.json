@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "reason": "NO_SAFE_DEPLOYED_RETURN_ONLY_NO_WRITE_BINDING",
+  "source_output_schema": [
+    "Session_Attention_Map MAP_HEADERS",
+    "Session_Attention_Response_Audit AUDIT_HEADERS",
+    "Session_Attention_Summary SUMMARY_HEADERS"
+  ]
+}

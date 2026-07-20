@@ -1,17 +1,12 @@
 {
-  "blocker": "LIVE_V2_PROSPECTIVE_LINEAGE_ENTRYPOINTS_UNAVAILABLE",
-  "entrypoint_resolution": {
-    "build_attention_map": false,
-    "build_information_requests": false,
-    "build_shared_market_state_pack": false
-  },
+  "adapter_fingerprint": "sha256:552236a8f7812c26a32c4926568ac36b1e6d246c4b2a1448f0b437211be372e7",
   "external_calls": 0,
-  "passed": false,
-  "provider_bridge_available": true,
-  "required_v2_live_lineage_entrypoints": [
-    "build_attention_map",
-    "build_information_requests",
-    "build_shared_market_state_pack"
+  "previous_artifact": "live_lineage_capability_initial.json",
+  "safe_binding_available": false,
+  "source_entrypoints": [
+    "build_session_attention_map_v0",
+    "build",
+    "build_session_information_requests_v0"
   ],
-  "smallest_repair": "Bind the existing deployed v2 Session Attention Map, Information Request, and shared Market-State Pack entrypoints to one local prospective adapter, preserving their current output shapes, run identities, and provenance. Do not introduce a new Attention, Request, or Pack architecture."
+  "status": "V2_1_POST_STEP9_R1_DEPLOYED_ENTRYPOINT_WRITE_ISOLATION_REQUIRED"
 }

@@ -1,0 +1,26 @@
+{
+  "adapter_scope": "strict source and write-isolation gate; no provider, acquisition, Apps Script, Google Sheets, workbook, or production call",
+  "classification": "NON_SCIENTIFIC_PROSPECTIVE_LINEAGE_INTEGRATION",
+  "entrypoints": [
+    "build_session_attention_map_v0",
+    "build_session_information_requests_v0",
+    "build"
+  ],
+  "execution_status": "BLOCKED_PENDING_RETURN_ONLY_NO_WRITE_BINDING",
+  "required_arguments": [
+    "study_id",
+    "collection_run_id",
+    "session_id",
+    "session_snapshot",
+    "member_event_ids",
+    "provider",
+    "exact_model",
+    "information_cutoff_ts",
+    "attention_run_id",
+    "request_run_id",
+    "pack_freeze_id",
+    "resume_state"
+  ],
+  "source_commit": "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f",
+  "timing": "All usable Attention, Request, acquisition, and Pack timestamps must be at or before information_cutoff_ts."
+}

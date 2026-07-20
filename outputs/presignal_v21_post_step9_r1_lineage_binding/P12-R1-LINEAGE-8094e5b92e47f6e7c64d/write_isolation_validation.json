@@ -1,0 +1,6 @@
+{
+  "google_sheets_writes": 0,
+  "passed": false,
+  "production_writes": 0,
+  "reason": "V2_1_POST_STEP9_R1_DEPLOYED_ENTRYPOINT_WRITE_ISOLATION_REQUIRED"
+}

@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "reason": "NO_SAFE_DEPLOYED_RETURN_ONLY_NO_WRITE_BINDING",
+  "source_output_schema": [
+    "local Pack E artifacts and acquisition manifests"
+  ]
+}
