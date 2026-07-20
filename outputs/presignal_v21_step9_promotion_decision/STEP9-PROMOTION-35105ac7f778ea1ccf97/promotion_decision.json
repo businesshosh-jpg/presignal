@@ -1,0 +1,10 @@
+{
+  "attention_redesign": "NOT_REQUIRED",
+  "decision": "V2_1_STEP9_PROMOTION_DEFERRED_PROSPECTIVE_SHADOW_AUTHORIZED",
+  "direct_session_forecasting": "RETAIN_ACTIVE",
+  "main_path_promotion": "DEFERRED",
+  "prospective_shadow_replication": "AUTHORIZED",
+  "rationale": "The architecture and controls are valid, but comparative historical evidence is indeterminate under Episode clustering and missingness bounds.",
+  "shadow_only_operation": "CONTINUES",
+  "v3_status": "NOT_AUTHORIZED"
+}

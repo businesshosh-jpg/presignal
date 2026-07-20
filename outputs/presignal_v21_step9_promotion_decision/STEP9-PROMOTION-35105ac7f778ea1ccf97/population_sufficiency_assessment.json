@@ -1,0 +1,11 @@
+{
+  "complete_pairs": 14,
+  "limitations": [
+    "Episode-clustered provider rows",
+    "seven incomplete pairs",
+    "limited Event-type diversity",
+    "wide paired uncertainty"
+  ],
+  "status": "INSUFFICIENT_FOR_MAIN_PATH_PROMOTION",
+  "unique_complete_episodes": 10
+}

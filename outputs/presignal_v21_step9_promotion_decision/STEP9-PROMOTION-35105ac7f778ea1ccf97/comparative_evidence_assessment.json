@@ -1,0 +1,8 @@
+{
+  "episode_cluster_permutation_p_value": 0.625,
+  "exact_mcnemar_p_value": 0.625,
+  "pack_a_accuracy": 0.42857142857142855,
+  "pack_e_accuracy": 0.2857142857142857,
+  "paired_difference_pack_a_minus_pack_e": 0.14285714285714285,
+  "status": "NO_PACK_SUPERIORITY_SUPPORTED"
+}

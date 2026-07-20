@@ -1,0 +1,15 @@
+{
+  "missingness_policy": "Preserve rejected responses, arm/provider completion, contract failure category, prompt length, Pack sizes, and execution order. Do not impute rejected forecasts or treat them as incorrect unless a future preregistered rule requires it.",
+  "primary_cluster": "Episode",
+  "primary_comparison": "paired Pack A minus Pack E within provider + model + Episode identity",
+  "primary_endpoint": "15-minute direction correctness",
+  "secondary_endpoints": [
+    "5-minute direction correctness",
+    "30-minute direction correctness",
+    "60-minute direction correctness",
+    "numeric path score",
+    "reversal/path validity",
+    "completion rate",
+    "Attention scope adequacy"
+  ]
+}

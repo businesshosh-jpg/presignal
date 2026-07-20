@@ -30,7 +30,8 @@ It aligns task labels with the authoritative v2.1 Development Plan.
 | Step 7 | COMPLETE | Add all providers and freeze the controlled batch pipeline |
 | Step 8A | COMPLETE | Execute the controlled historical Pack A versus Pack E shadow batch |
 | Step 8B | COMPLETE | Episode-cluster-aware analysis of the historical Pack A versus Pack E shadow test |
-| Step 9 | NOT STARTED | Decide promotion |
+| Step 8-R1 | COMPLETE | Repair the prospective FLAT path-stage output instruction |
+| Step 9 | COMPLETE | Promotion deferred; bounded prospective shadow replication authorized |
 
 ## Historical Label Compatibility
 
@@ -49,6 +50,12 @@ only current roadmap-label authority for future status and task titles.
 
 ## Current Gate
 
-Step 8B is complete. Step 9 remains not started; its promotion decision is
-blocked pending the separately authorized prospective output-contract repair
-identified by the frozen Step 8B analysis.
+Step 9 is complete. The Event-Path architecture is valid for a bounded
+Post-Step-9 Prospective Shadow Replication using the repaired prospective FLAT
+contract, but main-path promotion is deferred: the frozen Step 8B historical
+comparison remains indeterminate under Episode clustering and missingness.
+
+Direct Session Forecasting remains active, shadow-only operation continues,
+and v3.0 is not authorized. Historical internal names remain unchanged:
+historical batch execution maps to Step 8A and paired historical analysis maps
+to Step 8B under this authoritative roadmap.

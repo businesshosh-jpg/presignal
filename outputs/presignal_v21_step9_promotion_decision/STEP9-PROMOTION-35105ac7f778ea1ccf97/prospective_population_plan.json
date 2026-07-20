@@ -1,0 +1,36 @@
+{
+  "checkpoint_policy": [
+    "At 12 unique Episodes, verify operational completion, leakage, exact model identity, and contract adherence only.",
+    "At 40 unique Episodes, perform one preregistered adequacy and missingness review without prompt or eligibility optimization.",
+    "Continue toward 60 unique Episodes if controls hold; stop at 80 until a new explicit decision review."
+  ],
+  "expected_forecast_arms_at_target": 360,
+  "expected_provider_episode_pairs_at_target": 180,
+  "initial_operational_checkpoint_unique_episodes": 12,
+  "maximum_bounded_unique_episodes": 80,
+  "maximum_forecast_arms": 480,
+  "minimum_interpretable_unique_episodes": 40,
+  "planned_providers_models": [
+    {
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini"
+    },
+    {
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI"
+    }
+  ],
+  "prohibited_checkpoint_actions": [
+    "prompt optimization based on accuracy",
+    "arm rebalancing based on outcomes",
+    "provider/model substitution",
+    "main-path promotion"
+  ],
+  "providers_per_episode": 3,
+  "target_unique_episodes": 60,
+  "unit_of_collection": "unique Event Episode"
+}

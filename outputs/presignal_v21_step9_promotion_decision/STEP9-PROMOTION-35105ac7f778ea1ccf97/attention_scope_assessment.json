@@ -1,0 +1,7 @@
+{
+  "adequate": 14,
+  "completed_pairs_reviewed": 14,
+  "extension_candidates": 0,
+  "policy": "Reuse the existing member-level Attention infrastructure for new sessions; retain per-pair adequacy monitoring and do not reuse historical Attention answers.",
+  "status": "SUFFICIENT_WITH_MONITORING"
+}

@@ -1,0 +1,82 @@
+{
+  "accepted_forecasts": 32,
+  "complete_paired_observations": 14,
+  "frozen_contract_tag": "presignal-v2.1-event-path-contract-v1-frozen",
+  "frozen_contract_tag_target": "e8cd4f3fa2f3d7c1b2e624e32f1aea0a6c9866c0",
+  "historical_analysis_fingerprint": "sha256:f1dc8c8fb0e445eac14beeb99b17cd05cecdd1d5443e7f7c44c6cb69b88b9b92",
+  "historical_analysis_run_id": "STEP7-PAIRED-1dbbf399d2f73793e4f3",
+  "historical_batch_fingerprint": "sha256:8ac32a4f95786efa82d24cf3e7cffb3a013afe076e4b267121410ff7846f7779",
+  "historical_batch_run_id": "STEP6-BATCH-f718192a7566138c3fda",
+  "historical_summary": {
+    "attention": {
+      "attention_scope_adequate": 14,
+      "completed_pairs_reviewed": 14,
+      "dominant_member_identifiable": 14,
+      "extension_candidates": 0,
+      "joint_member_interpretation_possible": 14,
+      "recommendation": "NO_ATTENTION_EXTENSION_RECOMMENDED",
+      "reinforcement_or_conflict_interpretable": 14
+    },
+    "bounds": {
+      "best_case_pack_a_difference": 0.3333333333333333,
+      "complete_case_observed_difference": 0.14285714285714285,
+      "denominator_approved_pairs": 21,
+      "effect_sign_survives_bounds": false,
+      "known_pack_a_correct": 6,
+      "known_pack_e_correct": 5,
+      "neutral_midpoint_descriptive_difference": 0.09523809523809523,
+      "note": "Bounds preserve all accepted-arm primary scores derived from frozen Prediction and Outcome artifacts; only unaccepted arms vary.",
+      "unknown_pack_a_scores": 6,
+      "unknown_pack_e_scores": 4,
+      "worst_case_pack_a_difference": -0.14285714285714285
+    },
+    "cluster": {
+      "cluster_pair_counts": {
+        "EP_BATCH_4bf004a6c160d4763e06": 2,
+        "EP_BATCH_4c1237b4fdba265e575f": 1,
+        "EP_BATCH_6fb320e5e8c5931f2373": 2,
+        "EP_BATCH_abe9bddef79b4d517245": 1,
+        "EP_BATCH_ecfa4606e8dced27ecd0": 1,
+        "EP_EVENT_1990950e20318cd96a78": 1,
+        "EP_EVENT_697fa043068a1f61838f": 1,
+        "EP_EVENT_9d3109bf76341fad0d60": 3,
+        "EP_EVENT_d5499dc406b408c2068e": 1,
+        "EP_EVENT_fbb37fea272c4e76546e": 1
+      },
+      "method": "EXACT_EPISODE_LEVEL_LABEL_SWAP_ENUMERATION",
+      "null_distribution_max": 0.2857142857142857,
+      "null_distribution_min": -0.2857142857142857,
+      "observed_clustered_mean_difference": 0.14285714285714285,
+      "possible_permutations": 1024,
+      "statistic": "mean_paired_difference_pack_a_minus_pack_e",
+      "two_sided_p_value": 0.625,
+      "unique_episode_clusters": 10,
+      "value_key": "primary"
+    },
+    "primary": {
+      "both_correct": 3,
+      "both_incorrect": 7,
+      "conservative_95pct_difference_interval": [
+        -0.33268285425419064,
+        0.5568797677577234
+      ],
+      "exact_mcnemar_two_sided_p_value": 0.625,
+      "horizon_min": 15,
+      "pack_a_accuracy": 0.42857142857142855,
+      "pack_a_correct": 6,
+      "pack_a_only_correct": 3,
+      "pack_e_accuracy": 0.2857142857142857,
+      "pack_e_correct": 4,
+      "pack_e_only_correct": 1,
+      "pair_count": 14,
+      "paired_risk_difference_pack_a_minus_pack_e": 0.14285714285714285,
+      "primary_scoring_rule": "Only direction_15m_ok == true is correct; false and null no-signal direction endpoints are not correct directional forecasts."
+    }
+  },
+  "historical_trees_unchanged": true,
+  "prospective_contract_fingerprint": "sha256:a40c0ee570cde5c1e52e4b90d256ff5552411631d4a6224b1683b629fb69775a",
+  "prospective_contract_version": "presignal_event_path_contract_v1_flat_stage_prospective_v1",
+  "prospective_repair_run_id": "STEP8-R1-FLAT-a40c0ee570cde5c1e52e",
+  "rejected_responses": 10,
+  "unique_complete_episodes": 10
+}

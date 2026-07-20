@@ -1,0 +1,23 @@
+{
+  "automatic_promotion": false,
+  "governance": [
+    "Historical and prospective samples remain separate",
+    "shadow outputs remain non-production",
+    "a new explicit Step 9 review is required",
+    "no automatic v3.0 naming or migration"
+  ],
+  "operational": [
+    "Acceptable paired completion",
+    "controlled call usage",
+    "zero leakage",
+    "no model substitution",
+    "deterministic reconstruction",
+    "stable Outcome attachment",
+    "no recurring output-contract defect"
+  ],
+  "scientific": [
+    "At least the bounded target of unique Episodes, with useful paired and Episode-cluster-aware uncertainty.",
+    "No material arm-dependent missingness and no single provider or Episode driving the result.",
+    "Coherent horizon/path evidence and acceptable Attention adequacy."
+  ]
+}

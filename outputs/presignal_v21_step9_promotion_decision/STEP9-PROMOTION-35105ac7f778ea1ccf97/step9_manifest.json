@@ -1,0 +1,15 @@
+{
+  "decision": "V2_1_STEP9_PROMOTION_DEFERRED_PROSPECTIVE_SHADOW_AUTHORIZED",
+  "decision_fingerprint": "sha256:a74bd19ac154a895fbf3b571a9bac542521e3799e7d308edf5c6cbb9b57b02b1",
+  "decision_run_id": "STEP9-PROMOTION-35105ac7f778ea1ccf97",
+  "external_calls": {
+    "acquisition": 0,
+    "apps_script": 0,
+    "google_sheets_writes": 0,
+    "market_data": 0,
+    "provider": 0
+  },
+  "historical_artifacts_changed": false,
+  "production_changes": 0,
+  "workbook_changes": 0
+}

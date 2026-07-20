@@ -1,0 +1,21 @@
+{
+  "authorized": true,
+  "contract_version": "presignal_event_path_contract_v1_flat_stage_prospective_v1",
+  "explicitly_not_authorized": [
+    "provider execution in this decision task",
+    "production routing",
+    "automatic trading",
+    "historical artifact revision",
+    "direct Session Forecast retirement",
+    "v3.0 transition"
+  ],
+  "required_controls": [
+    "New v2 Attention Map for each new session using existing infrastructure.",
+    "New Information Requests and shared Pack A/E inputs for each new session.",
+    "Same provider/model within each Pack A/E pair; identical prompts except arm and pack content.",
+    "Forecast 5/15/30/60-minute paths and preserve 15-minute direction correctness as primary endpoint.",
+    "Freeze both forecasts before release; attach deterministic Outcome only after release.",
+    "Preserve provider disagreement, rejected responses, and no-trading shadow-only status."
+  ],
+  "scope": "Post-Step-9 Prospective Shadow Replication"
+}

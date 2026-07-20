@@ -1,0 +1,10 @@
+{
+  "mitigation": "bounded paired prospective collection with Episode clustering and preserved failure records.",
+  "risks": [
+    "Episode-clustered provider rows",
+    "seven incomplete pairs",
+    "limited Event-type diversity",
+    "wide paired uncertainty",
+    "Historical missingness bounds cross zero."
+  ]
+}

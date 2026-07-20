@@ -1,0 +1,11 @@
+{
+  "controls": [
+    "exact provider/model control",
+    "Pack A/E prompt symmetry",
+    "restart and duplicate-call controls",
+    "deterministic reconstruction",
+    "zero leakage",
+    "validated prospective FLAT repair"
+  ],
+  "status": "SUFFICIENT_FOR_BOUNDED_PROSPECTIVE_SHADOW"
+}
