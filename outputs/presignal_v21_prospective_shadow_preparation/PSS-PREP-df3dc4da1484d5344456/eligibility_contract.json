@@ -1,0 +1,21 @@
+{
+  "forecast_required_selection": "FORECAST",
+  "non_forecast_records": [
+    "WATCH",
+    "IGNORE",
+    "NO_SIGNAL"
+  ],
+  "requirements": [
+    "valid Session",
+    "deterministic Episode",
+    "exact release",
+    "paired identical cutoff",
+    "parsed complete Attention",
+    "valid Requests",
+    "distinct Pack A/E",
+    "exact provider/model",
+    "prospective contract",
+    "no leakage",
+    "unique Episode"
+  ]
+}

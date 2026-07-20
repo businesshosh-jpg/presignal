@@ -1,0 +1,26 @@
+{
+  "boundaries": {
+    "P12": {
+      "arms": 72,
+      "episodes": 12,
+      "pairs": 36
+    },
+    "P40": {
+      "arms": 240,
+      "episodes": 40,
+      "pairs": 120
+    },
+    "P60": {
+      "arms": 360,
+      "episodes": 60,
+      "pairs": 180
+    },
+    "P80": {
+      "arms": 480,
+      "episodes": 80,
+      "pairs": 240
+    }
+  },
+  "episode_counting_unit": "unique Episode IDs",
+  "provider_rows_do_not_inflate_episode_count": true
+}

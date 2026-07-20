@@ -1,0 +1,35 @@
+{
+  "cutoff_rule": "Session forecast_cutoff_ts is frozen before the earliest Episode release and is identical across paired Pack A/E prompts. Attention, Requests, and Packs must be frozen at or before it.",
+  "hard_stops": [
+    "forecast call or freeze at or after cutoff",
+    "released actuals in forecast input",
+    "Outcome attached before both forecasts freeze"
+  ],
+  "required_timestamps": [
+    "scheduled_release_ts",
+    "forecast_cutoff_ts",
+    "attention_generated_ts",
+    "requests_generated_ts",
+    "pack_freeze_ts",
+    "prompt_freeze_ts",
+    "forecast_call_ts",
+    "forecast_freeze_ts",
+    "release_observed_ts",
+    "outcome_generated_ts",
+    "evaluation_ts"
+  ],
+  "timing_states": [
+    "SESSION_PLANNED",
+    "ATTENTION_PENDING",
+    "ATTENTION_COMPLETE",
+    "REQUESTS_COMPLETE",
+    "PACKS_COMPLETE",
+    "EPISODES_COMPLETE",
+    "FORECAST_READY",
+    "FORECASTS_FROZEN",
+    "RELEASE_OCCURRED",
+    "OUTCOME_READY",
+    "EVALUATED",
+    "COMPLETE"
+  ]
+}

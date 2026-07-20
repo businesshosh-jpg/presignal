@@ -1,0 +1,36 @@
+{
+  "existing_step5_adapter": {
+    "callable": "adapt_prospective_outputs",
+    "live_v2_entrypoints_referenced_for_future_execution": [
+      "build_attention_map()",
+      "build_information_requests()",
+      "build_shared_market_state_pack()"
+    ],
+    "result": {
+      "attention_records": 1,
+      "episodes": 1,
+      "external_calls": 0,
+      "provider_models": [
+        "Anthropic",
+        "Gemini",
+        "OpenAI"
+      ],
+      "request_records": 1,
+      "shared_pack_records": 1
+    }
+  },
+  "step9": {
+    "historical_evidence": {
+      "accepted_forecasts": 32,
+      "frozen_contract_tag_target": "e8cd4f3fa2f3d7c1b2e624e32f1aea0a6c9866c0",
+      "historical_analysis_fingerprint": "sha256:f1dc8c8fb0e445eac14beeb99b17cd05cecdd1d5443e7f7c44c6cb69b88b9b92",
+      "historical_analysis_run_id": "STEP7-PAIRED-1dbbf399d2f73793e4f3",
+      "historical_batch_run_id": "STEP6-BATCH-f718192a7566138c3fda",
+      "rejected_responses": 10
+    },
+    "prospective_contract_fingerprint": "sha256:a40c0ee570cde5c1e52e4b90d256ff5552411631d4a6224b1683b629fb69775a",
+    "prospective_contract_version": "presignal_event_path_contract_v1_flat_stage_prospective_v1",
+    "step9_decision": "V2_1_STEP9_PROMOTION_DEFERRED_PROSPECTIVE_SHADOW_AUTHORIZED",
+    "step9_decision_fingerprint": "sha256:a74bd19ac154a895fbf3b571a9bac542521e3799e7d308edf5c6cbb9b57b02b1"
+  }
+}

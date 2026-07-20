@@ -1,0 +1,30 @@
+{
+  "note": "Underlying acquisition-source calls remain separately ledgered by the existing shared Pack infrastructure and are not executed here.",
+  "per_session": {
+    "attention_map_calls": 3,
+    "information_request_calls": 3,
+    "shared_pack_construction_calls": 1
+  },
+  "workflow_invocation_upper_bounds_assuming_one_admitted_episode_per_session": {
+    "P12": {
+      "attention_map_calls": 36,
+      "information_request_calls": 36,
+      "shared_pack_construction_calls": 12
+    },
+    "P40": {
+      "attention_map_calls": 120,
+      "information_request_calls": 120,
+      "shared_pack_construction_calls": 40
+    },
+    "P60": {
+      "attention_map_calls": 180,
+      "information_request_calls": 180,
+      "shared_pack_construction_calls": 60
+    },
+    "P80": {
+      "attention_map_calls": 240,
+      "information_request_calls": 240,
+      "shared_pack_construction_calls": 80
+    }
+  }
+}

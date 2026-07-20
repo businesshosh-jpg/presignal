@@ -1,0 +1,20 @@
+{
+  "permitted_differences": [
+    "information_arm",
+    "information_pack",
+    "information_pack_fingerprint"
+  ],
+  "prompt_freeze_before_calls": true,
+  "same_fields": [
+    "provider",
+    "model",
+    "Episode",
+    "members",
+    "cutoff",
+    "Attention",
+    "generation settings",
+    "schema",
+    "horizons",
+    "Outcome identity"
+  ]
+}

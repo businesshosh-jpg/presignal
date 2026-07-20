@@ -1,0 +1,5 @@
+{
+  "outcome_independent": true,
+  "resume_stable": true,
+  "rule": "PACK_A first iff sha256(provider_episode_pair_id) final hex digit is even; otherwise PACK_E first."
+}

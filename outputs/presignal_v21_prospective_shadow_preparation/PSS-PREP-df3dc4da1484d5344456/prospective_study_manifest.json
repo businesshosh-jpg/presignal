@@ -1,0 +1,87 @@
+{
+  "arm_order_rule": "PACK_A first iff sha256(provider_episode_pair_id) final hex digit is even; otherwise PACK_E first.",
+  "attention_mapping": {
+    "CONTEXT_ONLY": "WATCH",
+    "IGNORE": "IGNORE",
+    "NO_SIGNAL": "NO_SIGNAL",
+    "PRIMARY_DRIVER": "FORECAST",
+    "SECONDARY_DRIVER": "WATCH",
+    "WATCHLIST": "WATCH"
+  },
+  "checkpoint_rules": [
+    "P12 operational-only",
+    "P40 preregistered adequacy/missingness review",
+    "P60 requires a new explicit promotion review",
+    "P80 only under the precision extension rule"
+  ],
+  "cluster_definition": "Episode",
+  "cutoff_policy": "Session forecast_cutoff_ts is frozen before the earliest Episode release and is identical across paired Pack A/E prompts. Attention, Requests, and Packs must be frozen at or before it.",
+  "direct_session_forecast_status": "RETAIN_ACTIVE_REFERENCE_BASELINE",
+  "eligibility": "FORECAST selection, parsed complete Attention, valid requests and distinct Pack A/E, exact cutoff, no leakage, unique Episode identity.",
+  "historical_evidence_reference": {
+    "accepted_forecasts": 32,
+    "frozen_contract_tag_target": "e8cd4f3fa2f3d7c1b2e624e32f1aea0a6c9866c0",
+    "historical_analysis_fingerprint": "sha256:f1dc8c8fb0e445eac14beeb99b17cd05cecdd1d5443e7f7c44c6cb69b88b9b92",
+    "historical_analysis_run_id": "STEP7-PAIRED-1dbbf399d2f73793e4f3",
+    "historical_batch_run_id": "STEP6-BATCH-f718192a7566138c3fda",
+    "rejected_responses": 10
+  },
+  "missingness_policy": "Preserve every approved pair and arm state; rejected forecasts are not scored as incorrect.",
+  "object": "presignal_v21_prospective_event_path_shadow_study",
+  "p60_to_p80_extension_rule": "All operational and integrity controls pass; paired completion >= 85%; absolute arm completion-rate difference <= 5 percentage points; primary 15-minute Episode-cluster-aware interval includes zero and has width > 0.20; extension is for precision only. No prompt, contract, eligibility, provider, or evaluation change is permitted.",
+  "population_boundaries": {
+    "P12": {
+      "arms": 72,
+      "episodes": 12,
+      "pairs": 36
+    },
+    "P40": {
+      "arms": 240,
+      "episodes": 40,
+      "pairs": 120
+    },
+    "P60": {
+      "arms": 360,
+      "episodes": 60,
+      "pairs": 180
+    },
+    "P80": {
+      "arms": 480,
+      "episodes": 80,
+      "pairs": 240
+    }
+  },
+  "primary_endpoint": "15-minute direction correctness",
+  "promotion_review_requirement": "A new explicit review after P60; no automatic promotion.",
+  "prospective_contract": {
+    "fingerprint": "sha256:a40c0ee570cde5c1e52e4b90d256ff5552411631d4a6224b1683b629fb69775a",
+    "version": "presignal_event_path_contract_v1_flat_stage_prospective_v1"
+  },
+  "providers_models": [
+    {
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini"
+    },
+    {
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI"
+    }
+  ],
+  "scientific_fields_immutable_after_execution_begins": true,
+  "secondary_endpoints": [
+    "5-minute direction correctness",
+    "30-minute direction correctness",
+    "60-minute direction correctness",
+    "numeric path score",
+    "reversal/path validity",
+    "paired completion",
+    "Attention adequacy"
+  ],
+  "shadow_only_status": "RESEARCH_SIDECAR_NO_PRODUCTION_DECISIONS",
+  "step9_decision_identity": "sha256:a74bd19ac154a895fbf3b571a9bac542521e3799e7d308edf5c6cbb9b57b02b1",
+  "study_id": "PSS_8a6e8ca69c195cf9defc"
+}

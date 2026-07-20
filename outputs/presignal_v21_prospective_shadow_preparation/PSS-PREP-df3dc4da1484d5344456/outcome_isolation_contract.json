@@ -1,0 +1,19 @@
+{
+  "after_release": [
+    "released actuals",
+    "market reaction",
+    "Outcome",
+    "paired evaluation"
+  ],
+  "before_release": [
+    "Attention",
+    "Requests",
+    "Packs",
+    "prompts",
+    "provider responses",
+    "Predictions",
+    "Prediction Paths",
+    "forecast freeze"
+  ],
+  "provider_visibility": "Outcome contents never enter prompts or requests"
+}

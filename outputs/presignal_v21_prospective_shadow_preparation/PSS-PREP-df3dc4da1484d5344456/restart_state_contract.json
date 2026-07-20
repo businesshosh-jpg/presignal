@@ -1,0 +1,38 @@
+{
+  "duplicate_call_prevention": "accepted arm is skipped; retry request fingerprint must remain identical",
+  "immutable_identity_rules": {
+    "accepted_forecast_identity": "sha256(provider_request_identity,prediction_fingerprint)",
+    "evaluation_identity": "sha256(provider_episode_pair_id,arm,outcome_identity)",
+    "outcome_identity": "sha256(study_id,episode_id)"
+  },
+  "immutable_records": [
+    "accepted forecast",
+    "frozen prompt",
+    "frozen request",
+    "Outcome",
+    "evaluation"
+  ],
+  "resume_points": [
+    "within Attention",
+    "after Requests",
+    "after Pack freeze",
+    "between arms",
+    "after forecasts before Outcome",
+    "after release before Outcome",
+    "after partial evaluation"
+  ],
+  "timing_states": [
+    "SESSION_PLANNED",
+    "ATTENTION_PENDING",
+    "ATTENTION_COMPLETE",
+    "REQUESTS_COMPLETE",
+    "PACKS_COMPLETE",
+    "EPISODES_COMPLETE",
+    "FORECAST_READY",
+    "FORECASTS_FROZEN",
+    "RELEASE_OCCURRED",
+    "OUTCOME_READY",
+    "EVALUATED",
+    "COMPLETE"
+  ]
+}

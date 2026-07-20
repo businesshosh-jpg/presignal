@@ -1,0 +1,28 @@
+{
+  "completion_states": [
+    "COMPLETE_PAIRED",
+    "HARD_STOPPED",
+    "INCOMPLETE_BOTH",
+    "INCOMPLETE_PACK_A",
+    "INCOMPLETE_PACK_E",
+    "NOT_FORECAST_SELECTED"
+  ],
+  "fields": [
+    "Attention completion",
+    "Request completion",
+    "Pack A completion",
+    "Pack E completion",
+    "arm acceptance",
+    "pair completion",
+    "provider/model",
+    "Episode type",
+    "member count",
+    "prompt lengths",
+    "Pack sizes",
+    "arm order",
+    "rejection category",
+    "transport status",
+    "retry count"
+  ],
+  "rejected_outputs_scored_as_incorrect": false
+}

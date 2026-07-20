@@ -1,0 +1,9 @@
+{
+  "pack_a": "provider-owned requested information",
+  "pack_e": "full shared session Pack E, identical across providers",
+  "post_cutoff_items_prohibited": true,
+  "reused_systems": [
+    "existing v2 build_information_requests()",
+    "existing v2 build_shared_market_state_pack()"
+  ]
+}

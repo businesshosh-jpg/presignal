@@ -1,0 +1,10 @@
+{
+  "admission_rule": "An Episode accrues exactly once when admitted to the immutable prospective study manifest, independent of provider count, resume, or source refresh.",
+  "report_separately": [
+    "admitted unique Episodes",
+    "forecasted provider/Episode pairs",
+    "complete paired observations",
+    "accepted forecast arms",
+    "evaluated pairs"
+  ]
+}

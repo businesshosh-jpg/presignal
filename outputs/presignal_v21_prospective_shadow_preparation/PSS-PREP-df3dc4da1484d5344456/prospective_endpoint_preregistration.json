@@ -1,0 +1,22 @@
+{
+  "analysis": [
+    "paired",
+    "Episode-cluster-aware",
+    "deterministic permutation where feasible",
+    "missingness sensitivity",
+    "equal-weight Episode robustness",
+    "provider descriptive summaries"
+  ],
+  "cluster": "Episode",
+  "comparison": "paired Pack A minus Pack E within provider + Episode",
+  "primary": "15-minute direction correctness",
+  "secondary": [
+    "5-minute direction correctness",
+    "30-minute direction correctness",
+    "60-minute direction correctness",
+    "numeric path score",
+    "reversal/path validity",
+    "paired completion",
+    "Attention adequacy"
+  ]
+}

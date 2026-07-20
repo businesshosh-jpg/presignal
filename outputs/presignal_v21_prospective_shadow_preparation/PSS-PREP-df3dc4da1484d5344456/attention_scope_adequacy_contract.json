@@ -1,0 +1,20 @@
+{
+  "does_not_affect": [
+    "forecast acceptance",
+    "Outcome",
+    "evaluation"
+  ],
+  "fields": [
+    "episode_id",
+    "provider",
+    "model",
+    "attention_scope_adequate",
+    "dominant_member_identifiable",
+    "joint_member_interpretation_possible",
+    "reinforcement_or_conflict_interpretable",
+    "missing_attention_concept",
+    "ordinary_forecast_uncertainty_only",
+    "extension_candidate",
+    "review_reason"
+  ]
+}

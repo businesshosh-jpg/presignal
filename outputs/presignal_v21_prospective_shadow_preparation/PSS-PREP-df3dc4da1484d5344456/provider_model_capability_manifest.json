@@ -1,0 +1,23 @@
+{
+  "live_calls": 0,
+  "routes": [
+    {
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "silent_substitution": "PROHIBITED",
+      "static_capability": "REQUIRES_FUTURE_EXACT_AVAILABILITY_CHECK"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "silent_substitution": "PROHIBITED",
+      "static_capability": "REQUIRES_FUTURE_EXACT_AVAILABILITY_CHECK"
+    },
+    {
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "silent_substitution": "PROHIBITED",
+      "static_capability": "REQUIRES_FUTURE_EXACT_AVAILABILITY_CHECK"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "historical_answers_prohibited": true,
+  "mapping": {
+    "CONTEXT_ONLY": "WATCH",
+    "IGNORE": "IGNORE",
+    "NO_SIGNAL": "NO_SIGNAL",
+    "PRIMARY_DRIVER": "FORECAST",
+    "SECONDARY_DRIVER": "WATCH",
+    "WATCHLIST": "WATCH"
+  },
+  "new_session_required": true,
+  "reused_system": "existing v2 build_attention_map() output through Step 5 adapt_prospective_outputs",
+  "structural_roles": "neutral metadata only"
+}

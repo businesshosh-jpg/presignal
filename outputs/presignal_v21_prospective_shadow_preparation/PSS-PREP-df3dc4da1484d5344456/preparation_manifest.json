@@ -1,0 +1,17 @@
+{
+  "decision": "V2_1_PROSPECTIVE_SHADOW_COLLECTION_PREPARED",
+  "external_calls": {
+    "acquisition": 0,
+    "apps_script": 0,
+    "google_sheets_writes": 0,
+    "market_data": 0,
+    "provider": 0
+  },
+  "historical_artifacts_changed": false,
+  "mode": "prepare",
+  "preparation_fingerprint": "sha256:a7cfe811af8cbc9cfd8f49572cba575c152361c296df96c2b420252181c9f038",
+  "prepare_run_id": "PSS-PREP-df3dc4da1484d5344456",
+  "production_changes": 0,
+  "study_id": "PSS_8a6e8ca69c195cf9defc",
+  "workbook_changes": 0
+}

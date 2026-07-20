@@ -1,0 +1,14 @@
+{
+  "P12": [
+    "CONTINUE_UNCHANGED_TO_P40",
+    "HARD_STOP_FOR_OPERATIONAL_DEFECT",
+    "TARGETED_NON_SCIENTIFIC_REPAIR_REQUIRED"
+  ],
+  "P40": [
+    "CONTINUE_UNCHANGED_TO_P60",
+    "HARD_STOP_FOR_SCIENTIFIC_INTEGRITY_DEFECT",
+    "TARGETED_PROSPECTIVE_CONTRACT_REPAIR_REQUIRED"
+  ],
+  "P60": "requires new explicit promotion-review task",
+  "P80": "requires preregistered precision rule"
+}

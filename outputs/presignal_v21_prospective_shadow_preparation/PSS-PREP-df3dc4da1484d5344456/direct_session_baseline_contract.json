@@ -1,0 +1,6 @@
+{
+  "direct_session_forecast": "RETAIN_ACTIVE_REFERENCE_BASELINE",
+  "event_path": "RESEARCH_ONLY_SHADOW_SIDECAR",
+  "identity_merge": "PROHIBITED",
+  "production_effect": "NONE"
+}

@@ -1,0 +1,10 @@
+{
+  "acquisition_calls": 0,
+  "apps_script_calls": 0,
+  "google_sheets_writes": 0,
+  "market_data_calls": 0,
+  "provider_calls": 0,
+  "scenarios_attempted": 20,
+  "scenarios_failed": 0,
+  "scenarios_passed": 20
+}

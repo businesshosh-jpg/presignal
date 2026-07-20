@@ -59,3 +59,10 @@ Direct Session Forecasting remains active, shadow-only operation continues,
 and v3.0 is not authorized. Historical internal names remain unchanged:
 historical batch execution maps to Step 8A and paired historical analysis maps
 to Step 8B under this authoritative roadmap.
+
+## Post-Step-9 Preparation
+
+The bounded prospective Event-Path shadow collection is prepared with the
+frozen P12/P40/P60/P80 study boundaries and repaired prospective contract.
+Provider execution has **not** started. The next authorized work is the
+P12 operational checkpoint under the frozen prospective study manifest.

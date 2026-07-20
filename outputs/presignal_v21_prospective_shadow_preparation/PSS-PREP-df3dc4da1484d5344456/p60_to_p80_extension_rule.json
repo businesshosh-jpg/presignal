@@ -1,0 +1,19 @@
+{
+  "all_required": [
+    "no material operational defect",
+    "no leakage",
+    "paired completion >= 85%",
+    "absolute arm completion-rate difference <= 5 percentage points",
+    "primary Episode-cluster-aware interval includes zero",
+    "paired 15-minute risk-difference interval width > 0.20",
+    "unchanged prompt, contracts, eligibility, providers, and evaluation"
+  ],
+  "authorized_rationale": "uncertainty reduction only",
+  "forbidden_rationales": [
+    "Pack A appears to win",
+    "Pack E appears to win",
+    "near p-value threshold",
+    "provider subgroup",
+    "disappointing result"
+  ]
+}
