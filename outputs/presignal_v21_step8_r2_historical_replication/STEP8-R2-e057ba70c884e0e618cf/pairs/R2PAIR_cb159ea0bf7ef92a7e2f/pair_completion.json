@@ -1,0 +1,18 @@
+{
+  "arm_order": [
+    "PACK_E",
+    "PACK_A"
+  ],
+  "completion": "INCOMPLETE_PACK_A",
+  "episode_id": "EP_EVENT_13e6e3247eaea46e42de",
+  "model": "gpt-4o-mini-2024-07-18",
+  "outcome_identity": "OUT_8d7e99cfe434c7fa52d2",
+  "pack_a_fingerprint": "sha256:b01e42e0e2240e0dc3260acaa6fa9ef97e3e9abac2b44da04112b54d3304e57e",
+  "pack_a_reason": "PREDICTION_REVERSAL_FLAG",
+  "pack_e_fingerprint": "sha256:a0556b220c8eee3bdf8bf599a453d043f3aec8b5a043625878921058296d86dc",
+  "pack_e_reason": null,
+  "pair_id": "R2PAIR_cb159ea0bf7ef92a7e2f",
+  "provider": "OpenAI",
+  "selection": "FORECAST",
+  "session_id": "US|2024-05-07|CUSTOM_CONFIG_WINDOW"
+}

@@ -1,0 +1,18 @@
+{
+  "arm_order": [
+    "PACK_A",
+    "PACK_E"
+  ],
+  "completion": "INCOMPLETE_PACK_A",
+  "episode_id": "EP_BATCH_abe9bddef79b4d517245",
+  "model": "gemini-2.5-flash-lite",
+  "outcome_identity": "OUT_4710bbb1feaa52ae6c75",
+  "pack_a_fingerprint": "sha256:6986ce6af13cd8492853b4583fac0dfef10d52146a5ca61b4c2dbb2bdcf02fd0",
+  "pack_a_reason": "PATH_PIPS_MIN",
+  "pack_e_fingerprint": "sha256:1c77dbad1f767c5a74596bf7d004390c952ab8f5e90a44682b1c81425d2bfa29",
+  "pack_e_reason": null,
+  "pair_id": "R2PAIR_ba0b1b9c7403ab220f38",
+  "provider": "Gemini",
+  "selection": "FORECAST",
+  "session_id": "US|2024-05-15|CUSTOM_CONFIG_WINDOW"
+}

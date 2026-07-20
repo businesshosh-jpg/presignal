@@ -1,0 +1,83 @@
+{
+  "completion_tokens": 1172,
+  "confidence": 0.6,
+  "episode_id": "EP_BATCH_6fb320e5e8c5931f2373",
+  "error_message": null,
+  "expected_initial_direction": "UP",
+  "expected_path_summary": "Initial Jobless Claims data is expected to be slightly above consensus, which could lead to a slight USDJPY appreciation in the short term, driven by labor market resilience concerns. However, broader economic trends and potential Fed policy shifts may temper significant upside.",
+  "expected_reversal_flag": false,
+  "expected_reversal_horizon_min": 60,
+  "forecast_created_ts": "2026-07-20T09:31:03.792Z",
+  "forecast_cutoff_ts": "2024-05-09T12:20:00Z",
+  "information_arm": "FULL_CONTEXT",
+  "information_used": [
+    {
+      "description": "Initial Jobless Claims (May/04) - Primary Driver (High Confidence)",
+      "details": "Timely insights into labor market health and significant impact on short-term USDJPY moves."
+    },
+    {
+      "description": "Continuing Jobless Claims (Apr/27) - Secondary Driver (Medium Confidence)",
+      "details": "Key labor market indicator influencing Fed policy expectations and USD direction."
+    },
+    {
+      "description": "Jobless Claims 4-Week Average (May/04) - Context Only (Low Confidence)",
+      "details": "Smoothed view of labor market trends, less impactful than initial or continuing claims."
+    },
+    {
+      "description": "USDJPY recent trend and volatility data",
+      "details": "Provides current momentum and risk levels for USDJPY."
+    },
+    {
+      "description": "US Dollar Index (DXY) performance data",
+      "details": "Indicates overall USD strength/weakness against major currencies."
+    }
+  ],
+  "invalidation_condition": "Significant deviation of Initial Jobless Claims from consensus in a direction contrary to the expected slight beat, or a strong dovish signal from any unexpected Fed commentary.",
+  "latency_ms": null,
+  "missing_information": [
+    {
+      "description": "US 4-Week Bill Auction yield",
+      "details": "Influences short-term rates, relevant for Fed policy."
+    },
+    {
+      "description": "US 8-Week Bill Auction yield",
+      "details": "Influences short-term rates, relevant for Fed policy."
+    },
+    {
+      "description": "US 30-Year Bond Auction yield",
+      "details": "Impacts longer-term yields and market sentiment."
+    },
+    {
+      "description": "Fed officials' speeches and commentary",
+      "details": "Direct insights into Fed's monetary policy stance."
+    },
+    {
+      "description": "Equity market tone (S&P 500, Nasdaq)",
+      "details": "Reflects risk sentiment and growth outlook."
+    },
+    {
+      "description": "JPY intervention risk assessment",
+      "details": "Potential for direct BoJ intervention to impact JPY."
+    }
+  ],
+  "model": "gemini-2.5-flash-lite",
+  "no_signal_flag": false,
+  "no_signal_reason": null,
+  "object": "PREDICTION",
+  "pack_fingerprint": "sha256:a4bdd7468c9ff28bb0fe9018749502214e624934211dada4807478bed64f4630",
+  "pack_id": "PACK_E_56cbc5f43a651668771c",
+  "prediction_fingerprint": "sha256:5dab79c53bbafd44dbf24420e37e825efb9db68cd45be64e203be6624ecc677d",
+  "prediction_id": "PRD_c8c763b6cbb09a48b688",
+  "prediction_target_id": "EP_BATCH_6fb320e5e8c5931f2373",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "0992-7c6a-621a-baa2",
+  "prompt_tokens": 19122,
+  "provider": "Gemini",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": null,\n  \"confidence\": 0.6,\n  \"expected_initial_direction\": \"UP\",\n  \"expected_reversal_flag\": false,\n  \"expected_reversal_horizon_min\": 60,\n  \"expected_path_summary\": \"Initial Jobless Claims data is expected to be slightly above consensus, which could lead to a slight USDJPY appreciation in the short term, driven by labor market resilience concerns. However, broader economic trends and potential Fed policy shifts may temper significant upside.\",\n  \"information_used\": [\n    {\"description\": \"Initial Jobless Claims (May/04) - Primary Driver (High Confidence)\", \"details\": \"Timely insights into labor market health and significant impact on short-term USDJPY moves.\"},\n    {\"description\": \"Continuing Jobless Claims (Apr/27) - Secondary Driver (Medium Confidence)\", \"details\": \"Key labor market indicator influencing Fed policy expectations and USD direction.\"},\n    {\"description\": \"Jobless Claims 4-Week Average (May/04) - Context Only (Low Confidence)\", \"details\": \"Smoothed view of labor market trends, less impactful than initial or continuing claims.\"},\n    {\"description\": \"USDJPY recent trend and volatility data\", \"details\": \"Provides current momentum and risk levels for USDJPY.\"},\n    {\"description\": \"US Dollar Index (DXY) performance data\", \"details\": \"Indicates overall USD strength/weakness against major currencies.\"}\n  ],\n  \"missing_information\": [\n    {\"description\": \"US 4-Week Bill Auction yield\", \"details\": \"Influences short-term rates, relevant for Fed policy.\"},\n    {\"description\": \"US 8-Week Bill Auction yield\", \"details\": \"Influences short-term rates, relevant for Fed policy.\"},\n    {\"description\": \"US 30-Year Bond Auction yield\", \"details\": \"Impacts longer-term yields and market sentiment.\"},\n    {\"description\": \"Fed officials' speeches and commentary\", \"details\": \"Direct insights into Fed's monetary policy stance.\"},\n    {\"description\": \"Equity market tone (S&P 500, Nasdaq)\", \"details\": \"Reflects risk sentiment and growth outlook.\"},\n    {\"description\": \"JPY intervention risk assessment\", \"details\": \"Potential for direct BoJ intervention to impact JPY.\"}\n  ],\n  \"invalidation_condition\": \"Significant deviation of Initial Jobless Claims from consensus in a direction contrary to the expected slight beat, or a strong dovish signal from any unexpected Fed commentary.\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 2,\n      \"expected_pips_max\": 5,\n      \"stage_confidence\": 0.55,\n      \"continuation_probability\": 0.5,\n      \"reversal_probability\": 0.5,\n      \"stage_reason\": \"Initial reaction to slightly higher-than-expected jobless claims potentially indicating labor market resilience, leading to a short-term USD bid.\",\n      \"invalidation_condition\": \"Claims significantly worse than consensus, or no immediate market reaction.\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 4,\n      \"expected_pips_max\": 8,\n      \"stage_confidence\": 0.6,\n      \"continuation_probability\": 0.6,\n      \"reversal_probability\": 0.4,\n      \"stage_reason\": \"Sustained upward pressure as market digests the implications of labor market tightness on Fed policy expectations.\",\n      \"invalidation_condition\": \"DXY showing weakness, or other concurrent data releases tempering the initial reaction.\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"FLAT\",\n      \"expected_pips_min\": 0,\n      \"expected_pips_max\": 0,\n      \"stage_confidence\": 0.5,\n      \"continuation_probability\": 0.5,\n      \"reversal_probability\": 0.5,\n      \"stage_reason\": \"Market consolidates as attention shifts to broader economic context and potential future Fed actions. Volatility may decrease as initial claims impact is absorbed.\",\n      \"invalidation_condition\": \"Emergence of strong new directional drivers or significant shifts in risk sentiment.\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 10,\n      \"stage_confidence\": 0.55,\n      \"continuation_probability\": 0.55,\n      \"reversal_probability\": 0.45,\n      \"stage_reason\": \"Potential for a renewed upward move if labor market strength continues to imply a hawkish Fed stance, with USDJPY finding support from DXY.\",\n      \"invalidation_condition\": \"Strong dovish signals from any scheduled Fed speakers or a clear risk-off sentiment emerging.\"\n    }\n  ]\n}",
+  "run_id": "STEP8-R2-e057ba70c884e0e618cf",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [],
+  "session_id": "US|2024-05-09|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}

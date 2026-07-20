@@ -1,0 +1,18 @@
+{
+  "accepted_pack_a": 11,
+  "accepted_pack_e": 16,
+  "acquisition_calls": 0,
+  "apps_script_calls": 114,
+  "attention_calls": 39,
+  "completion_counts": {
+    "COMPLETE_PAIRED": 11,
+    "INCOMPLETE_BOTH": 2,
+    "INCOMPLETE_PACK_A": 5,
+    "NOT_FORECAST_SELECTED": 222
+  },
+  "forecast_calls": 36,
+  "leakage_fields_exposed": 0,
+  "market_data_calls": 0,
+  "provider_episode_pairs": 240,
+  "request_calls": 39
+}

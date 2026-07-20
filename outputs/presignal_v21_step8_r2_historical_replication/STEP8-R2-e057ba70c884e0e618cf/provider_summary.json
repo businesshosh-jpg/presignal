@@ -1,0 +1,7 @@
+{
+  "providers": {
+    "Anthropic": 80,
+    "Gemini": 80,
+    "OpenAI": 80
+  }
+}

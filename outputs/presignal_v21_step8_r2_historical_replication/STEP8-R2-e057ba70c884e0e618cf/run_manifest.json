@@ -1,0 +1,17 @@
+{
+  "attention_prompt_fingerprint": "sha256:174af274f8d80ac9194ae70735eb8eb53415825bfb2c18b5748c7b95c9cee07b",
+  "attention_request_contract_source_commit": "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f",
+  "contract_fingerprint": "sha256:a40c0ee570cde5c1e52e4b90d256ff5552411631d4a6224b1683b629fb69775a",
+  "contract_role": "HISTORICAL_REPLICATION_OUTPUT_CONTRACT",
+  "created_ts": "2026-07-20T09:18:42.132391Z",
+  "execution_episode_count": 80,
+  "execution_population_fingerprint": "sha256:4b8a40b4bbbb8fd587fb66caa4ef812405b9cb133ee7d79ad6cec8591b876a0c",
+  "forecast_outcome_access": "AFTER_BOTH_ARMS_FROZEN_ONLY",
+  "frozen_contract_tag_target": "e8cd4f3fa2f3d7c1b2e624e32f1aea0a6c9866c0",
+  "historical_replication_output_contract": "presignal_event_path_contract_v1_flat_stage_prospective_v1",
+  "prospective_p12_status": "PAUSED_PENDING_HISTORICAL_VALIDATION",
+  "request_prompt_fingerprint": "sha256:24d94c475f908d336caa98dfd3aa0b5b3aef891213b4a24f9a32244226bfe9a7",
+  "run_id": "STEP8-R2-e057ba70c884e0e618cf",
+  "run_kind": "STEP8_R2_HISTORICAL_REPLICATION",
+  "source_snapshot_fingerprint": "90887a4874a71d1a41bf2d370dcde0d07f2178e4da562128060300e3696d007c"
+}

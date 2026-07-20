@@ -1,0 +1,50 @@
+{
+  "eligible_sessions": 239,
+  "excluded_sessions": 10,
+  "maximum_bounded_population": 80,
+  "minimum_interpretable_population": 40,
+  "reconstructed_sessions": 249,
+  "safe_eligible_episodes": 1241,
+  "selection_rule": "FIRST_80_BY_RELEASE_SESSION_EPISODE",
+  "source_manifest": {
+    "component_fingerprints": {
+      "authoritative_component_fingerprints.json": "ac287edf8d49e2393ec2b52d0106a7dac6f55856be7268fa339aa36debc88f72",
+      "authoritative_excluded_sessions.jsonl": "4f6293b5f1f389d835449fc04fae7e4daa225acb03675b92624af61eea60b266",
+      "authoritative_forecast_population.jsonl": "127f15220dc7c267bb44ca86122c0126bbf7b78329e9aba05f9753bc203ef7b6",
+      "authoritative_pack_references.jsonl": "743d1248279b45754e5f92db1c10630d08cbfaf444ee2437e7b8dc4c36fc1f4b",
+      "authoritative_provider_model_config.json": "1fdfc099af3b240b5f42503853e2acedb59ea63e0150c1f7c9c8e9e060ad745a",
+      "authoritative_requests.jsonl": "28aa8187d817f338a3970009aa6a4d6b0bf2cf9f777f9a5aa39b00a54675198b",
+      "authoritative_session_members.jsonl": "3852a317a924522adcedb0d14c259e3610d8822faf9fe49ab55814ee73519738",
+      "authoritative_sessions.jsonl": "4fae7a04c81238214a8f186be60f7af6b8861d8ee4a8487aeae97bf2683e4030"
+    },
+    "configuration_fingerprint": "31a9f4298fadf8238547e3ebf1d5f1a832b46d6874c213dc84833c673f5dfaff",
+    "created_ts": "2026-07-17T09:41:56.922953Z",
+    "execution_integrity_repair": "EXECUTOR_GIT_BRIDGE_MODEL_TIMEOUT_PROJECT_BINDING_V2",
+    "record_counts": {
+      "eligible_sessions": 239,
+      "excluded_sessions": 10,
+      "forecast_identities": 1434,
+      "pack_references": 239
+    },
+    "run_id": "9-AUTHORITATIVE-HISTORICAL-REPLAY-20260717T094156Z",
+    "snapshot_fingerprint": "90887a4874a71d1a41bf2d370dcde0d07f2178e4da562128060300e3696d007c",
+    "source_blocked_package": "/Users/junhoshino/projects/presignal/outputs/phase9_authoritative_historical_replay/9-AUTHORITATIVE-HISTORICAL-REPLAY-20260717T072947Z",
+    "source_blocked_run_id": "9-AUTHORITATIVE-HISTORICAL-REPLAY-20260717T072947Z",
+    "source_eligibility_ledger": "/Users/junhoshino/projects/presignal/outputs/phase9_authoritative_historical_replay_input_reconciliation/9-AUTHORITATIVE-HISTORICAL-REPLAY-INPUT-RECONCILIATION_20260717T042841Z/authoritative_session_eligibility_ledger.jsonl",
+    "source_eligibility_ledger_fingerprint": "f00e16513431332d7455169a8d252b5745e5b14031db2c0a5fb5ed52f3342801",
+    "source_snapshot_fingerprint": "e838dba7bf7d4f546659f7ad8823b59cd1820ff759ef75422d77fae3e9134029",
+    "stage4a_contract": {
+      "components": {
+        "cutoff_policy_fingerprint": "23b45c70bc0a56ba06b3ac7dc53e3e954a2edf0d1a618fef18e7b0351d90b75f",
+        "pack_construction_contract_fingerprint": "a90574325a8d1f4dbe7d96c52e2aac0019b72c44093f5712a50cf3635e1e2e19",
+        "provenance_policy_fingerprint": "427bfcd70fc4a08ed458275694d04bc3352480ef835241ef658fc666b3e5b095",
+        "request_classification_fingerprint": "9621ca111f878e0366fccc5f6f255f1add975c50f32af8699b380ad60cef3ec2",
+        "route_configuration_fingerprint": "a1fd215bfc7dd858e95e58a4f90a8f91f255023cd3a51fb668daba0566ea37b6",
+        "source_registry_artifact_sha256": "40dee09bb81cc234d3d36a43e97858b38d82588de6f5616b31dc4ce8a1e000a6",
+        "source_registry_fingerprint": "df4f6ff679961c8546f84deff86db1b289eae93a7340f7ae58bdf66e4542417e"
+      },
+      "fingerprint": "7ad8b1537f59041a9f9311fbbd547d682a5a15d7fc55a1bc225ca14d24c42e85",
+      "version": "stage4a_historical_environment_contract_v1"
+    }
+  }
+}

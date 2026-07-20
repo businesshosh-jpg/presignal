@@ -1,0 +1,7 @@
+{
+  "admitted_episodes": 0,
+  "prospective_provider_calls": 0,
+  "reason": "Step 8-R2 frozen historical validation",
+  "recorded_ts": "2026-07-20T09:18:42.133319Z",
+  "status": "PAUSED_PENDING_HISTORICAL_VALIDATION"
+}

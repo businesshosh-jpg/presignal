@@ -1,0 +1,35 @@
+{
+  "decision": "ADEQUATE",
+  "dominant_member_event_ids": [
+    "fa9c-b9ec-388c-767c"
+  ],
+  "dominant_member_identifiable": true,
+  "episode_id": "EP_EVENT_697fa043068a1f61838f",
+  "episode_selected_as": "FORECAST",
+  "essential_episode_attention_concept_missing": [],
+  "joint_same_time_interpretation_supported": true,
+  "member_attention_evidence": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 1,
+      "attention_reason": "Fed speeches can provide crucial insights into monetary policy outlook, directly impacting USDJPY via interest rate expectations.",
+      "attention_run_id": "ATTENTION_9c10bde42eb3c463dd43",
+      "confidence": "High",
+      "driver_role": "primary",
+      "event_id": "fa9c-b9ec-388c-767c",
+      "expected_market_channel": "fed_path",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Fed Daly Speech",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-05-09|CUSTOM_CONFIG_WINDOW"
+    }
+  ],
+  "member_labels_and_ranks_available": true,
+  "model": "gemini-2.5-flash-lite",
+  "provider": "Gemini",
+  "rationale": "Preserved member labels, ranks, reasons, channels, and exact membership provide sufficient causal orientation without treating structural roles as causal truth.",
+  "reasons_and_channels_useful": true,
+  "reinforcement_or_conflict_interpretable": true,
+  "would_episode_attention_field_materially_change_task": false
+}

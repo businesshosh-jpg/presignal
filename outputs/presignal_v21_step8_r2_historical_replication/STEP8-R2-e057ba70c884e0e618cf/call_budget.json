@@ -1,0 +1,12 @@
+{
+  "attention_max_calls": 39,
+  "forecast_retries_authorized": 0,
+  "forecast_retry_policy": "one_byte_identical_transport_retry_only",
+  "maximum_forecast_arms": 480,
+  "providers": {
+    "Anthropic": "claude-haiku-4-5",
+    "Gemini": "gemini-2.5-flash-lite",
+    "OpenAI": "gpt-4o-mini-2024-07-18"
+  },
+  "request_max_calls": 39
+}

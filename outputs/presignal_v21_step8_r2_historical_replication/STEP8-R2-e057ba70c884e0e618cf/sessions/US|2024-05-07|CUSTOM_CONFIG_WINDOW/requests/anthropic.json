@@ -1,0 +1,23 @@
+{
+  "error": "REQUEST_BLOCKED_BY_ATTENTION_FAILURE",
+  "metadata": {
+    "request_run_id": "REQUESTS_b3e5df08003e4e287f1a"
+  },
+  "preserved_failure": true,
+  "provider_calls": 1,
+  "rows": [
+    {
+      "error_message": "REQUEST_BLOCKED_BY_ATTENTION_FAILURE",
+      "generated_ts": "2024-05-07T12:45:00Z",
+      "information_cutoff_ts": "2024-05-07T12:45:00Z",
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "raw_output": null,
+      "request_run_id": "REQUESTS_b3e5df08003e4e287f1a",
+      "response_preservation": "bridge_result_unavailable_after_parser_failure",
+      "session_id": "US|2024-05-07|CUSTOM_CONFIG_WINDOW",
+      "status": "provider_contract_error"
+    }
+  ],
+  "status": "provider_contract_error"
+}

@@ -1,0 +1,65 @@
+{
+  "approved_provider_episode_pairs": 240,
+  "complete_paired_observations": 11,
+  "completion_counts": {
+    "COMPLETE_PAIRED": 11,
+    "INCOMPLETE_BOTH": 2,
+    "INCOMPLETE_PACK_A": 5,
+    "NOT_FORECAST_SELECTED": 222
+  },
+  "episode_cluster_permutation": {
+    "clusters": 10,
+    "observed_mean_difference": -0.09090909090909091,
+    "possible_permutations": 1024,
+    "two_sided_p_value": 1.0
+  },
+  "evidence_decision": "V2_1_STEP8_R2_HISTORICAL_EVIDENCE_REMAINS_INDETERMINATE",
+  "missingness": {
+    "classification": "DESCRIPTIVE_NON_RANDOM_MISSINGNESS_PRESERVED",
+    "pack_a_accepted": 11,
+    "pack_e_accepted": 16,
+    "pair_completion_rate": 0.04583333333333333
+  },
+  "path_score": {
+    "pack_a_mean": 0.3,
+    "pack_a_median": 0.25,
+    "pack_e_mean": 0.28125,
+    "pack_e_median": 0.25
+  },
+  "primary_15m": {
+    "both_correct": 1,
+    "both_incorrect": 7,
+    "exact_mcnemar_p_value": 1.0,
+    "pack_a_accuracy": 0.18181818181818182,
+    "pack_a_correct": 2,
+    "pack_a_only_correct": 1,
+    "pack_e_accuracy": 0.2727272727272727,
+    "pack_e_correct": 3,
+    "pack_e_only_correct": 2,
+    "paired_difference_pack_a_minus_pack_e": -0.09090909090909091
+  },
+  "reason": "Complete paired population is below the 40-Episode minimum and provider contract/transport missingness is substantial.",
+  "secondary_horizons": {
+    "15": {
+      "pack_a_correct": 2,
+      "pack_e_correct": 3,
+      "paired_difference": -0.09090909090909091
+    },
+    "30": {
+      "pack_a_correct": 1,
+      "pack_e_correct": 1,
+      "paired_difference": 0.0
+    },
+    "5": {
+      "pack_a_correct": 0,
+      "pack_e_correct": 1,
+      "paired_difference": -0.09090909090909091
+    },
+    "60": {
+      "pack_a_correct": 3,
+      "pack_e_correct": 4,
+      "paired_difference": -0.09090909090909091
+    }
+  },
+  "unique_complete_episodes": 10
+}
