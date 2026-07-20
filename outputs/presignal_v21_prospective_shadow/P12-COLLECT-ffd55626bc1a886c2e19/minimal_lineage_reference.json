@@ -1,0 +1,7 @@
+{
+  "external_calls": 0,
+  "module": "automation/presignal_v21_minimal_prospective_lineage_v1.py",
+  "module_fingerprint": "sha256:0a94de655f6c0a4656f29c3cdfb74fe6d27ccfbb2910ca9f092b5bc87f23f029",
+  "repair_evidence_dir": "outputs/presignal_v21_post_step9_r3_minimal_lineage/P12-R3-MINIMAL-415b2874284bddbea888",
+  "validated": true
+}

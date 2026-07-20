@@ -1,0 +1,13 @@
+{
+  "after": {
+    "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step6_batch/STEP6-BATCH-f718192a7566138c3fda": "sha256:8ac32a4f95786efa82d24cf3e7cffb3a013afe076e4b267121410ff7846f7779",
+    "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step7_paired_analysis/STEP7-PAIRED-1dbbf399d2f73793e4f3": "sha256:df4cbf533f2e772252578e186e69d15abce8363b5c5f7369a9042b491214b06b",
+    "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step8_r1_flat_contract_repair/STEP8-R1-FLAT-a40c0ee570cde5c1e52e": "sha256:a478ee688a8b41a753d968b88bef375fd70df16d47c13e4c65a3790193a1982f"
+  },
+  "before": {
+    "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step6_batch/STEP6-BATCH-f718192a7566138c3fda": "sha256:8ac32a4f95786efa82d24cf3e7cffb3a013afe076e4b267121410ff7846f7779",
+    "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step7_paired_analysis/STEP7-PAIRED-1dbbf399d2f73793e4f3": "sha256:df4cbf533f2e772252578e186e69d15abce8363b5c5f7369a9042b491214b06b",
+    "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step8_r1_flat_contract_repair/STEP8-R1-FLAT-a40c0ee570cde5c1e52e": "sha256:a478ee688a8b41a753d968b88bef375fd70df16d47c13e4c65a3790193a1982f"
+  },
+  "passed": true
+}

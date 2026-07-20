@@ -1,8 +1,7 @@
 {
-  "adapter_fingerprint": "sha256:552236a8f7812c26a32c4926568ac36b1e6d246c4b2a1448f0b437211be372e7",
-  "adapter_validated": true,
   "collection_run_id": "P12-COLLECT-ffd55626bc1a886c2e19",
   "external_calls": 0,
+  "minimal_lineage_validated": true,
   "previous_status": "V2_1_P12_TARGETED_NON_SCIENTIFIC_REPAIR_REQUIRED",
-  "resume_status": "BLOCKED_WRITE_ISOLATION"
+  "resume_status": "P12_COLLECTION_IN_PROGRESS_NO_ACTIONABLE_SESSION"
 }

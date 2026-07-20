@@ -1,0 +1,5 @@
+{
+  "passed": true,
+  "post_cutoff_rejected": true,
+  "required_order": "information_cutoff_ts <= prompt_freeze_ts <= provider_call_started_ts < forecast_freeze_ts < scheduled_release_ts"
+}

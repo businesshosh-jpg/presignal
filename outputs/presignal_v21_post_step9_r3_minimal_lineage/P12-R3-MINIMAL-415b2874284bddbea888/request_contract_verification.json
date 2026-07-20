@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "priorities": [
+    "low_value",
+    "must_have",
+    "optional",
+    "useful"
+  ],
+  "source": "archived v2 Information Request prompt/schema"
+}

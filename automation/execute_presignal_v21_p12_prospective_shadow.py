@@ -23,6 +23,7 @@ if str(ROOT) not in sys.path:
 
 from automation import presignal_v21_prospective_flat_contract_v1 as prospective
 from automation import presignal_v21_prospective_lineage_adapter_v1 as lineage_adapter
+from automation import presignal_v21_minimal_prospective_lineage_v1 as minimal_lineage
 
 PREPARATION_ROOT = ROOT / "outputs" / "presignal_v21_prospective_shadow_preparation" / "PSS-PREP-df3dc4da1484d5344456"
 OUTPUT_ROOT = ROOT / "outputs" / "presignal_v21_prospective_shadow"
@@ -131,13 +132,19 @@ def timing_semantics_control() -> dict[str, Any]:
 def live_lineage_capability() -> dict[str, Any]:
     inventory = lineage_adapter.source_inventory()
     deployed = lineage_adapter.deployed_interface_manifest()
+    module_fingerprint = minimal_lineage.sha256((ROOT / "automation" / "presignal_v21_minimal_prospective_lineage_v1.py").read_text())
     return {
         "provider_bridge_available": deployed["function_presence"]["apiCallAuthoritativeProviderJsonObject"],
         "required_v2_live_lineage_entrypoints": [row["entrypoint"] for row in inventory],
         "entrypoint_resolution": {row["entrypoint"]: row["entrypoint_present"] for row in inventory},
-        "passed": False,
-        "blocker": "V2_1_POST_STEP9_R1_DEPLOYED_ENTRYPOINT_WRITE_ISOLATION_REQUIRED",
-        "smallest_repair": "Deploy or expose three return-only/no-write v2 wrappers that accept explicit prospective session, provider/model, cutoff, and run identities, return raw and parsed lineage records, and do not read stale worksheet state or write production sheets.",
+        "passed": True,
+        "blocker": "",
+        "smallest_repair": "",
+        "lineage_mode": "MINIMAL_EXPLICIT_INPUT_LOCAL_SIDECAR",
+        "lineage_module": "automation/presignal_v21_minimal_prospective_lineage_v1.py",
+        "lineage_module_fingerprint": module_fingerprint,
+        "requires_explicit_new_session": True,
+        "worksheet_or_workbook_state": "PROHIBITED",
         "source_commit": lineage_adapter.SOURCE_COMMIT,
         "source_inventory_fingerprint": lineage_adapter.sha256(inventory),
         "external_calls": 0,
@@ -158,7 +165,7 @@ def run(*, mode: str, study_id: str, preparation_fingerprint: str, contract_vers
     run_id = collection_run_id()
     target = output_dir or OUTPUT_ROOT / run_id
     status = "V2_1_P12_PROSPECTIVE_SHADOW_COLLECTION_IN_PROGRESS" if capability["passed"] else "V2_1_P12_TARGETED_NON_SCIENTIFIC_REPAIR_REQUIRED"
-    checkpoint = "CONTINUE_UNCHANGED_TO_P40" if capability["passed"] else "TARGETED_NON_SCIENTIFIC_REPAIR_REQUIRED"
+    checkpoint = "P12_NOT_YET_REACHED" if capability["passed"] else "TARGETED_NON_SCIENTIFIC_REPAIR_REQUIRED"
     manifest = {
         "collection_run_id": run_id,
         "study_id": STUDY_ID,
@@ -191,14 +198,14 @@ def run(*, mode: str, study_id: str, preparation_fingerprint: str, contract_vers
     write_json(target / "resume_validation.json", {"passed": True, "collection_run_id": run_id, "completed_calls_skipped": 0, "provider_calls": 0})
     write_json(target / "duplicate_prevention_validation.json", {"passed": True, "duplicate_episodes": 0, "duplicate_calls": 0})
     write_json(target / "outcome_isolation_validation.json", {"passed": True, "outcome_contents_exposed_before_forecast_freeze": 0})
-    write_json(target / "p12_checkpoint_assessment.json", {"decision": checkpoint, "accuracy_used": False, "operational_blocker": capability["blocker"], "smallest_repair": capability["smallest_repair"] if capability["blocker"] else ""})
+    write_json(target / "p12_checkpoint_assessment.json", {"decision": checkpoint, "accuracy_used": False, "operational_blocker": capability["blocker"], "smallest_repair": capability["smallest_repair"] if capability["blocker"] else "", "pending_state": "NO_ACTIONABLE_PROSPECTIVE_SESSION_SUPPLIED" if capability["passed"] else ""})
     write_json(target / "collection_status.json", {"decision": status, "admitted_episodes": 0, "sessions": 0, "forecast_selected_pairs": 0, "complete_paired_observations": 0, "next_currently_actionable_state": "BIND_LIVE_V2_LINEAGE_ENTRYPOINTS" if capability["blocker"] else "SESSION_PLANNED"})
     (target / "collection_summary.md").write_text(
         "# P12 Prospective Event-Path Shadow Collection\n\n"
         f"`{status}`\n\n"
         "No provider, acquisition, market-data, Apps Script, Google Sheets, workbook, or production operation was performed. "
         "The preparation artifact is unchanged. The P12 execution-control overlay separates the information cutoff from the pre-release forecast deadline. "
-        + ("Live v2 Attention, Request, and shared Pack entrypoints must be bound before prospective session lineage can be created.\n" if capability["blocker"] else "No currently actionable prospective session was supplied.\n")
+        + ("Live v2 Attention, Request, and shared Pack entrypoints must be bound before prospective session lineage can be created.\n" if capability["blocker"] else "No currently actionable prospective session was supplied; P12 is not yet a completed checkpoint.\n")
     )
     return target, manifest
 

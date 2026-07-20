@@ -1,8 +1,8 @@
 {
   "admitted_episodes": 0,
   "complete_paired_observations": 0,
-  "decision": "V2_1_P12_TARGETED_NON_SCIENTIFIC_REPAIR_REQUIRED",
+  "decision": "V2_1_P12_PROSPECTIVE_SHADOW_COLLECTION_IN_PROGRESS",
   "forecast_selected_pairs": 0,
-  "next_currently_actionable_state": "BIND_LIVE_V2_LINEAGE_ENTRYPOINTS",
+  "next_currently_actionable_state": "SESSION_PLANNED_WITH_EXPLICIT_CUTOFF_SAFE_SESSION_INPUT",
   "sessions": 0
 }

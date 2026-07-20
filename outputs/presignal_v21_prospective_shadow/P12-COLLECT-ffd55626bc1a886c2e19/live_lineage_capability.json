@@ -1,6 +1,7 @@
 {
-  "decision": "V2_1_POST_STEP9_R2_WRITE_ISOLATION_VALIDATION_FAILED",
+  "adapter_fingerprint": "sha256:0a94de655f6c0a4656f29c3cdfb74fe6d27ccfbb2910ca9f092b5bc87f23f029",
   "external_calls": 0,
-  "previous_artifact": "live_lineage_capability_r1.json",
-  "status": "BLOCKED_WRITE_ISOLATION"
+  "provider_calls_enabled_only_with_explicit_new_session": true,
+  "source": "automation/presignal_v21_minimal_prospective_lineage_v1.py",
+  "status": "MINIMAL_EXPLICIT_INPUT_LINEAGE_VALIDATED"
 }

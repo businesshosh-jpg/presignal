@@ -17,9 +17,9 @@
     },
     "study_id": "PSS_8a6e8ca69c195cf9defc"
   },
-  "checkpoint_decision": "P12_NOT_YET_REACHED",
+  "checkpoint_decision": "TARGETED_NON_SCIENTIFIC_REPAIR_REQUIRED",
   "collection_run_id": "P12-COLLECT-ffd55626bc1a886c2e19",
-  "execution_enablement": "EXPLICIT_INPUT_PROSPECTIVE_LINEAGE_READY",
+  "execution_enablement": "BLOCKED_UNTIL_LIVE_V2_LINEAGE_ENTRYPOINTS_ARE_BOUND",
   "external_calls": {
     "acquisition": 0,
     "apps_script": 0,
@@ -31,7 +31,7 @@
   },
   "mode": "execute",
   "scientific_contract_changes": 0,
-  "status": "V2_1_P12_PROSPECTIVE_SHADOW_COLLECTION_IN_PROGRESS",
+  "status": "V2_1_P12_TARGETED_NON_SCIENTIFIC_REPAIR_REQUIRED",
   "study_id": "PSS_8a6e8ca69c195cf9defc",
   "timing_control_fingerprint": "sha256:28eefa874f6b419771ae910d5c107230a1ccaf27f0861720dfd45896239f0eef"
 }

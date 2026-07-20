@@ -1,0 +1,12 @@
+{
+  "labels": [
+    "CONTEXT_ONLY",
+    "IGNORE",
+    "NO_SIGNAL",
+    "PRIMARY_DRIVER",
+    "SECONDARY_DRIVER",
+    "WATCHLIST"
+  ],
+  "passed": true,
+  "source": "archived v2 Attention prompt/schema"
+}

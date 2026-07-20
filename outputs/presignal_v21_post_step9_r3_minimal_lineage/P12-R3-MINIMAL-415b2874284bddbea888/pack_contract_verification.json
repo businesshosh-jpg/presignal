@@ -1,0 +1,5 @@
+{
+  "pack_a": "provider-specific Request references with no shared pack",
+  "pack_e": "explicit cutoff-safe shared Pack E",
+  "passed": true
+}

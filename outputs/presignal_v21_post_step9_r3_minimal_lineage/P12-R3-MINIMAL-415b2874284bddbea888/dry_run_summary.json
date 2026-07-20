@@ -1,0 +1,72 @@
+{
+  "acquisition_calls": 0,
+  "apps_script_calls": 0,
+  "google_sheets_writes": 0,
+  "market_data_calls": 0,
+  "passed": true,
+  "production_writes": 0,
+  "provider_calls": 0,
+  "scenarios": [
+    {
+      "attention_rows": 1,
+      "attention_status": "parsed",
+      "provider": "Anthropic",
+      "request_rows": 1,
+      "request_status": "parsed",
+      "scenario": "standalone"
+    },
+    {
+      "attention_rows": 1,
+      "attention_status": "parsed",
+      "provider": "Gemini",
+      "request_rows": 1,
+      "request_status": "parsed",
+      "scenario": "standalone"
+    },
+    {
+      "attention_rows": 1,
+      "attention_status": "parsed",
+      "provider": "OpenAI",
+      "request_rows": 1,
+      "request_status": "parsed",
+      "scenario": "standalone"
+    },
+    {
+      "pack_a_provider_specific": true,
+      "pack_e_equal_across_providers": true,
+      "pack_e_fingerprint": "sha256:54c6e89d63c13c4b521a37403319b16e56e36ee329c4ee153c0938b7f85fe957",
+      "scenario": "standalone"
+    },
+    {
+      "attention_rows": 2,
+      "attention_status": "parsed",
+      "provider": "Anthropic",
+      "request_rows": 1,
+      "request_status": "parsed",
+      "scenario": "cluster"
+    },
+    {
+      "attention_rows": 2,
+      "attention_status": "parsed",
+      "provider": "Gemini",
+      "request_rows": 1,
+      "request_status": "parsed",
+      "scenario": "cluster"
+    },
+    {
+      "attention_rows": 2,
+      "attention_status": "parsed",
+      "provider": "OpenAI",
+      "request_rows": 1,
+      "request_status": "parsed",
+      "scenario": "cluster"
+    },
+    {
+      "pack_a_provider_specific": true,
+      "pack_e_equal_across_providers": true,
+      "pack_e_fingerprint": "sha256:85278f8103f580f84f3bc8367e07b3ee4aa9e2481e373b14f97208584261526f",
+      "scenario": "cluster"
+    }
+  ],
+  "workbook_writes": 0
+}

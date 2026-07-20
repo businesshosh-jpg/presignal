@@ -1,0 +1,6 @@
+{
+  "current_blocker": "V2_1_POST_STEP9_R1_DEPLOYED_ENTRYPOINT_WRITE_ISOLATION_REQUIRED",
+  "previous_blocker": "LIVE_V2_PROSPECTIVE_LINEAGE_ENTRYPOINTS_UNAVAILABLE",
+  "reason": "Exact sources found but write isolation is absent.",
+  "resolved": false
+}

@@ -1,0 +1,15 @@
+{
+  "acquisition_calls": 0,
+  "classification": "NON_SCIENTIFIC_PROSPECTIVE_LINEAGE_INTEGRATION",
+  "historical_artifacts_changed": false,
+  "module": "automation/presignal_v21_minimal_prospective_lineage_v1.py",
+  "production_writes": 0,
+  "provider_calls": 0,
+  "reused_contracts": [
+    "archived v2 Attention prompt/schema",
+    "archived v2 Information Request prompt/schema",
+    "current prospective Pack A/E definition",
+    "existing authoritative provider bridge"
+  ],
+  "writes_limited_to": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_prospective_shadow/P12-COLLECT-ffd55626bc1a886c2e19"
+}
