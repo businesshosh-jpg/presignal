@@ -1,0 +1,5 @@
+{
+  "changed": false,
+  "reason": "Frozen schema already states FLAT and UNCERTAIN require [0,0].",
+  "schema_fingerprint": "sha256:b389e4f7164c2ee39c26343f460607423607e4057149691dc5e213bca877ea62"
+}

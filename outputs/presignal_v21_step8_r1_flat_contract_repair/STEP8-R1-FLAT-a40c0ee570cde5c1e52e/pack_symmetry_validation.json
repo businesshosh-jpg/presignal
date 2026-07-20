@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "permitted_differences": [
+    "information_arm",
+    "information_pack",
+    "information_pack_fingerprint"
+  ],
+  "provider_visible_contract_rule_identical_across_arms": true
+}

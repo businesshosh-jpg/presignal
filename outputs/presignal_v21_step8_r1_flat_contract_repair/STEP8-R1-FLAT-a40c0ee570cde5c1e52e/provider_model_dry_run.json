@@ -1,0 +1,165 @@
+{
+  "fingerprint": "sha256:5e8c06d1a121ae85edc2f5b833a889df4cb88e2fb42db93dc243c85990534f30",
+  "provider_calls": 0,
+  "providers": [
+    {
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "provider_calls": 0,
+      "results": [
+        {
+          "episode_id": "EP_EVENT_2d777c70a07c631e5f03",
+          "leakage_fields_exposed": 0,
+          "pack_a_prompt_fingerprint": "sha256:cc007890a64e8d6c7ddc241fc5efa04b58b14bf2dce5840590f1034a8934a284",
+          "pack_e_prompt_fingerprint": "sha256:051d19851214e3baacc7ddcbfac62f6a603a0b18f8ead280bfd75e3785f0579e",
+          "prompt_symmetry": {
+            "allowed_differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "passed": true
+          },
+          "request_a_fingerprint": "sha256:e0fe7561968290b28dec3fcd1aec76fcc1651af5d2cae7dce8fbef4fb96b59f1",
+          "request_e_fingerprint": "sha256:8dfccffac0444fee68218234a069be8c6a7fce1945119f66a97572844618f4c4",
+          "serialized": true,
+          "shape": "standalone"
+        },
+        {
+          "episode_id": "EP_BATCH_48e817a6f98121eb04dd",
+          "leakage_fields_exposed": 0,
+          "pack_a_prompt_fingerprint": "sha256:4e2ce0c886a7f1249b14f347eb9aecef3324203c28ff8135473f9e63a1f8664b",
+          "pack_e_prompt_fingerprint": "sha256:fb6faac8f15037fe0fdfafaa701728b6f368b5b86aa8b39baedb1569540be044",
+          "prompt_symmetry": {
+            "allowed_differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "passed": true
+          },
+          "request_a_fingerprint": "sha256:9d0f9ffa5a3c28aa6df80825522d81509da8645c2aa0dc7106c635fa6bab1765",
+          "request_e_fingerprint": "sha256:3355213fa4f19778df22267fbef4baeb2c99c96875a5ce6b0cdade214a16fc43",
+          "serialized": true,
+          "shape": "cluster"
+        }
+      ]
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "provider_calls": 0,
+      "results": [
+        {
+          "episode_id": "EP_EVENT_109d364ec5543cf0adf3",
+          "leakage_fields_exposed": 0,
+          "pack_a_prompt_fingerprint": "sha256:673cf5fe657302ee559f403f09cda766038df858611607c217fa95cec6fe45ed",
+          "pack_e_prompt_fingerprint": "sha256:6a290e308921be6596716e937af158e09105a276f68a40f25278bd552fe24802",
+          "prompt_symmetry": {
+            "allowed_differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "passed": true
+          },
+          "request_a_fingerprint": "sha256:e2fa186ff26b80a714dfef8e80c72d4ecd1ba16f41e7c557cf2041548734ae7b",
+          "request_e_fingerprint": "sha256:bd832beefe9f23ccfd41f2c6cf37860c343abb801ba88020e03ca49bdb408243",
+          "serialized": true,
+          "shape": "standalone"
+        },
+        {
+          "episode_id": "EP_BATCH_08270f992a13e29e770f",
+          "leakage_fields_exposed": 0,
+          "pack_a_prompt_fingerprint": "sha256:2feec590f839bacab95f73c77b7fb50bae64467771430b3cfe77fc7ef9770c35",
+          "pack_e_prompt_fingerprint": "sha256:ae95feddfbd95da10e66a25e64dadc895fb2f55e3802a75af36de3a0d99bc090",
+          "prompt_symmetry": {
+            "allowed_differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "passed": true
+          },
+          "request_a_fingerprint": "sha256:091b0674f5dc0e5ab36a493c7eb8e5063cf9f1a93823464b90c9d15e5ea6da78",
+          "request_e_fingerprint": "sha256:531412c642d6e88ec8a45b94ac14ee0e10c78333bb1d86729e65ea8797d7ce43",
+          "serialized": true,
+          "shape": "cluster"
+        }
+      ]
+    },
+    {
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "provider_calls": 0,
+      "results": [
+        {
+          "episode_id": "EP_EVENT_109d364ec5543cf0adf3",
+          "leakage_fields_exposed": 0,
+          "pack_a_prompt_fingerprint": "sha256:9b78146319b3434ee49185a6595a949d61f0091cf2d6be77be7efcf409cd64da",
+          "pack_e_prompt_fingerprint": "sha256:3343c99bc4c8d30a694e978252ed2e7ece4215e24f5ce414e1141ae2aa569ce0",
+          "prompt_symmetry": {
+            "allowed_differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "passed": true
+          },
+          "request_a_fingerprint": "sha256:f8814762901c723ab4d2bc25b8d4119d7e101f4e76d2819319ce3c5ee6efc4b8",
+          "request_e_fingerprint": "sha256:15d0ddd55c84f7a464b999fb182b504d042c8a65c9b2ff53d819c900d26d1a0a",
+          "serialized": true,
+          "shape": "standalone"
+        },
+        {
+          "episode_id": "EP_BATCH_08270f992a13e29e770f",
+          "leakage_fields_exposed": 0,
+          "pack_a_prompt_fingerprint": "sha256:560c4249fbe32a8234bd380c1028901aea09e5f60215fabc167a1d62f20e9777",
+          "pack_e_prompt_fingerprint": "sha256:fb2f8a36cf957809f986a1c8748883b6fe974b8ef92ae457941613822796cd74",
+          "prompt_symmetry": {
+            "allowed_differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "differences": [
+              "information_arm",
+              "information_pack",
+              "information_pack_fingerprint"
+            ],
+            "passed": true
+          },
+          "request_a_fingerprint": "sha256:c541fbd1c019ae97a6af75c824520ba14fba20c6069e92d6e1c51c2872a6ccf3",
+          "request_e_fingerprint": "sha256:66adb91fa725bdc3113ae0dc1cb9a5cabd629257937891c8eea9d1bed2df4958",
+          "serialized": true,
+          "shape": "cluster"
+        }
+      ]
+    }
+  ]
+}

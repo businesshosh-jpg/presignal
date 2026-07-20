@@ -1,0 +1,41 @@
+{
+  "contract_name": "prospective_flat_path_contract_v1",
+  "contract_version": "presignal_event_path_contract_v1_flat_stage_prospective_v1",
+  "parent_contract_version": "presignal_event_path_contract_v1",
+  "prospective_only": true,
+  "effective_scope": "Future provider-visible Event-Path prompt construction and dry-run request serialization only. Historical runs remain bound to the frozen parent contract.",
+  "system_version": "presignal_v2.1",
+  "schema_version": "2.1.0",
+  "created_from_commit": "3e0f5c8556d29f443039c8229a39a3b8c72cdb4f",
+  "authorized_scientific_change": "A Prediction Path stage whose expected_direction is FLAT must set expected_pips_min and expected_pips_max to exactly 0.",
+  "inherited_unchanged": [
+    "Prediction schema",
+    "Prediction Path schema",
+    "frozen strict validator",
+    "parser",
+    "UP and DOWN magnitude semantics",
+    "5/15/30/60-minute horizons",
+    "15-minute primary endpoint",
+    "reversal semantics",
+    "Pack A/E symmetry",
+    "Outcome attachment and evaluation"
+  ],
+  "provider_visible_flat_rule": "FLAT means zero directional pip movement for that path stage. For FLAT, expected_pips_min must be 0 and expected_pips_max must be 0. Do not use a non-zero range around zero for FLAT. Put uncertainty or low-volatility interpretation in confidence or rationale.",
+  "provider_visible_valid_example": {
+    "horizon_min": 30,
+    "expected_direction": "FLAT",
+    "expected_pips_min": 0,
+    "expected_pips_max": 0
+  },
+  "internal_invalid_example": {
+    "horizon_min": 30,
+    "expected_direction": "FLAT",
+    "expected_pips_min": -3,
+    "expected_pips_max": 3
+  },
+  "contract_fingerprint": "sha256:a40c0ee570cde5c1e52e4b90d256ff5552411631d4a6224b1683b629fb69775a",
+  "prompt_template_fingerprint": "sha256:7224c53c5a4c0d60cca98ce19f18ece59304c43750e3ab0dac1cf228244768ff",
+  "schema_fingerprint": "sha256:b389e4f7164c2ee39c26343f460607423607e4057149691dc5e213bca877ea62",
+  "validator_fingerprint": "sha256:9c2843733af80af042a56ea9199e51005581b15650d0562ca43426b77169f343",
+  "parser_fingerprint": "sha256:a748d2758c754c8a0b4fd3a7668f6db72b83547f16e5b19262c39aaabf5503b4"
+}

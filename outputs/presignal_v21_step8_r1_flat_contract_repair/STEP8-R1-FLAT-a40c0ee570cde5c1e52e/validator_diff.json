@@ -1,0 +1,5 @@
+{
+  "changed": false,
+  "reason": "Frozen validator already raises PATH_NEUTRAL_PIP_RANGE for non-zero FLAT bounds.",
+  "validator_fingerprint": "sha256:9c2843733af80af042a56ea9199e51005581b15650d0562ca43426b77169f343"
+}

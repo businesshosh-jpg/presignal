@@ -1,0 +1,102 @@
+{
+  "count": 6,
+  "historical_statuses_changed": 0,
+  "path_neutral_pip_range_cases": [
+    {
+      "arm": "PACK_A",
+      "frozen_rejection_reason": "PATH_NEUTRAL_PIP_RANGE",
+      "model": "gpt-4o-mini-2024-07-18",
+      "offending_stages": [
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 5,
+          "expected_pips_min": 0,
+          "horizon_min": 30
+        }
+      ],
+      "pair_id": "PAIR_0182fce529349eef3d1a",
+      "provider": "OpenAI",
+      "raw_response_fingerprint": "sha256:50400b9920d79433768b4385cd5833749392cea2487e9febdd769667b28812de"
+    },
+    {
+      "arm": "PACK_E",
+      "frozen_rejection_reason": "PATH_NEUTRAL_PIP_RANGE",
+      "model": "gpt-4o-mini-2024-07-18",
+      "offending_stages": [
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 5,
+          "expected_pips_min": 0,
+          "horizon_min": 30
+        }
+      ],
+      "pair_id": "PAIR_0182fce529349eef3d1a",
+      "provider": "OpenAI",
+      "raw_response_fingerprint": "sha256:e793c8d5b595796e41fe5d88d7d882dfbaf022564d51d04f0be9677efff5d184"
+    },
+    {
+      "arm": "PACK_A",
+      "frozen_rejection_reason": "PATH_NEUTRAL_PIP_RANGE",
+      "model": "gemini-2.5-flash-lite",
+      "offending_stages": [
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 2,
+          "expected_pips_min": 0,
+          "horizon_min": 60
+        }
+      ],
+      "pair_id": "PAIR_027be891ac7a5333c77a",
+      "provider": "Gemini",
+      "raw_response_fingerprint": "sha256:b49fbb711ea8b511b2f69147bf40d1f74140154c4a37981c7c272b02323de9f8"
+    },
+    {
+      "arm": "PACK_E",
+      "frozen_rejection_reason": "PATH_NEUTRAL_PIP_RANGE",
+      "model": "claude-haiku-4-5",
+      "offending_stages": [
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 8,
+          "expected_pips_min": 0,
+          "horizon_min": 30
+        }
+      ],
+      "pair_id": "PAIR_290f4abd2ebd36bd197b",
+      "provider": "Anthropic",
+      "raw_response_fingerprint": "sha256:0bb1f84d4f41701eec4ad4d3f043d4dccbac80f5dd55b99ffd2e10d400a906e7"
+    },
+    {
+      "arm": "PACK_A",
+      "frozen_rejection_reason": "PATH_NEUTRAL_PIP_RANGE",
+      "model": "gpt-4o-mini-2024-07-18",
+      "offending_stages": [
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 5,
+          "expected_pips_min": 0,
+          "horizon_min": 60
+        }
+      ],
+      "pair_id": "PAIR_8080d0f613eb31f4ef5e",
+      "provider": "OpenAI",
+      "raw_response_fingerprint": "sha256:c1ea0ac9e3216367b66bfdccb2e124266a591566b64cdf0a00dc0f722945fb81"
+    },
+    {
+      "arm": "PACK_E",
+      "frozen_rejection_reason": "PATH_NEUTRAL_PIP_RANGE",
+      "model": "gemini-2.5-flash-lite",
+      "offending_stages": [
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 5,
+          "expected_pips_min": 0,
+          "horizon_min": 30
+        }
+      ],
+      "pair_id": "PAIR_9dd5048c231d9907bc16",
+      "provider": "Gemini",
+      "raw_response_fingerprint": "sha256:c56070188b7fe3a8929cf9134c35f4d92d0f264d99a43263b44fdef4b48c3f08"
+    }
+  ]
+}

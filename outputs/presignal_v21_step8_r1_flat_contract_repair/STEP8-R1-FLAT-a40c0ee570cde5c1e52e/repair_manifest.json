@@ -1,0 +1,9 @@
+{
+  "apps_script_calls": 0,
+  "decision": "V2_1_STEP8_R1_FLAT_OUTPUT_CONTRACT_REPAIR_VALIDATED",
+  "google_sheets_writes": 0,
+  "historical_artifacts_changed": false,
+  "prospective_contract_fingerprint": "sha256:a40c0ee570cde5c1e52e4b90d256ff5552411631d4a6224b1683b629fb69775a",
+  "provider_calls": 0,
+  "repair_run_id": "STEP8-R1-FLAT-a40c0ee570cde5c1e52e"
+}

@@ -1,0 +1,89 @@
+{
+  "fingerprint": "sha256:59b81a0b8e9d58aef5bba55e1bfbacf4adad7dba37a458774a90376eb4a6eb4b",
+  "results": [
+    {
+      "actual_valid": true,
+      "category": "valid_flat_stages",
+      "error": null,
+      "expected_valid": true,
+      "name": "flat_zero_bounds"
+    },
+    {
+      "actual_valid": true,
+      "category": "valid_flat_stages",
+      "error": null,
+      "expected_valid": true,
+      "name": "flat_integer_zero_bounds"
+    },
+    {
+      "actual_valid": false,
+      "category": "invalid_flat_stages",
+      "error": "PATH_PIPS_MIN",
+      "expected_valid": false,
+      "name": "neutral_range"
+    },
+    {
+      "actual_valid": false,
+      "category": "invalid_flat_stages",
+      "error": "PATH_NEUTRAL_PIP_RANGE",
+      "expected_valid": false,
+      "name": "positive_range"
+    },
+    {
+      "actual_valid": false,
+      "category": "invalid_flat_stages",
+      "error": "PATH_PIPS_MIN",
+      "expected_valid": false,
+      "name": "negative_range"
+    },
+    {
+      "actual_valid": false,
+      "category": "invalid_flat_stages",
+      "error": "PATH_MISSING_FIELD:expected_pips_min",
+      "expected_valid": false,
+      "name": "missing_min"
+    },
+    {
+      "actual_valid": false,
+      "category": "invalid_flat_stages",
+      "error": "PATH_MISSING_FIELD:expected_pips_max",
+      "expected_valid": false,
+      "name": "missing_max"
+    },
+    {
+      "actual_valid": false,
+      "category": "invalid_flat_stages",
+      "error": "PATH_PIPS_MIN",
+      "expected_valid": false,
+      "name": "nonnumeric_bounds"
+    },
+    {
+      "actual_valid": true,
+      "category": "directional_regression",
+      "error": null,
+      "expected_valid": true,
+      "name": "valid_up"
+    },
+    {
+      "actual_valid": true,
+      "category": "directional_regression",
+      "error": null,
+      "expected_valid": true,
+      "name": "valid_down"
+    },
+    {
+      "actual_valid": false,
+      "category": "directional_regression",
+      "error": "PATH_PIPS_MIN",
+      "expected_valid": false,
+      "name": "invalid_up_negative"
+    },
+    {
+      "actual_valid": false,
+      "category": "directional_regression",
+      "error": "PATH_PIPS_MIN",
+      "expected_valid": false,
+      "name": "invalid_down_negative"
+    }
+  ]
+}

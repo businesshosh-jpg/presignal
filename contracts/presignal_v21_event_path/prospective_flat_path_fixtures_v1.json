@@ -1,0 +1,20 @@
+{
+  "valid_flat_stages": [
+    {"name": "flat_zero_bounds", "expected_direction": "FLAT", "expected_pips_min": 0, "expected_pips_max": 0},
+    {"name": "flat_integer_zero_bounds", "expected_direction": "FLAT", "expected_pips_min": 0.0, "expected_pips_max": 0.0}
+  ],
+  "invalid_flat_stages": [
+    {"name": "neutral_range", "expected_direction": "FLAT", "expected_pips_min": -3, "expected_pips_max": 3},
+    {"name": "positive_range", "expected_direction": "FLAT", "expected_pips_min": 0, "expected_pips_max": 2},
+    {"name": "negative_range", "expected_direction": "FLAT", "expected_pips_min": -1, "expected_pips_max": 0},
+    {"name": "missing_min", "expected_direction": "FLAT", "expected_pips_max": 0},
+    {"name": "missing_max", "expected_direction": "FLAT", "expected_pips_min": 0},
+    {"name": "nonnumeric_bounds", "expected_direction": "FLAT", "expected_pips_min": "zero", "expected_pips_max": 0}
+  ],
+  "directional_regression_stages": [
+    {"name": "valid_up", "expected_direction": "UP", "expected_pips_min": 1, "expected_pips_max": 3, "valid": true},
+    {"name": "valid_down", "expected_direction": "DOWN", "expected_pips_min": 1, "expected_pips_max": 3, "valid": true},
+    {"name": "invalid_up_negative", "expected_direction": "UP", "expected_pips_min": -1, "expected_pips_max": 3, "valid": false},
+    {"name": "invalid_down_negative", "expected_direction": "DOWN", "expected_pips_min": -1, "expected_pips_max": 3, "valid": false}
+  ]
+}

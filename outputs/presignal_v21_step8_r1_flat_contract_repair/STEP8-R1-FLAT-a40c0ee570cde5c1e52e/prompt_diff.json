@@ -1,0 +1,5 @@
+{
+  "historical_prompt_rule": "FLAT has zero bounds.",
+  "only_scientific_prompt_change": "FLAT exact-zero representation",
+  "prospective_addition": "Prospective path-stage FLAT rule: FLAT means zero directional pip movement for that stage. For FLAT, expected_pips_min must be 0 and expected_pips_max must be 0. Do not use a non-zero range around zero for FLAT; express uncertainty or low volatility in stage_confidence or stage_reason. Valid FLAT example: {\"horizon_min\":30,\"expected_direction\":\"FLAT\",\"expected_pips_min\":0,\"expected_pips_max\":0}."
+}

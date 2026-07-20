@@ -1,0 +1,36 @@
+{
+  "accepted_forecasts": 32,
+  "analysis_reconstruction": {
+    "analysis_fingerprint": "sha256:f1dc8c8fb0e445eac14beeb99b17cd05cecdd1d5443e7f7c44c6cb69b88b9b92",
+    "provider_calls": 0,
+    "verified": true
+  },
+  "analysis_run_id": "STEP7-PAIRED-1dbbf399d2f73793e4f3",
+  "batch_reconstruction": {
+    "provider_calls": 0,
+    "source": "read_only_episode_cluster_analysis_verifier",
+    "verified": true
+  },
+  "batch_run_id": "STEP6-BATCH-f718192a7566138c3fda",
+  "frozen_contract_version": "presignal_event_path_contract_v1",
+  "historical_analysis_fingerprint": "sha256:f1dc8c8fb0e445eac14beeb99b17cd05cecdd1d5443e7f7c44c6cb69b88b9b92",
+  "historical_fingerprints_after": {
+    "analysis": "sha256:df4cbf533f2e772252578e186e69d15abce8363b5c5f7369a9042b491214b06b",
+    "batch": "sha256:8ac32a4f95786efa82d24cf3e7cffb3a013afe076e4b267121410ff7846f7779",
+    "single": "sha256:e8b522839acfd6a634377846783857159b36bfaa3b45add3fcfc225e30e6fcce"
+  },
+  "historical_fingerprints_before": {
+    "analysis": "sha256:df4cbf533f2e772252578e186e69d15abce8363b5c5f7369a9042b491214b06b",
+    "batch": "sha256:8ac32a4f95786efa82d24cf3e7cffb3a013afe076e4b267121410ff7846f7779",
+    "single": "sha256:e8b522839acfd6a634377846783857159b36bfaa3b45add3fcfc225e30e6fcce"
+  },
+  "rejected_responses": 10,
+  "single_pair_reconstruction": {
+    "provider_calls": 0,
+    "run_id": "STEP6-SINGLE-20260719T175850564590Z",
+    "stable_validation_fingerprint": "sha256:017d16e2a0b1c40dfad84eb51cc46775e17ce327b7142b82320c06125089d793",
+    "valid": true
+  },
+  "single_run_id": "STEP6-SINGLE-20260719T175850564590Z",
+  "unchanged": true
+}

@@ -1,0 +1,20 @@
+{
+  "historical_scope": "unchanged",
+  "parent_contract_version": "presignal_event_path_contract_v1",
+  "prospective_contract_version": "presignal_event_path_contract_v1_flat_stage_prospective_v1",
+  "scientific_changes": [
+    "Explicit provider-visible FLAT exact-zero pip bounds and one positive JSON example."
+  ],
+  "unchanged": [
+    "Prediction schema",
+    "Prediction Path schema",
+    "frozen strict validator",
+    "parser",
+    "UP and DOWN magnitude semantics",
+    "5/15/30/60-minute horizons",
+    "15-minute primary endpoint",
+    "reversal semantics",
+    "Pack A/E symmetry",
+    "Outcome attachment and evaluation"
+  ]
+}
