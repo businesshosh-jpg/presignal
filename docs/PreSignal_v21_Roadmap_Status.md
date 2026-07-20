@@ -29,7 +29,7 @@ It aligns task labels with the authoritative v2.1 Development Plan.
 | Step 6 | COMPLETE | Validate the one-provider Pack A versus Pack E Event-Path pipeline |
 | Step 7 | COMPLETE | Add all providers and freeze the controlled batch pipeline |
 | Step 8A | COMPLETE | Execute the controlled historical Pack A versus Pack E shadow batch |
-| Step 8B | NEXT | Episode-cluster-aware analysis of the historical Pack A versus Pack E shadow test |
+| Step 8B | COMPLETE | Episode-cluster-aware analysis of the historical Pack A versus Pack E shadow test |
 | Step 9 | NOT STARTED | Decide promotion |
 
 ## Historical Label Compatibility
@@ -38,11 +38,17 @@ Historical task labels used "Step 6" for some batch preparation and execution
 work. Under the authoritative v2.1 Development Plan, all-provider enablement
 maps to Step 7 and controlled historical batch execution maps to Step 8A.
 
+The completed episode-cluster-aware paired analysis was historically created
+with `STEP7-*` artifact and decision identifiers. Under this roadmap, that work
+is **Step 8B — Episode-Cluster-Aware Analysis of the Historical Pack A versus
+Pack E Shadow Test**. Those historical identifiers are retained unchanged.
+
 Historical output directories, run IDs, fingerprints, contracts, forecasts,
 evaluations, and execution artifacts remain unchanged. This document is the
 only current roadmap-label authority for future status and task titles.
 
-## Next Task
+## Current Gate
 
-Step 8B - Episode-Cluster-Aware Analysis of the Historical Pack A versus Pack E
-Shadow Test.
+Step 8B is complete. Step 9 remains not started; its promotion decision is
+blocked pending the separately authorized prospective output-contract repair
+identified by the frozen Step 8B analysis.
