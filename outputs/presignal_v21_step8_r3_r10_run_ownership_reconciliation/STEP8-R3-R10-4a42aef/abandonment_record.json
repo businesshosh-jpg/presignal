@@ -1,0 +1,14 @@
+{
+  "abandoned_at": "2026-07-21T08:34:04.785952Z",
+  "calls_known_to_have_occurred": 2,
+  "calls_with_unknown_status": 1,
+  "complete_pairs": 0,
+  "last_trustworthy_state": "Anthropic Request result persisted; Gemini Attention DISPATCH_STARTED/ATTENTION_SENT without durable response",
+  "operation_classification": "SENT_NO_CONFIRMED_RESPONSE",
+  "orphaned_operation_id": "sha256:a077134392edcaece0bdf719f9621731028aca52a5e5a2ac1c3f6271b1fd53d6",
+  "processed_episodes": 0,
+  "reason": "Dispatch may have occurred, but neither a response nor authoritative non-dispatch proof is available.",
+  "run_id": "STEP8-R3-FINAL-4a42aef",
+  "scientific_evidence_issued": false,
+  "successor_run_authorization": true
+}

@@ -1,0 +1,5 @@
+{
+  "reports_lease": true,
+  "reports_orphans": true,
+  "reports_safe_to_resume": true
+}

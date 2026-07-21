@@ -158,3 +158,15 @@ The one-Episode R9 smoke completed Pack A/Pack E paired evaluations for all
 three providers, recorded one complete Episode, and resumed with zero calls.
 No cohort Episode beyond the smoke was processed. P12 remains
 **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+
+## Step 8-R3-R10 Run Ownership and Orphan Reconciliation
+
+The final Compat-R5 run `STEP8-R3-FINAL-4a42aef` is formally abandoned with
+no scientific evidence issued. Its Gemini Attention operation reached
+`ATTENTION_SENT` without a durable response, provider request ID, transport
+result, or authoritative non-dispatch proof. R10 adds an OS-backed exclusive
+run lease, heartbeat, append-only operation journal, and fail-closed stale
+lease handling: any unresolved sent operation blocks takeover and retry.
+The abandoned Gemini provider/Episode operation is preserved as terminal
+missing for a successor Compat-R5 cohort; it must never be sent again. P12
+remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.

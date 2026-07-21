@@ -1,0 +1,6 @@
+{
+  "authorized": true,
+  "contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r5",
+  "orphan_treatment": "Mark only Gemini/EP_BATCH_633a5a3b9389a895b622/ATTENTION as terminally missing; do not send that operation again. Do not exclude the whole Episode.",
+  "population": "same frozen canonical order"
+}

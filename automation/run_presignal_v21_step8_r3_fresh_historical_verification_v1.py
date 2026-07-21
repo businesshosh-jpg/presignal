@@ -8,10 +8,14 @@ provider bridge and evaluator.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
+import socket
+import subprocess
 import sys
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping
@@ -79,18 +83,128 @@ def operation_key(identity: Mapping[str, Any]) -> str:
     return sha256(identity)
 
 
+def process_start_time(pid: int) -> str | None:
+    try:
+        return subprocess.check_output(["ps", "-o", "lstart=", "-p", str(pid)], text=True).strip() or None
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
+def sent_orphans(run: Path) -> list[dict[str, Any]]:
+    """Read-only reconstruction of calls which may have reached a provider."""
+    ledger = run / "transition_ledger.jsonl"
+    if not ledger.exists():
+        return []
+    result_keys = {path.stem for path in (run / "stage_results").glob("*.json")}
+    found = []
+    for line in ledger.read_text().splitlines():
+        row = json.loads(line)
+        if row.get("to") not in {"ATTENTION_SENT", "REQUEST_SENT", "PACK_A_SENT", "PACK_E_SENT"}:
+            continue
+        key = row["operation_key"]
+        if key not in result_keys:
+            found.append({"operation_id": key, "identity": row["identity"], "transition_timestamp": row["timestamp"], "classification": "SENT_NO_CONFIRMED_RESPONSE"})
+    return found
+
+
+class RunLease:
+    """An advisory OS lock plus durable owner evidence for one immutable run."""
+
+    def __init__(self, run: Path, command: str):
+        self.run, self.command = run, command
+        self.path = run / "run_lease.json"
+        self.lock_path = run / "run_lease.lock"
+        self.handle: Any = None
+        self.lease_id: str | None = None
+
+    def _metadata(self, status: str, **extra: Any) -> dict[str, Any]:
+        return {"run_id": self.run.name, "lease_id": self.lease_id, "owner_pid": os.getpid(), "owner_process_start_time": process_start_time(os.getpid()), "owner_host": socket.gethostname(), "owner_command": self.command, "acquired_at": now(), "heartbeat_at": now(), "lease_expires_at": None, "lease_generation": 1, "status": status, **extra}
+
+    def acquire(self) -> None:
+        self.run.mkdir(parents=True, exist_ok=True)
+        self.handle = self.lock_path.open("a+")
+        try:
+            fcntl.flock(self.handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            active = read_json(self.path) if self.path.exists() else {}
+            self.handle.close(); self.handle = None
+            raise DispatchError("V2_1_STEP8_R3_R10_RUN_ALREADY_OWNED:" + canonical(active))
+        # Never take a formerly-owned run if an external call may be in flight.
+        orphans = sent_orphans(self.run)
+        if orphans:
+            fcntl.flock(self.handle.fileno(), fcntl.LOCK_UN); self.handle.close(); self.handle = None
+            raise DispatchError("V2_1_STEP8_R3_R10_ORPHANED_CALL_BLOCKED")
+        self.lease_id = "LEASE_" + uuid.uuid4().hex
+        atomic(self.path, self._metadata("ACTIVE"))
+
+    def heartbeat(self) -> None:
+        if self.handle is None or self.lease_id is None:
+            raise DispatchError("V2_1_STEP8_R3_R10_RUN_ALREADY_OWNED")
+        current = read_json(self.path)
+        if current.get("lease_id") != self.lease_id or current.get("status") != "ACTIVE":
+            raise DispatchError("V2_1_STEP8_R3_R10_RUN_ALREADY_OWNED")
+        current["heartbeat_at"] = now()
+        atomic(self.path, current)
+
+    def release(self, reason: str) -> None:
+        if self.handle is None:
+            return
+        current = read_json(self.path) if self.path.exists() else self._metadata("RELEASED")
+        if current.get("lease_id") == self.lease_id:
+            current.update({"status": "RELEASED", "released_at": now(), "release_reason": reason})
+            atomic(self.path, current)
+        fcntl.flock(self.handle.fileno(), fcntl.LOCK_UN)
+        self.handle.close(); self.handle = None
+
+
+def lease_status(run: Path) -> dict[str, Any]:
+    if not (run / "run_lease.json").exists():
+        return {"classification": "NO_LEASE", "metadata": None}
+    metadata = read_json(run / "run_lease.json")
+    start = process_start_time(int(metadata.get("owner_pid") or 0))
+    active = metadata.get("status") == "ACTIVE" and start == metadata.get("owner_process_start_time")
+    if active:
+        classification = "ACTIVE_OWNER"
+    elif sent_orphans(run):
+        classification = "STALE_EXTERNAL_CALL_STATUS_UNKNOWN"
+    else:
+        classification = "STALE_NO_EXTERNAL_CALL_RISK"
+    return {"classification": classification, "metadata": metadata}
+
+
 class ExecutionLoop:
     """Persisted stage dispatcher with an injectable bridge for call-free tests."""
 
-    def __init__(self, run_id: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, manifest_path: Path = R9_MANIFEST):
+    def __init__(self, run_id: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, manifest_path: Path = R9_MANIFEST, execution_plan_path: Path | None = None):
         self.gate = binding.gate(manifest_path)
         if self.gate["contract"]["contract_version"] != compat_contract.CONTRACT_VERSION:
             raise DispatchError("V2_1_STEP8_R9_PREVIOUS_CONTRACT_REJECTED")
         self.run = OUT / run_id
         self.state_path = self.run / "execution_state.json"
         self.dispatcher = dispatcher
+        self.execution_plan_path = execution_plan_path
+        self.execution_plan = read_json(execution_plan_path) if execution_plan_path else None
+        self.population_path = Path(self.execution_plan["population_path"]) if self.execution_plan else POPULATION
+        self._validate_execution_plan()
+        self.lease = RunLease(self.run, " ".join(sys.argv))
         self._source: dict[str, Any] | None = None
         self._episodes: dict[str, dict[str, Any]] | None = None
+
+    def _validate_execution_plan(self) -> None:
+        """Fail closed when a final cohort differs from its frozen manifest."""
+        if self.execution_plan is None:
+            return
+        required = ("contract", "providers", "episode_ids", "maximum_processed_episodes", "target_complete_episodes", "checkpoint_complete_episodes", "maximum_forecast_arms")
+        if any(key not in self.execution_plan for key in required):
+            raise DispatchError("V2_1_STEP8_R3_R2_RUNTIME_MANIFEST_MISMATCH")
+        if self.execution_plan["contract"] != self.gate["contract"] or self.execution_plan["providers"] != self.gate["provider_routes"]:
+            raise DispatchError("V2_1_STEP8_R3_R2_RUNTIME_MANIFEST_MISMATCH")
+        population = read_json(self.population_path).get("episodes", [])
+        population_ids = [row.get("episode_id") for row in population]
+        if self.execution_plan["episode_ids"] != population_ids:
+            raise DispatchError("V2_1_STEP8_R3_R2_RUNTIME_MANIFEST_MISMATCH")
+        if len(population_ids) > int(self.execution_plan["maximum_processed_episodes"]):
+            raise DispatchError("V2_1_STEP8_R3_R2_RUNTIME_MANIFEST_MISMATCH")
 
     def initialize(self) -> dict[str, Any]:
         if self.state_path.exists():
@@ -100,6 +214,7 @@ class ExecutionLoop:
             "gate": self.gate,
             "processed_episodes": 0,
             "unique_complete_episodes": 0,
+            "complete_paired_observations": 0,
             "current": {},
             "terminal_identities": [],
             "processed_episode_ids": [],
@@ -107,13 +222,36 @@ class ExecutionLoop:
             "episode_states": {},
             "last_durable_checkpoint": "INITIALIZED",
             "blocking_error": None,
+            "forecast_call_reservations": [],
+            "execution_plan_fingerprint": sha256(self.execution_plan) if self.execution_plan else None,
         }
         atomic(self.state_path, state)
-        atomic(self.run / "run_manifest.json", self.gate)
+        atomic(self.run / "run_manifest.json", {**self.gate, "execution_plan": self.execution_plan})
         return state
 
     def status(self) -> dict[str, Any]:
-        return self.initialize()
+        state = self.initialize()
+        state["lease"] = lease_status(self.run)
+        state["orphaned_operations"] = sent_orphans(self.run)
+        state["safe_to_resume"] = not state["orphaned_operations"] and state["lease"]["classification"] != "ACTIVE_OWNER"
+        return state
+
+    def acquire_ownership(self) -> None:
+        if self.lease.handle is None:
+            self.lease.acquire()
+
+    def release_ownership(self, reason: str) -> None:
+        self.lease.release(reason)
+
+    def _operation_event(self, identity: Mapping[str, Any], state: str, **extra: Any) -> None:
+        append(self.run / "operation_journal.jsonl", {
+            "operation_id": operation_key(identity), "run_id": identity["run_id"], "episode_id": identity["episode_id"],
+            "session_id": identity["session_id"], "provider": identity["provider"], "model": identity["model"],
+            "stage": identity["stage"], "information_arm": identity["information_arm"],
+            "contract_fingerprint": identity["contract_fingerprint"], "attempt_number": identity["attempt_number"],
+            "lease_id": self.lease.lease_id, "owner_pid": os.getpid(), "owner_process_start_time": process_start_time(os.getpid()),
+            "state": state, "timestamp": now(), **extra,
+        })
 
     def _record_provider_path(self, episode_id: str, provider: str, state_name: str) -> None:
         state = self.initialize()
@@ -212,18 +350,33 @@ class ExecutionLoop:
         atomic(path, raw)
 
     def _call(self, identity: Mapping[str, Any], payload: Mapping[str, Any], handler: Callable[[], Mapping[str, Any]], sent: str, received: str) -> dict[str, Any]:
+        self.acquire_ownership()
+        self.lease.heartbeat()
         self._persist_payload(identity, payload)
         _, result_path = self._paths(identity)
         if result_path.exists():
             return read_json(result_path)
+        # A pre-call transition without a durable response cannot establish
+        # whether the provider completed the original identity.  Failing
+        # closed preserves the no-duplicate-call contract on resume.
+        if self._state(identity) == sent:
+            state = self.initialize()
+            state["blocking_error"] = "V2_1_STEP8_R3_R4_DISPATCH_RECONCILIATION_CONFLICT"
+            atomic(self.state_path, state)
+            raise DispatchError("V2_1_STEP8_R3_R4_DISPATCH_RECONCILIATION_CONFLICT")
+        self._operation_event(identity, "RESERVED", payload_fingerprint=sha256(payload), prompt_fingerprint=payload.get("prompt_fingerprint"), call_budget_reserved=identity["stage"] == "FORECAST")
+        self._operation_event(identity, "DISPATCH_STARTED", dispatch_started_at=now())
         self._transition(identity, sent)
         try:
             returned = dict(handler())
             record = {"stage": identity["stage"], "transport_status": returned.get("transport_status", "ok"), "raw_response": returned.get("raw_response"), "raw_response_fingerprint": sha256(returned.get("raw_response")), "parser_result": returned.get("parser_result"), "validator_result": returned.get("validator_result"), "accepted": bool(returned.get("accepted")), "rejection_reason": returned.get("rejection_reason"), "output": returned.get("output"), "output_lineage": returned.get("output_lineage", {}), "provider_call_metadata": returned.get("provider_call_metadata", {}), "started_ts": returned.get("started_ts", now()), "completed_ts": returned.get("completed_ts", now())}
         except Exception as exc:
             record = {"stage": identity["stage"], "transport_status": "exception", "raw_response": None, "raw_response_fingerprint": sha256(None), "parser_result": None, "validator_result": None, "accepted": False, "rejection_reason": str(exc), "output": None, "output_lineage": {}, "provider_call_metadata": {}, "started_ts": now(), "completed_ts": now()}
+        self._operation_event(identity, "RESPONSE_RECEIVED", transport_status=record["transport_status"], raw_response_fingerprint=record["raw_response_fingerprint"], provider_request_id=record["provider_call_metadata"].get("provider_request_id"), response_received_at=now())
         persisted = self._persist_result(identity, record)
+        self._operation_event(identity, "TERMINAL_ACCEPTED" if record["accepted"] else "TERMINAL_REJECTED", result_persisted_at=now(), final_classification="ACCEPTED" if record["accepted"] else "REJECTED")
         self._transition(identity, received, result=persisted)
+        self.lease.heartbeat()
         return persisted
 
     def _load_source(self) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
@@ -231,10 +384,29 @@ class ExecutionLoop:
             _, _, _, source = replay.recover_population()
             # Outcome values must not be retained on the pre-forecast path.
             source.pop("outcomes", None)
-            planned = read_json(POPULATION)["episodes"]
+            planned = read_json(self.population_path)["episodes"]
             self._source = source
             self._episodes = {row["episode_id"]: row for row in planned}
         return self._source, self._episodes or {}
+
+    def episode_ids(self) -> list[str]:
+        return [row["episode_id"] for row in read_json(self.population_path)["episodes"]]
+
+    def _reserve_forecast_call(self, identity: Mapping[str, Any]) -> None:
+        """Reserve a frozen forecast arm once, before its provider call."""
+        if self.execution_plan is None:
+            return
+        state = self.initialize()
+        key = operation_key(identity)
+        reservations = state.setdefault("forecast_call_reservations", [])
+        if key in reservations:
+            return
+        if len(reservations) >= int(self.execution_plan["maximum_forecast_arms"]):
+            state["blocking_error"] = "V2_1_STEP8_R3_R2_CALL_BUDGET_EXHAUSTED"
+            atomic(self.state_path, state)
+            raise DispatchError("V2_1_STEP8_R3_R2_CALL_BUDGET_EXHAUSTED")
+        reservations.append(key)
+        atomic(self.state_path, state)
 
     def _manifest_gate(self, episode: Mapping[str, Any]) -> None:
         contract = self.gate["contract"]
@@ -339,6 +511,9 @@ class ExecutionLoop:
 
     def _forecast(self, episode: Mapping[str, Any], provider: str, model: str, arm: str, row: Mapping[str, Any], prompt: str) -> dict[str, Any]:
         identity = self._identity(episode, provider, model, "FORECAST", arm)
+        _, existing_result = self._paths(identity)
+        if not existing_result.exists():
+            self._reserve_forecast_call(identity)
         payload = single.bridge_payload(row, prompt, run_id=self.run.name, arm=arm)
         payload["forecast_identity"] = "STEP8_R3_" + operation_key(identity)[7:27]
         frozen_payload = {"payload": payload, "prompt_fingerprint": sha256(prompt), "pack_fingerprint": row["pack_fingerprint"]}
@@ -384,7 +559,22 @@ class ExecutionLoop:
         self._transition(evaluation_identity, "COMPLETE" if completed else "TERMINAL_INCOMPLETE", result=evaluation_result)
         return {"outcome": outcome_result, "evaluations": evaluations, "complete": completed}
 
+    @staticmethod
+    def _is_evaluable_pair(result: Mapping[str, Any]) -> bool:
+        """A lifecycle-complete pair counts only with a usable 15-minute Outcome."""
+        outcome = result.get("outcome", {})
+        evaluations = outcome.get("evaluations", {}) if isinstance(outcome, Mapping) else {}
+        return bool(
+            outcome.get("complete")
+            and isinstance(evaluations, Mapping)
+            and isinstance(evaluations.get("PACK_A"), Mapping)
+            and isinstance(evaluations.get("PACK_E"), Mapping)
+            and isinstance(evaluations["PACK_A"].get("direction_15m_ok"), bool)
+            and isinstance(evaluations["PACK_E"].get("direction_15m_ok"), bool)
+        )
+
     def process_episode(self, episode_id: str) -> dict[str, Any]:
+        self.acquire_ownership()
         source, episodes = self._load_source()
         episode = episodes[episode_id]; self._manifest_gate(episode)
         state = self.initialize()
@@ -427,13 +617,37 @@ class ExecutionLoop:
                     results[provider] = {"error": str(exc)}
                     self._record_provider_path(episode_id, provider, "TERMINAL_INCOMPLETE")
         state = self.initialize(); state["processed_episodes"] += 1; state["processed_episode_ids"].append(episode_id)
-        if any(row.get("outcome", {}).get("complete") for row in results.values()): state["unique_complete_episodes"] += 1
+        evaluable_pairs = sum(self._is_evaluable_pair(row) for row in results.values())
+        state["complete_paired_observations"] += evaluable_pairs
+        if evaluable_pairs:
+            state["unique_complete_episodes"] += 1
         state["last_durable_checkpoint"] = "EPISODE_TERMINAL"; atomic(self.state_path, state)
-        append(self.run / "progress_checkpoints.jsonl", {"episode_id": episode_id, "processed_episodes": state["processed_episodes"], "unique_complete_episodes": state["unique_complete_episodes"], "terminal": terminal, "timestamp": now()})
+        append(self.run / "progress_checkpoints.jsonl", {"episode_id": episode_id, "processed_episodes": state["processed_episodes"], "unique_complete_episodes": state["unique_complete_episodes"], "complete_paired_observations": state["complete_paired_observations"], "terminal": terminal, "timestamp": now()})
+        if self.execution_plan and state["unique_complete_episodes"] >= int(self.execution_plan["checkpoint_complete_episodes"]):
+            checkpoint = self.run / "checkpoint_40_recorded.json"
+            if not checkpoint.exists():
+                atomic(checkpoint, {"checkpoint_complete_episodes": self.execution_plan["checkpoint_complete_episodes"], "processed_episodes": state["processed_episodes"], "unique_complete_episodes": state["unique_complete_episodes"], "timestamp": now()})
         return {"episode_id": episode_id, "terminal": terminal, "results": results}
 
     def first_episode(self) -> str:
-        return read_json(POPULATION)["episodes"][0]["episode_id"]
+        return self.episode_ids()[0]
+
+    def process_cohort(self) -> dict[str, Any]:
+        self.acquire_ownership()
+        if self.execution_plan is None:
+            raise DispatchError("V2_1_STEP8_R3_R2_RUNTIME_MANIFEST_MISMATCH")
+        for episode_id in self.episode_ids():
+            state = self.initialize()
+            if state["unique_complete_episodes"] >= int(self.execution_plan["target_complete_episodes"]):
+                return {"status": "TARGET_COMPLETE", **state}
+            if state["processed_episodes"] >= int(self.execution_plan["maximum_processed_episodes"]):
+                return {"status": "CEILING_REACHED", **state}
+            if episode_id in state["processed_episode_ids"]:
+                continue
+            self.process_episode(episode_id)
+        state = self.initialize()
+        status = "TARGET_COMPLETE" if state["unique_complete_episodes"] >= int(self.execution_plan["target_complete_episodes"]) else "POPULATION_EXHAUSTED"
+        return {"status": status, **state}
 
 
 def main() -> None:
@@ -444,15 +658,23 @@ def main() -> None:
     parser.add_argument("--status", action="store_true")
     parser.add_argument("--run-id", default="STEP8-R3-R9-SMOKE-3f72650")
     parser.add_argument("--verification-manifest", type=Path, default=R9_MANIFEST)
+    parser.add_argument("--execution-plan", type=Path)
+    parser.add_argument("--execute-cohort", action="store_true")
+    parser.add_argument("--resume-cohort", action="store_true")
     args = parser.parse_args()
-    loop = ExecutionLoop(args.run_id, manifest_path=args.verification_manifest)
+    loop = ExecutionLoop(args.run_id, manifest_path=args.verification_manifest, execution_plan_path=args.execution_plan)
     if args.status:
         print(json.dumps(loop.status(), sort_keys=True)); return
     if args.preflight:
         print(json.dumps(binding.gate(args.verification_manifest), sort_keys=True)); return
-    if args.execute or args.resume:
-        print(json.dumps(loop.process_episode(loop.first_episode()), sort_keys=True)); return
-    raise SystemExit("PRELIGHT_REQUIRED")
+    try:
+        if args.execute_cohort or args.resume_cohort:
+            print(json.dumps(loop.process_cohort(), sort_keys=True)); return
+        if args.execute or args.resume:
+            print(json.dumps(loop.process_episode(loop.first_episode()), sort_keys=True)); return
+        raise SystemExit("PRELIGHT_REQUIRED")
+    finally:
+        loop.release_ownership("COMMAND_EXIT")
 
 
 if __name__ == "__main__":

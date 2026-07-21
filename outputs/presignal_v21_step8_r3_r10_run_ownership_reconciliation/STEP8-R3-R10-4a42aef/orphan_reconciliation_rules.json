@@ -1,0 +1,6 @@
+{
+  "CONFIRMED_NOT_SENT": "retryable only with authoritative pre-dispatch proof",
+  "CONFIRMED_RESPONSE_RECOVERED": "parse recovered response without resend",
+  "OWNERSHIP_CONFLICT": "blocked; no automatic retry",
+  "SENT_NO_CONFIRMED_RESPONSE": "blocked; no automatic retry"
+}

@@ -1,0 +1,6 @@
+{
+  "foreground_default": true,
+  "lease_required_before_provider_dispatch": true,
+  "no_shell_backgrounding_in_runner": true,
+  "signal_release": "CLI finally releases only after durable command exit; sent orphan prevents future acquisition."
+}

@@ -84,6 +84,7 @@ class LoopTests(unittest.TestCase):
         shutil.rmtree(self.loop.run, ignore_errors=True)
 
     def tearDown(self):
+        self.loop.release_ownership("TEST_TEARDOWN")
         shutil.rmtree(self.loop.run, ignore_errors=True)
 
     def test_concrete_adapter_backed_end_to_end_and_resume(self):
@@ -126,6 +127,28 @@ class LoopTests(unittest.TestCase):
         replayed = self.loop._requests(episode, "Gemini", "gemini-2.5-flash-lite", attention, source)
         self.assertEqual(replayed["result_fingerprint"], first["result_fingerprint"])
         self.assertEqual(len(self.bridge.calls), before)
+
+    def test_sent_without_durable_result_fails_closed_on_resume(self):
+        source, episodes = self.loop._load_source()
+        episode = episodes[self.loop.first_episode()]
+        identity = self.loop._identity(episode, "Gemini", "gemini-2.5-flash-lite", "ATTENTION")
+        payload = {"fixture": "sent_without_response"}
+        self.loop._persist_payload(identity, payload)
+        self.loop._transition(identity, "ATTENTION_SENT")
+        with self.assertRaisesRegex(runner.DispatchError, "ORPHANED_CALL_BLOCKED|RECONCILIATION_CONFLICT"):
+            self.loop._call(identity, payload, lambda: {"accepted": True}, "ATTENTION_SENT", "ATTENTION_RESPONSE_RECEIVED")
+        self.assertEqual(self.bridge.calls, [])
+        self.assertEqual(len(self.loop.status()["orphaned_operations"]), 1)
+
+    def test_second_owner_fails_closed(self):
+        first = runner.RunLease(self.loop.run, "first")
+        second = runner.RunLease(self.loop.run, "second")
+        first.acquire()
+        try:
+            with self.assertRaisesRegex(runner.DispatchError, "RUN_ALREADY_OWNED"):
+                second.acquire()
+        finally:
+            first.release("fixture")
 
     def test_provider_failures_are_isolated_from_openai_completion(self):
         self.bridge = IsolatedFailureBridge()

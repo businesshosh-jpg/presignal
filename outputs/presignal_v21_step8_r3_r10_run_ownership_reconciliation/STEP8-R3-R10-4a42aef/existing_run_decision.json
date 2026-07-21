@@ -1,0 +1,5 @@
+{
+  "decision": "V2_1_STEP8_R3_R10_EXISTING_RUN_BLOCKED_BY_ORPHANED_CALL",
+  "reason": "Dispatch may have occurred, but neither a response nor authoritative non-dispatch proof is available.",
+  "safe_to_resume": false
+}

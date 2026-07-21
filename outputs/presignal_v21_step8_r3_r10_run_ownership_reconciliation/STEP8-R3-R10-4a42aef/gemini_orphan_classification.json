@@ -1,0 +1,32 @@
+{
+  "automatic_retry_allowed": false,
+  "classification": "SENT_NO_CONFIRMED_RESPONSE",
+  "evidence": {
+    "apps_script_execution": "NOT_RECOVERABLE: no deterministic operation ID was durably passed through the pre-R10 bridge operation.",
+    "provider_request_id": null,
+    "raw_response": false,
+    "stage_payload": true,
+    "stage_result": false,
+    "stop_reason": null,
+    "transition_ledger": true,
+    "transport_result": null
+  },
+  "operation": {
+    "classification": "SENT_NO_CONFIRMED_RESPONSE",
+    "identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_633a5a3b9389a895b622",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-4a42aef",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "operation_id": "sha256:a077134392edcaece0bdf719f9621731028aca52a5e5a2ac1c3f6271b1fd53d6",
+    "transition_timestamp": "2026-07-21T08:09:45.987686Z"
+  },
+  "reason": "Dispatch may have occurred, but neither a response nor authoritative non-dispatch proof is available.",
+  "response_recovered": false
+}

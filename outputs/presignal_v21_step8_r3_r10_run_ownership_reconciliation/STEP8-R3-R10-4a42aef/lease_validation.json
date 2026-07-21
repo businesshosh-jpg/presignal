@@ -1,0 +1,6 @@
+{
+  "atomic_second_owner_rejection": true,
+  "heartbeat_atomic": true,
+  "release_audited": true,
+  "sent_stale_takeover_blocked": true
+}

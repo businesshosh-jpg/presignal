@@ -1,0 +1,18 @@
+{
+  "known": {
+    "both_used_same_run_id": true,
+    "commands": [
+      "--execute-cohort STEP8-R3-FINAL-4a42aef",
+      "--resume-cohort STEP8-R3-FINAL-4a42aef"
+    ],
+    "first_executor_pid": 14515,
+    "observed_active_processes": 2,
+    "second_executor_pid": 15082
+  },
+  "not_reconstructable": [
+    "parent terminal wrapper lifecycle",
+    "per-transition writer PID",
+    "remote provider receipt"
+  ],
+  "root_cause": "The pre-R10 runner had no OS-backed run lease, so separate detached command processes passed initialization independently."
+}

@@ -1,0 +1,16 @@
+{
+  "fields": [
+    "run_id",
+    "lease_id",
+    "owner_pid",
+    "owner_process_start_time",
+    "owner_host",
+    "owner_command",
+    "acquired_at",
+    "heartbeat_at",
+    "lease_expires_at",
+    "lease_generation"
+  ],
+  "mechanism": "fcntl LOCK_EX | LOCK_NB held for process lifetime plus atomically written run_lease.json",
+  "stale_takeover": "Only STALE_NO_EXTERNAL_CALL_RISK; sent operations remain blocked."
+}

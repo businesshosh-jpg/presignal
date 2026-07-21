@@ -1,0 +1,10 @@
+{
+  "apps_script_execution": "NOT_RECOVERABLE: no deterministic operation ID was durably passed through the pre-R10 bridge operation.",
+  "provider_request_id": null,
+  "raw_response": false,
+  "stage_payload": true,
+  "stage_result": false,
+  "stop_reason": null,
+  "transition_ledger": true,
+  "transport_result": null
+}

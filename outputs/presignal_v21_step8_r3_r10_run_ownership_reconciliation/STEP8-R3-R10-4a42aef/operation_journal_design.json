@@ -1,0 +1,16 @@
+{
+  "path": "<run>/operation_journal.jsonl",
+  "pre_call_boundary": "payload + lease + reservation + DISPATCH_STARTED are durable before dispatch",
+  "states": [
+    "RESERVED",
+    "DISPATCH_STARTED",
+    "RESPONSE_RECEIVED",
+    "RESULT_PERSISTED",
+    "CONFIRMED_NOT_SENT",
+    "SENT_NO_CONFIRMED_RESPONSE",
+    "CONFIRMED_RESPONSE_RECOVERED",
+    "TERMINAL_REJECTED",
+    "TERMINAL_ACCEPTED",
+    "OWNERSHIP_CONFLICT"
+  ]
+}
