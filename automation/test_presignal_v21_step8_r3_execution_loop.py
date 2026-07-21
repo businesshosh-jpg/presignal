@@ -8,3 +8,7 @@ class LoopTests(unittest.TestCase):
   self.loop.transition(i,'ATTENTION_REQUEST_FROZEN');self.assertEqual(self.loop.status()['current'][__import__('json').dumps(i,sort_keys=True)],'ATTENTION_REQUEST_FROZEN')
   self.loop.transition(i,'COMPLETE')
   with self.assertRaisesRegex(RuntimeError,'DUPLICATE'):self.loop.transition(i,'PACK_A_SENT')
+ def test_mock_dispatch_and_resume(self):
+  state=self.loop.dispatch_mock_episode()
+  self.assertEqual(state['processed_episodes'],1);self.assertEqual(state['unique_complete_episodes'],1)
+  self.assertEqual(self.loop.status()['processed_episodes'],1)

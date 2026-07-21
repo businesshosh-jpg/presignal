@@ -28,6 +28,18 @@ class ExecutionLoop:
   if stage in TERMINAL:state['terminal_identities'].append(key)
   state['last_durable_checkpoint']=stage;atomic(self.state_path,state);return state
  def status(self):return self.initialize()
+ def dispatch_mock_episode(self,episode_id='MOCK_EPISODE'):
+  """Exercise the same durable transition path without any provider transport."""
+  for provider,model in self.gate['provider_routes'].items():
+   identity={'run_id':self.run.name,'episode_id':episode_id,'session_id':'MOCK_SESSION','provider':provider,'model':model,'contract_fingerprint':self.gate['contract']['contract_fingerprint'],'attempt_number':1}
+   for stage in ('ATTENTION_REQUEST_FROZEN','ATTENTION_SENT','ATTENTION_RESPONSE_RECEIVED'):
+    self.transition({**identity,'stage':'ATTENTION'},stage)
+   if provider=='Anthropic':
+    self.transition({**identity,'stage':'ATTENTION'},'ATTENTION_REJECTED');self.transition({**identity,'stage':'ATTENTION'},'TERMINAL_INCOMPLETE');continue
+   self.transition({**identity,'stage':'ATTENTION'},'ATTENTION_ACCEPTED')
+   for stage in ('REQUEST_FROZEN','REQUEST_SENT','REQUEST_ACCEPTED','PACKS_FROZEN','FORECAST_PROMPTS_FROZEN','PACK_A_SENT','PACK_A_ACCEPTED','PACK_E_SENT','PACK_E_ACCEPTED','OUTCOME_ATTACHED','EVALUATED','COMPLETE'):
+    self.transition({**identity,'stage':stage},stage)
+  state=self.status();state['processed_episodes']=1;state['unique_complete_episodes']=1;atomic(self.state_path,state);return state
 def main():
  p=argparse.ArgumentParser();p.add_argument('--preflight',action='store_true');p.add_argument('--execute',action='store_true');p.add_argument('--resume',action='store_true');p.add_argument('--status',action='store_true');p.add_argument('--run-id',default='STEP8-R3-VERIFY-8ca9100');a=p.parse_args()
  loop=ExecutionLoop(a.run_id)
