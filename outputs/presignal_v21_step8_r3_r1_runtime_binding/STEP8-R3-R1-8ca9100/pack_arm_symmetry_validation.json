@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "permitted_differences": [
+    "information_arm",
+    "information_pack_content",
+    "information_pack_fingerprint"
+  ]
+}

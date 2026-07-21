@@ -1,0 +1,7 @@
+{
+  "draws": 100000,
+  "old_rng_reset_reachable": false,
+  "persistent_rng": true,
+  "seed": 20260721,
+  "threshold": 65536
+}

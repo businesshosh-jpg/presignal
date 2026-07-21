@@ -1,0 +1,5 @@
+{
+  "old_contract": "run_presignal_v21_step8_r2_historical_replication_v1._forecast_pair",
+  "old_raw_parser": "presignal_v21_minimal_prospective_lineage_v1._raw_object",
+  "r3_path_uses_old_components": false
+}

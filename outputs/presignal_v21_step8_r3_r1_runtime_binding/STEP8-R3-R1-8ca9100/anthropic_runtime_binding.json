@@ -1,0 +1,5 @@
+{
+  "extractor": "r3.extract_json_object",
+  "fixtures_passed": true,
+  "old_parser_reachable_for_r3": false
+}

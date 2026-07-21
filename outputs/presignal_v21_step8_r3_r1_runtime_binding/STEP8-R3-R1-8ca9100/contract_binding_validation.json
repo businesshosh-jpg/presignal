@@ -1,0 +1,8 @@
+{
+  "exact_contract": "presignal_event_path_contract_v1_historical_verification_r3",
+  "fallback": false,
+  "fingerprint": "sha256:ca2e8053e0302dbd08d640c858877b4bd93b4177fcbe6cbc99d6db125a46f9fa",
+  "manifest_loaded": true,
+  "old_contract_rejected": true,
+  "pack_arms_same_contract": true
+}

@@ -1,0 +1,8 @@
+{
+  "attention_parser": "bind_presignal_v21_step8_r3_runtime_v1.attention_parser",
+  "cluster_analyzer": "continue_presignal_v21_step8_r2_historical_replication_v1.analyze",
+  "contract_resolver": "bind_presignal_v21_step8_r3_runtime_v1.load_manifest",
+  "entrypoint": "automation/run_presignal_v21_step8_r3_fresh_historical_verification_v1.py",
+  "missingness": "bind_presignal_v21_step8_r3_runtime_v1.missingness",
+  "prompt_builder": "bind_presignal_v21_step8_r3_runtime_v1.forecast_prompt"
+}
