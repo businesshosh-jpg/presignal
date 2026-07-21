@@ -1,0 +1,7 @@
+{
+  "invalid_rank_rejected_before_requests": true,
+  "outcome_isolation": true,
+  "provider_calls": 0,
+  "provider_isolation_cases_passed": true,
+  "raw_anthropic_body_retained": true
+}

@@ -1,0 +1,46 @@
+{
+  "accepted_attention": 3,
+  "accepted_pack_a": 3,
+  "accepted_pack_e": 3,
+  "accepted_requests": 3,
+  "attention_calls": {
+    "Anthropic": 1,
+    "Gemini": 1,
+    "OpenAI": 1
+  },
+  "complete_paired_observations": 1,
+  "completed_paired_evaluations": 3,
+  "cutoff_violations": 0,
+  "decision": "V2_1_STEP8_R3_R9_PROVIDER_SCOPED_EXECUTION_VALIDATED",
+  "duplicate_accepted_calls": 0,
+  "episode_id": "EP_BATCH_b5c0c544ec07bbf0b950",
+  "episode_state": "COMPLETE",
+  "model_substitutions": 0,
+  "outcome_leakage": 0,
+  "pack_a_calls": {
+    "Anthropic": 1,
+    "Gemini": 1,
+    "OpenAI": 1
+  },
+  "pack_arm_symmetry": "PASSED",
+  "pack_e_calls": {
+    "Anthropic": 1,
+    "Gemini": 1,
+    "OpenAI": 1
+  },
+  "pack_e_equality": "PASSED",
+  "processed_episodes": 1,
+  "prospective_calls": 0,
+  "provider_paths": {
+    "Anthropic": "COMPLETE",
+    "Gemini": "COMPLETE",
+    "OpenAI": "COMPLETE"
+  },
+  "rejected": [],
+  "request_calls": {
+    "Anthropic": 1,
+    "Gemini": 1,
+    "OpenAI": 1
+  },
+  "run_id": "STEP8-R3-R9-SMOKE-3f72650"
+}

@@ -1,0 +1,7 @@
+{
+  "early_validator": "INVALID_ATTENTION_RANK",
+  "emitted_value": "L",
+  "expected_type": "nonnegative integer",
+  "ordering_metadata_only": true,
+  "r8_failure_location": "run_presignal_v21_single_event_path_pair_v1.normalized_attention int(attention_rank)"
+}

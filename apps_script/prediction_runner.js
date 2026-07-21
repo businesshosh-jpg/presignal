@@ -1763,7 +1763,21 @@ function _callClaudeJsonObject_(prov, prompt, expectedObject, options) {
     if (code === 429) throw _quotaErr_('Anthropic 429: ' + txt);
     if (code >= 500) throw _providerErr_('Anthropic ' + code);
     if (code < 200 || code > 299) throw _providerErr_('Anthropic ' + code + ': ' + txt);
-    var j = JSON.parse(txt);
+    var j;
+    try {
+      j = JSON.parse(txt);
+    } catch (error) {
+      // Preserve the unparsed provider body for the caller's durable boundary.
+      // It remains a strict provider-contract rejection; no JSON is repaired here.
+      return {
+        raw_output: '',
+        raw_response_blocks: null,
+        provider_response_body: txt,
+        stop_reason: null,
+        parse_error: String(error || 'anthropic_response_body_json_invalid'),
+        ai_name: 'Anthropic', ai_model: prov.model
+      };
+    }
     var c = (j.content && j.content[0] && j.content[0].text) || '';
     if (!c) throw _providerErr_('Anthropic: empty content');
     var rawResult = {

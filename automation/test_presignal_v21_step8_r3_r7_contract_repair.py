@@ -4,15 +4,15 @@ import unittest
 
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
 from automation import presignal_v21_event_path_contract_v1 as event_contract
-from automation import presignal_v21_historical_verification_r3_compat_r4_contract_v1 as compat
-from automation import repair_presignal_v21_step8_r3_r8_provider_coverage_v1 as r8
+from automation import presignal_v21_historical_verification_r3_compat_r5_contract_v1 as compat
+from automation import repair_presignal_v21_step8_r3_r9_provider_isolation_v1 as r9
 from automation import run_presignal_v21_step8_r3_fresh_historical_verification_v1 as runner
 
 
 class R7ContractRepairTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.manifest = r8.prepare()
+        cls.manifest = r9.prepare()
 
     def test_contract_and_all_provider_prompts_use_absolute_pip_representation(self):
         gate = binding.gate(self.manifest)
@@ -87,7 +87,7 @@ class R7ContractRepairTests(unittest.TestCase):
         shutil.rmtree(loop.run, ignore_errors=True)
         self.assertEqual(loop.gate["contract"]["validator_fingerprint"], compat.spec()["validator_fingerprint"])
         with self.assertRaisesRegex(runner.DispatchError, "PREVIOUS_CONTRACT_REJECTED"):
-            runner.ExecutionLoop("TEST-R3-R8-R3", dispatcher=lambda _: {"status": "ok"}, manifest_path=r8.R7 / "verification_manifest.json")
+            runner.ExecutionLoop("TEST-R3-R9-R4", dispatcher=lambda _: {"status": "ok"}, manifest_path=r9.R8 / "verification_manifest.json")
 
 
 if __name__ == "__main__":

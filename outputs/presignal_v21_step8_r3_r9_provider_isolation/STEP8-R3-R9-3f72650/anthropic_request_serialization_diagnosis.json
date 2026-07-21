@@ -1,0 +1,10 @@
+{
+  "classification": "APPS_SCRIPT_RETURN_OBJECT_ENCODING",
+  "configured_max_output_tokens": null,
+  "failure_location": "apps_script/prediction_runner.js:_callClaudeJsonObject_ JSON.parse(resp.getContentText())",
+  "r8_stage": "REQUEST",
+  "raw_response_available": false,
+  "repair": "return raw provider HTTP body with parse_error before the bridge envelope is constructed",
+  "request_payload_bytes": 733,
+  "stop_reason": null
+}

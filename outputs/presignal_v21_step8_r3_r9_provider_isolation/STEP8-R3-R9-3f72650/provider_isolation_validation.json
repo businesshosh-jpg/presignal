@@ -1,0 +1,6 @@
+{
+  "anthropic_failure_isolated": true,
+  "duplicate_calls": 0,
+  "gemini_failure_isolated": true,
+  "valid_provider_continues": true
+}

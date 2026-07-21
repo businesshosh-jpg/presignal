@@ -1,0 +1,12 @@
+{
+  "episode_states": [
+    "IN_PROGRESS",
+    "COMPLETE",
+    "TERMINAL_NO_COMPLETE_PROVIDER"
+  ],
+  "processed_count_rule": "increment once after all provider paths are terminal",
+  "provider_terminal_states": [
+    "COMPLETE",
+    "TERMINAL_INCOMPLETE"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "automatic_json_repair": false,
+  "order": [
+    "provider_body",
+    "raw_persistence",
+    "parse_error",
+    "strict_rejection"
+  ]
+}

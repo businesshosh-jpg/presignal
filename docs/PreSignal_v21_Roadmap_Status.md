@@ -147,3 +147,14 @@ failures: an Anthropic Request bridge payload serialization error and a Gemini
 `attention_rank="L"` value that was not rejected before prompt construction.
 No additional Episode was processed, no forecast call was made, and the fresh
 cohort remains blocked. P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+
+## Step 8-R3-R9 Provider-Scoped Execution Repair
+
+Compat-r5 preserves an undecodable Anthropic Request HTTP body before strict
+rejection and rejects nonnumeric Attention rank values before they can reach
+Request or forecast construction. Provider paths are now recorded independently
+and aggregate to an Episode terminal state only after all provider paths finish.
+The one-Episode R9 smoke completed Pack A/Pack E paired evaluations for all
+three providers, recorded one complete Episode, and resumed with zero calls.
+No cohort Episode beyond the smoke was processed. P12 remains
+**PAUSED_PENDING_HISTORICAL_VALIDATION**.

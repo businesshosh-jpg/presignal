@@ -4,8 +4,9 @@ import unittest
 
 from automation import run_presignal_v21_step8_r3_fresh_historical_verification_v1 as runner
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
-from automation import presignal_v21_historical_verification_r3_compat_r4_contract_v1 as compat
+from automation import presignal_v21_historical_verification_r3_compat_r5_contract_v1 as compat
 from automation import repair_presignal_v21_step8_r3_r8_provider_coverage_v1 as r8
+from automation import repair_presignal_v21_step8_r3_r9_provider_isolation_v1 as r9
 
 
 def forecast(direction="UP"):
@@ -58,10 +59,24 @@ class MockBridge:
                 "raw_output": raw, "completed_timestamp": "2024-07-03T05:00:00Z"}
 
 
+class IsolatedFailureBridge(MockBridge):
+    def __call__(self, request):
+        if request["provider"] == "Anthropic" and request["arm"] == "LINEAGE_REQUESTS":
+            self.calls.append(dict(request))
+            return {"status": "error", "error": "fixture_anthropic_request_body_parse_error", "actual_provider": "Anthropic", "actual_model": request["model"], "raw_output": ""}
+        response = super().__call__(request)
+        if request["provider"] == "Gemini" and request["arm"] == "LINEAGE_ATTENTION":
+            payload = json.loads(response["raw_output"])
+            for item in payload["attention_items"]:
+                item["attention_rank"] = "L"
+            response["raw_output"] = json.dumps(payload)
+        return response
+
+
 class LoopTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        r8.prepare()
+        r8.prepare(); r9.prepare()
 
     def setUp(self):
         self.bridge = MockBridge()
@@ -112,7 +127,20 @@ class LoopTests(unittest.TestCase):
         self.assertEqual(replayed["result_fingerprint"], first["result_fingerprint"])
         self.assertEqual(len(self.bridge.calls), before)
 
-    def test_r8_contract_is_bound_and_previous_manifest_is_rejected(self):
+    def test_provider_failures_are_isolated_from_openai_completion(self):
+        self.bridge = IsolatedFailureBridge()
+        self.loop = runner.ExecutionLoop("TEST-R3-R9-ISOLATION", dispatcher=self.bridge)
+        shutil.rmtree(self.loop.run, ignore_errors=True)
+        result = self.loop.process_episode(self.loop.first_episode())
+        self.assertEqual(result["terminal"]["Anthropic"], "REQUEST_REJECTED")
+        self.assertEqual(result["terminal"]["Gemini"], "ATTENTION_REJECTED")
+        self.assertEqual(result["terminal"]["OpenAI"], "COMPLETE")
+        state = self.loop.status()
+        self.assertEqual(state["episode_states"][self.loop.first_episode()], "COMPLETE")
+        self.assertEqual(state["unique_complete_episodes"], 1)
+        self.assertFalse(any(call["provider"] == "Gemini" and call["arm"] == "LINEAGE_REQUESTS" for call in self.bridge.calls))
+
+    def test_r9_contract_is_bound_and_previous_manifest_is_rejected(self):
         self.assertEqual(self.loop.gate["contract"]["contract_version"], compat.CONTRACT_VERSION)
         self.assertIn("attention_reason must contain at most six words", binding.attention_instruction(self.loop.gate["contract"], "Anthropic"))
         self.assertIn("information_category=(treasury_yields", binding.request_instruction(self.loop.gate["contract"], "Gemini"))

@@ -1,0 +1,12 @@
+{
+  "apps_script_source_changed": true,
+  "older_contracts_rejected": [
+    "presignal_event_path_contract_v1_historical_verification_r3",
+    "presignal_event_path_contract_v1_historical_verification_r3_compat_r1",
+    "presignal_event_path_contract_v1_historical_verification_r3_compat_r2",
+    "presignal_event_path_contract_v1_historical_verification_r3_compat_r3",
+    "presignal_event_path_contract_v1_historical_verification_r3_compat_r4"
+  ],
+  "required_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r5",
+  "runner": "automation/run_presignal_v21_step8_r3_fresh_historical_verification_v1.py"
+}

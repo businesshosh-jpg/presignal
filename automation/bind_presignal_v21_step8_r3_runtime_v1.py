@@ -11,6 +11,7 @@ from automation import presignal_v21_historical_verification_r3_compat_r1_contra
 from automation import presignal_v21_historical_verification_r3_compat_r2_contract_v1 as compat_r2
 from automation import presignal_v21_historical_verification_r3_compat_r3_contract_v1 as compat_r3
 from automation import presignal_v21_historical_verification_r3_compat_r4_contract_v1 as compat_r4
+from automation import presignal_v21_historical_verification_r3_compat_r5_contract_v1 as compat_r5
 from automation import presignal_v21_minimal_prospective_lineage_v1 as lineage
 from automation import presignal_v21_prospective_flat_contract_v1 as parent
 
@@ -23,6 +24,7 @@ CONTRACTS = {
     compat_r2.CONTRACT_VERSION: compat_r2,
     compat_r3.CONTRACT_VERSION: compat_r3,
     compat_r4.CONTRACT_VERSION: compat_r4,
+    compat_r5.CONTRACT_VERSION: compat_r5,
 }
 
 
@@ -52,7 +54,7 @@ def load_manifest(path: Path = PREP) -> dict[str, Any]:
 
 def attention_instruction(spec: Mapping[str, Any], provider: str) -> str:
     module = contract_module(spec)
-    if provider == "Anthropic" and module.CONTRACT_VERSION in (compat_r1.CONTRACT_VERSION, compat_r2.CONTRACT_VERSION, compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION):
+    if provider == "Anthropic" and module.CONTRACT_VERSION in (compat_r1.CONTRACT_VERSION, compat_r2.CONTRACT_VERSION, compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION):
         return lineage.ATTENTION_INSTRUCTION + "\n\n" + compat_r1.ANTHROPIC_ATTENTION_RULE
     return lineage.ATTENTION_INSTRUCTION
 
@@ -65,7 +67,7 @@ def request_instruction(spec: Mapping[str, Any], provider: str) -> str:
         return lineage.REQUEST_INSTRUCTION + "\n\n" + compat_r2.REQUEST_ENUM_RULE + "\n\n" + compat_r2.REQUEST_PRIORITY_RULE + "\n\n" + compat_r2.OTHER_CHANNEL_RULE
     if module.CONTRACT_VERSION == compat_r3.CONTRACT_VERSION:
         return lineage.REQUEST_INSTRUCTION + "\n\n" + compat_r2.REQUEST_ENUM_RULE + "\n\n" + compat_r2.REQUEST_PRIORITY_RULE + "\n\n" + compat_r2.OTHER_CHANNEL_RULE + "\n\n" + compat_r3.REQUEST_CATEGORY_RULE
-    if module.CONTRACT_VERSION == compat_r4.CONTRACT_VERSION:
+    if module.CONTRACT_VERSION in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION):
         return lineage.REQUEST_INSTRUCTION + "\n\n" + compat_r2.REQUEST_ENUM_RULE + "\n\n" + compat_r2.REQUEST_PRIORITY_RULE + "\n\n" + compat_r2.OTHER_CHANNEL_RULE + "\n\n" + compat_r3.REQUEST_CATEGORY_RULE + "\n\n" + compat_r4.REQUEST_HOUSING_RULE
     return lineage.REQUEST_INSTRUCTION
 
@@ -73,7 +75,7 @@ def request_instruction(spec: Mapping[str, Any], provider: str) -> str:
 def attention_parser(provider: str, raw: Any, spec: Mapping[str, Any] | None = None) -> dict[str, Any]:
     module = contract_module(spec or r3.spec())
     parsed = module.extract_json_object(raw)
-    if module.CONTRACT_VERSION == compat_r4.CONTRACT_VERSION and provider == "Anthropic":
+    if module.CONTRACT_VERSION in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and provider == "Anthropic":
         rule = compat_r4.NORMALIZATION["anthropic_runtime_identity"]
         emitted_provider = parsed.get("provider")
         emitted_model = parsed.get("model")
@@ -104,7 +106,7 @@ def attention_parser(provider: str, raw: Any, spec: Mapping[str, Any] | None = N
 
 def generation_settings(spec: Mapping[str, Any], provider: str, stage: str) -> dict[str, Any]:
     module = contract_module(spec)
-    if module.CONTRACT_VERSION in (compat_r2.CONTRACT_VERSION, compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION) and provider == "Anthropic" and stage == "ATTENTION":
+    if module.CONTRACT_VERSION in (compat_r2.CONTRACT_VERSION, compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and provider == "Anthropic" and stage == "ATTENTION":
         return {"max_output_tokens": compat_r2.ANTHROPIC_ATTENTION_MAX_TOKENS, "preserve_raw_before_parse": True}
     return {}
 
@@ -113,18 +115,30 @@ def normalize_request_item(item: Mapping[str, Any], spec: Mapping[str, Any]) -> 
     module = contract_module(spec)
     normalized = dict(item)
     changes = []
-    if module.CONTRACT_VERSION in (compat_r2.CONTRACT_VERSION, compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION) and normalized.get("affected_channel") == compat_r2.NORMALIZATION["input"]:
+    if module.CONTRACT_VERSION in (compat_r2.CONTRACT_VERSION, compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and normalized.get("affected_channel") == compat_r2.NORMALIZATION["input"]:
         normalized["affected_channel"] = compat_r2.NORMALIZATION["output"]
         changes.append({"field": "affected_channel", "original_value": "other", "normalized_value": "unknown", "reason": compat_r2.NORMALIZATION["reason"]})
-    if module.CONTRACT_VERSION in (compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION) and normalized.get("information_category") == compat_r3.NORMALIZATION["information_category"]["input"]:
+    if module.CONTRACT_VERSION in (compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and normalized.get("information_category") == compat_r3.NORMALIZATION["information_category"]["input"]:
         rule = compat_r3.NORMALIZATION["information_category"]
         normalized["information_category"] = rule["output"]
         changes.append({"field": rule["field"], "original_value": rule["input"], "normalized_value": rule["output"], "reason": rule["reason"]})
-    if module.CONTRACT_VERSION == compat_r4.CONTRACT_VERSION and normalized.get("information_category") == compat_r4.NORMALIZATION["information_category_housing"]["input"]:
+    if module.CONTRACT_VERSION in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and normalized.get("information_category") == compat_r4.NORMALIZATION["information_category_housing"]["input"]:
         rule = compat_r4.NORMALIZATION["information_category_housing"]
         normalized["information_category"] = rule["output"]
         changes.append({"field": rule["field"], "original_value": rule["input"], "normalized_value": rule["output"], "reason": rule["reason"]})
     return normalized, {"normalizations": changes} if changes else None
+
+
+def validate_attention_rank(rows: list[Mapping[str, Any]], spec: Mapping[str, Any]) -> None:
+    """Reject malformed ordering metadata before a provider path reaches Requests."""
+    module = contract_module(spec)
+    if module.CONTRACT_VERSION != compat_r5.CONTRACT_VERSION:
+        return
+    rule = compat_r5.ATTENTION_RANK_RULE
+    for row in rows:
+        rank = row.get("attention_rank")
+        if isinstance(rank, bool) or not isinstance(rank, int) or rank < rule["minimum"]:
+            raise BindingError(rule["error"])
 
 
 def forecast_prompt(input_row: Mapping[str, Any], provider: str, spec: Mapping[str, Any] | None = None) -> str:
@@ -133,7 +147,7 @@ def forecast_prompt(input_row: Mapping[str, Any], provider: str, spec: Mapping[s
     module = contract_module(spec or r3.spec())
     base = parent.prospective_prompt_text(parent.prospective_context(input_row, parent.PROSPECTIVE_CONTRACT_VERSION), parent.PROSPECTIVE_CONTRACT_VERSION)
     provider_rule = module.PROMPT_RULES["gemini_pips"] if provider == "Gemini" else module.PROMPT_RULES["openai_reversal"] if provider == "OpenAI" else module.PROMPT_RULES["anthropic_json"]
-    rule = (module.PROMPT_RULES["pip_representation"] + "\n" + provider_rule) if module.CONTRACT_VERSION in (compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION) else provider_rule
+    rule = (module.PROMPT_RULES["pip_representation"] + "\n" + provider_rule) if module.CONTRACT_VERSION in (compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) else provider_rule
     return base + "\n\nR3 historical-verification compatibility rule: " + rule
 
 

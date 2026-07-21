@@ -3,16 +3,16 @@ import shutil
 import unittest
 
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
-from automation import presignal_v21_historical_verification_r3_compat_r4_contract_v1 as r3
+from automation import presignal_v21_historical_verification_r3_compat_r5_contract_v1 as r3
 from automation import presignal_v21_minimal_prospective_lineage_v1 as lineage
-from automation import repair_presignal_v21_step8_r3_r8_provider_coverage_v1 as r8
+from automation import repair_presignal_v21_step8_r3_r9_provider_isolation_v1 as r9
 from automation import run_presignal_v21_step8_r3_fresh_historical_verification_v1 as runner
 
 
 class R6CompatibilityTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.manifest = r8.prepare()
+        cls.manifest = r9.prepare()
 
     def test_contract_and_anthropic_settings_are_manifest_bound(self):
         gate = binding.gate(self.manifest)

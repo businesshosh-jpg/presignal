@@ -1,0 +1,10 @@
+{
+  "child_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r5",
+  "deltas": [
+    "Anthropic Request raw response before bridge-envelope parsing",
+    "Gemini strict attention_rank validation",
+    "provider-scoped runner aggregation reference"
+  ],
+  "parent_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r4",
+  "scientific_forecast_semantics_changed": false
+}

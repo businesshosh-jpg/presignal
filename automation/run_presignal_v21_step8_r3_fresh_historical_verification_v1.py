@@ -21,7 +21,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
-from automation import presignal_v21_historical_verification_r3_compat_r4_contract_v1 as compat_contract
+from automation import presignal_v21_historical_verification_r3_compat_r5_contract_v1 as compat_contract
 from automation import presignal_v21_minimal_prospective_lineage_v1 as lineage
 from automation import run_presignal_v21_single_event_path_pair_v1 as single
 from automation import run_presignal_v21_step8_r2_historical_replication_v1 as replay
@@ -29,7 +29,7 @@ from automation import run_presignal_v21_step8_r2_historical_replication_v1 as r
 OUT = ROOT / "outputs/presignal_v21_step8_r3_fresh_historical_verification"
 PREP = ROOT / "outputs/presignal_v21_step8_r3_repair/STEP8-R3-REPAIR-df9c25e"
 POPULATION = PREP / "fresh_verification_population_plan.json"
-R8_MANIFEST = ROOT / "outputs/presignal_v21_step8_r3_r8_provider_coverage_repair/STEP8-R3-R8-d84e6a5/verification_manifest.json"
+R9_MANIFEST = ROOT / "outputs/presignal_v21_step8_r3_r9_provider_isolation/STEP8-R3-R9-3f72650/verification_manifest.json"
 
 STAGES = (
     "PENDING", "ATTENTION_REQUEST_FROZEN", "ATTENTION_SENT", "ATTENTION_RESPONSE_RECEIVED",
@@ -82,10 +82,10 @@ def operation_key(identity: Mapping[str, Any]) -> str:
 class ExecutionLoop:
     """Persisted stage dispatcher with an injectable bridge for call-free tests."""
 
-    def __init__(self, run_id: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, manifest_path: Path = R8_MANIFEST):
+    def __init__(self, run_id: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, manifest_path: Path = R9_MANIFEST):
         self.gate = binding.gate(manifest_path)
         if self.gate["contract"]["contract_version"] != compat_contract.CONTRACT_VERSION:
-            raise DispatchError("V2_1_STEP8_R8_PREVIOUS_CONTRACT_REJECTED")
+            raise DispatchError("V2_1_STEP8_R9_PREVIOUS_CONTRACT_REJECTED")
         self.run = OUT / run_id
         self.state_path = self.run / "execution_state.json"
         self.dispatcher = dispatcher
@@ -103,6 +103,8 @@ class ExecutionLoop:
             "current": {},
             "terminal_identities": [],
             "processed_episode_ids": [],
+            "provider_paths": {},
+            "episode_states": {},
             "last_durable_checkpoint": "INITIALIZED",
             "blocking_error": None,
         }
@@ -112,6 +114,17 @@ class ExecutionLoop:
 
     def status(self) -> dict[str, Any]:
         return self.initialize()
+
+    def _record_provider_path(self, episode_id: str, provider: str, state_name: str) -> None:
+        state = self.initialize()
+        paths = state.setdefault("provider_paths", {}).setdefault(episode_id, {})
+        paths[provider] = state_name
+        terminals = set(paths.values())
+        if all(provider_name in paths and paths[provider_name] in {"COMPLETE", "TERMINAL_INCOMPLETE"} for provider_name in self.gate["provider_routes"]):
+            state.setdefault("episode_states", {})[episode_id] = "COMPLETE" if "COMPLETE" in terminals else "TERMINAL_NO_COMPLETE_PROVIDER"
+        else:
+            state.setdefault("episode_states", {})[episode_id] = "IN_PROGRESS"
+        atomic(self.state_path, state)
 
     def _identity(self, episode: Mapping[str, Any], provider: str, model: str, stage: str, arm: str | None = None, attempt: int = 1) -> dict[str, Any]:
         return {
@@ -252,8 +265,15 @@ class ExecutionLoop:
         def handler() -> Mapping[str, Any]:
             result = lineage.build_prospective_attention(study_id="HISTORICAL_R3", collection_run_id=self.run.name, session_snapshot=payload["session"], member_rows=payload["members"], provider=provider, model=model, information_cutoff_ts=payload["cutoff"], attention_run_id="R3_ATT_" + operation_key(identity)[7:27], stage_generated_ts=payload["cutoff"], dispatcher=self._lineage_dispatcher(provider), raw_parser=lambda raw: binding.attention_parser(provider, raw, self.gate["contract"]), instruction_override=binding.attention_instruction(self.gate["contract"], provider), generation_settings=generation_settings, raw_response_persistor=lambda response: self._persist_raw_bridge_response(identity, response))
             accepted = result.get("status") == "parsed"
+            rank_error = None
+            if accepted:
+                try:
+                    binding.validate_attention_rank(list(result.get("rows") or []), self.gate["contract"])
+                except binding.BindingError as exc:
+                    accepted = False
+                    rank_error = str(exc)
             response = result.get("response", {})
-            return {"raw_response": response.get("raw_output_original", response.get("raw_output")), "parser_result": result.get("status"), "validator_result": result.get("status"), "accepted": accepted, "rejection_reason": None if accepted else result.get("error") or result.get("status"), "output": result, "provider_call_metadata": response}
+            return {"raw_response": response.get("raw_output_original", response.get("raw_output")), "parser_result": result.get("status"), "validator_result": "VALID" if accepted else rank_error or result.get("status"), "accepted": accepted, "rejection_reason": None if accepted else rank_error or result.get("error") or result.get("status"), "output": result, "provider_call_metadata": response}
         result = self._call(identity, payload, handler, "ATTENTION_SENT", "ATTENTION_RESPONSE_RECEIVED")
         if result["accepted"]:
             self._transition(identity, "ATTENTION_ACCEPTED", result=result)
@@ -376,28 +396,38 @@ class ExecutionLoop:
             attention = self._attention(episode, provider, model, source)
             if not attention["accepted"]:
                 identity = self._identity(episode, provider, model, "ATTENTION")
-                self._transition(identity, "TERMINAL_INCOMPLETE", result=attention); terminal[provider] = "ATTENTION_REJECTED"; continue
+                self._transition(identity, "TERMINAL_INCOMPLETE", result=attention)
+                terminal[provider] = "ATTENTION_REJECTED"; self._record_provider_path(episode_id, provider, "TERMINAL_INCOMPLETE"); continue
             action = replay.selection_action(attention["output"]["rows"])
             if action != "FORECAST":
                 identity = self._identity(episode, provider, model, "ATTENTION")
-                self._transition(identity, "NOT_FORECAST_SELECTED", result=attention); terminal[provider] = action; continue
+                self._transition(identity, "NOT_FORECAST_SELECTED", result=attention)
+                terminal[provider] = action; self._record_provider_path(episode_id, provider, "TERMINAL_INCOMPLETE"); continue
             request = self._requests(episode, provider, model, attention, source)
             if not request["accepted"]:
                 identity = self._identity(episode, provider, model, "REQUEST")
-                self._transition(identity, "TERMINAL_INCOMPLETE", result=request); terminal[provider] = "REQUEST_REJECTED"; continue
+                self._transition(identity, "TERMINAL_INCOMPLETE", result=request)
+                terminal[provider] = "REQUEST_REJECTED"; self._record_provider_path(episode_id, provider, "TERMINAL_INCOMPLETE"); continue
             selected[provider] = (model, attention, request)
+            self._record_provider_path(episode_id, provider, "IN_PROGRESS")
         packs = self._packs(episode, selected, source)["output"] if selected else None
         results: dict[str, Any] = {}
         if packs:
             for provider, (model, attention, request) in selected.items():
-                inputs = {arm: self._forecast_input(episode, provider, model, attention, request, source, packs, arm) for arm in ("PACK_A", "PACK_E")}
-                frozen = self._freeze_prompts(episode, provider, model, inputs)
-                forecasts = {arm: self._forecast(episode, provider, model, arm, inputs[arm], frozen["prompts"][arm]) for arm in replay.arm_order("R3PAIR_" + episode["episode_id"] + provider)}
-                outcome = self._outcome_and_evaluate(episode, provider, model, forecasts)
-                results[provider] = {"forecasts": forecasts, "outcome": outcome, "prompt_diff": frozen["diff"]}
-                terminal[provider] = "COMPLETE" if outcome["complete"] else "TERMINAL_INCOMPLETE"
+                try:
+                    inputs = {arm: self._forecast_input(episode, provider, model, attention, request, source, packs, arm) for arm in ("PACK_A", "PACK_E")}
+                    frozen = self._freeze_prompts(episode, provider, model, inputs)
+                    forecasts = {arm: self._forecast(episode, provider, model, arm, inputs[arm], frozen["prompts"][arm]) for arm in replay.arm_order("R3PAIR_" + episode["episode_id"] + provider)}
+                    outcome = self._outcome_and_evaluate(episode, provider, model, forecasts)
+                    results[provider] = {"forecasts": forecasts, "outcome": outcome, "prompt_diff": frozen["diff"]}
+                    terminal[provider] = "COMPLETE" if outcome["complete"] else "TERMINAL_INCOMPLETE"
+                    self._record_provider_path(episode_id, provider, terminal[provider])
+                except Exception as exc:
+                    terminal[provider] = "TERMINAL_INCOMPLETE"
+                    results[provider] = {"error": str(exc)}
+                    self._record_provider_path(episode_id, provider, "TERMINAL_INCOMPLETE")
         state = self.initialize(); state["processed_episodes"] += 1; state["processed_episode_ids"].append(episode_id)
-        if any(row["outcome"]["complete"] for row in results.values()): state["unique_complete_episodes"] += 1
+        if any(row.get("outcome", {}).get("complete") for row in results.values()): state["unique_complete_episodes"] += 1
         state["last_durable_checkpoint"] = "EPISODE_TERMINAL"; atomic(self.state_path, state)
         append(self.run / "progress_checkpoints.jsonl", {"episode_id": episode_id, "processed_episodes": state["processed_episodes"], "unique_complete_episodes": state["unique_complete_episodes"], "terminal": terminal, "timestamp": now()})
         return {"episode_id": episode_id, "terminal": terminal, "results": results}
@@ -412,8 +442,8 @@ def main() -> None:
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--status", action="store_true")
-    parser.add_argument("--run-id", default="STEP8-R3-R8-SMOKE-d84e6a5")
-    parser.add_argument("--verification-manifest", type=Path, default=R8_MANIFEST)
+    parser.add_argument("--run-id", default="STEP8-R3-R9-SMOKE-3f72650")
+    parser.add_argument("--verification-manifest", type=Path, default=R9_MANIFEST)
     args = parser.parse_args()
     loop = ExecutionLoop(args.run_id, manifest_path=args.verification_manifest)
     if args.status:
