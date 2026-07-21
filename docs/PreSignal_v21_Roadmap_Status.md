@@ -96,3 +96,14 @@ that Episode: Anthropic Attention was rejected for truncated raw JSON, while
 Gemini and OpenAI Information Requests were rejected for invalid frozen-schema
 enums. The smoke validates runtime dispatch and resume safety only; it does not
 provide a forecast-quality result. P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+
+## Step 8-R3-R5 Compatibility Result
+
+The child compatibility contract was bound to one replacement smoke of the
+same Episode. The live run confirmed that the new prompt rules reached the
+providers, but it did not meet the zero-recurrence gate: Anthropic remained
+truncated by the fixed generic bridge output limit, Gemini used Attention
+labels in the Request `priority` field, and OpenAI emitted `other` for one
+Request `affected_channel`. No second replacement smoke was run. The fresh
+cohort remains blocked pending a single targeted provider-contract repair;
+P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.

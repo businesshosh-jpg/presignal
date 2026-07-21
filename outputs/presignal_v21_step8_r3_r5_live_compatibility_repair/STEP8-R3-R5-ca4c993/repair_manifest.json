@@ -1,0 +1,11 @@
+{
+  "child_contract_fingerprint": "sha256:d25e2ac4133905e2e92d50ae14915addd3a909500fb452bcb3fbd682c4341c05",
+  "classification": "NON_SCIENTIFIC_LIVE_PROVIDER_COMPATIBILITY_REPAIR",
+  "decision": "V2_1_STEP8_R3_R5_LIVE_PROVIDER_COMPATIBILITY_REPAIR_REQUIRED",
+  "forecast_calls": 0,
+  "live_provider_calls": 5,
+  "original_smoke": "STEP8-R3-SMOKE-38b2e12",
+  "prospective_calls": 0,
+  "replacement_smoke": "STEP8-R3-R5-SMOKE-ca4c993",
+  "source_head": "ca4c993"
+}

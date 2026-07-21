@@ -21,6 +21,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
+from automation import presignal_v21_historical_verification_r3_compat_r1_contract_v1 as compat_contract
 from automation import presignal_v21_minimal_prospective_lineage_v1 as lineage
 from automation import run_presignal_v21_single_event_path_pair_v1 as single
 from automation import run_presignal_v21_step8_r2_historical_replication_v1 as replay
@@ -28,6 +29,7 @@ from automation import run_presignal_v21_step8_r2_historical_replication_v1 as r
 OUT = ROOT / "outputs/presignal_v21_step8_r3_fresh_historical_verification"
 PREP = ROOT / "outputs/presignal_v21_step8_r3_repair/STEP8-R3-REPAIR-df9c25e"
 POPULATION = PREP / "fresh_verification_population_plan.json"
+R5_MANIFEST = ROOT / "outputs/presignal_v21_step8_r3_r5_live_compatibility_repair/STEP8-R3-R5-ca4c993/replacement_verification_manifest.json"
 
 STAGES = (
     "PENDING", "ATTENTION_REQUEST_FROZEN", "ATTENTION_SENT", "ATTENTION_RESPONSE_RECEIVED",
@@ -80,8 +82,10 @@ def operation_key(identity: Mapping[str, Any]) -> str:
 class ExecutionLoop:
     """Persisted stage dispatcher with an injectable bridge for call-free tests."""
 
-    def __init__(self, run_id: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None):
-        self.gate = binding.gate()
+    def __init__(self, run_id: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, manifest_path: Path = R5_MANIFEST):
+        self.gate = binding.gate(manifest_path)
+        if self.gate["contract"]["contract_version"] != compat_contract.CONTRACT_VERSION:
+            raise DispatchError("V2_1_STEP8_R5_PREVIOUS_CONTRACT_REJECTED")
         self.run = OUT / run_id
         self.state_path = self.run / "execution_state.json"
         self.dispatcher = dispatcher
@@ -193,7 +197,7 @@ class ExecutionLoop:
 
     def _manifest_gate(self, episode: Mapping[str, Any]) -> None:
         contract = self.gate["contract"]
-        if contract["contract_version"] != "presignal_event_path_contract_v1_historical_verification_r3" or contract["contract_fingerprint"] != "sha256:ca2e8053e0302dbd08d640c858877b4bd93b4177fcbe6cbc99d6db125a46f9fa":
+        if contract != binding.contract_module(contract).spec():
             raise DispatchError("V2_1_STEP8_R3_R2_RUNTIME_MANIFEST_MISMATCH")
         if episode["episode_id"] not in self._load_source()[1]:
             raise DispatchError("V2_1_STEP8_R3_R2_RUNTIME_MANIFEST_MISMATCH")
@@ -214,7 +218,7 @@ class ExecutionLoop:
         self._persist_payload(identity, payload)
         self._transition(identity, "ATTENTION_REQUEST_FROZEN")
         def handler() -> Mapping[str, Any]:
-            result = lineage.build_prospective_attention(study_id="HISTORICAL_R3", collection_run_id=self.run.name, session_snapshot=payload["session"], member_rows=payload["members"], provider=provider, model=model, information_cutoff_ts=payload["cutoff"], attention_run_id="R3_ATT_" + operation_key(identity)[7:27], stage_generated_ts=payload["cutoff"], dispatcher=self._lineage_dispatcher(provider), raw_parser=lambda raw: binding.attention_parser(provider, raw))
+            result = lineage.build_prospective_attention(study_id="HISTORICAL_R3", collection_run_id=self.run.name, session_snapshot=payload["session"], member_rows=payload["members"], provider=provider, model=model, information_cutoff_ts=payload["cutoff"], attention_run_id="R3_ATT_" + operation_key(identity)[7:27], stage_generated_ts=payload["cutoff"], dispatcher=self._lineage_dispatcher(provider), raw_parser=lambda raw: binding.attention_parser(provider, raw, self.gate["contract"]), instruction_override=binding.attention_instruction(self.gate["contract"], provider))
             accepted = result.get("status") == "parsed"
             return {"raw_response": result.get("response", {}).get("raw_output"), "parser_result": result.get("status"), "validator_result": result.get("status"), "accepted": accepted, "rejection_reason": None if accepted else result.get("error") or result.get("status"), "output": result, "provider_call_metadata": result.get("response", {})}
         result = self._call(identity, payload, handler, "ATTENTION_SENT", "ATTENTION_RESPONSE_RECEIVED")
@@ -230,7 +234,7 @@ class ExecutionLoop:
         payload = {"attention_result_fingerprint": attention["result_fingerprint"], "cutoff": episode["forecast_cutoff_ts"]}
         self._persist_payload(identity, payload); self._transition(identity, "REQUEST_FROZEN")
         def handler() -> Mapping[str, Any]:
-            result = lineage.build_prospective_requests(study_id="HISTORICAL_R3", collection_run_id=self.run.name, session_snapshot=self._snapshot(session), member_rows=source["members"][episode["session_id"]], attention_result=attention["output"], provider=provider, model=model, information_cutoff_ts=episode["forecast_cutoff_ts"], request_run_id="R3_REQ_" + operation_key(identity)[7:27], stage_generated_ts=episode["forecast_cutoff_ts"], dispatcher=self._lineage_dispatcher(provider), raw_parser=lambda raw: binding.attention_parser(provider, raw))
+            result = lineage.build_prospective_requests(study_id="HISTORICAL_R3", collection_run_id=self.run.name, session_snapshot=self._snapshot(session), member_rows=source["members"][episode["session_id"]], attention_result=attention["output"], provider=provider, model=model, information_cutoff_ts=episode["forecast_cutoff_ts"], request_run_id="R3_REQ_" + operation_key(identity)[7:27], stage_generated_ts=episode["forecast_cutoff_ts"], dispatcher=self._lineage_dispatcher(provider), raw_parser=lambda raw: binding.attention_parser(provider, raw, self.gate["contract"]), instruction_override=binding.request_instruction(self.gate["contract"], provider))
             accepted = result.get("status") == "parsed"
             return {"raw_response": result.get("response", {}).get("raw_output"), "parser_result": result.get("status"), "validator_result": result.get("status"), "accepted": accepted, "rejection_reason": None if accepted else result.get("error") or result.get("status"), "output": result, "provider_call_metadata": result.get("response", {})}
         result = self._call(identity, payload, handler, "REQUEST_SENT", "REQUEST_SENT")
@@ -265,7 +269,7 @@ class ExecutionLoop:
         return replay._pair_input(episode, provider, model, attention["output"], requests["output"], source["packs"][episode["session_id"]], pack_a, arm)
 
     def _freeze_prompts(self, episode: Mapping[str, Any], provider: str, model: str, inputs: Mapping[str, Mapping[str, Any]]) -> dict[str, dict[str, Any]]:
-        prompts = {arm: binding.forecast_prompt(row, provider) for arm, row in inputs.items()}
+        prompts = {arm: binding.forecast_prompt(row, provider, self.gate["contract"]) for arm, row in inputs.items()}
         contexts = {arm: __import__("automation.presignal_v21_prospective_flat_contract_v1", fromlist=["prospective_context"]).prospective_context(row, "presignal_event_path_contract_v1_flat_stage_prospective_v1") for arm, row in inputs.items()}
         diff = single.prompt_diff(contexts["PACK_A"], contexts["PACK_E"])
         if not diff["passed"]:
@@ -371,13 +375,14 @@ def main() -> None:
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--status", action="store_true")
-    parser.add_argument("--run-id", default="STEP8-R3-SMOKE-38b2e12")
+    parser.add_argument("--run-id", default="STEP8-R3-R5-SMOKE-ca4c993")
+    parser.add_argument("--verification-manifest", type=Path, default=R5_MANIFEST)
     args = parser.parse_args()
-    loop = ExecutionLoop(args.run_id)
+    loop = ExecutionLoop(args.run_id, manifest_path=args.verification_manifest)
     if args.status:
         print(json.dumps(loop.status(), sort_keys=True)); return
     if args.preflight:
-        print(json.dumps(binding.gate(), sort_keys=True)); return
+        print(json.dumps(binding.gate(args.verification_manifest), sort_keys=True)); return
     if args.execute or args.resume:
         print(json.dumps(loop.process_episode(loop.first_episode()), sort_keys=True)); return
     raise SystemExit("PRELIGHT_REQUIRED")

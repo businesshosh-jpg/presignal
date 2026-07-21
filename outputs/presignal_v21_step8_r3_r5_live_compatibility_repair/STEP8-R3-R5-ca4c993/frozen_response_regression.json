@@ -1,0 +1,23 @@
+{
+  "Anthropic": {
+    "automatic_completion_of_truncated_json": false,
+    "fenced_json_fixture": "ACCEPTED",
+    "live_recurrence": true,
+    "plain_json_fixture": "ACCEPTED",
+    "truncated_json_fixture": "REJECTED"
+  },
+  "Gemini": {
+    "canonical_fixture": "ACCEPTED",
+    "invalid_enum_fixture": "REJECTED",
+    "live_recurrence": "priority uses Attention labels",
+    "original_response": "REJECTED_DETERMINISTICALLY"
+  },
+  "OpenAI": {
+    "canonical_fixture": "ACCEPTED",
+    "invalid_enum_fixture": "REJECTED",
+    "live_recurrence": "affected_channel other",
+    "original_response": "REJECTED_DETERMINISTICALLY"
+  },
+  "dispatcher_repaired_path_exercised": true,
+  "resume_duplicate_calls": 0
+}

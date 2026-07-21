@@ -1,0 +1,18 @@
+{
+  "attempted_repair": "child prompt restricts attention_reason to at most six words and requests compact summaries",
+  "classification": "OUTPUT_TOKEN_LIMIT_TOO_LOW",
+  "evidence": {
+    "bridge_behavior": "generic parser throws before authoritative bridge can persist raw_output",
+    "bridge_source": "apps_script/prediction_runner.js:_callClaudeJsonObject_",
+    "fixed_max_tokens": 4096,
+    "original_parse_error_position": 13669,
+    "original_raw_preserved": false,
+    "replacement_parse_error_position": 11955,
+    "replacement_raw_preserved": false,
+    "stop_reason_available": false
+  },
+  "response_ended_during_valid_json_structure": true,
+  "result": "RECURRENCE",
+  "scientific_semantics_changed": false,
+  "smallest_next_repair": "Expose a bounded per-call Anthropic max-output setting above 4096 and preserve raw text with provider stop_reason before generic JSON parsing."
+}

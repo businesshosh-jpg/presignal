@@ -129,13 +129,13 @@ def _stage_timestamp(response: Mapping[str, Any], fallback: str) -> str:
     return value
 
 
-def build_prospective_attention(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], provider: str, model: str, information_cutoff_ts: str, attention_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None) -> dict[str, Any]:
+def build_prospective_attention(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], provider: str, model: str, information_cutoff_ts: str, attention_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None, instruction_override: str | None = None) -> dict[str, Any]:
     """Build one explicit prospective Attention call or parse its returned output."""
     _validate_identity(study_id=study_id, collection_run_id=collection_run_id, session_snapshot=session_snapshot, provider=provider, model=model, information_cutoff_ts=information_cutoff_ts, stage_run_id=attention_run_id)
     if utc(stage_generated_ts) > utc(information_cutoff_ts): raise MinimalProspectiveLineageError("ATTENTION_AFTER_INFORMATION_CUTOFF")
     members = _event_payload(member_rows); session_id = str(session_snapshot["session_id"])
     payload = {"object": "presignal_v2_market_session_attention_task", "schema_version": "v0", "session": {key: session_snapshot.get(key, "") for key in ("session_id", "country", "session_window_name", "session_start_ts", "session_end_ts")}, "events": members, "task": "Classify which events in this market session matter for USDJPY reaction. Do not forecast USDJPY direction or pips."}
-    prompt = _prompt(ATTENTION_INSTRUCTION, payload); request = bridge_request(provider=provider, model=model, prompt=prompt, collection_run_id=collection_run_id, session_id=session_id, stage="ATTENTION")
+    prompt = _prompt(instruction_override or ATTENTION_INSTRUCTION, payload); request = bridge_request(provider=provider, model=model, prompt=prompt, collection_run_id=collection_run_id, session_id=session_id, stage="ATTENTION")
     base = {"attention_run_id": attention_run_id, "session_id": session_id, "provider": provider, "model": model, "information_cutoff_ts": information_cutoff_ts, "generated_ts": stage_generated_ts, "request_fingerprint": sha256(request), "source": "existing_v2_attention_prompt_schema", "raw_output": None}
     if dispatcher is None:
         return {"status": "DRY_RUN", "request": request, "prompt": prompt, "rows": [], "metadata": base, "provider_calls": 0}
@@ -160,7 +160,7 @@ def build_prospective_attention(*, study_id: str, collection_run_id: str, sessio
     return {"status": "parsed", "request": request, "response": response, "rows": rows, "provider_calls": 1}
 
 
-def build_prospective_requests(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], attention_result: Mapping[str, Any], provider: str, model: str, information_cutoff_ts: str, request_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None) -> dict[str, Any]:
+def build_prospective_requests(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], attention_result: Mapping[str, Any], provider: str, model: str, information_cutoff_ts: str, request_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None, instruction_override: str | None = None) -> dict[str, Any]:
     """Build one Request call from the same provider's prospective Attention."""
     _validate_identity(study_id=study_id, collection_run_id=collection_run_id, session_snapshot=session_snapshot, provider=provider, model=model, information_cutoff_ts=information_cutoff_ts, stage_run_id=request_run_id)
     if utc(stage_generated_ts) > utc(information_cutoff_ts): raise MinimalProspectiveLineageError("REQUEST_AFTER_INFORMATION_CUTOFF")
@@ -168,7 +168,7 @@ def build_prospective_requests(*, study_id: str, collection_run_id: str, session
     if any(row.get("session_id") != session_snapshot.get("session_id") or row.get("provider") != provider or row.get("model") != model for row in rows): raise MinimalProspectiveLineageError("REQUEST_ATTENTION_IDENTITY_MISMATCH")
     members = _event_payload(member_rows); session_id = str(session_snapshot["session_id"])
     payload = {"object": "presignal_v2_session_information_request_task", "schema_version": "v0", "session": {key: session_snapshot.get(key, "") for key in ("session_id", "country", "session_window_name", "session_start_ts", "session_end_ts")}, "events": members, "provider_attention_map": [{key: row.get(key, "") for key in ("event_id", "attention_label", "attention_rank", "attention_reason", "expected_market_channel", "driver_role")} for row in rows], "task": "List information needed for a later USDJPY forecast. Do not forecast direction or pips."}
-    prompt = _prompt(REQUEST_INSTRUCTION, payload); request = bridge_request(provider=provider, model=model, prompt=prompt, collection_run_id=collection_run_id, session_id=session_id, stage="REQUESTS")
+    prompt = _prompt(instruction_override or REQUEST_INSTRUCTION, payload); request = bridge_request(provider=provider, model=model, prompt=prompt, collection_run_id=collection_run_id, session_id=session_id, stage="REQUESTS")
     base = {"request_run_id": request_run_id, "attention_run_id": attention_run_id, "session_id": session_id, "provider": provider, "model": model, "information_cutoff_ts": information_cutoff_ts, "generated_ts": stage_generated_ts, "request_fingerprint": sha256(request), "source": "existing_v2_information_request_prompt_schema", "raw_output": None}
     if dispatcher is None: return {"status": "DRY_RUN", "request": request, "prompt": prompt, "rows": [], "metadata": base, "provider_calls": 0}
     response = dict(dispatcher(request)); raw = response.get("raw_output")

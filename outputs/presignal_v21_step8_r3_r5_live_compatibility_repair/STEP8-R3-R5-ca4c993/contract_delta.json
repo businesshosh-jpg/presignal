@@ -1,0 +1,10 @@
+{
+  "child_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r1",
+  "deltas": [
+    "Anthropic compact Attention response instruction",
+    "canonical Information Request enums and minimal example"
+  ],
+  "forecast_science_changed": false,
+  "frozen_r3_unchanged": true,
+  "parent": "presignal_event_path_contract_v1_historical_verification_r3"
+}

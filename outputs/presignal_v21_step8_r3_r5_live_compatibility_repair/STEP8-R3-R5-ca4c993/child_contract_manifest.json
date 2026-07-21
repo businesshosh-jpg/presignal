@@ -1,0 +1,18 @@
+{
+  "contract_fingerprint": "sha256:d25e2ac4133905e2e92d50ae14915addd3a909500fb452bcb3fbd682c4341c05",
+  "contract_version": "presignal_event_path_contract_v1_historical_verification_r3_compat_r1",
+  "generation_settings_fingerprint": "sha256:004e3f2fe2ef940fc2ff6697cf5e498703af025007adda830f3c1d06c594c965",
+  "parent_contract_version": "presignal_event_path_contract_v1_historical_verification_r3",
+  "parser_fingerprint": "sha256:a748d2758c754c8a0b4fd3a7668f6db72b83547f16e5b19262c39aaabf5503b4",
+  "prompt_rules": {
+    "anthropic_attention_concise": "Use compact JSON values so every supplied event fits in one response: attention_reason must contain at most six words; expected_market_channel and driver_role must be concise labels; session_attention_summary must be a compact count summary. Return only the required object and required fields.",
+    "anthropic_json": "Return one JSON object only. JSON inside one markdown fence is accepted, but no prose may make the object ambiguous.",
+    "gemini_pips": "For UP use 0 <= expected_pips_min <= expected_pips_max; for DOWN use expected_pips_min <= expected_pips_max <= 0; for FLAT both values are 0.",
+    "openai_reversal": "expected_reversal_flag is true only when a later stated horizon reverses the stated path direction; include that reversal horizon and do not contradict the stage directions.",
+    "request_canonical_enums": "Use these exact enum tokens, with lowercase spelling and underscores: information_category=(treasury_yields|fed_expectations|dxy|usdjpy_trend|risk_sentiment|equity_tone|inflation_narrative|labor_market_trend|growth_context|market_positioning|upcoming_larger_events|jpy_intervention_risk|volatility|historical_surprise_sensitivity|event_consensus_detail|other); priority=(must_have|useful|optional|low_value); affected_channel=(fed_path|treasury_yields|usd_direction|jpy_direction|risk_sentiment|inflation_expectations|labor_market|growth_outlook|market_positioning|event_importance|low_direct_market_impact|unknown). For example: {\"information_category\":\"fed_expectations\",\"priority\":\"must_have\",\"affected_channel\":\"fed_path\"}. Do not use semantic aliases."
+  },
+  "prompt_template_fingerprint": "sha256:991bff6b2b5e423d86e24a0e9a71417755df4d8bc63fba584b9474f04b7d7692",
+  "schema_fingerprint": "sha256:b389e4f7164c2ee39c26343f460607423607e4057149691dc5e213bca877ea62",
+  "scope": "HISTORICAL_VERIFICATION_ONLY",
+  "validator_fingerprint": "sha256:9c2843733af80af042a56ea9199e51005581b15650d0562ca43426b77169f343"
+}

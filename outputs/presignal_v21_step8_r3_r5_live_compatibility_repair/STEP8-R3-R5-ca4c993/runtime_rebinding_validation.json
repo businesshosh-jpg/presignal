@@ -1,0 +1,8 @@
+{
+  "child_contract_required": true,
+  "child_manifest": "outputs/presignal_v21_step8_r3_r5_live_compatibility_repair/STEP8-R3-R5-ca4c993/replacement_verification_manifest.json",
+  "concrete_dispatcher_reused": true,
+  "corrected_cluster_and_missingness_unchanged": true,
+  "previous_r3_contract_rejected": true,
+  "runner": "automation/run_presignal_v21_step8_r3_fresh_historical_verification_v1.py"
+}

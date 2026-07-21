@@ -1,0 +1,84 @@
+{
+  "accepted_attention_results": 2,
+  "accepted_pack_a": 0,
+  "accepted_pack_e": 0,
+  "accepted_requests": 0,
+  "attention_calls": {
+    "Anthropic": 1,
+    "Gemini": 1,
+    "OpenAI": 1
+  },
+  "complete_pairs": 0,
+  "completed_evaluations": 0,
+  "cutoff_violations": 0,
+  "diagnosed_failures_recurred": {
+    "anthropic_truncation": true,
+    "gemini_invalid_request_enum": true,
+    "openai_invalid_request_enum": true
+  },
+  "duplicate_accepted_calls": 0,
+  "model_substitutions": 0,
+  "outcome_leakage": 0,
+  "pack_a_calls": 0,
+  "pack_e_calls": 0,
+  "pack_e_equality": "NOT_REACHED_NO_VALID_REQUEST",
+  "request_calls": {
+    "Anthropic": 0,
+    "Gemini": 1,
+    "OpenAI": 1
+  },
+  "run_id": "STEP8-R3-R5-SMOKE-ca4c993",
+  "safety_hard_stop": false,
+  "stage_results": [
+    {
+      "accepted": true,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "raw_length": 10867,
+      "rejection_reason": null,
+      "result_fingerprint": "sha256:40a2915156f3ef710026182f87851284cbccc0332940dd53eaabed99d8be6e1c",
+      "stage": "ATTENTION",
+      "transport_status": "ok"
+    },
+    {
+      "accepted": false,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "raw_length": 0,
+      "rejection_reason": "provider_contract_error",
+      "result_fingerprint": "sha256:baa4326db7f1b7dbaf02cf5e67174e5c224d1e94cad767f030a943836461b308",
+      "stage": "ATTENTION",
+      "transport_status": "ok"
+    },
+    {
+      "accepted": false,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "raw_length": 27375,
+      "rejection_reason": "provider_contract_error",
+      "result_fingerprint": "sha256:77c1910a8e3e47013c199a614bfbed4f61afc26e660c72fa4eccdb2b1a21986c",
+      "stage": "REQUEST",
+      "transport_status": "ok"
+    },
+    {
+      "accepted": true,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "raw_length": 14468,
+      "rejection_reason": null,
+      "result_fingerprint": "sha256:92f299fba9bc96a3b8e7a093553d13f3b3ba638475a1c02618e52583c19db1fa",
+      "stage": "ATTENTION",
+      "transport_status": "ok"
+    },
+    {
+      "accepted": false,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "raw_length": 2741,
+      "rejection_reason": "provider_contract_error",
+      "result_fingerprint": "sha256:3188f9b5e9f3d8fc95f1fa376a45e0610eff37414c84daa970b1e7f3ff58e385",
+      "stage": "REQUEST",
+      "transport_status": "ok"
+    }
+  ]
+}

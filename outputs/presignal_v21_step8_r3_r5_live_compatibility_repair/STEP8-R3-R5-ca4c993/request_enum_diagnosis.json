@@ -1,0 +1,88 @@
+{
+  "Gemini": {
+    "original": {
+      "allowed_categories": [
+        "dxy",
+        "equity_tone",
+        "event_consensus_detail",
+        "fed_expectations",
+        "growth_context",
+        "historical_surprise_sensitivity",
+        "inflation_narrative",
+        "jpy_intervention_risk",
+        "labor_market_trend",
+        "market_positioning",
+        "other",
+        "risk_sentiment",
+        "treasury_yields",
+        "upcoming_larger_events",
+        "usdjpy_trend",
+        "volatility"
+      ],
+      "allowed_priorities": [
+        "low_value",
+        "must_have",
+        "optional",
+        "useful"
+      ],
+      "cause": "PROMPT_ENUM_NOT_EXPLICIT",
+      "emitted_examples": [
+        "Monetary Policy",
+        "High"
+      ],
+      "field": "information_category and priority"
+    },
+    "replacement": {
+      "canonical_values": [
+        "low_value",
+        "must_have",
+        "optional",
+        "useful"
+      ],
+      "cause": "PROVIDER_EMITTED_SEMANTIC_ALIAS",
+      "emitted_values": [
+        "primary_driver",
+        "secondary_driver"
+      ],
+      "invalid_field": "priority",
+      "parser_read_intended_field": true,
+      "prompt_displayed_canonical_values": true,
+      "schema_prompt_agree": true,
+      "smallest_next_repair": "Add an explicit sentence that priority is not an Attention label and must never equal PRIMARY_DRIVER or SECONDARY_DRIVER; rerun one newly authorized smoke."
+    }
+  },
+  "OpenAI": {
+    "original": {
+      "cause": "PROMPT_ENUM_NOT_EXPLICIT",
+      "emitted_examples": [
+        "Consumption",
+        "Low"
+      ],
+      "field": "information_category, priority, affected_channel"
+    },
+    "replacement": {
+      "canonical_values": [
+        "event_importance",
+        "fed_path",
+        "growth_outlook",
+        "inflation_expectations",
+        "jpy_direction",
+        "labor_market",
+        "low_direct_market_impact",
+        "market_positioning",
+        "risk_sentiment",
+        "treasury_yields",
+        "unknown",
+        "usd_direction"
+      ],
+      "cause": "PROVIDER_EMITTED_SEMANTIC_ALIAS",
+      "emitted_value": "other",
+      "invalid_field": "affected_channel",
+      "parser_read_intended_field": true,
+      "prompt_displayed_canonical_values": true,
+      "schema_prompt_agree": true,
+      "smallest_next_repair": "Either explicitly prohibit other and require unknown, or preregister the unambiguous alias other -> unknown; rerun one newly authorized smoke."
+    }
+  },
+  "alias_normalization_added": false
+}
