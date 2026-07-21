@@ -113,7 +113,11 @@ P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.
 The compat-r2 source repair is call-free validated and freezes an 8,192-token
 Anthropic Attention bound, raw-response retention before Python parsing, strict
 Request-priority separation, and the documented exact `other` to `unknown`
-channel normalization. Publishing the required Apps Script bridge update was
-blocked by a local Google OAuth `invalid_grant` error, so the authorized
-one-Episode replacement smoke was not sent. The fresh cohort remains blocked;
-P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+channel normalization. OAuth was restored and the runtime uses the Apps Script
+Execution API against pushed project HEAD, so no `AKfy...` deployment update was
+needed. The authorized one-Episode smoke ran once and resumed with zero calls.
+It remains terminally incomplete: Gemini Pack E was rejected with
+`PATH_PIPS_MIN` because the frozen negative-DOWN instruction conflicts with the
+active absolute-pip validator; OpenAI emitted `information_category=unknown`;
+and Anthropic's fenced JSON provider identity was rejected before normalization.
+The fresh cohort remains blocked; P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.

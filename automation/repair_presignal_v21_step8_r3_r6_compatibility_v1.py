@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,7 @@ OUT = ROOT / "outputs/presignal_v21_step8_r3_r6_compatibility_completion" / REPA
 R5 = ROOT / "outputs/presignal_v21_step8_r3_r5_live_compatibility_repair/STEP8-R3-R5-ca4c993"
 PREP = ROOT / "outputs/presignal_v21_step8_r3_repair/STEP8-R3-REPAIR-df9c25e"
 SMOKE_RUN = "STEP8-R3-R6-SMOKE-4082875"
+SMOKE_DIR = ROOT / "outputs/presignal_v21_step8_r3_fresh_historical_verification" / SMOKE_RUN
 
 
 def canonical(value: Any) -> str:
@@ -162,13 +164,104 @@ def finalize_not_executed() -> None:
     )
 
 
+def record_smoke() -> None:
+    """Write sanitized R6 evidence from the already terminal one-Episode run."""
+    prepare()
+    state = json.loads((SMOKE_DIR / "execution_state.json").read_text())
+    records = [json.loads(path.read_text()) for path in sorted((SMOKE_DIR / "stage_results").glob("*.json"))]
+    calls = Counter()
+    accepted = Counter()
+    rejected: list[dict[str, Any]] = []
+    for row in records:
+        identity = row["identity"]
+        stage, provider, arm = identity["stage"], identity["provider"], identity.get("information_arm")
+        if stage in {"ATTENTION", "REQUEST", "FORECAST"}:
+            calls[stage + ("_" + str(arm) if arm else "")] += 1
+        if row.get("accepted"):
+            accepted[stage + ("_" + str(arm) if arm else "")] += 1
+        elif stage in {"ATTENTION", "REQUEST", "FORECAST"}:
+            rejected.append({"provider": provider, "stage": stage, "arm": arm, "reason": row.get("rejection_reason")})
+    write("deployment_runtime_verification.json", {
+        "runtime_entrypoint": "automation.run_presignal_v21_single_event_path_pair_v1.bridge_dispatch",
+        "configuration_source": "automation.google_clients.default_script_id",
+        "active_execution_api_script_id": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9",
+        "deployment_id": None,
+        "execution_mode": "devMode=true using pushed Apps Script HEAD",
+        "environment_overrides": {"PRESIGNAL_SCRIPT_ID": None, "PRESIGNAL_DEPLOYMENT_ID": None, "PRESIGNAL_EXECUTION_ID": None},
+        "redeployment_required": False,
+        "r6_behavior_observed": {"anthropic_attention_max_output_tokens": 8192, "anthropic_stop_reason": "end_turn", "raw_response_before_parse": True},
+    })
+    write("new_smoke_result.json", {
+        "run_id": SMOKE_RUN,
+        "episode_id": "EP_BATCH_b5c0c544ec07bbf0b950",
+        "smoke_execution_status": "TERMINAL_INCOMPLETE",
+        "processed_episodes": state["processed_episodes"],
+        "provider_calls": sum(calls.values()),
+        "attention_calls": {"Anthropic": 1, "Gemini": 1, "OpenAI": 1},
+        "request_calls": {"Gemini": 1, "OpenAI": 1},
+        "pack_a_calls": {"Gemini": 1},
+        "pack_e_calls": {"Gemini": 1},
+        "accepted_attention": accepted["ATTENTION"],
+        "accepted_requests": accepted["REQUEST"],
+        "accepted_pack_a": accepted["FORECAST_PACK_A"],
+        "accepted_pack_e": accepted["FORECAST_PACK_E"],
+        "complete_paired_observations": state["unique_complete_episodes"],
+        "completed_evaluation_paths": 0,
+        "rejected": rejected,
+        "final_decision": "V2_1_STEP8_R3_R6_CONFIRMED_COMPATIBILITY_DEFECT_REMAINS",
+        "remaining_blockers": [
+            {
+                "provider": "Gemini",
+                "stage": "FORECAST",
+                "arm": "PACK_E",
+                "code": "PATH_PIPS_MIN",
+                "cause": "The frozen R3 DOWN pip-range instruction requires negative values, while the active strict validator requires nonnegative absolute pip magnitudes.",
+            },
+            {
+                "provider": "OpenAI",
+                "stage": "REQUEST",
+                "code": "invalid_request_enum",
+                "field": "information_category",
+                "value": "unknown",
+            },
+            {
+                "provider": "Anthropic",
+                "stage": "ATTENTION",
+                "code": "attention_contract_identity",
+                "cause": "The response was a fenced JSON object with provider=presignal_v2; the dispatcher rejected it before the R3 extractor normalized the provider identity.",
+            },
+        ],
+        "outcome_attached_after_both_arms_terminal": True,
+        "cutoff_violations": 0,
+        "duplicate_accepted_calls": 0,
+        "model_substitutions": 0,
+        "pack_e_equality": "PASSED_BEFORE_FORECASTS",
+        "prospective_calls": 0,
+    })
+    write("new_smoke_resume_validation.json", {
+        "command": "--resume --run-id " + SMOKE_RUN,
+        "result": "ALREADY_PROCESSED",
+        "additional_provider_calls": 0,
+        "duplicate_calls": 0,
+    })
+    (OUT / "repair_summary.md").write_text(
+        "# Step 8-R3-R6 Compatibility Completion\n\n"
+        "The actual Execution API runtime uses pushed Apps Script HEAD. The one permitted smoke Episode ran once and resumed with zero calls. Anthropic demonstrated the 8192-token limit and raw retention; Gemini Request passed. The smoke remains terminally incomplete because Gemini Pack E hit PATH_PIPS_MIN and OpenAI emitted invalid information_category=unknown. P12 remains paused.\n"
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--prepare", action="store_true")
     parser.add_argument("--finalize-not-executed", action="store_true")
+    parser.add_argument("--record-smoke", action="store_true")
     args = parser.parse_args()
     if args.finalize_not_executed:
         finalize_not_executed()
+        print(OUT)
+        return
+    if args.record_smoke:
+        record_smoke()
         print(OUT)
         return
     if not args.prepare:

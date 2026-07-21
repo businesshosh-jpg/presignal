@@ -1,0 +1,18 @@
+{
+  "active_execution_api_script_id": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9",
+  "configuration_source": "automation.google_clients.default_script_id",
+  "deployment_id": null,
+  "environment_overrides": {
+    "PRESIGNAL_DEPLOYMENT_ID": null,
+    "PRESIGNAL_EXECUTION_ID": null,
+    "PRESIGNAL_SCRIPT_ID": null
+  },
+  "execution_mode": "devMode=true using pushed Apps Script HEAD",
+  "r6_behavior_observed": {
+    "anthropic_attention_max_output_tokens": 8192,
+    "anthropic_stop_reason": "end_turn",
+    "raw_response_before_parse": true
+  },
+  "redeployment_required": false,
+  "runtime_entrypoint": "automation.run_presignal_v21_single_event_path_pair_v1.bridge_dispatch"
+}

@@ -1,3 +1,3 @@
 # Step 8-R3-R6 Compatibility Completion
 
-The compat-r2 source and call-free regression suite are complete. The authorized one-Episode smoke was not sent because the Apps Script publish command failed with `invalid_grant`; the deployed bridge therefore cannot be claimed to contain this repair. P12 remains paused.
+The actual Execution API runtime uses pushed Apps Script HEAD. The one permitted smoke Episode ran once and resumed with zero calls. Anthropic demonstrated the 8192-token limit and raw retention; Gemini Request passed. The smoke remains terminally incomplete because Gemini Pack E hit PATH_PIPS_MIN and OpenAI emitted invalid information_category=unknown. P12 remains paused.

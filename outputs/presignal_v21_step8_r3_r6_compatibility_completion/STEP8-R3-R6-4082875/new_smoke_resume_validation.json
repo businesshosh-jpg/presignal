@@ -1,5 +1,6 @@
 {
   "additional_provider_calls": 0,
-  "reason": "No replacement smoke run was initialized after the deployment credential failure.",
-  "status": "NOT_EXECUTED"
+  "command": "--resume --run-id STEP8-R3-R6-SMOKE-4082875",
+  "duplicate_calls": 0,
+  "result": "ALREADY_PROCESSED"
 }

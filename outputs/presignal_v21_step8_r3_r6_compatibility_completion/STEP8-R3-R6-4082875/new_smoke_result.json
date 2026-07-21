@@ -1,12 +1,77 @@
 {
-  "acquisition_calls": 0,
-  "blocking_error": "Apps Script publish rejected by clasp: invalid_grant",
+  "accepted_attention": 2,
+  "accepted_pack_a": 1,
+  "accepted_pack_e": 0,
+  "accepted_requests": 1,
+  "attention_calls": {
+    "Anthropic": 1,
+    "Gemini": 1,
+    "OpenAI": 1
+  },
   "complete_paired_observations": 0,
+  "completed_evaluation_paths": 0,
+  "cutoff_violations": 0,
+  "duplicate_accepted_calls": 0,
   "episode_id": "EP_BATCH_b5c0c544ec07bbf0b950",
-  "forecast_calls": 0,
-  "outcome_accessed": false,
-  "production_mutation": false,
-  "provider_calls": 0,
+  "final_decision": "V2_1_STEP8_R3_R6_CONFIRMED_COMPATIBILITY_DEFECT_REMAINS",
+  "model_substitutions": 0,
+  "outcome_attached_after_both_arms_terminal": true,
+  "pack_a_calls": {
+    "Gemini": 1
+  },
+  "pack_e_calls": {
+    "Gemini": 1
+  },
+  "pack_e_equality": "PASSED_BEFORE_FORECASTS",
+  "processed_episodes": 1,
+  "prospective_calls": 0,
+  "provider_calls": 7,
+  "rejected": [
+    {
+      "arm": null,
+      "provider": "OpenAI",
+      "reason": "provider_contract_error",
+      "stage": "REQUEST"
+    },
+    {
+      "arm": "PACK_E",
+      "provider": "Gemini",
+      "reason": "PATH_PIPS_MIN",
+      "stage": "FORECAST"
+    },
+    {
+      "arm": null,
+      "provider": "Anthropic",
+      "reason": "provider_contract_error",
+      "stage": "ATTENTION"
+    }
+  ],
+  "remaining_blockers": [
+    {
+      "arm": "PACK_E",
+      "cause": "The frozen R3 DOWN pip-range instruction requires negative values, while the active strict validator requires nonnegative absolute pip magnitudes.",
+      "code": "PATH_PIPS_MIN",
+      "provider": "Gemini",
+      "stage": "FORECAST"
+    },
+    {
+      "code": "invalid_request_enum",
+      "field": "information_category",
+      "provider": "OpenAI",
+      "stage": "REQUEST",
+      "value": "unknown"
+    },
+    {
+      "cause": "The response was a fenced JSON object with provider=presignal_v2; the dispatcher rejected it before the R3 extractor normalized the provider identity.",
+      "code": "attention_contract_identity",
+      "provider": "Anthropic",
+      "stage": "ATTENTION"
+    }
+  ],
+  "request_calls": {
+    "Gemini": 1,
+    "OpenAI": 1
+  },
   "run_id": "STEP8-R3-R6-SMOKE-4082875",
-  "smoke_execution_status": "NOT_EXECUTED"
+  "smoke_execution_status": "TERMINAL_INCOMPLETE"
 }
