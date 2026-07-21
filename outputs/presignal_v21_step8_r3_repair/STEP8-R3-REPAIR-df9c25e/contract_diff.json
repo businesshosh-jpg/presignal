@@ -1,0 +1,9 @@
+{
+  "deltas": {
+    "anthropic_json": "Return one JSON object only. JSON inside one markdown fence is accepted, but no prose may make the object ambiguous.",
+    "gemini_pips": "For UP use 0 <= expected_pips_min <= expected_pips_max; for DOWN use expected_pips_min <= expected_pips_max <= 0; for FLAT both values are 0.",
+    "openai_reversal": "expected_reversal_flag is true only when a later stated horizon reverses the stated path direction; include that reversal horizon and do not contradict the stage directions."
+  },
+  "parent": "presignal_event_path_contract_v1_flat_stage_prospective_v1",
+  "scientific_semantics_changed": false
+}

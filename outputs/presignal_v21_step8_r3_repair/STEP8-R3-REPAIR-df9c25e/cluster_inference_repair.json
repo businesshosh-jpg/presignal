@@ -1,0 +1,7 @@
+{
+  "draws": 100000,
+  "persistent_rng": true,
+  "plus_one_correction": true,
+  "seed": 20260721,
+  "threshold": 65536
+}

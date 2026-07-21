@@ -1,0 +1,10 @@
+{
+  "fixtures": [
+    true,
+    true,
+    false,
+    false
+  ],
+  "repair": "R3 extractor accepts one fenced JSON object only; raw response remains preserved",
+  "root_cause": "strict raw JSON parser did not accept an unambiguous markdown-fenced object"
+}

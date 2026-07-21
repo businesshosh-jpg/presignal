@@ -1,0 +1,10 @@
+{
+  "all_routes_dry_run": true,
+  "anthropic_fixture_complete_pair_required": true,
+  "cutoff_violations": 0,
+  "leakage": 0,
+  "max_arm_completion_imbalance": 0.05,
+  "model_substitutions": 0,
+  "paired_completion_target": 0.85,
+  "unexplained_contract_failures": 0
+}

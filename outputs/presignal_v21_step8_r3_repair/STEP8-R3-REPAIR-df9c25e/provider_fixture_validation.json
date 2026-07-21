@@ -1,0 +1,17 @@
+{
+  "Anthropic": {
+    "leading_prose_rejected": true,
+    "malformed_rejected": true,
+    "markdown_fence": true,
+    "plain_json": true
+  },
+  "Gemini": {
+    "invalid_order_rejected": true,
+    "up_down_flat_ranges": true
+  },
+  "OpenAI": {
+    "contradiction_rejected": true,
+    "valid_reversal": true
+  },
+  "provider_calls": 0
+}

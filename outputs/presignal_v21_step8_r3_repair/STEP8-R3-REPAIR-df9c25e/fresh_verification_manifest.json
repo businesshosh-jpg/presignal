@@ -1,0 +1,35 @@
+{
+  "acquisition_calls": 0,
+  "apps_script_calls": 0,
+  "contract": {
+    "contract_fingerprint": "sha256:ca2e8053e0302dbd08d640c858877b4bd93b4177fcbe6cbc99d6db125a46f9fa",
+    "contract_version": "presignal_event_path_contract_v1_historical_verification_r3",
+    "parent_contract_version": "presignal_event_path_contract_v1_flat_stage_prospective_v1",
+    "parser_fingerprint": "sha256:a748d2758c754c8a0b4fd3a7668f6db72b83547f16e5b19262c39aaabf5503b4",
+    "prompt_rules": {
+      "anthropic_json": "Return one JSON object only. JSON inside one markdown fence is accepted, but no prose may make the object ambiguous.",
+      "gemini_pips": "For UP use 0 <= expected_pips_min <= expected_pips_max; for DOWN use expected_pips_min <= expected_pips_max <= 0; for FLAT both values are 0.",
+      "openai_reversal": "expected_reversal_flag is true only when a later stated horizon reverses the stated path direction; include that reversal horizon and do not contradict the stage directions."
+    },
+    "prompt_template_fingerprint": "sha256:7224c53c5a4c0d60cca98ce19f18ece59304c43750e3ab0dac1cf228244768ff",
+    "schema_fingerprint": "sha256:b389e4f7164c2ee39c26343f460607423607e4057149691dc5e213bca877ea62",
+    "scope": "HISTORICAL_VERIFICATION_ONLY",
+    "validator_fingerprint": "sha256:9c2843733af80af042a56ea9199e51005581b15650d0562ca43426b77169f343"
+  },
+  "excluded_prior_r2_episodes": 259,
+  "fresh_execution_episodes": 400,
+  "maximum_processed_episodes": 400,
+  "minimum_complete_episodes": 40,
+  "provider_calls": 0,
+  "providers": {
+    "Anthropic": "claude-haiku-4-5",
+    "Gemini": "gemini-2.5-flash-lite",
+    "OpenAI": "gpt-4o-mini-2024-07-18"
+  },
+  "selection_order": [
+    "scheduled_release_ts",
+    "session_id",
+    "episode_id"
+  ],
+  "target_complete_episodes": 60
+}

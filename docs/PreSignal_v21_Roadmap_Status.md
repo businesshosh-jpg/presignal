@@ -79,3 +79,7 @@ Step 8-R3 diagnosis is complete. It identified an invalid sampled cluster
 sign-flip implementation, Anthropic Attention raw-JSON coverage failure, and
 provider-specific output-contract rejections. P12 remains paused pending
 targeted repair and fresh homogeneous historical verification.
+
+The Step 8-R3 targeted repairs and call-free fresh-verification preparation
+are complete. The fresh cohort remains unexecuted and is frozen for a separate
+historical verification task; P12 remains paused.

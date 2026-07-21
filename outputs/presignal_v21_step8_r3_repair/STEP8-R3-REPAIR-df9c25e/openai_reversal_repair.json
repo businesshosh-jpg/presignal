@@ -1,0 +1,5 @@
+{
+  "fixtures_passed": true,
+  "repair": "expected_reversal_flag is true only when a later stated horizon reverses the stated path direction; include that reversal horizon and do not contradict the stage directions.",
+  "root_cause": "PREDICTION_REVERSAL_FLAG formatting ambiguity"
+}

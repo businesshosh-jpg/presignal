@@ -1,0 +1,6 @@
+{
+  "deterministic": true,
+  "exact_below_threshold": true,
+  "independent_masks": true,
+  "sampled_above_threshold": true
+}

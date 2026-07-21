@@ -1,0 +1,5 @@
+{
+  "fixtures_passed": true,
+  "repair": "For UP use 0 <= expected_pips_min <= expected_pips_max; for DOWN use expected_pips_min <= expected_pips_max <= 0; for FLAT both values are 0.",
+  "root_cause": "PATH_PIPS_MIN formatting ambiguity"
+}

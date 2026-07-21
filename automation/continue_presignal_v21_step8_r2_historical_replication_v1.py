@@ -52,7 +52,8 @@ def analyze(records:list[dict[str,Any]])->dict[str,Any]:
  possible=1<<len(episode_ids)
  # Exact enumeration remains practical for small cohorts; larger cohorts use
  # preregistered fixed-seed sign flips and never treat provider rows as independent.
- masks=range(possible) if possible<=65536 else (random.Random(20260721).getrandbits(len(episode_ids)) for _ in range(100000))
+ rng = random.Random(20260721)
+ masks=range(possible) if possible<=65536 else (rng.getrandbits(len(episode_ids)) for _ in range(100000))
  permutations=[sum((-1 if (mask>>index)&1 else 1)*sum(clusters[eid]) for index,eid in enumerate(episode_ids))/n for mask in masks]
  extreme=sum(abs(x)>=abs(observed)-1e-12 for x in permutations)
  p=((extreme/len(permutations)) if possible<=65536 else ((extreme+1)/(len(permutations)+1))) if permutations and observed is not None else None

@@ -1,0 +1,7 @@
+{
+  "complete_case": "mean paired difference among complete pairs",
+  "estimand": "absolute Pack A-minus-Pack E 15-minute correctness among FORECAST-selected provider/Episode pairs",
+  "not_a_confidence_interval": true,
+  "worst_pack_a": "all Pack-A-missing arms incorrect and Pack-E-missing arms correct; incomplete-both excluded symmetrically",
+  "worst_pack_e": "reverse assumptions; incomplete-both excluded symmetrically"
+}
