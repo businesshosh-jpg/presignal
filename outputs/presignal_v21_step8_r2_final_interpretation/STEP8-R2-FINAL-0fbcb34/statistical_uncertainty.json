@@ -1,0 +1,23 @@
+{
+  "clustered_interval": "Not produced by the committed R2 analyzer; missingness identification bounds are the available committed uncertainty bounds.",
+  "episode_cluster": {
+    "clusters": 40,
+    "enumerated_permutations": 100000,
+    "method": "FIXED_SEED_MONTE_CARLO",
+    "observed_mean_difference": -0.09615384615384616,
+    "possible_permutations": 1099511627776,
+    "seed": 20260721,
+    "two_sided_p_value": 9.99990000099999e-06
+  },
+  "equal_weight_episode": {
+    "episodes": 40,
+    "mean_paired_difference": -0.1375
+  },
+  "interpretation": "The complete-case leader is Pack E, but the all-record best-case Pack A bound is positive and the worst-case bound is negative.",
+  "mcnemar_p_value": 0.38331031799316406,
+  "missingness_sensitivity_bounds": {
+    "best_case_pack_a_difference": 0.018018018018018018,
+    "incomplete_both_pairs": 3,
+    "worst_case_pack_a_difference": -0.03088803088803089
+  }
+}

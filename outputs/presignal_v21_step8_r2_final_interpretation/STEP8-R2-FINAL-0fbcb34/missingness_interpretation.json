@@ -1,0 +1,16 @@
+{
+  "completion_counts": {
+    "COMPLETE_PAIRED": 52,
+    "INCOMPLETE_BOTH": 3,
+    "INCOMPLETE_PACK_A": 14,
+    "INCOMPLETE_PACK_E": 5,
+    "NOT_FORECAST_SELECTED": 703
+  },
+  "could_reverse_observed_result": true,
+  "main_causes": "Most records were not FORECAST-selected; among selected pairs, arm-specific contract rejections left 17 Pack A and 8 Pack E responses unaccepted.",
+  "sensitivity_bounds": {
+    "best_case_pack_a_difference": 0.018018018018018018,
+    "incomplete_both_pairs": 3,
+    "worst_case_pack_a_difference": -0.03088803088803089
+  }
+}

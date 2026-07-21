@@ -1,0 +1,32 @@
+{
+  "interpretation_fingerprint": "sha256:20918b980af28e54ff95b6c6abee3f9cac1fc53255a3a3916f8f4079da356199",
+  "run_id": "STEP8-R2-FINAL-0fbcb34",
+  "source_artifacts": [
+    {
+      "bytes": 286074,
+      "fingerprint": "sha256:8bf1c662a823c0a287d50b07178dd743d631ec411d645798cc036bb593ab5eac",
+      "path": "outputs/presignal_v21_step8_r2_historical_replication/STEP8-R2-e057ba70c884e0e618cf/continuation_to_40_complete/continued_forecast_results.jsonl"
+    },
+    {
+      "bytes": 2086,
+      "fingerprint": "sha256:4aa4a29c33f0da4bb201c0cf93bb375af62aac287f67a2a3dd5277775820c70e",
+      "path": "outputs/presignal_v21_step8_r2_historical_replication/STEP8-R2-e057ba70c884e0e618cf/continuation_to_40_complete/final_paired_analysis.json"
+    },
+    {
+      "bytes": 351,
+      "fingerprint": "sha256:ddf2e3ec77f79dea602afcf288fcd355e087af08eed5f18dc3ed5ea1f24b31c5",
+      "path": "outputs/presignal_v21_step8_r2_historical_replication/STEP8-R2-e057ba70c884e0e618cf/continuation_to_40_complete/completion_target_status.json"
+    },
+    {
+      "bytes": 3511,
+      "fingerprint": "sha256:4fa6ff970effa3e304b5c2c3877e9cd0380e039d2e1526309a0975104ab09cca",
+      "path": "outputs/presignal_v21_step8_r2_historical_replication/STEP8-R2-e057ba70c884e0e618cf/source_population_verification.json"
+    },
+    {
+      "bytes": 103,
+      "fingerprint": "sha256:96e8d58a1235b6c29b7633d09a7a56cce1d48a32de37036f3d1f3df0f65210bb",
+      "path": "outputs/presignal_v21_step8_r2_historical_replication/STEP8-R2-e057ba70c884e0e618cf/leakage_validation.json"
+    }
+  ],
+  "source_run": "STEP8-R2-e057ba70c884e0e618cf"
+}

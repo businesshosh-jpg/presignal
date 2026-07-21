@@ -64,5 +64,13 @@ to Step 8B under this authoritative roadmap.
 
 The bounded prospective Event-Path shadow collection is prepared with the
 frozen P12/P40/P60/P80 study boundaries and repaired prospective contract.
-Provider execution has **not** started. The next authorized work is the
-P12 operational checkpoint under the frozen prospective study manifest.
+Provider execution has **not** started. P12 is **PAUSED_PENDING_HISTORICAL_VALIDATION**
+with zero admitted Episodes and zero prospective provider or forecast calls.
+
+## Step 8-R2 Historical Reconstruction
+
+The homogeneous Step 8-R2 historical continuation is complete: 259 Episodes
+were processed and 40 unique Episodes produced at least one complete paired
+observation. Its final read-only interpretation is complete and classifies the
+historical evidence as indeterminate under missingness sensitivity. This does
+not reopen Step 9 or authorize prospective execution.

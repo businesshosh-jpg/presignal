@@ -1,0 +1,23 @@
+{
+  "accepted_pack_a_forecasts": 57,
+  "accepted_pack_e_forecasts": 66,
+  "complete_pairs": 52,
+  "completion_counts": {
+    "COMPLETE_PAIRED": 52,
+    "INCOMPLETE_BOTH": 3,
+    "INCOMPLETE_PACK_A": 14,
+    "INCOMPLETE_PACK_E": 5,
+    "NOT_FORECAST_SELECTED": 703
+  },
+  "forecast_selected_pairs": 74,
+  "ignore_records": 103,
+  "no_signal_records": 15,
+  "pair_records": 777,
+  "processed_episodes": 259,
+  "reconciled": true,
+  "rejected_pack_a_responses": 17,
+  "rejected_pack_e_responses": 8,
+  "safe_eligible_episodes": 1241,
+  "unique_complete_episodes": 40,
+  "watch_records": 255
+}

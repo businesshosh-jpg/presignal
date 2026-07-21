@@ -1,0 +1,41 @@
+{
+  "Anthropic": {
+    "complete_pairs": 0,
+    "model": "claude-haiku-4-5",
+    "pack_a_accuracy": null,
+    "pack_a_correct": 0,
+    "pack_a_rejections": 0,
+    "pack_e_accuracy": null,
+    "pack_e_correct": 0,
+    "pack_e_rejections": 0,
+    "pair_records": 259,
+    "paired_difference": null,
+    "unique_complete_episodes": 0
+  },
+  "Gemini": {
+    "complete_pairs": 30,
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accuracy": 0.23333333333333334,
+    "pack_a_correct": 7,
+    "pack_a_rejections": 7,
+    "pack_e_accuracy": 0.36666666666666664,
+    "pack_e_correct": 11,
+    "pack_e_rejections": 1,
+    "pair_records": 259,
+    "paired_difference": -0.13333333333333333,
+    "unique_complete_episodes": 30
+  },
+  "OpenAI": {
+    "complete_pairs": 22,
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accuracy": 0.22727272727272727,
+    "pack_a_correct": 5,
+    "pack_a_rejections": 10,
+    "pack_e_accuracy": 0.2727272727272727,
+    "pack_e_correct": 6,
+    "pack_e_rejections": 7,
+    "pair_records": 259,
+    "paired_difference": -0.045454545454545456,
+    "unique_complete_episodes": 22
+  }
+}

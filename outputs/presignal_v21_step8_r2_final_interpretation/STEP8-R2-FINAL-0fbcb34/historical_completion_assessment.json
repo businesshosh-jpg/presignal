@@ -1,0 +1,5 @@
+{
+  "decision": "V2_1_STEP8_R2_FINAL_HISTORICAL_RESULT_RECONSTRUCTED",
+  "further_historical_evidence": "CANNOT_DECIDE_WITHOUT_PREDEFINED_PRECISION_TARGET",
+  "reason": "The study reached its completion rule, but a future historical expansion needs a prespecified clustered-interval-width objective."
+}

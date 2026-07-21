@@ -1,0 +1,26 @@
+{
+  "15": {
+    "denominator": 52,
+    "pack_a_correct": 12,
+    "pack_e_correct": 17,
+    "paired_difference": -0.09615384615384616
+  },
+  "30": {
+    "denominator": 52,
+    "pack_a_correct": 11,
+    "pack_e_correct": 15,
+    "paired_difference": -0.07692307692307693
+  },
+  "5": {
+    "denominator": 52,
+    "pack_a_correct": 14,
+    "pack_e_correct": 20,
+    "paired_difference": -0.11538461538461539
+  },
+  "60": {
+    "denominator": 52,
+    "pack_a_correct": 12,
+    "pack_e_correct": 21,
+    "paired_difference": -0.17307692307692307
+  }
+}
