@@ -1,0 +1,8 @@
+{
+  "canonical_representation": "direction carries the sign; pip bounds are nonnegative absolute magnitudes",
+  "down": "0 <= min <= max",
+  "flat": "min = max = 0",
+  "reason": "The existing validator and evaluator consume absolute magnitudes; the R3 negative-DOWN prompt was contradictory.",
+  "up": "0 <= min <= max",
+  "validator_changed": false
+}

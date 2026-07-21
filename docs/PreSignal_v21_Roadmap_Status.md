@@ -121,3 +121,15 @@ It remains terminally incomplete: Gemini Pack E was rejected with
 active absolute-pip validator; OpenAI emitted `information_category=unknown`;
 and Anthropic's fenced JSON provider identity was rejected before normalization.
 The fresh cohort remains blocked; P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+
+## Step 8-R3-R7 Final Contract Repair
+
+Compat-r3 aligns all provider-visible pip ranges with the unchanged
+absolute-magnitude validator, normalizes only the exact R6 Anthropic
+`presignal_v2` label, and maps only `information_category=unknown` to the
+existing `other` category. One new smoke of the same Episode completed an
+OpenAI Pack A/Pack E paired evaluation and resumed with zero calls. The R6
+values did not recur. Anthropic emitted a new, unapproved identity label and
+Gemini emitted the unapproved `housing_market_trend` category; both were
+strictly preserved as coverage limitations rather than broadened silently.
+P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.

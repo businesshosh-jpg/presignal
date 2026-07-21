@@ -1,0 +1,10 @@
+{
+  "episode_id": "EP_BATCH_b5c0c544ec07bbf0b950",
+  "immutable": true,
+  "r6_result_fingerprint": "sha256:43e699e50a618dad1f173984dc320391f1af256d3be72125417dfcb4fa149dd0",
+  "runs": [
+    "STEP8-R3-SMOKE-38b2e12",
+    "STEP8-R3-R5-SMOKE-ca4c993",
+    "STEP8-R3-R6-SMOKE-4082875"
+  ]
+}

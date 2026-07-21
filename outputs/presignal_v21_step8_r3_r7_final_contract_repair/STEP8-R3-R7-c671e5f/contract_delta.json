@@ -1,0 +1,10 @@
+{
+  "child_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r3",
+  "deltas": [
+    "DOWN uses nonnegative absolute pip magnitudes",
+    "exact Anthropic presignal_v2 Attention identity normalization",
+    "exact information_category unknown -> other normalization"
+  ],
+  "parent_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r2",
+  "scientific_forecast_semantics_changed": false
+}

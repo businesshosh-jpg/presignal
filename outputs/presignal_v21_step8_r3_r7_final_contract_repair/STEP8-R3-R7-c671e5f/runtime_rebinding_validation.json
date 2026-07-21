@@ -1,0 +1,12 @@
+{
+  "apps_script_push_required": false,
+  "apps_script_source_changed": false,
+  "manifest": "outputs/presignal_v21_step8_r3_r7_final_contract_repair/STEP8-R3-R7-c671e5f/verification_manifest.json",
+  "prior_contracts_rejected": [
+    "presignal_event_path_contract_v1_historical_verification_r3",
+    "presignal_event_path_contract_v1_historical_verification_r3_compat_r1",
+    "presignal_event_path_contract_v1_historical_verification_r3_compat_r2"
+  ],
+  "required_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r3",
+  "runner": "automation/run_presignal_v21_step8_r3_fresh_historical_verification_v1.py"
+}

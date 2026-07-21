@@ -1,0 +1,24 @@
+{
+  "canonical_categories": [
+    "treasury_yields",
+    "fed_expectations",
+    "dxy",
+    "usdjpy_trend",
+    "risk_sentiment",
+    "equity_tone",
+    "inflation_narrative",
+    "labor_market_trend",
+    "growth_context",
+    "market_positioning",
+    "upcoming_larger_events",
+    "jpy_intervention_risk",
+    "volatility",
+    "historical_surprise_sensitivity",
+    "event_consensus_detail",
+    "other"
+  ],
+  "classification": "B",
+  "mapping": "unknown -> other",
+  "original_value_retained": true,
+  "reason": "other is the existing generic information_category fallback; unknown is not a distinct category in the frozen schema."
+}

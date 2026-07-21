@@ -1,0 +1,9 @@
+{
+  "canonical_model": "claude-haiku-4-5",
+  "canonical_provider": "Anthropic",
+  "contradictory_identity_rejected": true,
+  "exact_mapping": "presignal_v2 with omitted model -> runtime-bound Anthropic / claude-haiku-4-5",
+  "raw_identity_retained": true,
+  "raw_model": null,
+  "raw_provider": "presignal_v2"
+}

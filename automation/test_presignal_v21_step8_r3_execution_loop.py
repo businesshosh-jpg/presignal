@@ -4,8 +4,8 @@ import unittest
 
 from automation import run_presignal_v21_step8_r3_fresh_historical_verification_v1 as runner
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
-from automation import presignal_v21_historical_verification_r3_compat_r2_contract_v1 as compat
-from automation import repair_presignal_v21_step8_r3_r6_compatibility_v1 as r6
+from automation import presignal_v21_historical_verification_r3_compat_r3_contract_v1 as compat
+from automation import repair_presignal_v21_step8_r3_r7_final_contract_v1 as r7
 
 
 def forecast(direction="UP"):
@@ -61,7 +61,7 @@ class MockBridge:
 class LoopTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        r6.prepare()
+        r7.prepare()
 
     def setUp(self):
         self.bridge = MockBridge()
@@ -81,7 +81,7 @@ class LoopTests(unittest.TestCase):
         before = len(self.bridge.calls)
         self.assertEqual(self.loop.process_episode(self.loop.first_episode())["status"], "ALREADY_PROCESSED")
         self.assertEqual(len(self.bridge.calls), before)
-        self.assertTrue(any("For UP use" in json.loads(path.read_text())["payload"].get("payload", {}).get("prompt", {}).get("user", "") for path in (self.loop.run / "stage_payloads").glob("*.json") if "payload" in json.loads(path.read_text())["payload"]))
+        self.assertTrue(any("nonnegative absolute pip magnitudes" in json.loads(path.read_text())["payload"].get("payload", {}).get("prompt", {}).get("user", "") for path in (self.loop.run / "stage_payloads").glob("*.json") if "payload" in json.loads(path.read_text())["payload"]))
 
     def test_anthropic_r3_parser_rejection_is_terminal_and_not_retried(self):
         self.bridge = MockBridge(malformed_anthropic=True)
@@ -102,7 +102,7 @@ class LoopTests(unittest.TestCase):
         with self.assertRaisesRegex(runner.DispatchError, "RECONCILIATION_CONFLICT"):
             self.loop._persist_payload(identity, {"one": 2})
 
-    def test_r6_contract_is_bound_and_previous_manifest_is_rejected(self):
+    def test_r7_contract_is_bound_and_previous_manifest_is_rejected(self):
         self.assertEqual(self.loop.gate["contract"]["contract_version"], compat.CONTRACT_VERSION)
         self.assertIn("attention_reason must contain at most six words", binding.attention_instruction(self.loop.gate["contract"], "Anthropic"))
         self.assertIn("information_category=(treasury_yields", binding.request_instruction(self.loop.gate["contract"], "Gemini"))

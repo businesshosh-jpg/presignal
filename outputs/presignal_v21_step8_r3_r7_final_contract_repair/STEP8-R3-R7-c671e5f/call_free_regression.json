@@ -1,0 +1,12 @@
+{
+  "anthropic_contradictory_identity_rejected": true,
+  "anthropic_exact_identity_mapping": true,
+  "arbitrary_category_rejected": true,
+  "contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r3",
+  "flat_zero_accepted": true,
+  "information_category_unknown_to_other": true,
+  "pack_arm_symmetry": true,
+  "pip_negative_down_rejected": true,
+  "pip_positive_down_accepted": true,
+  "provider_calls": 0
+}
