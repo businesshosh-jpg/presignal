@@ -129,7 +129,7 @@ def _stage_timestamp(response: Mapping[str, Any], fallback: str) -> str:
     return value
 
 
-def build_prospective_attention(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], provider: str, model: str, information_cutoff_ts: str, attention_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None) -> dict[str, Any]:
+def build_prospective_attention(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], provider: str, model: str, information_cutoff_ts: str, attention_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None) -> dict[str, Any]:
     """Build one explicit prospective Attention call or parse its returned output."""
     _validate_identity(study_id=study_id, collection_run_id=collection_run_id, session_snapshot=session_snapshot, provider=provider, model=model, information_cutoff_ts=information_cutoff_ts, stage_run_id=attention_run_id)
     if utc(stage_generated_ts) > utc(information_cutoff_ts): raise MinimalProspectiveLineageError("ATTENTION_AFTER_INFORMATION_CUTOFF")
@@ -142,7 +142,7 @@ def build_prospective_attention(*, study_id: str, collection_run_id: str, sessio
     response = dict(dispatcher(request)); raw = response.get("raw_output")
     if response.get("status") != "ok":
         return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": response.get("error") or response.get("status"), "raw_output": raw}], "provider_calls": 1}
-    parsed = _raw_object(raw)
+    parsed = dict((raw_parser or _raw_object)(raw))
     if parsed.get("object") != "session_attention_map" or parsed.get("session_id") != session_id or parsed.get("provider") != provider or parsed.get("status") != "ok":
         return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "attention_contract_identity", "raw_output": raw}], "provider_calls": 1}
     item_by_event = {str(item.get("event_id")): item for item in parsed.get("attention_items", []) if isinstance(item, Mapping) and str(item.get("event_id"))}
@@ -160,7 +160,7 @@ def build_prospective_attention(*, study_id: str, collection_run_id: str, sessio
     return {"status": "parsed", "request": request, "response": response, "rows": rows, "provider_calls": 1}
 
 
-def build_prospective_requests(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], attention_result: Mapping[str, Any], provider: str, model: str, information_cutoff_ts: str, request_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None) -> dict[str, Any]:
+def build_prospective_requests(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], attention_result: Mapping[str, Any], provider: str, model: str, information_cutoff_ts: str, request_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None) -> dict[str, Any]:
     """Build one Request call from the same provider's prospective Attention."""
     _validate_identity(study_id=study_id, collection_run_id=collection_run_id, session_snapshot=session_snapshot, provider=provider, model=model, information_cutoff_ts=information_cutoff_ts, stage_run_id=request_run_id)
     if utc(stage_generated_ts) > utc(information_cutoff_ts): raise MinimalProspectiveLineageError("REQUEST_AFTER_INFORMATION_CUTOFF")
@@ -173,7 +173,7 @@ def build_prospective_requests(*, study_id: str, collection_run_id: str, session
     if dispatcher is None: return {"status": "DRY_RUN", "request": request, "prompt": prompt, "rows": [], "metadata": base, "provider_calls": 0}
     response = dict(dispatcher(request)); raw = response.get("raw_output")
     if response.get("status") != "ok": return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": response.get("error") or response.get("status"), "raw_output": raw}], "provider_calls": 1}
-    parsed = _raw_object(raw)
+    parsed = dict((raw_parser or _raw_object)(raw))
     if parsed.get("object") != "session_information_requirements" or parsed.get("session_id") != session_id or parsed.get("provider") != provider or parsed.get("status") != "ok": return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "request_contract_identity", "raw_output": raw}], "provider_calls": 1}
     output = []
     for index, item in enumerate(parsed.get("information_items", []), 1):

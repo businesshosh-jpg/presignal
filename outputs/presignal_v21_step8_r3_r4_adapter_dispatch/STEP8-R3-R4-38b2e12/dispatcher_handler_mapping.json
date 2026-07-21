@@ -1,0 +1,32 @@
+{
+  "handlers": {
+    "attention": {
+      "function": "automation.presignal_v21_minimal_prospective_lineage_v1.build_prospective_attention",
+      "parser": "automation.bind_presignal_v21_step8_r3_runtime_v1.attention_parser"
+    },
+    "evaluation": {
+      "function": "automation.run_presignal_v21_single_event_path_pair_v1.evaluate"
+    },
+    "forecast": {
+      "dispatch": "automation.run_presignal_v21_single_event_path_pair_v1.bridge_dispatch",
+      "parse": "automation.run_presignal_v21_single_event_path_pair_v1.parse_provider_output",
+      "request": "automation.run_presignal_v21_single_event_path_pair_v1.bridge_payload",
+      "validate": "automation.run_presignal_v21_single_event_path_pair_v1.response_to_contract"
+    },
+    "outcome": {
+      "function": "automation.run_presignal_v21_step8_r2_historical_replication_v1.read_jsonl",
+      "source": "automation.run_presignal_v21_step8_r2_historical_replication_v1.OUTCOMES"
+    },
+    "packs": {
+      "function": "automation.presignal_v21_minimal_prospective_lineage_v1.build_prospective_packs",
+      "historical_source": "automation.run_presignal_v21_step8_r2_historical_replication_v1._normal_pack_items"
+    },
+    "request": {
+      "function": "automation.presignal_v21_minimal_prospective_lineage_v1.build_prospective_requests",
+      "parser": "automation.bind_presignal_v21_step8_r3_runtime_v1.attention_parser"
+    }
+  },
+  "legacy_flat_stage_runtime_reachable": false,
+  "new_adapter_abstraction_created": false,
+  "runner": "automation/run_presignal_v21_step8_r3_fresh_historical_verification_v1.py:ExecutionLoop"
+}

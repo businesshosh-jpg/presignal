@@ -1,0 +1,7 @@
+{
+  "duplicate_accepted_calls": 0,
+  "payload_fingerprint_conflict_fails_closed": true,
+  "processed_episode_resume_skips_calls": true,
+  "response_before_snapshot_recovery": "persisted result is authoritative",
+  "result": "PASS"
+}

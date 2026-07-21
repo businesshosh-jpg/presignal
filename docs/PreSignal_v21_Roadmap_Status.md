@@ -83,3 +83,16 @@ targeted repair and fresh homogeneous historical verification.
 The Step 8-R3 targeted repairs and call-free fresh-verification preparation
 are complete. The fresh cohort remains unexecuted and is frozen for a separate
 historical verification task; P12 remains paused.
+
+## Step 8-R3-R4 Adapter Smoke
+
+The manifest-bound R3 dispatcher is connected to the concrete Attention,
+Information Request, Pack, forecast, Outcome, and evaluation components. One
+bounded smoke Episode (`EP_BATCH_b5c0c544ec07bbf0b950`) was processed without
+advancing the cohort. It made five historical provider calls and reached
+durable terminal states without a duplicate call, cutoff violation, leakage,
+model substitution, or production mutation. No forecast pair was eligible in
+that Episode: Anthropic Attention was rejected for truncated raw JSON, while
+Gemini and OpenAI Information Requests were rejected for invalid frozen-schema
+enums. The smoke validates runtime dispatch and resume safety only; it does not
+provide a forecast-quality result. P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.

@@ -1,0 +1,10 @@
+{
+  "classification": "NON_SCIENTIFIC_CONCRETE_ADAPTER_DISPATCH_REPAIR",
+  "contract_fingerprint": "sha256:ca2e8053e0302dbd08d640c858877b4bd93b4177fcbe6cbc99d6db125a46f9fa",
+  "decision": "V2_1_STEP8_R3_R4_ONE_EPISODE_SMOKE_VALIDATED",
+  "execution_status": "V2_1_STEP8_R3_FRESH_HISTORICAL_VERIFICATION_EXECUTABLE",
+  "forecast_calls": 0,
+  "prospective_calls": 0,
+  "provider_calls": 5,
+  "smoke_run_id": "STEP8-R3-SMOKE-38b2e12"
+}

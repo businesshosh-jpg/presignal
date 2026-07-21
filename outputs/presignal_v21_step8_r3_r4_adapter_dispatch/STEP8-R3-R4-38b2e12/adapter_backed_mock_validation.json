@@ -1,0 +1,6 @@
+{
+  "attention_request_pack_forecast_outcome_evaluation_mocked": true,
+  "concrete_adapter_path_exercised": true,
+  "result": "PASS",
+  "tests": "automation.test_presignal_v21_step8_r3_execution_loop"
+}

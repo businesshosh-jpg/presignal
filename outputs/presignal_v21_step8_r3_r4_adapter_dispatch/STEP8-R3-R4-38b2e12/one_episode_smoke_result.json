@@ -1,0 +1,80 @@
+{
+  "accepted_responses": 2,
+  "complete_pairs": 0,
+  "episode_id": "EP_BATCH_b5c0c544ec07bbf0b950",
+  "forecast_calls_by_provider": {
+    "Anthropic": 0,
+    "Gemini": 0,
+    "OpenAI": 0
+  },
+  "provider_calls_by_provider": {
+    "Anthropic": 1,
+    "Gemini": 2,
+    "OpenAI": 2
+  },
+  "rejected_responses": 3,
+  "rejection_summary": {
+    "ATTENTION": [
+      {
+        "accepted": true,
+        "model": "gpt-4o-mini-2024-07-18",
+        "provider": "OpenAI",
+        "rejection_reason": null,
+        "result_fingerprint": "sha256:90725d46ac51ab3f7b9ad049baddede1a424c381e0eaf72bec6f75473cb63312",
+        "stage": "ATTENTION",
+        "transport_status": "ok"
+      },
+      {
+        "accepted": true,
+        "model": "gemini-2.5-flash-lite",
+        "provider": "Gemini",
+        "rejection_reason": null,
+        "result_fingerprint": "sha256:6cfce74c45423744058a0676f27cd688b6a46dcd836ad3bd0b1b641e47f0b1fb",
+        "stage": "ATTENTION",
+        "transport_status": "ok"
+      },
+      {
+        "accepted": false,
+        "model": "claude-haiku-4-5",
+        "provider": "Anthropic",
+        "rejection_reason": "provider_contract_error",
+        "result_fingerprint": "sha256:ef21a44aea142823d72d5c59c83131cd1cad2a2d70e5d344ac9acf992110c796",
+        "stage": "ATTENTION",
+        "transport_status": "ok"
+      }
+    ],
+    "REQUEST": [
+      {
+        "accepted": false,
+        "model": "gemini-2.5-flash-lite",
+        "provider": "Gemini",
+        "rejection_reason": "provider_contract_error",
+        "result_fingerprint": "sha256:8aa21c2fba0d3c2b66e12f2efbc37bfff187da3a56305397a0cab8a53df3ee13",
+        "stage": "REQUEST",
+        "transport_status": "ok"
+      },
+      {
+        "accepted": false,
+        "model": "gpt-4o-mini-2024-07-18",
+        "provider": "OpenAI",
+        "rejection_reason": "provider_contract_error",
+        "result_fingerprint": "sha256:3bdd3bdf8eee8028fb44ae5a93eccb4e1526b18797f18a18aaaec3dd5a048a0d",
+        "stage": "REQUEST",
+        "transport_status": "ok"
+      }
+    ]
+  },
+  "request_calls_by_provider": {
+    "Anthropic": 0,
+    "Gemini": 1,
+    "OpenAI": 1
+  },
+  "resume_calls_added": 0,
+  "run_id": "STEP8-R3-SMOKE-38b2e12",
+  "safety_hard_stop": false,
+  "terminal_states": {
+    "Anthropic": "ATTENTION_REJECTED",
+    "Gemini": "REQUEST_REJECTED",
+    "OpenAI": "REQUEST_REJECTED"
+  }
+}

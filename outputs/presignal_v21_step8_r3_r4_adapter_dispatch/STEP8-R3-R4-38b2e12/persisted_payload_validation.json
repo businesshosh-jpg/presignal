@@ -1,0 +1,5 @@
+{
+  "all_live_operations_have_payloads": true,
+  "payloads_immutable_on_resume": true,
+  "result": "PASS"
+}
