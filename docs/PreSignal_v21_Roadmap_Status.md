@@ -74,3 +74,8 @@ were processed and 40 unique Episodes produced at least one complete paired
 observation. Its final read-only interpretation is complete and classifies the
 historical evidence as indeterminate under missingness sensitivity. This does
 not reopen Step 9 or authorize prospective execution.
+
+Step 8-R3 diagnosis is complete. It identified an invalid sampled cluster
+sign-flip implementation, Anthropic Attention raw-JSON coverage failure, and
+provider-specific output-contract rejections. P12 remains paused pending
+targeted repair and fresh homogeneous historical verification.
