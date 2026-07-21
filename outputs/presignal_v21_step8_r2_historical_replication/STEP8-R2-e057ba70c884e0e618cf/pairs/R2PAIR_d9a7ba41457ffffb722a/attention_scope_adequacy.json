@@ -1,0 +1,35 @@
+{
+  "decision": "ADEQUATE",
+  "dominant_member_event_ids": [
+    "1ab6-5b3e-dc4e-9de6"
+  ],
+  "dominant_member_identifiable": true,
+  "episode_id": "EP_EVENT_1eb58a8dd29907ace6d9",
+  "episode_selected_as": "FORECAST",
+  "essential_episode_attention_concept_missing": [],
+  "joint_same_time_interpretation_supported": true,
+  "member_attention_evidence": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 7,
+      "attention_reason": "Key indicator for consumer spending and economic activity. Directly impacts growth outlook.",
+      "attention_run_id": "ATTENTION_29ca1aaceedad216a1cd",
+      "confidence": "Medium",
+      "driver_role": "primary",
+      "event_id": "1ab6-5b3e-dc4e-9de6",
+      "expected_market_channel": "growth_outlook",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "New Home Sales (Apr)",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-05-23|CUSTOM_CONFIG_WINDOW"
+    }
+  ],
+  "member_labels_and_ranks_available": true,
+  "model": "gemini-2.5-flash-lite",
+  "provider": "Gemini",
+  "rationale": "Preserved member labels, ranks, reasons, channels, and exact membership provide sufficient causal orientation without treating structural roles as causal truth.",
+  "reasons_and_channels_useful": true,
+  "reinforcement_or_conflict_interpretable": true,
+  "would_episode_attention_field_materially_change_task": false
+}

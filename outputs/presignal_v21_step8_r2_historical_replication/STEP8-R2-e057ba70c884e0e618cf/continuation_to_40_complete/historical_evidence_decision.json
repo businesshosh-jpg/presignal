@@ -1,0 +1,6 @@
+{
+  "analysis_fingerprint": "sha256:a8056607ed72e69293f72b2f1afa5f9f10fec74b95926c62b95b01b4e40567df",
+  "decision": "V2_1_STEP8_R2_40_COMPLETE_HISTORICAL_EPISODES_ACCRUED",
+  "evidence_classification": "HISTORICAL_EVIDENCE_REMAINS_INDETERMINATE",
+  "reason": "The pre-specified completion boundary, not outcome performance, ended historical accrual."
+}

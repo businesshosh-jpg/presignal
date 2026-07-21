@@ -1,0 +1,154 @@
+{
+  "completion_tokens": 2399,
+  "confidence": 0.6,
+  "episode_id": "EP_BATCH_69dba1499b19dda97ef6",
+  "error_message": null,
+  "expected_initial_direction": "DOWN",
+  "expected_path_summary": "The forecast suggests an initial downward movement in USDJPY, driven by expectations of cooling inflation as indicated by the PPI data. This downward pressure may be met with some stabilization or slight upward correction later, influenced by labor market data and broader market sentiment. The overall trajectory anticipates a net downward move.",
+  "expected_reversal_flag": false,
+  "expected_reversal_horizon_min": null,
+  "forecast_created_ts": "2026-07-20T17:53:10.711Z",
+  "forecast_cutoff_ts": "2024-06-13T12:20:00Z",
+  "information_arm": "FULL_CONTEXT",
+  "information_used": [
+    {
+      "information_key": "dxy|dxy_index_level_and_momentum_pre_post_ppi_release",
+      "value": {
+        "dxy_change_from_prior_pct": -0.551174,
+        "dxy_direction": "down",
+        "dxy_level": 104.65
+      }
+    },
+    {
+      "information_key": "treasury_yields|2_year_10_year_ust_yield_spread_pre_post_ppi",
+      "value": {
+        "us10y_change_from_prior": -0.08,
+        "us10y_minus_us2y_curve": -0.44,
+        "us10y_yield_level": 4.31,
+        "us2y_change_from_prior": -0.06,
+        "us2y_yield_level": 4.75
+      }
+    },
+    {
+      "information_key": "usdjpy_trend|recent_usd_jpy_trends",
+      "value": {
+        "realized_volatility_1h": 7.94e-05,
+        "return_1h_pct": -0.072499,
+        "return_24h_pct": -0.055974,
+        "return_4h_pct": -0.071864,
+        "usdjpy_level": 157.129
+      }
+    },
+    {
+      "information_key": "event_consensus_detail|producer_price_index_details",
+      "value": [
+        {
+          "consensus_value": "1800",
+          "event_id": "f2b3-5317-13df-350b",
+          "indicator_name": "Continuing Jobless Claims (Jun/01)",
+          "previous_value": "1790",
+          "release_ts": "2024-06-13T12:30:00Z"
+        },
+        {
+          "consensus_value": "0.3",
+          "event_id": "4f3b-05ff-7387-97d3",
+          "indicator_name": "Core PPI MoM (May)",
+          "previous_value": "0.5",
+          "release_ts": "2024-06-13T12:30:00Z"
+        },
+        {
+          "consensus_value": "2.4",
+          "event_id": "4a53-c637-bdff-31ab",
+          "indicator_name": "Core PPI YoY (May)",
+          "previous_value": "2.4",
+          "release_ts": "2024-06-13T12:30:00Z"
+        },
+        {
+          "consensus_value": "225",
+          "event_id": "36b4-c724-e804-9954",
+          "indicator_name": "Initial Jobless Claims (Jun/08)",
+          "previous_value": "229",
+          "release_ts": "2024-06-13T12:30:00Z"
+        },
+        {
+          "consensus_value": "224",
+          "event_id": "fb00-bf00-4700-9300",
+          "indicator_name": "Jobless Claims 4-Week Average (Jun/08)",
+          "previous_value": "222.25",
+          "release_ts": "2024-06-13T12:30:00Z"
+        },
+        {
+          "consensus_value": "0.3",
+          "event_id": "2066-a52e-aebe-3d16",
+          "indicator_name": "PPI Ex Food, Energy and Trade MoM (May)",
+          "previous_value": "0.5",
+          "release_ts": "2024-06-13T12:30:00Z"
+        },
+        {
+          "consensus_value": "3.1",
+          "event_id": "1b7e-6566-f936-d6ee",
+          "indicator_name": "PPI Ex Food, Energy and Trade YoY (May)",
+          "previous_value": "3.2",
+          "release_ts": "2024-06-13T12:30:00Z"
+        },
+        {
+          "consensus_value": "144.3",
+          "event_id": "ea35-e4b1-d9a9-c91d",
+          "indicator_name": "Producer Price Index (May)",
+          "previous_value": "144.1",
+          "release_ts": "2024-06-13T12:30:00Z"
+        },
+        {
+          "consensus_value": "0.1",
+          "event_id": "3c20-0da0-b0a0-2520",
+          "indicator_name": "Producer Price Index MoM (May)",
+          "previous_value": "0.5",
+          "release_ts": "2024-06-13T12:30:00Z"
+        },
+        {
+          "consensus_value": "2.5",
+          "event_id": "3738-cdd8-fb18-bef8",
+          "indicator_name": "Producer Price Index YoY (May)",
+          "previous_value": "2.3",
+          "release_ts": "2024-06-13T12:30:00Z"
+        }
+      ]
+    }
+  ],
+  "invalidation_condition": "A significant upside surprise in both PPI and Initial Jobless Claims, or a strong upside surprise in USDJPY trend data.",
+  "latency_ms": null,
+  "missing_information": [
+    {
+      "information_key": "jpy_intervention_risk|jpy_intervention_risk_and_rhetoric",
+      "reason": "JPY intervention risk and rhetoric is not available."
+    },
+    {
+      "information_key": "historical_surprise_sensitivity|historical_sensitivity_of_usdjpy_to_ppi_and_jobless_claims",
+      "reason": "Historical sensitivity of USDJPY to PPI and jobless claims is not available."
+    },
+    {
+      "information_key": "market_positioning|market_positioning_cftc_cot_reports",
+      "reason": "Market positioning (e.g., CFTC COT reports) is not available."
+    }
+  ],
+  "model": "gemini-2.5-flash-lite",
+  "no_signal_flag": false,
+  "no_signal_reason": null,
+  "object": "PREDICTION",
+  "pack_fingerprint": "sha256:aa46acc9c83f873d1acd45082a98667c58744856e0e9f491fecc8deb3b16c9e8",
+  "pack_id": "PACK_E_40109a2eedc0ba7e8c3b",
+  "prediction_fingerprint": "sha256:5b57e737a801834139b873540b0e5ad1897783bd88082651165480141dddc719",
+  "prediction_id": "PRD_92e121396ab2cc80e79f",
+  "prediction_target_id": "EP_BATCH_69dba1499b19dda97ef6",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "3c20-0da0-b0a0-2520",
+  "prompt_tokens": 24952,
+  "provider": "Gemini",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": null,\n  \"confidence\": 0.6,\n  \"expected_initial_direction\": \"DOWN\",\n  \"expected_reversal_flag\": false,\n  \"expected_reversal_horizon_min\": null,\n  \"expected_path_summary\": \"The forecast suggests an initial downward movement in USDJPY, driven by expectations of cooling inflation as indicated by the PPI data. This downward pressure may be met with some stabilization or slight upward correction later, influenced by labor market data and broader market sentiment. The overall trajectory anticipates a net downward move.\",\n  \"information_used\": [\n    {\n      \"information_key\": \"dxy|dxy_index_level_and_momentum_pre_post_ppi_release\",\n      \"value\": {\n        \"dxy_change_from_prior_pct\": -0.551174,\n        \"dxy_direction\": \"down\",\n        \"dxy_level\": 104.65\n      }\n    },\n    {\n      \"information_key\": \"treasury_yields|2_year_10_year_ust_yield_spread_pre_post_ppi\",\n      \"value\": {\n        \"us10y_change_from_prior\": -0.08,\n        \"us10y_minus_us2y_curve\": -0.44,\n        \"us10y_yield_level\": 4.31,\n        \"us2y_change_from_prior\": -0.06,\n        \"us2y_yield_level\": 4.75\n      }\n    },\n    {\n      \"information_key\": \"usdjpy_trend|recent_usd_jpy_trends\",\n      \"value\": {\n        \"realized_volatility_1h\": 7.94e-05,\n        \"return_1h_pct\": -0.072499,\n        \"return_24h_pct\": -0.055974,\n        \"return_4h_pct\": -0.071864,\n        \"usdjpy_level\": 157.129\n      }\n    },\n    {\n      \"information_key\": \"event_consensus_detail|producer_price_index_details\",\n      \"value\": [\n        {\n          \"consensus_value\": \"1800\",\n          \"event_id\": \"f2b3-5317-13df-350b\",\n          \"indicator_name\": \"Continuing Jobless Claims (Jun/01)\",\n          \"previous_value\": \"1790\",\n          \"release_ts\": \"2024-06-13T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"0.3\",\n          \"event_id\": \"4f3b-05ff-7387-97d3\",\n          \"indicator_name\": \"Core PPI MoM (May)\",\n          \"previous_value\": \"0.5\",\n          \"release_ts\": \"2024-06-13T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"2.4\",\n          \"event_id\": \"4a53-c637-bdff-31ab\",\n          \"indicator_name\": \"Core PPI YoY (May)\",\n          \"previous_value\": \"2.4\",\n          \"release_ts\": \"2024-06-13T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"225\",\n          \"event_id\": \"36b4-c724-e804-9954\",\n          \"indicator_name\": \"Initial Jobless Claims (Jun/08)\",\n          \"previous_value\": \"229\",\n          \"release_ts\": \"2024-06-13T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"224\",\n          \"event_id\": \"fb00-bf00-4700-9300\",\n          \"indicator_name\": \"Jobless Claims 4-Week Average (Jun/08)\",\n          \"previous_value\": \"222.25\",\n          \"release_ts\": \"2024-06-13T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"0.3\",\n          \"event_id\": \"2066-a52e-aebe-3d16\",\n          \"indicator_name\": \"PPI Ex Food, Energy and Trade MoM (May)\",\n          \"previous_value\": \"0.5\",\n          \"release_ts\": \"2024-06-13T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"3.1\",\n          \"event_id\": \"1b7e-6566-f936-d6ee\",\n          \"indicator_name\": \"PPI Ex Food, Energy and Trade YoY (May)\",\n          \"previous_value\": \"3.2\",\n          \"release_ts\": \"2024-06-13T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"144.3\",\n          \"event_id\": \"ea35-e4b1-d9a9-c91d\",\n          \"indicator_name\": \"Producer Price Index (May)\",\n          \"previous_value\": \"144.1\",\n          \"release_ts\": \"2024-06-13T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"0.1\",\n          \"event_id\": \"3c20-0da0-b0a0-2520\",\n          \"indicator_name\": \"Producer Price Index MoM (May)\",\n          \"previous_value\": \"0.5\",\n          \"release_ts\": \"2024-06-13T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"2.5\",\n          \"event_id\": \"3738-cdd8-fb18-bef8\",\n          \"indicator_name\": \"Producer Price Index YoY (May)\",\n          \"previous_value\": \"2.3\",\n          \"release_ts\": \"2024-06-13T12:30:00Z\"\n        }\n      ]\n    }\n  ],\n  \"missing_information\": [\n    {\n      \"information_key\": \"jpy_intervention_risk|jpy_intervention_risk_and_rhetoric\",\n      \"reason\": \"JPY intervention risk and rhetoric is not available.\"\n    },\n    {\n      \"information_key\": \"historical_surprise_sensitivity|historical_sensitivity_of_usdjpy_to_ppi_and_jobless_claims\",\n      \"reason\": \"Historical sensitivity of USDJPY to PPI and jobless claims is not available.\"\n    },\n    {\n      \"information_key\": \"market_positioning|market_positioning_cftc_cot_reports\",\n      \"reason\": \"Market positioning (e.g., CFTC COT reports) is not available.\"\n    }\n  ],\n  \"invalidation_condition\": \"A significant upside surprise in both PPI and Initial Jobless Claims, or a strong upside surprise in USDJPY trend data.\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 15,\n      \"stage_confidence\": 0.6,\n      \"continuation_probability\": 0.7,\n      \"reversal_probability\": 0.3,\n      \"stage_reason\": \"Initial reaction to potentially softer PPI data, coupled with a recent downward trend in USDJPY and a weaker DXY.\",\n      \"invalidation_condition\": \"No immediate move or an upside surprise in the initial data points.\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 10,\n      \"expected_pips_max\": 25,\n      \"stage_confidence\": 0.55,\n      \"continuation_probability\": 0.65,\n      \"reversal_probability\": 0.35,\n      \"stage_reason\": \"Sustained downward pressure from inflation concerns and labor market data potentially showing some weakness.\",\n      \"invalidation_condition\": \"Strong upside surprise in the US Initial Jobless Claims or a shift in market sentiment.\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"FLAT\",\n      \"expected_pips_min\": 0,\n      \"expected_pips_max\": 0,\n      \"stage_confidence\": 0.5,\n      \"continuation_probability\": 0.5,\n      \"reversal_probability\": 0.5,\n      \"stage_reason\": \"Market may consolidate as it awaits further clarity on the labor market and broader economic outlook. Limited directionality expected.\",\n      \"invalidation_condition\": \"A significant data surprise or clear directional signal emerging.\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 15,\n      \"stage_confidence\": 0.55,\n      \"continuation_probability\": 0.6,\n      \"reversal_probability\": 0.4,\n      \"stage_reason\": \"Potential for a slight upward correction as market digests labor data and re-evaluates Fed policy implications. Previous downward momentum might be retraced.\",\n      \"invalidation_condition\": \"Continued weakness in US data or persistent negative market sentiment.\"\n    }\n  ]\n}",
+  "run_id": "STEP8-R2-e057ba70c884e0e618cf",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [],
+  "session_id": "US|2024-06-13|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}

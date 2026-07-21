@@ -1,0 +1,7 @@
+{
+  "forecast_freeze_ts": "2026-07-20T16:46:59.692Z",
+  "frozen_before_release": true,
+  "historical_information_cutoff_ts": "2024-05-22T07:20:00Z",
+  "historical_replication_output_contract": "presignal_event_path_contract_v1_flat_stage_prospective_v1",
+  "scheduled_release_ts": "2024-05-22T18:00:00Z"
+}

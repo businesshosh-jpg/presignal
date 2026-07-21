@@ -1,0 +1,117 @@
+{
+  "attached_after_both_forecasts_frozen": true,
+  "outcome": {
+    "acquisition_ts": "2026-07-19T14:46:48Z",
+    "anchor_price": 157.236,
+    "anchor_price_ts": "2024-06-12T05:30:00Z",
+    "direction_15m": "UP",
+    "direction_30m": "UP",
+    "direction_5m": "UP",
+    "direction_60m": "DOWN",
+    "episode_id": "EP_BATCH_7c7591deb77f4734925f",
+    "error_message": null,
+    "initial_direction": "UP",
+    "intervening_event_flag": false,
+    "market_data_provider": "tiingo",
+    "max_down_pips": -4.2,
+    "max_down_ts": "2024-06-12T06:27:00Z",
+    "max_up_pips": 4.8,
+    "max_up_ts": "2024-06-12T05:45:00Z",
+    "object": "OUTCOME",
+    "outcome_fingerprint": "sha256:fd8ef79d854598d4dfc358e232b767160126f3fe6d0a7081811d2a1583ede5f5",
+    "outcome_id": "OUT_41f813476132a216e0d8",
+    "pips_15m": 4.8,
+    "pips_30m": 2.05,
+    "pips_5m": 1.85,
+    "pips_60m": -1.15,
+    "price_15m": 157.284,
+    "price_30m": 157.2565,
+    "price_5m": 157.2545,
+    "price_60m": 157.2245,
+    "release_ts": "2024-06-12T05:30:00Z",
+    "reversal_flag": true,
+    "reversal_ts": "2024-06-12T06:30:00Z",
+    "schema_version": "2.1.0",
+    "session_id": "",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-06-12T05:30:00Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-06-12T05:45:00Z",
+        "30": "2024-06-12T06:00:00Z",
+        "5": "2024-06-12T05:35:00Z",
+        "60": "2024-06-12T06:30:00Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-12",
+          "provider_attempts": [
+            {
+              "credential_available": true,
+              "credential_property_name": "TIINGO_API_KEY",
+              "http_status": 200,
+              "missing_data_reason": "",
+              "provider": "tiingo",
+              "requested_window_end": "2024-06-12T23:59:00Z",
+              "requested_window_start": "2024-06-12T00:00:00Z",
+              "status": "SUCCESS"
+            }
+          ],
+          "request_id": "MD_DAY_80425515505b4b60c5c6",
+          "returned_observation_count": 1431,
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "transport_error": "",
+          "window_end": "2024-06-12T23:59:00Z",
+          "window_start": "2024-06-12T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 157.284,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-12T05:45:00.000Z",
+          "request_id": "MD_DAY_80425515505b4b60c5c6",
+          "timestamp": "2024-06-12T05:45:00Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 157.2565,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-12T06:00:00.000Z",
+          "request_id": "MD_DAY_80425515505b4b60c5c6",
+          "timestamp": "2024-06-12T06:00:00Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 157.2545,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-12T05:35:00.000Z",
+          "request_id": "MD_DAY_80425515505b4b60c5c6",
+          "timestamp": "2024-06-12T05:35:00Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 157.2245,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-12T06:30:00.000Z",
+          "request_id": "MD_DAY_80425515505b4b60c5c6",
+          "timestamp": "2024-06-12T06:30:00Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 157.236,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-12T05:30:00.000Z",
+          "request_id": "MD_DAY_80425515505b4b60c5c6",
+          "timestamp": "2024-06-12T05:30:00Z"
+        }
+      }
+    },
+    "status": "VALID",
+    "system_version": "presignal_v2.1"
+  },
+  "same_outcome_for_pack_a_and_pack_e": true
+}

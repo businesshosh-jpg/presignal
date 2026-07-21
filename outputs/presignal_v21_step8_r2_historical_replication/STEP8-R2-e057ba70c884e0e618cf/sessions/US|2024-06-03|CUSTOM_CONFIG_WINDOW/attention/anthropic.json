@@ -1,0 +1,23 @@
+{
+  "error": "PROVIDER_RAW_JSON_INVALID",
+  "metadata": {
+    "attention_run_id": "ATTENTION_b576ac27b262b88f0a83"
+  },
+  "preserved_failure": true,
+  "provider_calls": 1,
+  "rows": [
+    {
+      "attention_run_id": "ATTENTION_b576ac27b262b88f0a83",
+      "error_message": "PROVIDER_RAW_JSON_INVALID",
+      "generated_ts": "2024-06-03T13:50:00Z",
+      "information_cutoff_ts": "2024-06-03T13:50:00Z",
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "raw_output": null,
+      "response_preservation": "bridge_result_unavailable_after_parser_failure",
+      "session_id": "US|2024-06-03|CUSTOM_CONFIG_WINDOW",
+      "status": "provider_contract_error"
+    }
+  ],
+  "status": "provider_contract_error"
+}

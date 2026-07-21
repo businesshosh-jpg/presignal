@@ -1,0 +1,35 @@
+{
+  "decision": "ADEQUATE",
+  "dominant_member_event_ids": [
+    "875b-df9f-9027-98f3"
+  ],
+  "dominant_member_identifiable": true,
+  "episode_id": "EP_EVENT_9abf6d24da667544c615",
+  "episode_selected_as": "FORECAST",
+  "essential_episode_attention_concept_missing": [],
+  "joint_same_time_interpretation_supported": true,
+  "member_attention_evidence": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 1,
+      "attention_reason": "Fed official speeches, especially from influential members, can significantly impact Fed path expectations.",
+      "attention_run_id": "ATTENTION_02a79a2ce13d80070f0f",
+      "confidence": 0.85,
+      "driver_role": "primary",
+      "event_id": "875b-df9f-9027-98f3",
+      "expected_market_channel": "fed_path",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Fed Williams Speech",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-05-30|CUSTOM_CONFIG_WINDOW"
+    }
+  ],
+  "member_labels_and_ranks_available": true,
+  "model": "gemini-2.5-flash-lite",
+  "provider": "Gemini",
+  "rationale": "Preserved member labels, ranks, reasons, channels, and exact membership provide sufficient causal orientation without treating structural roles as causal truth.",
+  "reasons_and_channels_useful": true,
+  "reinforcement_or_conflict_interpretable": true,
+  "would_episode_attention_field_materially_change_task": false
+}

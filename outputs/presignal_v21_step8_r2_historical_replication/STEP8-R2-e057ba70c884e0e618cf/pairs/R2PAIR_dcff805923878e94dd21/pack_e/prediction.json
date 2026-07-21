@@ -1,0 +1,167 @@
+{
+  "completion_tokens": 2549,
+  "confidence": 0.7,
+  "episode_id": "EP_BATCH_0aca5f1e0ebb1905712c",
+  "error_message": null,
+  "expected_initial_direction": "UP",
+  "expected_path_summary": "The forecast anticipates an initial upward movement in USDJPY driven by the slightly positive DXY trend and potentially stronger than expected US labor market data, followed by a potential reversal as the market digests the implications for Federal Reserve policy.",
+  "expected_reversal_flag": false,
+  "expected_reversal_horizon_min": 60,
+  "forecast_created_ts": "2026-07-20T17:36:00.393Z",
+  "forecast_cutoff_ts": "2024-06-06T11:20:00Z",
+  "information_arm": "FULL_CONTEXT",
+  "information_used": [
+    {
+      "item_key": "dxy|dxy_index_level_and_recent_trend",
+      "source_series_or_input": "DX-Y.NYB",
+      "source_system": "FMP",
+      "value": {
+        "dxy_change_from_prior_pct": 0.153684,
+        "dxy_direction": "up",
+        "dxy_level": 104.27
+      }
+    },
+    {
+      "item_key": "treasury_yields|10y_and_2y_ust_yield_levels_pre_session",
+      "source_series_or_input": "DGS2|DGS10",
+      "source_system": "FRED",
+      "value": {
+        "us10y_change_from_prior": -0.04,
+        "us10y_minus_us2y_curve": -0.43,
+        "us10y_yield_level": 4.29,
+        "us2y_change_from_prior": -0.05,
+        "us2y_yield_level": 4.72
+      }
+    },
+    {
+      "item_key": "usdjpy_trend|recent_usdjpy_trend_analysis",
+      "source_series_or_input": "USDJPY.FOREX_INTRADAY",
+      "source_system": "EODHD",
+      "value": {
+        "realized_volatility_1h": 0.00010054,
+        "return_1h_pct": 0.148798,
+        "return_24h_pct": -0.02817,
+        "return_4h_pct": 0.003843,
+        "usdjpy_level": 156.148
+      }
+    },
+    {
+      "item_key": "event_consensus_detail|market_expectations_for_initial_claims_beat_miss",
+      "source_series_or_input": "RAW_SESSION_MEMBERS",
+      "source_system": "Event",
+      "value": [
+        {
+          "consensus_value": "75",
+          "event_id": "2d70-4eb0-9130-f4f0",
+          "indicator_name": "Challenger Job Cuts (May)",
+          "previous_value": "64.789",
+          "release_ts": "2024-06-06T11:30:00Z"
+        },
+        {
+          "consensus_value": "-76.1",
+          "event_id": "a1ad-35c9-5e01-1a55",
+          "indicator_name": "Balance of Trade (Apr)",
+          "previous_value": "-68.6",
+          "release_ts": "2024-06-06T12:30:00Z"
+        },
+        {
+          "consensus_value": "1790",
+          "event_id": "a577-670b-ea33-2eef",
+          "indicator_name": "Continuing Jobless Claims (May/25)",
+          "previous_value": "1790",
+          "release_ts": "2024-06-06T12:30:00Z"
+        },
+        {
+          "consensus_value": "253",
+          "event_id": "2aad-2ac9-2b01-2b55",
+          "indicator_name": "Exports (Apr)",
+          "previous_value": "261.6",
+          "release_ts": "2024-06-06T12:30:00Z"
+        },
+        {
+          "consensus_value": "324",
+          "event_id": "299c-1cec-038c-dd7c",
+          "indicator_name": "Imports (Apr)",
+          "previous_value": "330.2",
+          "release_ts": "2024-06-06T12:30:00Z"
+        },
+        {
+          "consensus_value": "220",
+          "event_id": "dd77-3f0b-0233-26ef",
+          "indicator_name": "Initial Jobless Claims (Jun/01)",
+          "previous_value": "221",
+          "release_ts": "2024-06-06T12:30:00Z"
+        },
+        {
+          "consensus_value": "224",
+          "event_id": "cb0b-4f8f-5897-e623",
+          "indicator_name": "Jobless Claims 4-Week Average (Jun/01)",
+          "previous_value": "223",
+          "release_ts": "2024-06-06T12:30:00Z"
+        },
+        {
+          "consensus_value": "89",
+          "event_id": "2e25-57e1-ab59-288d",
+          "indicator_name": "EIA Natural Gas Stocks Change (May/31)",
+          "previous_value": "84",
+          "release_ts": "2024-06-06T14:30:00Z"
+        },
+        {
+          "consensus_value": "",
+          "event_id": "25a0-e920-7020-baa0",
+          "indicator_name": "4-Week Bill Auction",
+          "previous_value": "5.27",
+          "release_ts": "2024-06-06T15:30:00Z"
+        },
+        {
+          "consensus_value": "",
+          "event_id": "aca4-c454-f3b4-3ac4",
+          "indicator_name": "8-Week Bill Auction",
+          "previous_value": "5.275",
+          "release_ts": "2024-06-06T15:30:00Z"
+        },
+        {
+          "consensus_value": "",
+          "event_id": "c885-2ec1-fb39-2ded",
+          "indicator_name": "15-Year Mortgage Rate (Jun/05)",
+          "previous_value": "6.36",
+          "release_ts": "2024-06-06T16:00:00Z"
+        },
+        {
+          "consensus_value": "",
+          "event_id": "a93e-9826-75f6-42ae",
+          "indicator_name": "30-Year Mortgage Rate (Jun/05)",
+          "previous_value": "7.03",
+          "release_ts": "2024-06-06T16:00:00Z"
+        }
+      ]
+    }
+  ],
+  "invalidation_condition": "USDJPY exhibits a sharp move against the forecasted direction in the first 5 minutes, or if the Initial Jobless Claims data is significantly more dovish than consensus, leading to a strong downward revision of Fed rate cut expectations.",
+  "latency_ms": null,
+  "missing_information": [],
+  "model": "gemini-2.5-flash-lite",
+  "no_signal_flag": false,
+  "no_signal_reason": null,
+  "object": "PREDICTION",
+  "pack_fingerprint": "sha256:5510303b98924a92d79e96eaadb7c6a71ab32f006c2e52b972acea668dc94bd3",
+  "pack_id": "PACK_E_65c3ef176e862e852f49",
+  "prediction_fingerprint": "sha256:38e93affd389a89b0f1a83ec5b88c056eed6e15edb31e3d42af6083821fb7927",
+  "prediction_id": "PRD_30a2d03d2db8142ad0fe",
+  "prediction_target_id": "EP_BATCH_0aca5f1e0ebb1905712c",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "a1ad-35c9-5e01-1a55",
+  "prompt_tokens": 20089,
+  "provider": "Gemini",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": null,\n  \"confidence\": 0.7,\n  \"expected_initial_direction\": \"UP\",\n  \"expected_reversal_flag\": false,\n  \"expected_reversal_horizon_min\": 60,\n  \"expected_path_summary\": \"The forecast anticipates an initial upward movement in USDJPY driven by the slightly positive DXY trend and potentially stronger than expected US labor market data, followed by a potential reversal as the market digests the implications for Federal Reserve policy.\",\n  \"information_used\": [\n    {\n      \"item_key\": \"dxy|dxy_index_level_and_recent_trend\",\n      \"source_system\": \"FMP\",\n      \"source_series_or_input\": \"DX-Y.NYB\",\n      \"value\": {\n        \"dxy_change_from_prior_pct\": 0.153684,\n        \"dxy_direction\": \"up\",\n        \"dxy_level\": 104.27\n      }\n    },\n    {\n      \"item_key\": \"treasury_yields|10y_and_2y_ust_yield_levels_pre_session\",\n      \"source_system\": \"FRED\",\n      \"source_series_or_input\": \"DGS2|DGS10\",\n      \"value\": {\n        \"us10y_change_from_prior\": -0.04,\n        \"us10y_minus_us2y_curve\": -0.43,\n        \"us10y_yield_level\": 4.29,\n        \"us2y_change_from_prior\": -0.05,\n        \"us2y_yield_level\": 4.72\n      }\n    },\n    {\n      \"item_key\": \"usdjpy_trend|recent_usdjpy_trend_analysis\",\n      \"source_system\": \"EODHD\",\n      \"source_series_or_input\": \"USDJPY.FOREX_INTRADAY\",\n      \"value\": {\n        \"realized_volatility_1h\": 0.00010054,\n        \"return_1h_pct\": 0.148798,\n        \"return_24h_pct\": -0.02817,\n        \"return_4h_pct\": 0.003843,\n        \"usdjpy_level\": 156.148\n      }\n    },\n    {\n      \"item_key\": \"event_consensus_detail|market_expectations_for_initial_claims_beat_miss\",\n      \"source_system\": \"Event\",\n      \"source_series_or_input\": \"RAW_SESSION_MEMBERS\",\n      \"value\": [\n        {\n          \"consensus_value\": \"75\",\n          \"event_id\": \"2d70-4eb0-9130-f4f0\",\n          \"indicator_name\": \"Challenger Job Cuts (May)\",\n          \"previous_value\": \"64.789\",\n          \"release_ts\": \"2024-06-06T11:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"-76.1\",\n          \"event_id\": \"a1ad-35c9-5e01-1a55\",\n          \"indicator_name\": \"Balance of Trade (Apr)\",\n          \"previous_value\": \"-68.6\",\n          \"release_ts\": \"2024-06-06T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"1790\",\n          \"event_id\": \"a577-670b-ea33-2eef\",\n          \"indicator_name\": \"Continuing Jobless Claims (May/25)\",\n          \"previous_value\": \"1790\",\n          \"release_ts\": \"2024-06-06T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"253\",\n          \"event_id\": \"2aad-2ac9-2b01-2b55\",\n          \"indicator_name\": \"Exports (Apr)\",\n          \"previous_value\": \"261.6\",\n          \"release_ts\": \"2024-06-06T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"324\",\n          \"event_id\": \"299c-1cec-038c-dd7c\",\n          \"indicator_name\": \"Imports (Apr)\",\n          \"previous_value\": \"330.2\",\n          \"release_ts\": \"2024-06-06T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"220\",\n          \"event_id\": \"dd77-3f0b-0233-26ef\",\n          \"indicator_name\": \"Initial Jobless Claims (Jun/01)\",\n          \"previous_value\": \"221\",\n          \"release_ts\": \"2024-06-06T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"224\",\n          \"event_id\": \"cb0b-4f8f-5897-e623\",\n          \"indicator_name\": \"Jobless Claims 4-Week Average (Jun/01)\",\n          \"previous_value\": \"223\",\n          \"release_ts\": \"2024-06-06T12:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"89\",\n          \"event_id\": \"2e25-57e1-ab59-288d\",\n          \"indicator_name\": \"EIA Natural Gas Stocks Change (May/31)\",\n          \"previous_value\": \"84\",\n          \"release_ts\": \"2024-06-06T14:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"\",\n          \"event_id\": \"25a0-e920-7020-baa0\",\n          \"indicator_name\": \"4-Week Bill Auction\",\n          \"previous_value\": \"5.27\",\n          \"release_ts\": \"2024-06-06T15:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"\",\n          \"event_id\": \"aca4-c454-f3b4-3ac4\",\n          \"indicator_name\": \"8-Week Bill Auction\",\n          \"previous_value\": \"5.275\",\n          \"release_ts\": \"2024-06-06T15:30:00Z\"\n        },\n        {\n          \"consensus_value\": \"\",\n          \"event_id\": \"c885-2ec1-fb39-2ded\",\n          \"indicator_name\": \"15-Year Mortgage Rate (Jun/05)\",\n          \"previous_value\": \"6.36\",\n          \"release_ts\": \"2024-06-06T16:00:00Z\"\n        },\n        {\n          \"consensus_value\": \"\",\n          \"event_id\": \"a93e-9826-75f6-42ae\",\n          \"indicator_name\": \"30-Year Mortgage Rate (Jun/05)\",\n          \"previous_value\": \"7.03\",\n          \"release_ts\": \"2024-06-06T16:00:00Z\"\n        }\n      ]\n    }\n  ],\n  \"missing_information\": [],\n  \"invalidation_condition\": \"USDJPY exhibits a sharp move against the forecasted direction in the first 5 minutes, or if the Initial Jobless Claims data is significantly more dovish than consensus, leading to a strong downward revision of Fed rate cut expectations.\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 2,\n      \"expected_pips_max\": 5,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.6,\n      \"reversal_probability\": 0.4,\n      \"stage_reason\": \"Initial move driven by slightly positive DXY trend and anticipation of potentially solid labor data.\",\n      \"invalidation_condition\": \"A sharp move down or sideways consolidation within the first 5 minutes.\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 10,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.65,\n      \"reversal_probability\": 0.35,\n      \"stage_reason\": \"Sustained upward momentum as initial reaction to data unfolds, assuming favorable US figures.\",\n      \"invalidation_condition\": \"Price failing to make new highs and showing signs of topping out.\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 8,\n      \"expected_pips_max\": 15,\n      \"stage_confidence\": 0.65,\n      \"continuation_probability\": 0.55,\n      \"reversal_probability\": 0.45,\n      \"stage_reason\": \"Potential for further gains if data is strongly positive, but increasing caution as market digests Fed implications.\",\n      \"invalidation_condition\": \"Clear signs of a bearish reversal, such as a break below a short-term support level.\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 12,\n      \"stage_confidence\": 0.6,\n      \"continuation_probability\": 0.4,\n      \"reversal_probability\": 0.6,\n      \"stage_reason\": \"Reversal likely as market overinterprets initial data, focusing on potential Fed policy shifts rather than immediate economic strength, or if data is not as strong as hoped.\",\n      \"invalidation_condition\": \"Continued upward momentum beyond the expected reversal point.\"\n    }\n  ]\n}",
+  "run_id": "STEP8-R2-e057ba70c884e0e618cf",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [
+    "299c-1cec-038c-dd7c",
+    "dd77-3f0b-0233-26ef",
+    "2aad-2ac9-2b01-2b55"
+  ],
+  "session_id": "US|2024-06-06|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}

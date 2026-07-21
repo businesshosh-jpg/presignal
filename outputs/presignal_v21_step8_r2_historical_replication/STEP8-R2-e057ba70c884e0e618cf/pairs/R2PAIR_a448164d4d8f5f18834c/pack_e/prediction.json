@@ -1,0 +1,53 @@
+{
+  "completion_tokens": 1000,
+  "confidence": 0.75,
+  "episode_id": "EP_BATCH_df82c1416aa58d9948d0",
+  "error_message": null,
+  "expected_initial_direction": "DOWN",
+  "expected_path_summary": "The ISM Non-Manufacturing PMI and its components for June are expected to show a slight slowdown in the services sector activity, potentially leading to a brief downward pressure on the USD. However, the overall economic outlook remains relatively stable, and the impact might be contained, with a possibility of a rebound or sideways movement later.",
+  "expected_reversal_flag": false,
+  "expected_reversal_horizon_min": 60,
+  "forecast_created_ts": "2026-07-20T18:28:40.183Z",
+  "forecast_cutoff_ts": "2024-07-03T04:50:00Z",
+  "information_arm": "FULL_CONTEXT",
+  "information_used": [
+    "ISM Non-Manufacturing PMI (Jun)",
+    "ISM Non-Manufacturing Business Activity (Jun)",
+    "ISM Non-Manufacturing Prices (Jun)",
+    "ISM Non-Manufacturing New Orders (Jun)",
+    "ISM Non-Manufacturing Employment (Jun)",
+    "DXY Index (US Dollar Index)",
+    "US Treasury yields (2Y, 10Y)",
+    "USDJPY recent price action and momentum"
+  ],
+  "invalidation_condition": "If the ISM Non-Manufacturing PMI and its key components significantly exceed consensus expectations, indicating stronger-than-expected services sector growth, the forecast for an initial downward USD move would be invalidated.",
+  "latency_ms": null,
+  "missing_information": [
+    "Fed Funds Futures Implied Probabilities",
+    "Inflation expectations (e.g., breakevens)",
+    "Market positioning data (e.g., COT report)",
+    "Implied volatility for USDJPY"
+  ],
+  "model": "gemini-2.5-flash-lite",
+  "no_signal_flag": false,
+  "no_signal_reason": null,
+  "object": "PREDICTION",
+  "pack_fingerprint": "sha256:9cc0e379287248e4505b68f89c4cad0ad54a18ac0ba006cdef10406bbc45a92e",
+  "pack_id": "PACK_E_f7197035a855e741b145",
+  "prediction_fingerprint": "sha256:dc6fe3c37f2c93b75ae0f5311dcffcab7b5e9af5b3aa0e380a41bc87a4501d07",
+  "prediction_id": "PRD_ed6dbb0b403e1b106c3b",
+  "prediction_target_id": "EP_BATCH_df82c1416aa58d9948d0",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "fd42-dc5a-9a8a-37d2",
+  "prompt_tokens": 33729,
+  "provider": "Gemini",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": null,\n  \"confidence\": 0.75,\n  \"expected_initial_direction\": \"DOWN\",\n  \"expected_reversal_flag\": false,\n  \"expected_reversal_horizon_min\": 60,\n  \"expected_path_summary\": \"The ISM Non-Manufacturing PMI and its components for June are expected to show a slight slowdown in the services sector activity, potentially leading to a brief downward pressure on the USD. However, the overall economic outlook remains relatively stable, and the impact might be contained, with a possibility of a rebound or sideways movement later.\",\n  \"information_used\": [\n    \"ISM Non-Manufacturing PMI (Jun)\",\n    \"ISM Non-Manufacturing Business Activity (Jun)\",\n    \"ISM Non-Manufacturing Prices (Jun)\",\n    \"ISM Non-Manufacturing New Orders (Jun)\",\n    \"ISM Non-Manufacturing Employment (Jun)\",\n    \"DXY Index (US Dollar Index)\",\n    \"US Treasury yields (2Y, 10Y)\",\n    \"USDJPY recent price action and momentum\"\n  ],\n  \"missing_information\": [\n    \"Fed Funds Futures Implied Probabilities\",\n    \"Inflation expectations (e.g., breakevens)\",\n    \"Market positioning data (e.g., COT report)\",\n    \"Implied volatility for USDJPY\"\n  ],\n  \"invalidation_condition\": \"If the ISM Non-Manufacturing PMI and its key components significantly exceed consensus expectations, indicating stronger-than-expected services sector growth, the forecast for an initial downward USD move would be invalidated.\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 2.5,\n      \"expected_pips_max\": 5.0,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.5,\n      \"reversal_probability\": 0.3,\n      \"stage_reason\": \"Initial reaction to potentially softer-than-expected ISM Non-Manufacturing data, particularly the PMI and Business Activity components, exerting downward pressure on USD.\",\n      \"invalidation_condition\": \"Stronger than expected PMI or component data, or a significant DXY rebound.\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 4.0,\n      \"expected_pips_max\": 7.0,\n      \"stage_confidence\": 0.65,\n      \"continuation_probability\": 0.4,\n      \"reversal_probability\": 0.4,\n      \"stage_reason\": \"Continued selling pressure as markets digest the details of the ISM report, with a focus on employment and prices, which might hint at underlying weaknesses or persistent inflation.\",\n      \"invalidation_condition\": \"Data indicating resilient growth or inflation, or a shift in broader market sentiment away from risk aversion.\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"FLAT\",\n      \"expected_pips_min\": 0,\n      \"expected_pips_max\": 0,\n      \"stage_confidence\": 0.6,\n      \"continuation_probability\": 0.6,\n      \"reversal_probability\": 0.4,\n      \"stage_reason\": \"Market consolidating as it awaits further catalysts. The initial reaction has played out, and traders are assessing the broader implications for Fed policy and the US economic trajectory.\",\n      \"invalidation_condition\": \"Significant new data releases or shifts in geopolitical events.\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 3.0,\n      \"expected_pips_max\": 6.0,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.5,\n      \"reversal_probability\": 0.5,\n      \"stage_reason\": \"Potential reversal as the market re-evaluates the ISM data in the context of overall economic resilience, or if other market factors (like DXY strengthening) begin to dominate.\",\n      \"invalidation_condition\": \"Evidence of a significant economic downturn or a sharp deterioration in risk sentiment.\"\n    }\n  ]\n}",
+  "run_id": "STEP8-R2-e057ba70c884e0e618cf",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [
+    "83f0-b330-11b0-9f70"
+  ],
+  "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}

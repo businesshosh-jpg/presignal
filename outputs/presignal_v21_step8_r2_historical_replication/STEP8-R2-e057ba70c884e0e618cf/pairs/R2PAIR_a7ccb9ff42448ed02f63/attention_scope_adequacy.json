@@ -1,0 +1,35 @@
+{
+  "decision": "ADEQUATE",
+  "dominant_member_event_ids": [
+    "4617-8f2b-2153-fc8f"
+  ],
+  "dominant_member_identifiable": true,
+  "episode_id": "EP_EVENT_d6fce9c8901236c9cdd2",
+  "episode_selected_as": "FORECAST",
+  "essential_episode_attention_concept_missing": [],
+  "joint_same_time_interpretation_supported": true,
+  "member_attention_evidence": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 1,
+      "attention_reason": "Fed speeches often influence monetary policy expectations.",
+      "attention_run_id": "ATTENTION_bbb84bc17172c66dfb9c",
+      "confidence": "high",
+      "driver_role": "primary",
+      "event_id": "4617-8f2b-2153-fc8f",
+      "expected_market_channel": "usd_direction",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Fed Waller Speech",
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "session_id": "US|2024-06-24|CUSTOM_CONFIG_WINDOW"
+    }
+  ],
+  "member_labels_and_ranks_available": true,
+  "model": "gpt-4o-mini-2024-07-18",
+  "provider": "OpenAI",
+  "rationale": "Preserved member labels, ranks, reasons, channels, and exact membership provide sufficient causal orientation without treating structural roles as causal truth.",
+  "reasons_and_channels_useful": true,
+  "reinforcement_or_conflict_interpretable": true,
+  "would_episode_attention_field_materially_change_task": false
+}

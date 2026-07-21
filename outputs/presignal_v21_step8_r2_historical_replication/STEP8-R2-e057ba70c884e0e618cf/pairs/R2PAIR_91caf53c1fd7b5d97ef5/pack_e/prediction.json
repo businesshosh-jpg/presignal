@@ -1,0 +1,43 @@
+{
+  "completion_tokens": 558,
+  "confidence": 0.85,
+  "episode_id": "EP_BATCH_4d7f79cce0f991b2673c",
+  "error_message": null,
+  "expected_initial_direction": "UP",
+  "expected_path_summary": "USDJPY projected to start with upward momentum influenced by strong labor market indicators before a potential reversal.",
+  "expected_reversal_flag": true,
+  "expected_reversal_horizon_min": 30,
+  "forecast_created_ts": "2026-07-20T17:31:04.898Z",
+  "forecast_cutoff_ts": "2024-06-04T05:50:00Z",
+  "information_arm": "FULL_CONTEXT",
+  "information_used": [
+    "JOLTs Job Openings",
+    "Factory Orders MoM"
+  ],
+  "invalidation_condition": "USDJPY drops below 156.00",
+  "latency_ms": null,
+  "missing_information": [
+    "Current volatility metrics",
+    "Market positioning and sentiment data"
+  ],
+  "model": "gpt-4o-mini-2024-07-18",
+  "no_signal_flag": false,
+  "no_signal_reason": null,
+  "object": "PREDICTION",
+  "pack_fingerprint": "sha256:b8c5cca73c0a1fd66608afb270ca77ec7216499b94cc2d6f52759dcfad804430",
+  "pack_id": "PACK_E_3aad20d0d5562520a6db",
+  "prediction_fingerprint": "sha256:0a1b272b592e0e8d0166e84063da918f90df95e8578e06eb72fe0b0f9faef3ec",
+  "prediction_id": "PRD_401251301b028439c4aa",
+  "prediction_target_id": "EP_BATCH_4d7f79cce0f991b2673c",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "2625-efe1-8359-e08d",
+  "prompt_tokens": 55067,
+  "provider": "OpenAI",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": null,\n  \"confidence\": 0.85,\n  \"expected_initial_direction\": \"UP\",\n  \"expected_reversal_flag\": true,\n  \"expected_reversal_horizon_min\": 30,\n  \"expected_path_summary\": \"USDJPY projected to start with upward momentum influenced by strong labor market indicators before a potential reversal.\",\n  \"information_used\": [\"JOLTs Job Openings\", \"Factory Orders MoM\"],\n  \"missing_information\": [\"Current volatility metrics\", \"Market positioning and sentiment data\"],\n  \"invalidation_condition\": \"USDJPY drops below 156.00\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 15,\n      \"expected_pips_max\": 25,\n      \"stage_confidence\": 0.8,\n      \"continuation_probability\": 0.7,\n      \"reversal_probability\": 0.3,\n      \"stage_reason\": \"Initial upward response to strong job openings data.\",\n      \"invalidation_condition\": \"Drops below 156.00\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 30,\n      \"expected_pips_max\": 50,\n      \"stage_confidence\": 0.75,\n      \"continuation_probability\": 0.65,\n      \"reversal_probability\": 0.35,\n      \"stage_reason\": \"Continued strength from labor market indicators.\",\n      \"invalidation_condition\": \"Falls under 156.10\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"FLAT\",\n      \"expected_pips_min\": 0,\n      \"expected_pips_max\": 0,\n      \"stage_confidence\": 0.6,\n      \"continuation_probability\": 0.5,\n      \"reversal_probability\": 0.5,\n      \"stage_reason\": \"Anticipation of markets digesting data leading to volatility.\",\n      \"invalidation_condition\": \"Movement below 156.20\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 20,\n      \"expected_pips_max\": 35,\n      \"stage_confidence\": 0.65,\n      \"continuation_probability\": 0.4,\n      \"reversal_probability\": 0.6,\n      \"stage_reason\": \"Potential reversal signaling from previous gains and profit-taking.\",\n      \"invalidation_condition\": \"Surpasses 156.60\"\n    }\n  ]\n}",
+  "run_id": "STEP8-R2-e057ba70c884e0e618cf",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [],
+  "session_id": "US|2024-06-04|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}

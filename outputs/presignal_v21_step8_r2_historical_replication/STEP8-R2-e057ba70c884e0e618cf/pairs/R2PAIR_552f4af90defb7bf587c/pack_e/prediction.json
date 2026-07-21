@@ -1,0 +1,47 @@
+{
+  "completion_tokens": 549,
+  "confidence": 0.75,
+  "episode_id": "EP_BATCH_7154bda73b1042302e26",
+  "error_message": null,
+  "expected_initial_direction": "UP",
+  "expected_path_summary": "Initial upward movement expected, followed by reinforced stability.",
+  "expected_reversal_flag": false,
+  "expected_reversal_horizon_min": null,
+  "forecast_created_ts": "2026-07-20T16:50:14.907Z",
+  "forecast_cutoff_ts": "2024-05-23T12:10:00Z",
+  "information_arm": "FULL_CONTEXT",
+  "information_used": [
+    "Initial Jobless Claims",
+    "Chicago Fed National Activity Index",
+    "Continuing Jobless Claims",
+    "Jobless Claims 4-Week Average"
+  ],
+  "invalidation_condition": "Market data deviates significantly from expected jobless claims.",
+  "latency_ms": null,
+  "missing_information": [
+    "Fed expectations",
+    "Treasury yields"
+  ],
+  "model": "gpt-4o-mini-2024-07-18",
+  "no_signal_flag": false,
+  "no_signal_reason": null,
+  "object": "PREDICTION",
+  "pack_fingerprint": "sha256:87e7d4acc7d23153b5b96f89a7a507b8b4a1eb3ffdc08dd7806d6456bd4fd6e6",
+  "pack_id": "PACK_E_391d27aac41313c9859a",
+  "prediction_fingerprint": "sha256:47f73c1d59fa1b0a8fc644468d3980a92ab987f4c76b3fad9f5f13ccca3d8bfc",
+  "prediction_id": "PRD_fd7037f8675da9bc801a",
+  "prediction_target_id": "EP_BATCH_7154bda73b1042302e26",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "be97-adab-8bd3-590f",
+  "prompt_tokens": 54721,
+  "provider": "OpenAI",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": null,\n  \"confidence\": 0.75,\n  \"expected_initial_direction\": \"UP\",\n  \"expected_reversal_flag\": false,\n  \"expected_reversal_horizon_min\": null,\n  \"expected_path_summary\": \"Initial upward movement expected, followed by reinforced stability.\",\n  \"information_used\": [\"Initial Jobless Claims\", \"Chicago Fed National Activity Index\", \"Continuing Jobless Claims\", \"Jobless Claims 4-Week Average\"],\n  \"missing_information\": [\"Fed expectations\", \"Treasury yields\"],\n  \"invalidation_condition\": \"Market data deviates significantly from expected jobless claims.\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 10,\n      \"expected_pips_max\": 20,\n      \"stage_confidence\": 0.8,\n      \"continuation_probability\": 0.7,\n      \"reversal_probability\": 0.3,\n      \"stage_reason\": \"Strong labor market signals indicate upward bias.\",\n      \"invalidation_condition\": \"Jobless claims exceed forecast.\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"FLAT\",\n      \"expected_pips_min\": 0,\n      \"expected_pips_max\": 0,\n      \"stage_confidence\": 0.6,\n      \"continuation_probability\": 0.5,\n      \"reversal_probability\": 0.4,\n      \"stage_reason\": \"Market stabilization expected after initial move.\",\n      \"invalidation_condition\": \"Market sentiment shift towards risk-off.\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 15,\n      \"stage_confidence\": 0.75,\n      \"continuation_probability\": 0.6,\n      \"reversal_probability\": 0.3,\n      \"stage_reason\": \"Positive economic data expected to strengthen dollar.\",\n      \"invalidation_condition\": \"Negative economic indicators surface.\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"FLAT\",\n      \"expected_pips_min\": 0,\n      \"expected_pips_max\": 0,\n      \"stage_confidence\": 0.5,\n      \"continuation_probability\": 0.5,\n      \"reversal_probability\": 0.4,\n      \"stage_reason\": \"Potential consolidation phase as markets adjust.\",\n      \"invalidation_condition\": \"Unexpected high volatility.\"\n    }\n  ]\n}",
+  "run_id": "STEP8-R2-e057ba70c884e0e618cf",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [
+    "51f0-2930-d7b0-5d70"
+  ],
+  "session_id": "US|2024-05-23|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}

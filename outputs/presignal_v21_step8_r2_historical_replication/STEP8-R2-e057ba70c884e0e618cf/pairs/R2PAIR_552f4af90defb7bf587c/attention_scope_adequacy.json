@@ -1,0 +1,82 @@
+{
+  "decision": "INADEQUATE",
+  "dominant_member_event_ids": [
+    "be97-adab-8bd3-590f"
+  ],
+  "dominant_member_identifiable": true,
+  "episode_id": "EP_BATCH_7154bda73b1042302e26",
+  "episode_selected_as": "FORECAST",
+  "essential_episode_attention_concept_missing": [
+    "complete_member_level_attention_evidence"
+  ],
+  "joint_same_time_interpretation_supported": true,
+  "member_attention_evidence": [
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": 3,
+      "attention_reason": "Chicago Fed index gives a broader economic pulse, may influence market sentiment.",
+      "attention_run_id": "ATTENTION_9a69909555fde72aa133",
+      "confidence": 0.65,
+      "driver_role": "secondary",
+      "event_id": "51f0-2930-d7b0-5d70",
+      "expected_market_channel": "growth_outlook",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Chicago Fed National Activity Index (Apr)",
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "session_id": "US|2024-05-23|CUSTOM_CONFIG_WINDOW"
+    },
+    {
+      "attention_label": null,
+      "attention_rank": null,
+      "attention_reason": null,
+      "attention_run_id": "ATTENTION_9a69909555fde72aa133",
+      "confidence": null,
+      "driver_role": null,
+      "event_id": "9a16-d31e-452e-f046",
+      "expected_market_channel": null,
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Continuing Jobless Claims (May/11)",
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "session_id": "US|2024-05-23|CUSTOM_CONFIG_WINDOW"
+    },
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 4,
+      "attention_reason": "Initial jobless claims are crucial for labor market health, a key economic indicator.",
+      "attention_run_id": "ATTENTION_9a69909555fde72aa133",
+      "confidence": 0.8,
+      "driver_role": "primary",
+      "event_id": "be97-adab-8bd3-590f",
+      "expected_market_channel": "labor_market",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Initial Jobless Claims (May/18)",
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "session_id": "US|2024-05-23|CUSTOM_CONFIG_WINDOW"
+    },
+    {
+      "attention_label": "WATCHLIST",
+      "attention_rank": 5,
+      "attention_reason": "4-week jobless claims average aids in understanding trends, could be relevant.",
+      "attention_run_id": "ATTENTION_9a69909555fde72aa133",
+      "confidence": 0.55,
+      "driver_role": "watch",
+      "event_id": "c263-df07-184f-6e3b",
+      "expected_market_channel": "labor_market",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Jobless Claims 4-Week Average (May/18)",
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "session_id": "US|2024-05-23|CUSTOM_CONFIG_WINDOW"
+    }
+  ],
+  "member_labels_and_ranks_available": true,
+  "model": "gpt-4o-mini-2024-07-18",
+  "provider": "OpenAI",
+  "rationale": "A member lacks preserved original Attention orientation; a forecast would require unsupported inference.",
+  "reasons_and_channels_useful": false,
+  "reinforcement_or_conflict_interpretable": true,
+  "would_episode_attention_field_materially_change_task": true
+}

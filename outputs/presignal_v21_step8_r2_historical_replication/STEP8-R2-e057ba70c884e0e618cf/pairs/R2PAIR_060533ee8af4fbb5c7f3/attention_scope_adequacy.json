@@ -1,0 +1,35 @@
+{
+  "decision": "ADEQUATE",
+  "dominant_member_event_ids": [
+    "315d-81b9-2271-1385"
+  ],
+  "dominant_member_identifiable": true,
+  "episode_id": "EP_EVENT_9057e45c0a3429423d83",
+  "episode_selected_as": "FORECAST",
+  "essential_episode_attention_concept_missing": [],
+  "joint_same_time_interpretation_supported": true,
+  "member_attention_evidence": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 2,
+      "attention_reason": "Consumer confidence can significantly influence USDJPY through sentiment.",
+      "attention_run_id": "ATTENTION_33e4ce67aaa18e027d45",
+      "confidence": "high",
+      "driver_role": "primary",
+      "event_id": "315d-81b9-2271-1385",
+      "expected_market_channel": "usd_direction",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "CB Consumer Confidence (May)",
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "session_id": "US|2024-05-28|CUSTOM_CONFIG_WINDOW"
+    }
+  ],
+  "member_labels_and_ranks_available": true,
+  "model": "gpt-4o-mini-2024-07-18",
+  "provider": "OpenAI",
+  "rationale": "Preserved member labels, ranks, reasons, channels, and exact membership provide sufficient causal orientation without treating structural roles as causal truth.",
+  "reasons_and_channels_useful": true,
+  "reinforcement_or_conflict_interpretable": true,
+  "would_episode_attention_field_materially_change_task": false
+}

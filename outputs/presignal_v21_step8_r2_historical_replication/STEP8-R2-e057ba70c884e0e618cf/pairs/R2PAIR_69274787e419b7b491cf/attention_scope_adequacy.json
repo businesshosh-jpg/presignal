@@ -1,0 +1,80 @@
+{
+  "decision": "ADEQUATE",
+  "dominant_member_event_ids": [
+    "2625-efe1-8359-e08d"
+  ],
+  "dominant_member_identifiable": true,
+  "episode_id": "EP_BATCH_4d7f79cce0f991b2673c",
+  "episode_selected_as": "FORECAST",
+  "essential_episode_attention_concept_missing": [],
+  "joint_same_time_interpretation_supported": true,
+  "member_attention_evidence": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 1,
+      "attention_reason": "JOLTs Job Openings are a critical labor market indicator, highly influential on Fed policy expectations and USDJPY.",
+      "attention_run_id": "ATTENTION_150c0c9c2e52ca38aa0a",
+      "confidence": 0.9,
+      "driver_role": "primary",
+      "event_id": "2625-efe1-8359-e08d",
+      "expected_market_channel": "labor_market",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "JOLTs Job Openings (Apr)",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-06-04|CUSTOM_CONFIG_WINDOW"
+    },
+    {
+      "attention_label": "CONTEXT_ONLY",
+      "attention_rank": 4,
+      "attention_reason": "Excluding transportation provides a nuanced view of durable goods, less impact than headline orders.",
+      "attention_run_id": "ATTENTION_150c0c9c2e52ca38aa0a",
+      "confidence": 0.7,
+      "driver_role": "context",
+      "event_id": "a0e1-2b6d-4085-e029",
+      "expected_market_channel": "growth_outlook",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Factory Orders ex Transportation (Apr)",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-06-04|CUSTOM_CONFIG_WINDOW"
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": 2,
+      "attention_reason": "Job quits reflect labor market tightness and worker confidence, influencing Fed outlook and USDJPY.",
+      "attention_run_id": "ATTENTION_150c0c9c2e52ca38aa0a",
+      "confidence": 0.75,
+      "driver_role": "secondary",
+      "event_id": "bb56-835e-136e-6b86",
+      "expected_market_channel": "labor_market",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "JOLTs Job Quits (Apr)",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-06-04|CUSTOM_CONFIG_WINDOW"
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": 2,
+      "attention_reason": "Factory orders are a key manufacturing indicator impacting growth outlook, potentially moving USDJPY.",
+      "attention_run_id": "ATTENTION_150c0c9c2e52ca38aa0a",
+      "confidence": 0.75,
+      "driver_role": "secondary",
+      "event_id": "df13-53f7-3dbf-9c6b",
+      "expected_market_channel": "growth_outlook",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Factory Orders MoM (Apr)",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-06-04|CUSTOM_CONFIG_WINDOW"
+    }
+  ],
+  "member_labels_and_ranks_available": true,
+  "model": "gemini-2.5-flash-lite",
+  "provider": "Gemini",
+  "rationale": "Preserved member labels, ranks, reasons, channels, and exact membership provide sufficient causal orientation without treating structural roles as causal truth.",
+  "reasons_and_channels_useful": true,
+  "reinforcement_or_conflict_interpretable": true,
+  "would_episode_attention_field_materially_change_task": false
+}

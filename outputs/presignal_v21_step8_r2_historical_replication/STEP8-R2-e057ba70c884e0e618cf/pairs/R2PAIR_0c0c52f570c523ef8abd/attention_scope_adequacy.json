@@ -1,0 +1,35 @@
+{
+  "decision": "ADEQUATE",
+  "dominant_member_event_ids": [
+    "1453-0837-efff-cbab"
+  ],
+  "dominant_member_identifiable": true,
+  "episode_id": "EP_EVENT_4c7017820e55586a2667",
+  "episode_selected_as": "FORECAST",
+  "essential_episode_attention_concept_missing": [],
+  "joint_same_time_interpretation_supported": true,
+  "member_attention_evidence": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 1,
+      "attention_reason": "Michigan 1-year inflation expectations directly impact inflation outlook and Fed policy, influencing USDJPY.",
+      "attention_run_id": "ATTENTION_8fa9a0c3fa837086818d",
+      "confidence": "high",
+      "driver_role": "primary",
+      "event_id": "1453-0837-efff-cbab",
+      "expected_market_channel": "inflation_expectations",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Michigan 1 Year Inflation Expectations (May)",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-05-24|CUSTOM_CONFIG_WINDOW"
+    }
+  ],
+  "member_labels_and_ranks_available": true,
+  "model": "gemini-2.5-flash-lite",
+  "provider": "Gemini",
+  "rationale": "Preserved member labels, ranks, reasons, channels, and exact membership provide sufficient causal orientation without treating structural roles as causal truth.",
+  "reasons_and_channels_useful": true,
+  "reinforcement_or_conflict_interpretable": true,
+  "would_episode_attention_field_materially_change_task": false
+}

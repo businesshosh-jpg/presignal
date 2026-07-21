@@ -1,0 +1,46 @@
+{
+  "completion_tokens": 568,
+  "confidence": 0.8,
+  "episode_id": "EP_BATCH_b60ae087ec3a120ecd6e",
+  "error_message": null,
+  "expected_initial_direction": "UP",
+  "expected_path_summary": "Initial upward movement with potential reversal expected around 30 minutes.",
+  "expected_reversal_flag": true,
+  "expected_reversal_horizon_min": 30,
+  "forecast_created_ts": "2026-07-20T17:40:32.699Z",
+  "forecast_cutoff_ts": "2024-06-07T05:20:00Z",
+  "information_arm": "BASELINE",
+  "information_used": [
+    "Non Farm Payrolls (May)",
+    "Unemployment Rate (May)"
+  ],
+  "invalidation_condition": "Direction changes to FLAT or DOWN with significant volume.",
+  "latency_ms": null,
+  "missing_information": [
+    "Current Treasury Yields",
+    "Fed Interest Rate Expectations",
+    "DXY Trends"
+  ],
+  "model": "gpt-4o-mini-2024-07-18",
+  "no_signal_flag": false,
+  "no_signal_reason": "",
+  "object": "PREDICTION",
+  "pack_fingerprint": null,
+  "pack_id": "BASELINE_NO_PACK",
+  "prediction_fingerprint": "sha256:4926f58469bec83e2ad46e46db3eff7d5ec0f5030ba5af8d6647b918eb17a275",
+  "prediction_id": "PRD_255c975c3e55841815a5",
+  "prediction_target_id": "EP_BATCH_b60ae087ec3a120ecd6e",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "0450-3810-9f90-3ad0",
+  "prompt_tokens": 45650,
+  "provider": "OpenAI",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": \"\",\n  \"confidence\": 0.8,\n  \"expected_initial_direction\": \"UP\",\n  \"expected_reversal_flag\": true,\n  \"expected_reversal_horizon_min\": 30,\n  \"expected_path_summary\": \"Initial upward movement with potential reversal expected around 30 minutes.\",\n  \"information_used\": [\n    \"Non Farm Payrolls (May)\",\n    \"Unemployment Rate (May)\"\n  ],\n  \"missing_information\": [\n    \"Current Treasury Yields\",\n    \"Fed Interest Rate Expectations\",\n    \"DXY Trends\"\n  ],\n  \"invalidation_condition\": \"Direction changes to FLAT or DOWN with significant volume.\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 10,\n      \"stage_confidence\": 0.85,\n      \"continuation_probability\": 0.7,\n      \"reversal_probability\": 0.3,\n      \"stage_reason\": \"Positive market sentiment from strong labor data.\",\n      \"invalidation_condition\": \"Any significant downward movement.\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 10,\n      \"expected_pips_max\": 15,\n      \"stage_confidence\": 0.75,\n      \"continuation_probability\": 0.65,\n      \"reversal_probability\": 0.35,\n      \"stage_reason\": \"Continued positive labor indicators bolster bullish sentiment.\",\n      \"invalidation_condition\": \"Shift to bearish news impacting market sentiment.\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"FLAT\",\n      \"expected_pips_min\": 0,\n      \"expected_pips_max\": 0,\n      \"stage_confidence\": 0.6,\n      \"continuation_probability\": 0.5,\n      \"reversal_probability\": 0.5,\n      \"stage_reason\": \"Market consolidates as it awaits more economic data.\",\n      \"invalidation_condition\": \"Trace returns back to downward momentum.\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 10,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.7,\n      \"reversal_probability\": 0.3,\n      \"stage_reason\": \"Despite potential flatness, long-term outlook remains bullish.\",\n      \"invalidation_condition\": \"Reversal signs manifest sooner than expected.\"\n    }\n  ]\n}",
+  "run_id": "STEP8-R2-e057ba70c884e0e618cf",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [
+    "cc46-5f8e-861e-3ff6"
+  ],
+  "session_id": "US|2024-06-07|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}

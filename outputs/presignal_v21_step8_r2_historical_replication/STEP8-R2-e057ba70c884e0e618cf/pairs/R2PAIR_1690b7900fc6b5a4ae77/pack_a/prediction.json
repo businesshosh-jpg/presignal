@@ -1,0 +1,96 @@
+{
+  "completion_tokens": 1399,
+  "confidence": 0.85,
+  "episode_id": "EP_BATCH_b60ae087ec3a120ecd6e",
+  "error_message": null,
+  "expected_initial_direction": "UP",
+  "expected_path_summary": "The forecast anticipates an initial upward movement in USDJPY driven by strong US labor market data, potentially leading to a Federal Reserve rate hike expectation. This could be followed by a reversal as markets digest the data and consider the broader economic implications or potential for JPY strength.",
+  "expected_reversal_flag": true,
+  "expected_reversal_horizon_min": 15,
+  "forecast_created_ts": "2026-07-20T17:39:34.116Z",
+  "forecast_cutoff_ts": "2024-06-07T05:20:00Z",
+  "information_arm": "BASELINE",
+  "information_used": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 19,
+      "attention_reason": "Nonfarm Payrolls is a high-impact labor market report crucial for Fed policy and USDJPY direction.",
+      "driver_role": "primary",
+      "indicator_name": "Non Farm Payrolls (May)"
+    },
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 4,
+      "attention_reason": "Monthly average hourly earnings are a key component of wage growth and inflation, influencing Fed policy.",
+      "driver_role": "primary",
+      "indicator_name": "Average Hourly Earnings MoM (May)"
+    },
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 22,
+      "attention_reason": "The Unemployment Rate is a key indicator for the labor market's health, influencing Fed policy and USDJPY.",
+      "driver_role": "primary",
+      "indicator_name": "Unemployment Rate (May)"
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": 20,
+      "attention_reason": "Nonfarm Private Payrolls provide a more focused view on job growth ex-government, impacting USDJPY.",
+      "driver_role": "secondary",
+      "indicator_name": "Nonfarm Payrolls Private (May)"
+    },
+    {
+      "attention_label": "SECONDARY_DRIVER",
+      "attention_rank": 21,
+      "attention_reason": "The participation rate indicates labor force engagement, providing context to the unemployment rate.",
+      "driver_role": "secondary",
+      "indicator_name": "Participation Rate (May)"
+    },
+    {
+      "attention_label": "WATCHLIST",
+      "attention_rank": 9,
+      "attention_reason": "Oil prices can influence inflation expectations and risk sentiment, indirectly affecting USDJPY.",
+      "driver_role": "watch",
+      "indicator_name": "CFTC Crude Oil speculative net positions"
+    },
+    {
+      "attention_label": "WATCHLIST",
+      "attention_rank": 10,
+      "attention_reason": "Gold positions can impact risk sentiment, which may indirectly affect USDJPY.",
+      "driver_role": "watch",
+      "indicator_name": "CFTC Gold Speculative net positions"
+    },
+    {
+      "attention_label": "CONTEXT_ONLY",
+      "attention_rank": 5,
+      "attention_reason": "Average weekly hours provide insight into labor utilization but are less impactful than payrolls or wages.",
+      "driver_role": "context",
+      "indicator_name": "Average Weekly Hours (May)"
+    }
+  ],
+  "invalidation_condition": "If the US labor market data is significantly weaker than expected, or if there are strong indications of immediate Bank of Japan intervention.",
+  "latency_ms": null,
+  "missing_information": [],
+  "model": "gemini-2.5-flash-lite",
+  "no_signal_flag": false,
+  "no_signal_reason": null,
+  "object": "PREDICTION",
+  "pack_fingerprint": null,
+  "pack_id": "BASELINE_NO_PACK",
+  "prediction_fingerprint": "sha256:9e4f9a9e920b7283ef9c13eb3f4020a2f0ee98bcedff99f8e5bd7cd896da9d32",
+  "prediction_id": "PRD_df9917f445bc0bd0a5d0",
+  "prediction_target_id": "EP_BATCH_b60ae087ec3a120ecd6e",
+  "prediction_target_type": "EVENT_EPISODE",
+  "primary_event_id": "0450-3810-9f90-3ad0",
+  "prompt_tokens": 9912,
+  "provider": "Gemini",
+  "raw_output": "{\n  \"no_signal_flag\": false,\n  \"no_signal_reason\": null,\n  \"confidence\": 0.85,\n  \"expected_initial_direction\": \"UP\",\n  \"expected_reversal_flag\": true,\n  \"expected_reversal_horizon_min\": 15,\n  \"expected_path_summary\": \"The forecast anticipates an initial upward movement in USDJPY driven by strong US labor market data, potentially leading to a Federal Reserve rate hike expectation. This could be followed by a reversal as markets digest the data and consider the broader economic implications or potential for JPY strength.\",\n  \"information_used\": [\n    {\n      \"attention_label\": \"PRIMARY_DRIVER\",\n      \"attention_rank\": 19,\n      \"attention_reason\": \"Nonfarm Payrolls is a high-impact labor market report crucial for Fed policy and USDJPY direction.\",\n      \"driver_role\": \"primary\",\n      \"indicator_name\": \"Non Farm Payrolls (May)\"\n    },\n    {\n      \"attention_label\": \"PRIMARY_DRIVER\",\n      \"attention_rank\": 4,\n      \"attention_reason\": \"Monthly average hourly earnings are a key component of wage growth and inflation, influencing Fed policy.\",\n      \"driver_role\": \"primary\",\n      \"indicator_name\": \"Average Hourly Earnings MoM (May)\"\n    },\n    {\n      \"attention_label\": \"PRIMARY_DRIVER\",\n      \"attention_rank\": 22,\n      \"attention_reason\": \"The Unemployment Rate is a key indicator for the labor market's health, influencing Fed policy and USDJPY.\",\n      \"driver_role\": \"primary\",\n      \"indicator_name\": \"Unemployment Rate (May)\"\n    },\n    {\n      \"attention_label\": \"SECONDARY_DRIVER\",\n      \"attention_rank\": 20,\n      \"attention_reason\": \"Nonfarm Private Payrolls provide a more focused view on job growth ex-government, impacting USDJPY.\",\n      \"driver_role\": \"secondary\",\n      \"indicator_name\": \"Nonfarm Payrolls Private (May)\"\n    },\n    {\n      \"attention_label\": \"SECONDARY_DRIVER\",\n      \"attention_rank\": 21,\n      \"attention_reason\": \"The participation rate indicates labor force engagement, providing context to the unemployment rate.\",\n      \"driver_role\": \"secondary\",\n      \"indicator_name\": \"Participation Rate (May)\"\n    },\n    {\n      \"attention_label\": \"WATCHLIST\",\n      \"attention_rank\": 9,\n      \"attention_reason\": \"Oil prices can influence inflation expectations and risk sentiment, indirectly affecting USDJPY.\",\n      \"driver_role\": \"watch\",\n      \"indicator_name\": \"CFTC Crude Oil speculative net positions\"\n    },\n    {\n      \"attention_label\": \"WATCHLIST\",\n      \"attention_rank\": 10,\n      \"attention_reason\": \"Gold positions can impact risk sentiment, which may indirectly affect USDJPY.\",\n      \"driver_role\": \"watch\",\n      \"indicator_name\": \"CFTC Gold Speculative net positions\"\n    },\n    {\n      \"attention_label\": \"CONTEXT_ONLY\",\n      \"attention_rank\": 5,\n      \"attention_reason\": \"Average weekly hours provide insight into labor utilization but are less impactful than payrolls or wages.\",\n      \"driver_role\": \"context\",\n      \"indicator_name\": \"Average Weekly Hours (May)\"\n    }\n  ],\n  \"missing_information\": [],\n  \"invalidation_condition\": \"If the US labor market data is significantly weaker than expected, or if there are strong indications of immediate Bank of Japan intervention.\",\n  \"path\": [\n    {\n      \"horizon_min\": 5,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 10,\n      \"stage_confidence\": 0.8,\n      \"continuation_probability\": 0.7,\n      \"reversal_probability\": 0.3,\n      \"stage_reason\": \"Initial positive reaction to strong US labor data (NFP, AHE) reinforcing Fed hawkishness.\",\n      \"invalidation_condition\": \"Data significantly misses expectations or BoJ signals intervention.\"\n    },\n    {\n      \"horizon_min\": 15,\n      \"expected_direction\": \"UP\",\n      \"expected_pips_min\": 10,\n      \"expected_pips_max\": 20,\n      \"stage_confidence\": 0.75,\n      \"continuation_probability\": 0.6,\n      \"reversal_probability\": 0.4,\n      \"stage_reason\": \"Sustained upward momentum as markets price in Fed policy implications and assess wage growth.\",\n      \"invalidation_condition\": \"Weakening risk sentiment or shift in Fed communication.\"\n    },\n    {\n      \"horizon_min\": 30,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 5,\n      \"expected_pips_max\": 15,\n      \"stage_confidence\": 0.7,\n      \"continuation_probability\": 0.4,\n      \"reversal_probability\": 0.6,\n      \"stage_reason\": \"Potential reversal as markets digest data, consider inflation outlook, or anticipate JPY buying if BoJ remains passive.\",\n      \"invalidation_condition\": \"Further strong US data or hawkish Fed commentary.\"\n    },\n    {\n      \"horizon_min\": 60,\n      \"expected_direction\": \"DOWN\",\n      \"expected_pips_min\": 10,\n      \"expected_pips_max\": 25,\n      \"stage_confidence\": 0.65,\n      \"continuation_probability\": 0.35,\n      \"reversal_probability\": 0.65,\n      \"stage_reason\": \"Consolidation or continued downward pressure as focus shifts to broader economic health and interest rate differentials.\",\n      \"invalidation_condition\": \"Unexpected shifts in monetary policy outlook for either Fed or BoJ.\"\n    }\n  ]\n}",
+  "run_id": "STEP8-R2-e057ba70c884e0e618cf",
+  "schema_version": "2.1.0",
+  "secondary_event_ids": [
+    "cc46-5f8e-861e-3ff6"
+  ],
+  "session_id": "US|2024-06-07|CUSTOM_CONFIG_WINDOW",
+  "status": "VALID",
+  "system_version": "presignal_v2.1"
+}

@@ -27,6 +27,14 @@ def accepted_counts(records:list[dict[str,Any]])->tuple[int,int]:
   sum(x.get('completion') in {'COMPLETE_PAIRED','INCOMPLETE_PACK_E'} for x in records),
   sum(x.get('completion') in {'COMPLETE_PAIRED','INCOMPLETE_PACK_A'} for x in records),
  )
+def unique_records(records:list[dict[str,Any]])->list[dict[str,Any]]:
+ """Preserve the first immutable pair record if a resumed invocation replays it."""
+ seen=set(); result=[]
+ for record in records:
+  identity=record.get('pair_id')
+  if not identity or identity not in seen:
+   result.append(record); seen.add(identity)
+ return result
 def complete_episode_count(records:list[dict[str,Any]])->int:
  return len({x['episode_id'] for x in records if x.get('completion')=='COMPLETE_PAIRED'})
 def mcnemar(a:int,e:int)->float:
@@ -46,7 +54,8 @@ def analyze(records:list[dict[str,Any]])->dict[str,Any]:
  # preregistered fixed-seed sign flips and never treat provider rows as independent.
  masks=range(possible) if possible<=65536 else (random.Random(20260721).getrandbits(len(episode_ids)) for _ in range(100000))
  permutations=[sum((-1 if (mask>>index)&1 else 1)*sum(clusters[eid]) for index,eid in enumerate(episode_ids))/n for mask in masks]
- p=(sum(abs(x)>=abs(observed)-1e-12 for x in permutations)/len(permutations) if permutations and observed is not None else None)
+ extreme=sum(abs(x)>=abs(observed)-1e-12 for x in permutations)
+ p=((extreme/len(permutations)) if possible<=65536 else ((extreme+1)/(len(permutations)+1))) if permutations and observed is not None else None
  horizons={}
  for horizon in (5,15,30,60):
   a=sum(ok(x,'pack_a',horizon) for x in complete); e=sum(ok(x,'pack_e',horizon) for x in complete)
@@ -89,14 +98,14 @@ def execute(*, parent_run:Path, max_new:int=CEILING-80, dry_run:bool=False)->dic
  existing_continued=rows(continued_path) if continued_path.exists() else []
  existing_results_path=out/'continued_forecast_results.jsonl'
  original_records=rows(parent_run/'forecast_results.jsonl')
- all_records=rows(existing_results_path) if existing_results_path.exists() else list(original_records)
+ all_records=unique_records(rows(existing_results_path) if existing_results_path.exists() else list(original_records))
  existing_checkpoints=rows(out/'progress_checkpoints.jsonl') if (out/'progress_checkpoints.jsonl').exists() else []
  write(out/'continuation_manifest.json',{'parent_run_id':parent_run.name,'target_unique_complete_episodes':TARGET,'cumulative_ceiling':CEILING,'canonical_order':['scheduled_release_ts','session_id','episode_id'],'base_execution_population_fingerprint':read(parent_run/'frozen_execution_population.json')['execution_population_fingerprint'],'existing_additional_episodes':len(existing_continued),'invocation_population_fingerprint':parent.sha256(ordered),'planned_additional_episodes_this_invocation':len(ordered),'dry_run':dry_run})
  processed=len(existing_continued); checkpoints=list(existing_checkpoints); newly=[]
  for episode in ordered:
   if dry_run: result={'records':[]}
   else: result=parent.execute(parent_run,[episode])
-  all_records.extend(result['records']); newly.append(episode); processed+=1
+  all_records=unique_records(all_records+result['records']); newly.append(episode); processed+=1
   if complete_episode_count(all_records)>=TARGET:break
   if processed%CHECKPOINT==0:
    a,e=accepted_counts(all_records)

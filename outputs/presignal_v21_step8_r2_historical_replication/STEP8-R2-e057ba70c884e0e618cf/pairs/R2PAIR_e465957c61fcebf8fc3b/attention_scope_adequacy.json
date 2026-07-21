@@ -1,0 +1,50 @@
+{
+  "decision": "ADEQUATE",
+  "dominant_member_event_ids": [
+    "540a-4482-2572-f6da"
+  ],
+  "dominant_member_identifiable": true,
+  "episode_id": "EP_BATCH_9f048e805a002ad4e240",
+  "episode_selected_as": "FORECAST",
+  "essential_episode_attention_concept_missing": [],
+  "joint_same_time_interpretation_supported": true,
+  "member_attention_evidence": [
+    {
+      "attention_label": "PRIMARY_DRIVER",
+      "attention_rank": 2,
+      "attention_reason": "GDP is a key indicator of economic health, significantly influencing monetary policy expectations and risk sentiment.",
+      "attention_run_id": "ATTENTION_e2b521e6cad1a472c942",
+      "confidence": "High",
+      "driver_role": "primary",
+      "event_id": "540a-4482-2572-f6da",
+      "expected_market_channel": "growth_outlook",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Gross Domestic Product QoQ (Q1)",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-06-27|CUSTOM_CONFIG_WINDOW"
+    },
+    {
+      "attention_label": "CONTEXT_ONLY",
+      "attention_rank": 1,
+      "attention_reason": "Goods trade balance is a component of GDP, but its direct impact on USDJPY is limited.",
+      "attention_run_id": "ATTENTION_e2b521e6cad1a472c942",
+      "confidence": "Low",
+      "driver_role": "context",
+      "event_id": "f047-339b-ba43-843f",
+      "expected_market_channel": "growth_outlook",
+      "forecast_cutoff_ts": null,
+      "indicator_name": "Goods Trade Balance (May)",
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "session_id": "US|2024-06-27|CUSTOM_CONFIG_WINDOW"
+    }
+  ],
+  "member_labels_and_ranks_available": true,
+  "model": "gemini-2.5-flash-lite",
+  "provider": "Gemini",
+  "rationale": "Preserved member labels, ranks, reasons, channels, and exact membership provide sufficient causal orientation without treating structural roles as causal truth.",
+  "reasons_and_channels_useful": true,
+  "reinforcement_or_conflict_interpretable": true,
+  "would_episode_attention_field_materially_change_task": false
+}

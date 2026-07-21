@@ -1,0 +1,78 @@
+{
+  "approved_provider_episode_pairs": 777,
+  "complete_paired_observations": 52,
+  "episode_cluster_permutation": {
+    "clusters": 40,
+    "enumerated_permutations": 100000,
+    "method": "FIXED_SEED_MONTE_CARLO",
+    "observed_mean_difference": -0.09615384615384616,
+    "possible_permutations": 1099511627776,
+    "seed": 20260721,
+    "two_sided_p_value": 9.99990000099999e-06
+  },
+  "episode_equal_weight": {
+    "episodes": 40,
+    "mean_paired_difference": -0.1375
+  },
+  "missingness_sensitivity_bounds": {
+    "best_case_pack_a_difference": 0.018018018018018018,
+    "incomplete_both_pairs": 3,
+    "worst_case_pack_a_difference": -0.03088803088803089
+  },
+  "path_score": {
+    "pack_a_mean": 0.3712121212121212,
+    "pack_a_median": 0.5,
+    "pack_e_mean": 0.3967391304347826,
+    "pack_e_median": 0.375,
+    "paired_mean_difference": -0.007575757575757576
+  },
+  "primary_15m": {
+    "both_correct": 4,
+    "both_incorrect": 27,
+    "exact_mcnemar_p_value": 0.38331031799316406,
+    "pack_a_accuracy": 0.23076923076923078,
+    "pack_a_correct": 12,
+    "pack_a_only_correct": 8,
+    "pack_e_accuracy": 0.3269230769230769,
+    "pack_e_correct": 17,
+    "pack_e_only_correct": 13,
+    "paired_difference_pack_a_minus_pack_e": -0.09615384615384616
+  },
+  "provider_summary": {
+    "Anthropic": {
+      "approved_pairs": 259,
+      "complete_pairs": 0
+    },
+    "Gemini": {
+      "approved_pairs": 259,
+      "complete_pairs": 30
+    },
+    "OpenAI": {
+      "approved_pairs": 259,
+      "complete_pairs": 22
+    }
+  },
+  "secondary_horizons": {
+    "15": {
+      "pack_a_correct": 12,
+      "pack_e_correct": 17,
+      "paired_difference": -0.09615384615384616
+    },
+    "30": {
+      "pack_a_correct": 11,
+      "pack_e_correct": 15,
+      "paired_difference": -0.07692307692307693
+    },
+    "5": {
+      "pack_a_correct": 14,
+      "pack_e_correct": 20,
+      "paired_difference": -0.11538461538461539
+    },
+    "60": {
+      "pack_a_correct": 12,
+      "pack_e_correct": 21,
+      "paired_difference": -0.17307692307692307
+    }
+  },
+  "unique_complete_episodes": 40
+}
