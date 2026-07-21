@@ -1,0 +1,15 @@
+{
+  "decision": "EXACT_ALIAS_NORMALIZATION",
+  "evidence": "The Request schema admits unknown as its sole generic channel fallback and omits other from affected_channel; exact lowercase other is a noncanonical generic fallback only.",
+  "mapping": {
+    "case_sensitive": true,
+    "field": "affected_channel",
+    "input": "other",
+    "output": "unknown",
+    "reason": "The existing schema identifies unknown as the sole generic channel fallback; exact lowercase other carries no additional channel meaning."
+  },
+  "other_aliases_accepted": [
+    "other"
+  ],
+  "unknown_remains_canonical": true
+}

@@ -1,0 +1,6 @@
+{
+  "anthropic_r5_truncated_response": "remains_rejected_and_now_preservable",
+  "gemini_priority_primary_driver": "remains_invalid_request_enum",
+  "openai_affected_channel_other": "normalizes_only_under_compat_r2_with_original_retained",
+  "provider_calls": 0
+}

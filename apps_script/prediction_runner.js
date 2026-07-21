@@ -1645,11 +1645,11 @@ function _buildAttentionV3ReflectionPrompt_(ev, selected, prediction) {
   };
 }
 
-function _callProviderJsonObject_(prov, prompt, expectedObject, responseSchema) {
+function _callProviderJsonObject_(prov, prompt, expectedObject, responseSchema, options) {
   if (!prov || !prov.name) throw new Error('Provider metadata missing');
   if (prov.name === 'OpenAI') return _callOpenAiJsonObject_(prov, prompt, expectedObject);
   if (prov.name === 'Gemini') return _callGeminiJsonObject_(prov, prompt, expectedObject, responseSchema);
-  if (prov.name === 'Anthropic') return _callClaudeJsonObject_(prov, prompt, expectedObject);
+  if (prov.name === 'Anthropic') return _callClaudeJsonObject_(prov, prompt, expectedObject, options);
   throw new Error('Unsupported provider for generic JSON object call: ' + prov.name);
 }
 
@@ -1731,13 +1731,21 @@ function _callGeminiJsonObject_(prov, prompt, expectedObject, responseSchema) {
   }, { provider: prov.name });
 }
 
-function _callClaudeJsonObject_(prov, prompt, expectedObject) {
+function _callClaudeJsonObject_(prov, prompt, expectedObject, options) {
+  options = options || {};
+  var maxTokens = options.anthropic_max_tokens === null || options.anthropic_max_tokens === undefined ? 4096 : Number(options.anthropic_max_tokens);
+  // Claude Haiku 4.5 supports 64k output tokens. The caller owns any smaller
+  // frozen stage-specific bound; reject an unsupported override rather than
+  // quietly falling back to the legacy 4096-token generic default.
+  if (!isFinite(maxTokens) || maxTokens < 1 || Math.floor(maxTokens) !== maxTokens || maxTokens > 64000) {
+    throw new Error('V2_1_STEP8_R3_R6_ANTHROPIC_OUTPUT_LIMIT_UNSUPPORTED');
+  }
   var url = 'https://api.anthropic.com/v1/messages';
   var staticPromptBlock = { type: 'text', text: [prompt.system, prompt.instruction, prompt.cache_scaffold || ''].filter(function(part){ return !!part; }).join('\n\n') };
   if (_anthropicPromptCacheEnabled_()) staticPromptBlock.cache_control = _anthropicPromptCacheControl_();
   var body = {
     model: prov.model,
-    max_tokens: 4096,
+    max_tokens: maxTokens,
     temperature: CFG.PREDICTION_TEMPERATURE,
     system: [staticPromptBlock],
     messages: [{ role: 'user', content: [{ type: 'text', text: prompt.user }] }]
@@ -1758,9 +1766,10 @@ function _callClaudeJsonObject_(prov, prompt, expectedObject) {
     var j = JSON.parse(txt);
     var c = (j.content && j.content[0] && j.content[0].text) || '';
     if (!c) throw _providerErr_('Anthropic: empty content');
-    return {
-      parsed: _strictParseJsonObject_(c, expectedObject),
+    var rawResult = {
       raw_output: c,
+      raw_response_blocks: j.content || null,
+      provider_response_body: txt,
       prompt_tokens: (j.usage || {}).input_tokens || null,
       completion_tokens: (j.usage || {}).output_tokens || null,
       cache_creation_input_tokens: (j.usage || {}).cache_creation_input_tokens || null,
@@ -1768,6 +1777,16 @@ function _callClaudeJsonObject_(prov, prompt, expectedObject) {
       stop_reason: j.stop_reason || null,
       ai_name: 'Anthropic', ai_model: prov.model
     };
+    // The R3 Attention route returns provider text to its durable Python
+    // boundary before parsing, so a truncated response remains auditable.
+    if (options.defer_json_parsing === true) return rawResult;
+    try {
+      rawResult.parsed = _strictParseJsonObject_(c, expectedObject);
+    } catch (error) {
+      if (!options.preserve_raw_on_parse_error) throw error;
+      rawResult.parse_error = String(error || 'anthropic_json_parse_error');
+    }
+    return rawResult;
   }, { provider: prov.name });
 }
 

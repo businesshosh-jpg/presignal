@@ -107,3 +107,13 @@ labels in the Request `priority` field, and OpenAI emitted `other` for one
 Request `affected_channel`. No second replacement smoke was run. The fresh
 cohort remains blocked pending a single targeted provider-contract repair;
 P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+
+## Step 8-R3-R6 Compatibility Completion
+
+The compat-r2 source repair is call-free validated and freezes an 8,192-token
+Anthropic Attention bound, raw-response retention before Python parsing, strict
+Request-priority separation, and the documented exact `other` to `unknown`
+channel normalization. Publishing the required Apps Script bridge update was
+blocked by a local Google OAuth `invalid_grant` error, so the authorized
+one-Episode replacement smoke was not sent. The fresh cohort remains blocked;
+P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.

@@ -1,0 +1,9 @@
+{
+  "manifest": "outputs/presignal_v21_step8_r3_r6_compatibility_completion/STEP8-R3-R6-4082875/verification_manifest.json",
+  "previous_contracts_rejected": [
+    "presignal_event_path_contract_v1_historical_verification_r3",
+    "presignal_event_path_contract_v1_historical_verification_r3_compat_r1"
+  ],
+  "required_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r2",
+  "runner": "automation/run_presignal_v21_step8_r3_fresh_historical_verification_v1.py"
+}

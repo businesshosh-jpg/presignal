@@ -1,0 +1,12 @@
+{
+  "acquisition_calls": 0,
+  "blocking_error": "Apps Script publish rejected by clasp: invalid_grant",
+  "complete_paired_observations": 0,
+  "episode_id": "EP_BATCH_b5c0c544ec07bbf0b950",
+  "forecast_calls": 0,
+  "outcome_accessed": false,
+  "production_mutation": false,
+  "provider_calls": 0,
+  "run_id": "STEP8-R3-R6-SMOKE-4082875",
+  "smoke_execution_status": "NOT_EXECUTED"
+}

@@ -1,0 +1,6 @@
+{
+  "original_smoke_changed": false,
+  "r3_and_r5_contracts_changed_in_place": false,
+  "r5_smoke_changed": false,
+  "r6_is_new_child_contract_only": true
+}

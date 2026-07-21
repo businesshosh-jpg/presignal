@@ -1,0 +1,5 @@
+{
+  "additional_provider_calls": 0,
+  "reason": "No replacement smoke run was initialized after the deployment credential failure.",
+  "status": "NOT_EXECUTED"
+}

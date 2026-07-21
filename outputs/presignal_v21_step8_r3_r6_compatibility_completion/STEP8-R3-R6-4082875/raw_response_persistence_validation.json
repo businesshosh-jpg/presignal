@@ -1,0 +1,13 @@
+{
+  "order": [
+    "transport_return",
+    "raw_response_persisted",
+    "raw_response_fingerprint_persisted",
+    "stop_reason_persisted",
+    "python_parser",
+    "validator",
+    "dispatcher_result"
+  ],
+  "raw_storage": "raw_provider_responses/<operation_identity>.json",
+  "truncated_json_auto_repair": false
+}

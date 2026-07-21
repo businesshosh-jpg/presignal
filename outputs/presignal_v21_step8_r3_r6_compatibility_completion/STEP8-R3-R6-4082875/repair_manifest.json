@@ -1,0 +1,12 @@
+{
+  "acquisition_calls": 0,
+  "previous_smokes": [
+    "STEP8-R3-SMOKE-38b2e12",
+    "STEP8-R3-R5-SMOKE-ca4c993"
+  ],
+  "prospective_calls": 0,
+  "provider_calls_before_smoke": 0,
+  "repair_id": "STEP8-R3-R6-4082875",
+  "replacement_smoke": "STEP8-R3-R6-SMOKE-4082875",
+  "scope": "NON_SCIENTIFIC_LIVE_PROVIDER_COMPATIBILITY_REPAIR"
+}

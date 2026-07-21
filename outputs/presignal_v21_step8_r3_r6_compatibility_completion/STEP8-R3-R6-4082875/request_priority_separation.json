@@ -1,0 +1,19 @@
+{
+  "attention_labels_rejected": [
+    "PRIMARY_DRIVER",
+    "SECONDARY_DRIVER",
+    "WATCHLIST",
+    "CONTEXT_ONLY",
+    "IGNORE",
+    "NO_SIGNAL",
+    "primary_driver",
+    "secondary_driver"
+  ],
+  "canonical_priorities": [
+    "must_have",
+    "useful",
+    "optional",
+    "low_value"
+  ],
+  "normalization": "none"
+}

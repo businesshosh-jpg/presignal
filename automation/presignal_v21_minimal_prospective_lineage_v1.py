@@ -100,14 +100,20 @@ def _prompt(instruction: str, payload: Mapping[str, Any]) -> dict[str, str]:
     return {"system": "You are a macroeconomic research model. Output strict JSON only, with no markdown or prose outside the JSON object.", "user": canonical_json(payload), "instruction": instruction, "cache_scaffold": ""}
 
 
-def bridge_request(*, provider: str, model: str, prompt: Mapping[str, str], collection_run_id: str, session_id: str, stage: str) -> dict[str, Any]:
+def bridge_request(*, provider: str, model: str, prompt: Mapping[str, str], collection_run_id: str, session_id: str, stage: str, generation_settings: Mapping[str, Any] | None = None) -> dict[str, Any]:
     """Build the existing bridge payload without dispatching it."""
-    return {
+    request = {
         "provider": provider, "model": model, "prompt": dict(prompt), "authoritative_run_id": collection_run_id,
         "forecast_identity": "P12_LINEAGE_" + _short({"run": collection_run_id, "session": session_id, "stage": stage, "provider": provider, "model": model}),
         "arm": "LINEAGE_" + stage, "session_id": session_id, "hard_timeout_seconds": 180,
         "request_schema_version": "authoritative_historical_replay_bridge_v1",
     }
+    if generation_settings:
+        if "max_output_tokens" in generation_settings:
+            request["max_output_tokens"] = generation_settings["max_output_tokens"]
+        if generation_settings.get("preserve_raw_before_parse") is True:
+            request["preserve_raw_before_parse"] = True
+    return request
 
 
 def _raw_object(raw: Any) -> dict[str, Any]:
@@ -129,38 +135,42 @@ def _stage_timestamp(response: Mapping[str, Any], fallback: str) -> str:
     return value
 
 
-def build_prospective_attention(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], provider: str, model: str, information_cutoff_ts: str, attention_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None, instruction_override: str | None = None) -> dict[str, Any]:
+def build_prospective_attention(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], provider: str, model: str, information_cutoff_ts: str, attention_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None, instruction_override: str | None = None, generation_settings: Mapping[str, Any] | None = None, raw_response_persistor: Callable[[Mapping[str, Any]], None] | None = None) -> dict[str, Any]:
     """Build one explicit prospective Attention call or parse its returned output."""
     _validate_identity(study_id=study_id, collection_run_id=collection_run_id, session_snapshot=session_snapshot, provider=provider, model=model, information_cutoff_ts=information_cutoff_ts, stage_run_id=attention_run_id)
     if utc(stage_generated_ts) > utc(information_cutoff_ts): raise MinimalProspectiveLineageError("ATTENTION_AFTER_INFORMATION_CUTOFF")
     members = _event_payload(member_rows); session_id = str(session_snapshot["session_id"])
     payload = {"object": "presignal_v2_market_session_attention_task", "schema_version": "v0", "session": {key: session_snapshot.get(key, "") for key in ("session_id", "country", "session_window_name", "session_start_ts", "session_end_ts")}, "events": members, "task": "Classify which events in this market session matter for USDJPY reaction. Do not forecast USDJPY direction or pips."}
-    prompt = _prompt(instruction_override or ATTENTION_INSTRUCTION, payload); request = bridge_request(provider=provider, model=model, prompt=prompt, collection_run_id=collection_run_id, session_id=session_id, stage="ATTENTION")
+    prompt = _prompt(instruction_override or ATTENTION_INSTRUCTION, payload); request = bridge_request(provider=provider, model=model, prompt=prompt, collection_run_id=collection_run_id, session_id=session_id, stage="ATTENTION", generation_settings=generation_settings)
     base = {"attention_run_id": attention_run_id, "session_id": session_id, "provider": provider, "model": model, "information_cutoff_ts": information_cutoff_ts, "generated_ts": stage_generated_ts, "request_fingerprint": sha256(request), "source": "existing_v2_attention_prompt_schema", "raw_output": None}
     if dispatcher is None:
         return {"status": "DRY_RUN", "request": request, "prompt": prompt, "rows": [], "metadata": base, "provider_calls": 0}
-    response = dict(dispatcher(request)); raw = response.get("raw_output")
+    response = dict(dispatcher(request)); raw = response.get("raw_output"); raw_preserved = response.get("raw_output_original", raw)
+    if raw_response_persistor is not None: raw_response_persistor(response)
     if response.get("status") != "ok":
-        return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": response.get("error") or response.get("status"), "raw_output": raw}], "provider_calls": 1}
-    parsed = dict((raw_parser or _raw_object)(raw))
+        return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": response.get("error") or response.get("status"), "raw_output": raw_preserved}], "provider_calls": 1}
+    try:
+        parsed = dict((raw_parser or _raw_object)(raw))
+    except Exception as exc:
+        return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": str(exc), "raw_output": raw_preserved}], "provider_calls": 1}
     if parsed.get("object") != "session_attention_map" or parsed.get("session_id") != session_id or parsed.get("provider") != provider or parsed.get("status") != "ok":
-        return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "attention_contract_identity", "raw_output": raw}], "provider_calls": 1}
+        return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "attention_contract_identity", "raw_output": raw_preserved}], "provider_calls": 1}
     item_by_event = {str(item.get("event_id")): item for item in parsed.get("attention_items", []) if isinstance(item, Mapping) and str(item.get("event_id"))}
     rows = []
     for member in members:
         item = item_by_event.get(str(member["event_id"]))
         if item is None:
-            rows.append({**base, **member, "status": "provider_omitted_event", "omission_reason": "event_not_returned_by_provider", "raw_output": raw})
+            rows.append({**base, **member, "status": "provider_omitted_event", "omission_reason": "event_not_returned_by_provider", "raw_output": raw_preserved})
             continue
         label = str(item.get("attention_label") or "")
         if label not in VALID_LABELS:
-            rows.append({**base, **member, "status": "provider_contract_error", "error_message": "invalid_attention_label", "raw_output": raw})
+            rows.append({**base, **member, "status": "provider_contract_error", "error_message": "invalid_attention_label", "raw_output": raw_preserved})
             continue
-        rows.append({**base, **member, "status": "parsed", "attention_label": label, "attention_rank": item.get("attention_rank"), "attention_reason": str(item.get("attention_reason") or "")[:160], "expected_market_channel": str(item.get("expected_market_channel") or "unknown"), "driver_role": str(item.get("driver_role") or ""), "confidence": item.get("confidence"), "raw_output": raw, "response_fingerprint": sha256(response)})
+        rows.append({**base, **member, "status": "parsed", "attention_label": label, "attention_rank": item.get("attention_rank"), "attention_reason": str(item.get("attention_reason") or "")[:160], "expected_market_channel": str(item.get("expected_market_channel") or "unknown"), "driver_role": str(item.get("driver_role") or ""), "confidence": item.get("confidence"), "raw_output": raw_preserved, "response_fingerprint": sha256(response)})
     return {"status": "parsed", "request": request, "response": response, "rows": rows, "provider_calls": 1}
 
 
-def build_prospective_requests(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], attention_result: Mapping[str, Any], provider: str, model: str, information_cutoff_ts: str, request_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None, instruction_override: str | None = None) -> dict[str, Any]:
+def build_prospective_requests(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], attention_result: Mapping[str, Any], provider: str, model: str, information_cutoff_ts: str, request_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None, instruction_override: str | None = None, request_normalizer: Callable[[Mapping[str, Any]], tuple[dict[str, Any], Mapping[str, Any] | None]] | None = None, raw_response_persistor: Callable[[Mapping[str, Any]], None] | None = None) -> dict[str, Any]:
     """Build one Request call from the same provider's prospective Attention."""
     _validate_identity(study_id=study_id, collection_run_id=collection_run_id, session_snapshot=session_snapshot, provider=provider, model=model, information_cutoff_ts=information_cutoff_ts, stage_run_id=request_run_id)
     if utc(stage_generated_ts) > utc(information_cutoff_ts): raise MinimalProspectiveLineageError("REQUEST_AFTER_INFORMATION_CUTOFF")
@@ -171,16 +181,21 @@ def build_prospective_requests(*, study_id: str, collection_run_id: str, session
     prompt = _prompt(instruction_override or REQUEST_INSTRUCTION, payload); request = bridge_request(provider=provider, model=model, prompt=prompt, collection_run_id=collection_run_id, session_id=session_id, stage="REQUESTS")
     base = {"request_run_id": request_run_id, "attention_run_id": attention_run_id, "session_id": session_id, "provider": provider, "model": model, "information_cutoff_ts": information_cutoff_ts, "generated_ts": stage_generated_ts, "request_fingerprint": sha256(request), "source": "existing_v2_information_request_prompt_schema", "raw_output": None}
     if dispatcher is None: return {"status": "DRY_RUN", "request": request, "prompt": prompt, "rows": [], "metadata": base, "provider_calls": 0}
-    response = dict(dispatcher(request)); raw = response.get("raw_output")
-    if response.get("status") != "ok": return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": response.get("error") or response.get("status"), "raw_output": raw}], "provider_calls": 1}
-    parsed = dict((raw_parser or _raw_object)(raw))
-    if parsed.get("object") != "session_information_requirements" or parsed.get("session_id") != session_id or parsed.get("provider") != provider or parsed.get("status") != "ok": return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "request_contract_identity", "raw_output": raw}], "provider_calls": 1}
+    response = dict(dispatcher(request)); raw = response.get("raw_output"); raw_preserved = response.get("raw_output_original", raw)
+    if raw_response_persistor is not None: raw_response_persistor(response)
+    if response.get("status") != "ok": return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": response.get("error") or response.get("status"), "raw_output": raw_preserved}], "provider_calls": 1}
+    try:
+        parsed = dict((raw_parser or _raw_object)(raw))
+    except Exception as exc:
+        return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": str(exc), "raw_output": raw_preserved}], "provider_calls": 1}
+    if parsed.get("object") != "session_information_requirements" or parsed.get("session_id") != session_id or parsed.get("provider") != provider or parsed.get("status") != "ok": return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "request_contract_identity", "raw_output": raw_preserved}], "provider_calls": 1}
     output = []
     for index, item in enumerate(parsed.get("information_items", []), 1):
-        if not isinstance(item, Mapping) or not item.get("requested_information"): return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "invalid_information_item", "raw_output": raw}], "provider_calls": 1}
-        category = str(item.get("information_category") or "other"); priority = str(item.get("priority") or "useful"); channel = str(item.get("affected_channel") or "unknown")
-        if category not in VALID_CATEGORIES or priority not in VALID_PRIORITIES or channel not in VALID_CHANNELS: return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "invalid_request_enum", "raw_output": raw}], "provider_calls": 1}
-        requested = str(item["requested_information"]); output.append({**base, "status": "parsed", "request_identity": "PINFO_" + _short({"run": request_run_id, "rank": index, "requested": requested}), "request_rank": item.get("request_rank") or index, "requested_information": requested, "information_category": category, "priority": priority, "reason": str(item.get("reason") or "")[:160], "affected_channel": channel, "event_family_relevance": item.get("event_family_relevance"), "linked_event_ids": item.get("linked_event_ids"), "linked_attention_labels": item.get("linked_attention_labels"), "available_now": item.get("available_now"), "suggested_source": item.get("suggested_source"), "expected_forecast_use": item.get("expected_forecast_use"), "is_market_state_candidate": item.get("is_market_state_candidate"), "raw_output": raw, "response_fingerprint": sha256(response)})
+        if not isinstance(item, Mapping) or not item.get("requested_information"): return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "invalid_information_item", "raw_output": raw_preserved}], "provider_calls": 1}
+        normalized_item, normalization = request_normalizer(item) if request_normalizer else (dict(item), None)
+        category = str(normalized_item.get("information_category") or "other"); priority = str(normalized_item.get("priority") or "useful"); channel = str(normalized_item.get("affected_channel") or "unknown")
+        if category not in VALID_CATEGORIES or priority not in VALID_PRIORITIES or channel not in VALID_CHANNELS: return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "invalid_request_enum", "raw_output": raw_preserved}], "provider_calls": 1}
+        requested = str(normalized_item["requested_information"]); output.append({**base, "status": "parsed", "request_identity": "PINFO_" + _short({"run": request_run_id, "rank": index, "requested": requested}), "request_rank": normalized_item.get("request_rank") or index, "requested_information": requested, "information_category": category, "priority": priority, "reason": str(normalized_item.get("reason") or "")[:160], "affected_channel": channel, "original_affected_channel": item.get("affected_channel"), "normalization": normalization, "event_family_relevance": normalized_item.get("event_family_relevance"), "linked_event_ids": normalized_item.get("linked_event_ids"), "linked_attention_labels": normalized_item.get("linked_attention_labels"), "available_now": normalized_item.get("available_now"), "suggested_source": normalized_item.get("suggested_source"), "expected_forecast_use": normalized_item.get("expected_forecast_use"), "is_market_state_candidate": normalized_item.get("is_market_state_candidate"), "raw_output": raw_preserved, "response_fingerprint": sha256(response)})
     return {"status": "parsed", "request": request, "response": response, "rows": output, "provider_calls": 1}
 
 

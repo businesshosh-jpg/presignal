@@ -4,7 +4,8 @@ import unittest
 
 from automation import run_presignal_v21_step8_r3_fresh_historical_verification_v1 as runner
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
-from automation import presignal_v21_historical_verification_r3_compat_r1_contract_v1 as compat
+from automation import presignal_v21_historical_verification_r3_compat_r2_contract_v1 as compat
+from automation import repair_presignal_v21_step8_r3_r6_compatibility_v1 as r6
 
 
 def forecast(direction="UP"):
@@ -58,6 +59,10 @@ class MockBridge:
 
 
 class LoopTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        r6.prepare()
+
     def setUp(self):
         self.bridge = MockBridge()
         self.loop = runner.ExecutionLoop("TEST-R3-ADAPTER-DISPATCH", dispatcher=self.bridge)
@@ -87,6 +92,8 @@ class LoopTests(unittest.TestCase):
         anth_calls = [call for call in self.bridge.calls if call["provider"] == "Anthropic"]
         self.assertEqual(len(anth_calls), 1)
         self.assertEqual(anth_calls[0]["arm"], "LINEAGE_ATTENTION")
+        raw_records = [json.loads(path.read_text()) for path in (self.loop.run / "raw_provider_responses").glob("*.json")]
+        self.assertTrue(any(record["identity"]["provider"] == "Anthropic" and record["raw_output"] == "not json" for record in raw_records))
 
     def test_payload_conflict_fails_closed(self):
         episode = self.loop._load_source()[1][self.loop.first_episode()]
@@ -95,7 +102,7 @@ class LoopTests(unittest.TestCase):
         with self.assertRaisesRegex(runner.DispatchError, "RECONCILIATION_CONFLICT"):
             self.loop._persist_payload(identity, {"one": 2})
 
-    def test_r5_contract_is_bound_and_previous_manifest_is_rejected(self):
+    def test_r6_contract_is_bound_and_previous_manifest_is_rejected(self):
         self.assertEqual(self.loop.gate["contract"]["contract_version"], compat.CONTRACT_VERSION)
         self.assertIn("attention_reason must contain at most six words", binding.attention_instruction(self.loop.gate["contract"], "Anthropic"))
         self.assertIn("information_category=(treasury_yields", binding.request_instruction(self.loop.gate["contract"], "Gemini"))
@@ -108,6 +115,7 @@ class LoopTests(unittest.TestCase):
         self.assertTrue(request_calls)
         for call in request_calls:
             self.assertIn("priority=(must_have|useful|optional|low_value)", call["prompt"]["instruction"])
+            self.assertIn("Request priority is separate from Attention classification", call["prompt"]["instruction"])
             self.assertIn("information_category=(treasury_yields", call["prompt"]["instruction"])
         self.assertTrue(all(payload["forecasts"]["PACK_A"]["accepted"] for payload in result["results"].values()))
 

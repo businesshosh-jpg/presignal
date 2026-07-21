@@ -1,0 +1,11 @@
+{
+  "child_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r2",
+  "deltas": [
+    "Anthropic Attention max_output_tokens=8192",
+    "raw provider response retained before Python parsing",
+    "Request priority explicitly separated from Attention labels",
+    "exact affected_channel other normalized to unknown with original retained"
+  ],
+  "parent_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r1",
+  "scientific_forecast_semantics_changed": false
+}

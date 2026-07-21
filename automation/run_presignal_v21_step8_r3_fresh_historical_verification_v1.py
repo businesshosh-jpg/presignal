@@ -21,7 +21,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
-from automation import presignal_v21_historical_verification_r3_compat_r1_contract_v1 as compat_contract
+from automation import presignal_v21_historical_verification_r3_compat_r2_contract_v1 as compat_contract
 from automation import presignal_v21_minimal_prospective_lineage_v1 as lineage
 from automation import run_presignal_v21_single_event_path_pair_v1 as single
 from automation import run_presignal_v21_step8_r2_historical_replication_v1 as replay
@@ -29,7 +29,7 @@ from automation import run_presignal_v21_step8_r2_historical_replication_v1 as r
 OUT = ROOT / "outputs/presignal_v21_step8_r3_fresh_historical_verification"
 PREP = ROOT / "outputs/presignal_v21_step8_r3_repair/STEP8-R3-REPAIR-df9c25e"
 POPULATION = PREP / "fresh_verification_population_plan.json"
-R5_MANIFEST = ROOT / "outputs/presignal_v21_step8_r3_r5_live_compatibility_repair/STEP8-R3-R5-ca4c993/replacement_verification_manifest.json"
+R6_MANIFEST = ROOT / "outputs/presignal_v21_step8_r3_r6_compatibility_completion/STEP8-R3-R6-4082875/verification_manifest.json"
 
 STAGES = (
     "PENDING", "ATTENTION_REQUEST_FROZEN", "ATTENTION_SENT", "ATTENTION_RESPONSE_RECEIVED",
@@ -82,10 +82,10 @@ def operation_key(identity: Mapping[str, Any]) -> str:
 class ExecutionLoop:
     """Persisted stage dispatcher with an injectable bridge for call-free tests."""
 
-    def __init__(self, run_id: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, manifest_path: Path = R5_MANIFEST):
+    def __init__(self, run_id: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, manifest_path: Path = R6_MANIFEST):
         self.gate = binding.gate(manifest_path)
         if self.gate["contract"]["contract_version"] != compat_contract.CONTRACT_VERSION:
-            raise DispatchError("V2_1_STEP8_R5_PREVIOUS_CONTRACT_REJECTED")
+            raise DispatchError("V2_1_STEP8_R6_PREVIOUS_CONTRACT_REJECTED")
         self.run = OUT / run_id
         self.state_path = self.run / "execution_state.json"
         self.dispatcher = dispatcher
@@ -170,6 +170,34 @@ class ExecutionLoop:
         atomic(path, frozen)
         return frozen
 
+    def _persist_raw_bridge_response(self, identity: Mapping[str, Any], response: Mapping[str, Any]) -> None:
+        """Durably preserve provider evidence before Python parsing can fail."""
+        path = self.run / "raw_provider_responses" / (operation_key(identity) + ".json")
+        raw = {
+            "identity": dict(identity),
+            "raw_output": response.get("raw_output_original", response.get("raw_output")),
+            "raw_response_fingerprint": sha256(response.get("raw_output_original", response.get("raw_output"))),
+            "response_blocks": response.get("raw_response_blocks"),
+            "provider_response_body": response.get("provider_response_body"),
+            "stop_reason": response.get("stop_reason"),
+            "usage": {
+                "prompt_tokens": response.get("prompt_tokens"),
+                "completion_tokens": response.get("completion_tokens"),
+                "cache_creation_input_tokens": response.get("cache_creation_input_tokens"),
+                "cache_read_input_tokens": response.get("cache_read_input_tokens"),
+            },
+            "transport_status": response.get("status"),
+            "response_status": response.get("response_status"),
+            "configured_max_output_tokens": response.get("configured_max_output_tokens"),
+            "persisted_ts": now(),
+        }
+        if path.exists():
+            existing = read_json(path)
+            if existing["raw_response_fingerprint"] != raw["raw_response_fingerprint"]:
+                raise DispatchError("V2_1_STEP8_R3_R4_DISPATCH_RECONCILIATION_CONFLICT")
+            return
+        atomic(path, raw)
+
     def _call(self, identity: Mapping[str, Any], payload: Mapping[str, Any], handler: Callable[[], Mapping[str, Any]], sent: str, received: str) -> dict[str, Any]:
         self._persist_payload(identity, payload)
         _, result_path = self._paths(identity)
@@ -214,13 +242,15 @@ class ExecutionLoop:
     def _attention(self, episode: Mapping[str, Any], provider: str, model: str, source: Mapping[str, Any]) -> dict[str, Any]:
         identity = self._identity(episode, provider, model, "ATTENTION")
         session = source["sessions"][episode["session_id"]]
-        payload = {"session": self._snapshot(session), "members": source["members"][episode["session_id"]], "cutoff": episode["forecast_cutoff_ts"]}
+        generation_settings = binding.generation_settings(self.gate["contract"], provider, "ATTENTION")
+        payload = {"session": self._snapshot(session), "members": source["members"][episode["session_id"]], "cutoff": episode["forecast_cutoff_ts"], "generation_settings": generation_settings}
         self._persist_payload(identity, payload)
         self._transition(identity, "ATTENTION_REQUEST_FROZEN")
         def handler() -> Mapping[str, Any]:
-            result = lineage.build_prospective_attention(study_id="HISTORICAL_R3", collection_run_id=self.run.name, session_snapshot=payload["session"], member_rows=payload["members"], provider=provider, model=model, information_cutoff_ts=payload["cutoff"], attention_run_id="R3_ATT_" + operation_key(identity)[7:27], stage_generated_ts=payload["cutoff"], dispatcher=self._lineage_dispatcher(provider), raw_parser=lambda raw: binding.attention_parser(provider, raw, self.gate["contract"]), instruction_override=binding.attention_instruction(self.gate["contract"], provider))
+            result = lineage.build_prospective_attention(study_id="HISTORICAL_R3", collection_run_id=self.run.name, session_snapshot=payload["session"], member_rows=payload["members"], provider=provider, model=model, information_cutoff_ts=payload["cutoff"], attention_run_id="R3_ATT_" + operation_key(identity)[7:27], stage_generated_ts=payload["cutoff"], dispatcher=self._lineage_dispatcher(provider), raw_parser=lambda raw: binding.attention_parser(provider, raw, self.gate["contract"]), instruction_override=binding.attention_instruction(self.gate["contract"], provider), generation_settings=generation_settings, raw_response_persistor=lambda response: self._persist_raw_bridge_response(identity, response))
             accepted = result.get("status") == "parsed"
-            return {"raw_response": result.get("response", {}).get("raw_output"), "parser_result": result.get("status"), "validator_result": result.get("status"), "accepted": accepted, "rejection_reason": None if accepted else result.get("error") or result.get("status"), "output": result, "provider_call_metadata": result.get("response", {})}
+            response = result.get("response", {})
+            return {"raw_response": response.get("raw_output_original", response.get("raw_output")), "parser_result": result.get("status"), "validator_result": result.get("status"), "accepted": accepted, "rejection_reason": None if accepted else result.get("error") or result.get("status"), "output": result, "provider_call_metadata": response}
         result = self._call(identity, payload, handler, "ATTENTION_SENT", "ATTENTION_RESPONSE_RECEIVED")
         if result["accepted"]:
             self._transition(identity, "ATTENTION_ACCEPTED", result=result)
@@ -234,9 +264,10 @@ class ExecutionLoop:
         payload = {"attention_result_fingerprint": attention["result_fingerprint"], "cutoff": episode["forecast_cutoff_ts"]}
         self._persist_payload(identity, payload); self._transition(identity, "REQUEST_FROZEN")
         def handler() -> Mapping[str, Any]:
-            result = lineage.build_prospective_requests(study_id="HISTORICAL_R3", collection_run_id=self.run.name, session_snapshot=self._snapshot(session), member_rows=source["members"][episode["session_id"]], attention_result=attention["output"], provider=provider, model=model, information_cutoff_ts=episode["forecast_cutoff_ts"], request_run_id="R3_REQ_" + operation_key(identity)[7:27], stage_generated_ts=episode["forecast_cutoff_ts"], dispatcher=self._lineage_dispatcher(provider), raw_parser=lambda raw: binding.attention_parser(provider, raw, self.gate["contract"]), instruction_override=binding.request_instruction(self.gate["contract"], provider))
+            result = lineage.build_prospective_requests(study_id="HISTORICAL_R3", collection_run_id=self.run.name, session_snapshot=self._snapshot(session), member_rows=source["members"][episode["session_id"]], attention_result=attention["output"], provider=provider, model=model, information_cutoff_ts=episode["forecast_cutoff_ts"], request_run_id="R3_REQ_" + operation_key(identity)[7:27], stage_generated_ts=episode["forecast_cutoff_ts"], dispatcher=self._lineage_dispatcher(provider), raw_parser=lambda raw: binding.attention_parser(provider, raw, self.gate["contract"]), instruction_override=binding.request_instruction(self.gate["contract"], provider), request_normalizer=lambda item: binding.normalize_request_item(item, self.gate["contract"]), raw_response_persistor=lambda response: self._persist_raw_bridge_response(identity, response))
             accepted = result.get("status") == "parsed"
-            return {"raw_response": result.get("response", {}).get("raw_output"), "parser_result": result.get("status"), "validator_result": result.get("status"), "accepted": accepted, "rejection_reason": None if accepted else result.get("error") or result.get("status"), "output": result, "provider_call_metadata": result.get("response", {})}
+            response = result.get("response", {})
+            return {"raw_response": response.get("raw_output_original", response.get("raw_output")), "parser_result": result.get("status"), "validator_result": result.get("status"), "accepted": accepted, "rejection_reason": None if accepted else result.get("error") or result.get("status"), "output": result, "provider_call_metadata": response}
         result = self._call(identity, payload, handler, "REQUEST_SENT", "REQUEST_SENT")
         self._transition(identity, "REQUEST_ACCEPTED" if result["accepted"] else "REQUEST_REJECTED", result=result)
         return result
@@ -375,8 +406,8 @@ def main() -> None:
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--status", action="store_true")
-    parser.add_argument("--run-id", default="STEP8-R3-R5-SMOKE-ca4c993")
-    parser.add_argument("--verification-manifest", type=Path, default=R5_MANIFEST)
+    parser.add_argument("--run-id", default="STEP8-R3-R6-SMOKE-4082875")
+    parser.add_argument("--verification-manifest", type=Path, default=R6_MANIFEST)
     args = parser.parse_args()
     loop = ExecutionLoop(args.run_id, manifest_path=args.verification_manifest)
     if args.status:

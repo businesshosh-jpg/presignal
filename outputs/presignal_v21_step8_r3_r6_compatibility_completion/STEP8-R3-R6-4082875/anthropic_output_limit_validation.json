@@ -1,0 +1,9 @@
+{
+  "configured_attention_max_output_tokens": 8192,
+  "model": "claude-haiku-4-5",
+  "other_stages_unchanged": true,
+  "provider": "Anthropic",
+  "source": "Anthropic Claude models overview; Haiku 4.5 max output 64k.",
+  "unsupported_limit_failure_code": "V2_1_STEP8_R3_R6_ANTHROPIC_OUTPUT_LIMIT_UNSUPPORTED",
+  "verified_route_ceiling": 64000
+}

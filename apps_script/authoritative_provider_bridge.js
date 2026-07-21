@@ -9,6 +9,8 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
   var requestedModel = String(params.model || '').trim();
   var requestSchemaVersion = String(params.request_schema_version || '').trim();
   var hardTimeoutSeconds = Number(params.hard_timeout_seconds || 0);
+  var maxOutputTokens = params.max_output_tokens === undefined || params.max_output_tokens === null ? null : Number(params.max_output_tokens);
+  var preserveRawBeforeParse = params.preserve_raw_before_parse === true;
   var authoritativeRunId = String(params.authoritative_run_id || '').trim();
   var forecastIdentity = String(params.forecast_identity || '').trim();
   var sessionId = String(params.session_id || '').trim();
@@ -24,6 +26,12 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
   if (!isFinite(hardTimeoutSeconds) || hardTimeoutSeconds <= 0) {
     throw new Error('apiCallAuthoritativeProviderJsonObject requires positive hard_timeout_seconds.');
   }
+  if (maxOutputTokens !== null && (!isFinite(maxOutputTokens) || maxOutputTokens < 1 || Math.floor(maxOutputTokens) !== maxOutputTokens)) {
+    throw new Error('apiCallAuthoritativeProviderJsonObject received invalid max_output_tokens.');
+  }
+  if ((maxOutputTokens !== null || preserveRawBeforeParse) && providerName !== 'Anthropic') {
+    throw new Error('apiCallAuthoritativeProviderJsonObject permits Anthropic-only raw/output controls.');
+  }
   if (params.response_schema !== undefined && params.response_schema !== null) {
     responseSchema = _validateAuthoritativeReducedResponseSchema_(params.response_schema, prompt.user);
   }
@@ -37,7 +45,9 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
     arm: arm,
     hard_timeout_seconds: hardTimeoutSeconds,
     request_schema_version: requestSchemaVersion,
-    started_timestamp: startedAt
+    started_timestamp: startedAt,
+    configured_max_output_tokens: maxOutputTokens,
+    preserve_raw_before_parse: preserveRawBeforeParse
   };
   var resolved = _resolveProviders_([providerName]);
   if (!resolved || !resolved.length) {
@@ -72,7 +82,10 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
       user: String(prompt.user || ''),
       instruction: String(prompt.instruction || ''),
       cache_scaffold: String(prompt.cache_scaffold || '')
-    }, null, responseSchema);
+    }, null, responseSchema, {
+      anthropic_max_tokens: maxOutputTokens,
+      defer_json_parsing: preserveRawBeforeParse
+    });
     var elapsedMs = new Date().getTime() - startedMs;
     var actualProvider = String(response.ai_name || prov.name || '').trim();
     var actualModel = String(response.ai_model || prov.model || '').trim();
@@ -98,6 +111,26 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
         error: 'actual_provider_or_model_mismatch'
       });
     }
+    if (response.parse_error) {
+      return _authoritativeBridgeResult_(metadata, {
+        status: 'provider_contract_error',
+        request_status: 'attempted',
+        response_status: 'raw_response_preserved_parse_error',
+        terminal_status: 'provider_contract_error',
+        actual_provider: actualProvider,
+        actual_model: actualModel,
+        request_id: response.request_id || null,
+        raw_output: response.raw_output || '',
+        raw_response_blocks: response.raw_response_blocks || null,
+        provider_response_body: response.provider_response_body || null,
+        prompt_tokens: response.prompt_tokens || null,
+        completion_tokens: response.completion_tokens || null,
+        cache_creation_input_tokens: response.cache_creation_input_tokens || null,
+        cache_read_input_tokens: response.cache_read_input_tokens || null,
+        stop_reason: response.stop_reason || null,
+        error: response.parse_error
+      });
+    }
     return _authoritativeBridgeResult_(metadata, {
       status: 'ok',
       request_status: 'attempted',
@@ -111,7 +144,9 @@ function apiCallAuthoritativeProviderJsonObject_(params) {
       completion_tokens: response.completion_tokens || null,
       cache_creation_input_tokens: response.cache_creation_input_tokens || null,
       cache_read_input_tokens: response.cache_read_input_tokens || null,
-      stop_reason: response.stop_reason || null
+      stop_reason: response.stop_reason || null,
+      raw_response_blocks: response.raw_response_blocks || null,
+      provider_response_body: response.provider_response_body || null
     });
   } catch (error) {
     return _authoritativeBridgeResult_(metadata, {
@@ -254,6 +289,8 @@ function _authoritativeBridgeResult_(metadata, result) {
     session_id: metadata.session_id,
     arm: metadata.arm,
     hard_timeout_seconds: metadata.hard_timeout_seconds,
+    configured_max_output_tokens: metadata.configured_max_output_tokens,
+    preserve_raw_before_parse: metadata.preserve_raw_before_parse,
     request_schema_version: metadata.request_schema_version,
     started_timestamp: metadata.started_timestamp,
     completed_timestamp: new Date().toISOString(),
@@ -267,7 +304,9 @@ function _authoritativeBridgeResult_(metadata, result) {
     completion_tokens: result.completion_tokens || null,
     cache_creation_input_tokens: result.cache_creation_input_tokens || null,
     cache_read_input_tokens: result.cache_read_input_tokens || null,
-    stop_reason: result.stop_reason || null
+    stop_reason: result.stop_reason || null,
+    raw_response_blocks: result.raw_response_blocks || null,
+    provider_response_body: result.provider_response_body || null
   };
 }
 
