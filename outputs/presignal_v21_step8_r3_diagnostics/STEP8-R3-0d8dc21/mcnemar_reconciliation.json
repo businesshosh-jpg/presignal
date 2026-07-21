@@ -1,0 +1,7 @@
+{
+  "correct": true,
+  "discordant_pack_a_only": 8,
+  "discordant_pack_e_only": 13,
+  "exact_two_sided_p_value": 0.38331031799316406,
+  "formula": "2 * P[Binomial(21, 0.5) <= 8]"
+}

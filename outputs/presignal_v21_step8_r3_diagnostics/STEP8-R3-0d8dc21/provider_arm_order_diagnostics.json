@@ -1,0 +1,3 @@
+{
+  "arm_order_not_inferred": "Raw ledger records arm order but no causal association was modeled; failures concentrate by provider/validator category."
+}

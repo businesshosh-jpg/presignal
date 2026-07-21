@@ -1,0 +1,12 @@
+{
+  "accepted_pack_a": 0,
+  "accepted_pack_e": 0,
+  "classification": "IMPLEMENTATION_DEFECT",
+  "complete_pairs": 0,
+  "forecast_selected": 0,
+  "pack_a_calls": 0,
+  "pack_e_calls": 0,
+  "raw_responses_received": 0,
+  "root_cause": "All 259 Attention artifacts are provider_contract_error / PROVIDER_RAW_JSON_INVALID, so selection is UNAVAILABLE before Request or forecast stages.",
+  "smallest_repair": "Prospectively repair Anthropic Attention raw-JSON bridge/prompt compatibility, then verify a fresh homogeneous cohort."
+}

@@ -1,0 +1,4 @@
+{
+  "reason": "Prompt/bridge/validator-facing repairs cannot be patched into the frozen primary cohort.",
+  "required": "C. Running a fresh homogeneous historical verification cohort"
+}

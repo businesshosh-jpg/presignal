@@ -1,0 +1,54 @@
+{
+  "Anthropic": {
+    "accepted_pack_a": 0,
+    "accepted_pack_e": 0,
+    "complete_pairs": 0,
+    "forecast_selected": 0,
+    "incomplete_both": 0,
+    "incomplete_pack_a": 0,
+    "incomplete_pack_e": 0,
+    "pack_a_calls": 0,
+    "pack_e_calls": 0,
+    "processed_episodes": 259,
+    "selection_counts": {
+      "UNAVAILABLE": 259
+    }
+  },
+  "Gemini": {
+    "accepted_pack_a": 31,
+    "accepted_pack_e": 37,
+    "complete_pairs": 30,
+    "forecast_selected": 38,
+    "incomplete_both": 0,
+    "incomplete_pack_a": 7,
+    "incomplete_pack_e": 1,
+    "pack_a_calls": 38,
+    "pack_e_calls": 38,
+    "processed_episodes": 259,
+    "selection_counts": {
+      "FORECAST": 38,
+      "IGNORE": 41,
+      "UNAVAILABLE": 10,
+      "WATCH": 170
+    }
+  },
+  "OpenAI": {
+    "accepted_pack_a": 26,
+    "accepted_pack_e": 29,
+    "complete_pairs": 22,
+    "forecast_selected": 36,
+    "incomplete_both": 3,
+    "incomplete_pack_a": 7,
+    "incomplete_pack_e": 4,
+    "pack_a_calls": 36,
+    "pack_e_calls": 36,
+    "processed_episodes": 259,
+    "selection_counts": {
+      "FORECAST": 36,
+      "IGNORE": 62,
+      "NO_SIGNAL": 15,
+      "UNAVAILABLE": 61,
+      "WATCH": 85
+    }
+  }
+}

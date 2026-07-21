@@ -1,0 +1,26 @@
+[
+  {
+    "defect": "Cluster sampled sign-flip RNG reset",
+    "historical_rerun_required": false,
+    "priority": "P0",
+    "repair": "Single seeded RNG outside draw loop; reanalyze frozen complete pairs only."
+  },
+  {
+    "defect": "Anthropic Attention raw JSON incompatibility",
+    "fresh_homogeneous_cohort_required": true,
+    "priority": "P1",
+    "repair": "Targeted prospective Attention output/bridge compatibility repair."
+  },
+  {
+    "defect": "Arm/provider-specific path and reversal formatting failures",
+    "fresh_homogeneous_cohort_required": true,
+    "priority": "P1",
+    "repair": "Provider-visible strict output examples while retaining validator."
+  },
+  {
+    "defect": "Missingness bounds mislabeled as effect bounds",
+    "historical_rerun_required": false,
+    "priority": "P2",
+    "repair": "Define and preregister a FORECAST-selected-pair sensitivity estimand."
+  }
+]

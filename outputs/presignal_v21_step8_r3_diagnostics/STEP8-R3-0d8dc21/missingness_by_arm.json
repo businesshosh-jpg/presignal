@@ -1,0 +1,10 @@
+{
+  "accepted_a": 57,
+  "accepted_e": 66,
+  "causes": {
+    "PACK_A:PATH_RANGE_VIOLATION": 7,
+    "PACK_A:PREDICTION_REVERSAL_VIOLATION": 10,
+    "PACK_E:PATH_RANGE_VIOLATION": 1,
+    "PACK_E:PREDICTION_REVERSAL_VIOLATION": 7
+  }
+}

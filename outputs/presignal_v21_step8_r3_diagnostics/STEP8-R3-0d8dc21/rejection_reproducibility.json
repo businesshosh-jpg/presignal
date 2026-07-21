@@ -1,0 +1,4 @@
+{
+  "PATH_RANGE_VIOLATION": "CORRECT_REJECTION under frozen schema; prospective prompt ambiguity repair candidate",
+  "PREDICTION_REVERSAL_VIOLATION": "CORRECT_REJECTION under frozen schema; prospective prompt ambiguity repair candidate"
+}

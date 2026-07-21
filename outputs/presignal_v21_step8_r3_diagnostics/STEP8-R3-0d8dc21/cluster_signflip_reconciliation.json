@@ -1,0 +1,14 @@
+{
+  "code_location": "automation/continue_presignal_v21_step8_r2_historical_replication_v1.py: generator expression constructs random.Random(20260721) for every draw",
+  "committed_p_value": 9.99990000099999e-06,
+  "correct_behavior": "Instantiate one seeded RNG before the draw loop.",
+  "draws": 100000,
+  "finding": "IMPLEMENTATION_DEFECT",
+  "incorrect_behavior": "All sampled masks were identical; reported value was the Monte Carlo floor, not 100,000 independent sign flips.",
+  "observed_statistic": -0.09615384615384616,
+  "reconstructed_correct_p_value": 0.3882461175388246,
+  "seed": 20260721,
+  "two_sided_rule": "abs(simulated statistic) >= abs(observed statistic)",
+  "unit": "Episode; provider-pair differences are summed within Episode, then Episode sums are sign-flipped.",
+  "zero_episode_effects": 22
+}

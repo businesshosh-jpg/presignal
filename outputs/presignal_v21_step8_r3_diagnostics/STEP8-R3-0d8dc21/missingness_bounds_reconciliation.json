@@ -1,0 +1,10 @@
+{
+  "committed_bounds": {
+    "best_case_pack_a_difference": 0.018018018018018018,
+    "incomplete_both_pairs": 3,
+    "worst_case_pack_a_difference": -0.03088803088803089
+  },
+  "could_missingness_reverse_complete_case_lead": "Not established by these committed bounds; a repaired sensitivity analysis is required.",
+  "definition": "These are all-777-record score bounds using the complete-pair net difference plus/minus one point for incomplete one-arm pairs, divided by 777. They are not a confidence interval or an absolute effect bound among FORECAST-selected pairs.",
+  "finding": "STATISTIC_MISINTERPRETED"
+}

@@ -1,0 +1,8 @@
+{
+  "Gemini": {
+    "PATH_RANGE_VIOLATION": 8
+  },
+  "OpenAI": {
+    "PREDICTION_REVERSAL_VIOLATION": 17
+  }
+}
