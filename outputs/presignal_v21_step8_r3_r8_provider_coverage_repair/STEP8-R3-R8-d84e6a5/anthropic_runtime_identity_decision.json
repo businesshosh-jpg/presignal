@@ -1,0 +1,17 @@
+{
+  "accepted_emitted_model_identities": [
+    null,
+    "claude-haiku-4-5"
+  ],
+  "accepted_emitted_provider_identities": [
+    null,
+    "Anthropic",
+    "presignal_v2",
+    "presignal_v2_shadow_research"
+  ],
+  "contradictory_identity_rejected": true,
+  "identity_owner": "manifest-bound runtime route and bridge metadata",
+  "raw_emitted_values_retained": true,
+  "runtime_model": "claude-haiku-4-5",
+  "runtime_provider": "Anthropic"
+}

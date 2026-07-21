@@ -1,0 +1,12 @@
+{
+  "additional_provider_calls": 0,
+  "blocking_error": {
+    "code": "UNHANDLED_ATTENTION_RANK_FORMAT",
+    "detail": "Gemini emitted attention_rank='L'; the accepted Attention payload later raised ValueError during deterministic prompt construction.",
+    "provider": "Gemini",
+    "stage": "FORECAST_PROMPT"
+  },
+  "command": "--resume --run-id STEP8-R3-R8-SMOKE-d84e6a5",
+  "duplicate_calls": 0,
+  "result": "NO_PROVIDER_CALLS; execution did not reach a terminal episode state"
+}

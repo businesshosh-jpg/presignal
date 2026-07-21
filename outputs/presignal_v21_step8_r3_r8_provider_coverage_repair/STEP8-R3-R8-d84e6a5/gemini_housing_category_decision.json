@@ -1,0 +1,24 @@
+{
+  "canonical_information_categories": [
+    "treasury_yields",
+    "fed_expectations",
+    "dxy",
+    "usdjpy_trend",
+    "risk_sentiment",
+    "equity_tone",
+    "inflation_narrative",
+    "labor_market_trend",
+    "growth_context",
+    "market_positioning",
+    "upcoming_larger_events",
+    "jpy_intervention_risk",
+    "volatility",
+    "historical_surprise_sensitivity",
+    "event_consensus_detail",
+    "other"
+  ],
+  "case_sensitive": true,
+  "evidence": "The canonical enum has no housing category; preserved frozen historical housing Requests use other.",
+  "mapping": "housing_market_trend -> other",
+  "original_retained": true
+}

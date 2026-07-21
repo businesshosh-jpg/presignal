@@ -1,0 +1,11 @@
+{
+  "anthropic_contradictory_identity_rejected": true,
+  "anthropic_workflow_identities_accepted": true,
+  "compat_r4_required": true,
+  "housing_market_trend_to_other": true,
+  "invalid_categories_rejected": true,
+  "outcome_isolation": true,
+  "pack_symmetry": true,
+  "provider_calls": 0,
+  "unknown_to_other_preserved": true
+}

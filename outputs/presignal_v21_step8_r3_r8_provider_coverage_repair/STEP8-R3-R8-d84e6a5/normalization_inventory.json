@@ -1,0 +1,25 @@
+{
+  "affected_channel": [
+    "other -> unknown"
+  ],
+  "anthropic_identity": {
+    "accepted_emitted_model_identities": [
+      null,
+      "claude-haiku-4-5"
+    ],
+    "accepted_emitted_provider_identities": [
+      null,
+      "Anthropic",
+      "presignal_v2",
+      "presignal_v2_shadow_research"
+    ],
+    "reason": "Provider/model identity is owned by the manifest-bound route and bridge metadata; accepted emitted labels are exact application/workflow audit values observed in frozen smoke evidence.",
+    "runtime_model": "claude-haiku-4-5",
+    "runtime_provider": "Anthropic"
+  },
+  "fuzzy_matching": false,
+  "information_category": [
+    "unknown -> other",
+    "housing_market_trend -> other"
+  ]
+}

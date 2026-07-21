@@ -1,0 +1,11 @@
+{
+  "child_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r4",
+  "deltas": [
+    "runtime-owned Anthropic provider/model identity",
+    "exact workflow-identity audit handling",
+    "exact housing_market_trend -> other mapping",
+    "canonical housing prompt clarification"
+  ],
+  "parent_contract": "presignal_event_path_contract_v1_historical_verification_r3_compat_r3",
+  "scientific_forecast_semantics_changed": false
+}

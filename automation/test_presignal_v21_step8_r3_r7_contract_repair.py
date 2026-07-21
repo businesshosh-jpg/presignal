@@ -4,15 +4,15 @@ import unittest
 
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
 from automation import presignal_v21_event_path_contract_v1 as event_contract
-from automation import presignal_v21_historical_verification_r3_compat_r3_contract_v1 as compat
-from automation import repair_presignal_v21_step8_r3_r7_final_contract_v1 as r7
+from automation import presignal_v21_historical_verification_r3_compat_r4_contract_v1 as compat
+from automation import repair_presignal_v21_step8_r3_r8_provider_coverage_v1 as r8
 from automation import run_presignal_v21_step8_r3_fresh_historical_verification_v1 as runner
 
 
 class R7ContractRepairTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.manifest = r7.prepare()
+        cls.manifest = r8.prepare()
 
     def test_contract_and_all_provider_prompts_use_absolute_pip_representation(self):
         gate = binding.gate(self.manifest)
@@ -33,9 +33,10 @@ class R7ContractRepairTests(unittest.TestCase):
         raw = "```json\n" + json.dumps({"object": "session_attention_map", "session_id": "S", "provider": "presignal_v2", "attention_items": [], "status": "ok"}) + "\n```"
         parsed = binding.attention_parser("Anthropic", raw, compat.spec())
         self.assertEqual(parsed["provider"], "Anthropic")
-        self.assertEqual(parsed["_provider_identity_normalization"]["original_provider"], "presignal_v2")
+        self.assertEqual(parsed["_provider_identity_normalization"]["model_emitted_provider_identity"], "presignal_v2")
         contradictory = json.dumps({"object": "session_attention_map", "session_id": "S", "provider": "unexpected", "attention_items": [], "status": "ok"})
-        self.assertEqual(binding.attention_parser("Anthropic", contradictory, compat.spec())["provider"], "unexpected")
+        with self.assertRaisesRegex(binding.BindingError, "IDENTITY_CONTRADICTION"):
+            binding.attention_parser("Anthropic", contradictory, compat.spec())
 
     def test_only_unknown_information_category_maps_to_other(self):
         normalized, provenance = binding.normalize_request_item({"information_category": "unknown", "affected_channel": "other"}, compat.spec())
@@ -81,12 +82,12 @@ class R7ContractRepairTests(unittest.TestCase):
             event_contract.validate_prediction_path_transaction(prediction, paths)
         shutil.rmtree(loop.run, ignore_errors=True)
 
-    def test_runner_rejects_r2_manifest_and_keeps_validator_unchanged(self):
+    def test_runner_rejects_r3_manifest_and_keeps_validator_unchanged(self):
         loop = runner.ExecutionLoop("TEST-R3-R7-CONTRACT", dispatcher=lambda _: {"status": "ok"}, manifest_path=self.manifest)
         shutil.rmtree(loop.run, ignore_errors=True)
         self.assertEqual(loop.gate["contract"]["validator_fingerprint"], compat.spec()["validator_fingerprint"])
         with self.assertRaisesRegex(runner.DispatchError, "PREVIOUS_CONTRACT_REJECTED"):
-            runner.ExecutionLoop("TEST-R3-R7-R2", dispatcher=lambda _: {"status": "ok"}, manifest_path=r7.R6 / "verification_manifest.json")
+            runner.ExecutionLoop("TEST-R3-R8-R3", dispatcher=lambda _: {"status": "ok"}, manifest_path=r8.R7 / "verification_manifest.json")
 
 
 if __name__ == "__main__":

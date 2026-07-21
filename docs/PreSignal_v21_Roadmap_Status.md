@@ -133,3 +133,17 @@ values did not recur. Anthropic emitted a new, unapproved identity label and
 Gemini emitted the unapproved `housing_market_trend` category; both were
 strictly preserved as coverage limitations rather than broadened silently.
 P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+
+## Step 8-R3-R8 Provider Coverage Repair
+
+Compat-r4 transfers Anthropic provider/model ownership to the manifest-bound
+runtime route and accepts only documented workflow identity labels as audit
+metadata. It also freezes the one exact Request mapping
+`housing_market_trend` to the existing `other` category. The bounded R8 smoke
+confirmed both repaired blockers: Anthropic Attention accepted the emitted
+`presignal_v2_shadow_research` workflow identity and Gemini's Request was
+accepted. The smoke then stopped before forecasts on two separately recorded
+failures: an Anthropic Request bridge payload serialization error and a Gemini
+`attention_rank="L"` value that was not rejected before prompt construction.
+No additional Episode was processed, no forecast call was made, and the fresh
+cohort remains blocked. P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.

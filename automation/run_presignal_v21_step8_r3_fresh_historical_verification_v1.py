@@ -21,7 +21,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
-from automation import presignal_v21_historical_verification_r3_compat_r3_contract_v1 as compat_contract
+from automation import presignal_v21_historical_verification_r3_compat_r4_contract_v1 as compat_contract
 from automation import presignal_v21_minimal_prospective_lineage_v1 as lineage
 from automation import run_presignal_v21_single_event_path_pair_v1 as single
 from automation import run_presignal_v21_step8_r2_historical_replication_v1 as replay
@@ -29,7 +29,7 @@ from automation import run_presignal_v21_step8_r2_historical_replication_v1 as r
 OUT = ROOT / "outputs/presignal_v21_step8_r3_fresh_historical_verification"
 PREP = ROOT / "outputs/presignal_v21_step8_r3_repair/STEP8-R3-REPAIR-df9c25e"
 POPULATION = PREP / "fresh_verification_population_plan.json"
-R7_MANIFEST = ROOT / "outputs/presignal_v21_step8_r3_r7_final_contract_repair/STEP8-R3-R7-c671e5f/verification_manifest.json"
+R8_MANIFEST = ROOT / "outputs/presignal_v21_step8_r3_r8_provider_coverage_repair/STEP8-R3-R8-d84e6a5/verification_manifest.json"
 
 STAGES = (
     "PENDING", "ATTENTION_REQUEST_FROZEN", "ATTENTION_SENT", "ATTENTION_RESPONSE_RECEIVED",
@@ -82,10 +82,10 @@ def operation_key(identity: Mapping[str, Any]) -> str:
 class ExecutionLoop:
     """Persisted stage dispatcher with an injectable bridge for call-free tests."""
 
-    def __init__(self, run_id: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, manifest_path: Path = R7_MANIFEST):
+    def __init__(self, run_id: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, manifest_path: Path = R8_MANIFEST):
         self.gate = binding.gate(manifest_path)
         if self.gate["contract"]["contract_version"] != compat_contract.CONTRACT_VERSION:
-            raise DispatchError("V2_1_STEP8_R7_PREVIOUS_CONTRACT_REJECTED")
+            raise DispatchError("V2_1_STEP8_R8_PREVIOUS_CONTRACT_REJECTED")
         self.run = OUT / run_id
         self.state_path = self.run / "execution_state.json"
         self.dispatcher = dispatcher
@@ -241,6 +241,9 @@ class ExecutionLoop:
 
     def _attention(self, episode: Mapping[str, Any], provider: str, model: str, source: Mapping[str, Any]) -> dict[str, Any]:
         identity = self._identity(episode, provider, model, "ATTENTION")
+        _, result_path = self._paths(identity)
+        if result_path.exists():
+            return read_json(result_path)
         session = source["sessions"][episode["session_id"]]
         generation_settings = binding.generation_settings(self.gate["contract"], provider, "ATTENTION")
         payload = {"session": self._snapshot(session), "members": source["members"][episode["session_id"]], "cutoff": episode["forecast_cutoff_ts"], "generation_settings": generation_settings}
@@ -260,6 +263,9 @@ class ExecutionLoop:
 
     def _requests(self, episode: Mapping[str, Any], provider: str, model: str, attention: Mapping[str, Any], source: Mapping[str, Any]) -> dict[str, Any]:
         identity = self._identity(episode, provider, model, "REQUEST")
+        _, result_path = self._paths(identity)
+        if result_path.exists():
+            return read_json(result_path)
         session = source["sessions"][episode["session_id"]]
         payload = {"attention_result_fingerprint": attention["result_fingerprint"], "cutoff": episode["forecast_cutoff_ts"]}
         self._persist_payload(identity, payload); self._transition(identity, "REQUEST_FROZEN")
@@ -406,8 +412,8 @@ def main() -> None:
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--status", action="store_true")
-    parser.add_argument("--run-id", default="STEP8-R3-R7-SMOKE-c671e5f")
-    parser.add_argument("--verification-manifest", type=Path, default=R7_MANIFEST)
+    parser.add_argument("--run-id", default="STEP8-R3-R8-SMOKE-d84e6a5")
+    parser.add_argument("--verification-manifest", type=Path, default=R8_MANIFEST)
     args = parser.parse_args()
     loop = ExecutionLoop(args.run_id, manifest_path=args.verification_manifest)
     if args.status:

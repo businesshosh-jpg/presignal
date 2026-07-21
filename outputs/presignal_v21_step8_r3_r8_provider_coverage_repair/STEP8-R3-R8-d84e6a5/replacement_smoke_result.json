@@ -1,0 +1,57 @@
+{
+  "accepted_attention": 3,
+  "accepted_pack_a": 0,
+  "accepted_pack_e": 0,
+  "accepted_requests": 2,
+  "anthropic_request_bridge_error": "SyntaxError: Unterminated string in JSON at position 14062 (line 247 column 295)",
+  "attention_calls": {
+    "Anthropic": 1,
+    "Gemini": 1,
+    "OpenAI": 1
+  },
+  "complete_paired_observations": 0,
+  "completed_paired_evaluations": 0,
+  "cutoff_violations": 0,
+  "decision": "V2_1_STEP8_R3_R8_CONFIRMED_PROVIDER_COVERAGE_DEFECT_REMAINS",
+  "duplicate_accepted_calls": 0,
+  "episode_id": "EP_BATCH_b5c0c544ec07bbf0b950",
+  "execution_failure": {
+    "code": "UNHANDLED_ATTENTION_RANK_FORMAT",
+    "detail": "Gemini emitted attention_rank='L'; the accepted Attention payload later raised ValueError during deterministic prompt construction.",
+    "provider": "Gemini",
+    "stage": "FORECAST_PROMPT"
+  },
+  "known_anthropic_defect_recurred": false,
+  "known_gemini_defect_recurred": false,
+  "model_substitutions": 0,
+  "outcome_leakage": 0,
+  "pack_a_calls": {
+    "Anthropic": 0,
+    "Gemini": 0,
+    "OpenAI": 0
+  },
+  "pack_arm_symmetry": "PASSED",
+  "pack_e_calls": {
+    "Anthropic": 0,
+    "Gemini": 0,
+    "OpenAI": 0
+  },
+  "pack_e_equality": "PASSED_BEFORE_FORECASTS",
+  "processed_episodes": 0,
+  "prospective_calls": 0,
+  "provider_calls": 6,
+  "rejected": [
+    {
+      "arm": null,
+      "provider": "Anthropic",
+      "reason": "provider_contract_error",
+      "stage": "REQUEST"
+    }
+  ],
+  "request_calls": {
+    "Anthropic": 1,
+    "Gemini": 1,
+    "OpenAI": 1
+  },
+  "run_id": "STEP8-R3-R8-SMOKE-d84e6a5"
+}
