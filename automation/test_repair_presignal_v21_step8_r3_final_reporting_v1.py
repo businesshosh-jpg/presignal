@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import unittest
+import os
+from pathlib import Path
 
 from automation import repair_presignal_v21_step8_r3_final_reporting_v1 as reporting
 
@@ -29,9 +31,18 @@ class ReportingTaxonomyTests(unittest.TestCase):
         self.assertEqual(reporting.classify(self.stages(forecast(False), forecast(False), request=False))[:2], ("TRUE_INCOMPLETE_PAIR", "REQUEST_TRANSPORT_FAILURE"))
 
     def test_authoritative_reconciliation(self) -> None:
-        if not reporting.SOURCE_RUN.exists() or not any((reporting.SOURCE_RUN / "stage_results").glob("*.json")):
-            self.skipTest("frozen historical stage-results are not present in this isolated baseline worktree")
-        rows = reporting.pair_rows()
+        source_run = Path(os.environ.get("PRESIGNAL_V21_FROZEN_STAGE_RESULTS_DIR", reporting.SOURCE_RUN))
+        if not source_run.exists() or not any((source_run / "stage_results").glob("*.json")):
+            self.skipTest("frozen historical stage-results are not present; set PRESIGNAL_V21_FROZEN_STAGE_RESULTS_DIR")
+        previous = reporting.SOURCE_RUN
+        previous_root = reporting.recon.ROOT
+        reporting.SOURCE_RUN = source_run
+        reporting.recon.ROOT = source_run.parents[2]
+        try:
+            rows = reporting.pair_rows()
+        finally:
+            reporting.SOURCE_RUN = previous
+            reporting.recon.ROOT = previous_root
         counts = {name: sum(row["top_level_status"] == name for row in rows) for name in ("DIRECTIONAL_PAIR_EVALUABLE", "VALID_NO_SIGNAL_PAIR", "TRUE_INCOMPLETE_PAIR")}
         self.assertEqual(counts, {"DIRECTIONAL_PAIR_EVALUABLE": 52, "VALID_NO_SIGNAL_PAIR": 83, "TRUE_INCOMPLETE_PAIR": 57})
         self.assertEqual(sum(counts.values()), 192)
