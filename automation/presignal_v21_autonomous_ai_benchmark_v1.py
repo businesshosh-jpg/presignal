@@ -295,6 +295,41 @@ def _outcomes() -> dict[str, dict[str, Any]]:
     return found
 
 
+def _atomic_json(path: Path, value: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(value, sort_keys=True) + "\n")
+    tmp.replace(path)
+
+
+def _append_ledger(path: Path, record: Mapping[str, Any]) -> None:
+    previous = ""
+    if path.exists():
+        lines = [line for line in path.read_text().splitlines() if line]
+        previous = fingerprint(json.loads(lines[-1])) if lines else ""
+    value = {"ledger_schema_version": "native_ai_call_ledger_v1", **dict(record), "previous_ledger_record_fingerprint": previous}
+    with path.open("a") as handle:
+        handle.write(canonical(value) + "\n"); handle.flush()
+
+
+def import_pre_repair_responses() -> dict[str, Any]:
+    """One-time, parse-only recovery of durable raw responses already in the workbook."""
+    from automation.google_clients import build_sheets_service, load_credentials
+    service = build_sheets_service(load_credentials(False))
+    values = service.spreadsheets().values().get(spreadsheetId=NATIVE_WORKBOOK_ID, range="'Autonomous_Forecasts'!A1:ZZZ").execute().get("values", [])
+    headers = values[0] if values else []; rows = [dict(zip(headers, row + [""] * (len(headers) - len(row)))) for row in values[1:]]
+    ledger = NATIVE_ARTIFACT / "native_ai_call_ledger.jsonl"; response_dir = NATIVE_ARTIFACT / "native_responses"; imported = []
+    for row in rows:
+        if row.get("arm") != "NATIVE_AI_NO_RESEARCH": continue
+        episode_id = row["episode_id"]; call_id = "NATIVE_" + hashlib.sha256((NATIVE_RUN_ID + "|" + episode_id + "|NATIVE_AI_NO_RESEARCH|Gemini|gemini-2.5-flash-lite|" + NATIVE_PROMPT_VERSION + "|" + fingerprint(next(item["episode"] for item in resolve_source()["sample"] if item["episode"]["episode_id"] == episode_id))).encode()).hexdigest()[:24]
+        raw = row.get("raw_output", ""); response_path = response_dir / (call_id + ".json")
+        _atomic_json(response_path, {"call_id": call_id, "raw_output": raw, "requested_provider": "Gemini", "requested_model": "gemini-2.5-flash-lite", "actual_provider": "Gemini", "actual_model": "gemini-2.5-flash-lite", "recovered_from": "benchmark_workbook", "recovered_at": now(), "response_fingerprint": fingerprint(raw)})
+        base = {"benchmark_run_id": NATIVE_RUN_ID, "call_id": call_id, "episode_id": episode_id, "arm": "NATIVE_AI_NO_RESEARCH", "provider": "Gemini", "requested_model": "gemini-2.5-flash-lite", "prompt_version": NATIVE_PROMPT_VERSION, "prompt_fingerprint": "sha256:9f9543481fcfd11be7ef7b61e281ad8ea4cf66fc242e15131f5639f569ee3736", "input_fingerprint": fingerprint(next(item["episode"] for item in resolve_source()["sample"] if item["episode"]["episode_id"] == episode_id)), "request_fingerprint": fingerprint({"episode_id": episode_id, "arm": "NATIVE_AI_NO_RESEARCH"}), "attempt_number": 1, "reservation_timestamp": "", "dispatch_start_timestamp": "", "response_timestamp": now(), "completion_timestamp": now(), "provider_request_id": "", "actual_provider": "Gemini", "actual_model": "gemini-2.5-flash-lite", "raw_response_path": str(response_path), "raw_response_fingerprint": fingerprint(raw), "error_class": "", "error_message": "", "retry_eligibility": False}
+        _append_ledger(ledger, {**base, "state": "RESPONSE_RECEIVED", "terminal_status": ""}); _append_ledger(ledger, {**base, "state": "FORECAST_SCHEMA_REJECTED", "terminal_status": "FORECAST_SCHEMA_REJECTED", "error_class": "schema", "error_message": "Pre-repair raw response was already rejected by the frozen Event-Path parser."})
+        imported.append(call_id)
+    return {"pre_repair_investigation": "PRE_REPAIR_CALL_IDENTIFIED_WITH_RESPONSE", "imported_call_ids": imported, "ledger": str(ledger)}
+
+
 def _native_prompt(episode: Mapping[str, Any]) -> str:
     payload = {"episode_id": episode["episode_id"], "country": episode["country"], "target_pair": "USD/JPY", "release_timestamp": episode["release_ts"], "forecast_cutoff": episode["forecast_cutoff_ts"], "members": [{key: member.get(key) for key in ("event_id", "indicator_name", "genre", "importance", "consensus_value", "prev_revision", "type")} for member in episode["episode_members"]]}
     fields = "no_signal_flag,no_signal_reason,confidence,expected_initial_direction,expected_reversal_flag,expected_reversal_horizon_min,expected_path_summary,information_used,missing_information,invalidation_condition,path"
@@ -350,9 +385,10 @@ def main() -> int:
     parser.add_argument("--initialize", action="store_true", help="Create the isolated workbook and frozen artifact manifest.")
     parser.add_argument("--record-seed-audit", type=Path, help="Append the reconstructed seed audit to an existing benchmark manifest.")
     parser.add_argument("--execute-native", action="store_true", help="Execute the frozen no-research Gemini arm.")
+    parser.add_argument("--import-pre-repair-responses", action="store_true", help="Import prior durable workbook responses into the call ledger without dispatch.")
     parser.add_argument("--seed", type=int, default=SAMPLE_SEED)
     args = parser.parse_args()
-    if not args.check and not args.initialize and not args.record_seed_audit and not args.execute_native:
+    if not args.check and not args.initialize and not args.record_seed_audit and not args.execute_native and not args.import_pre_repair_responses:
         parser.error("choose --check, --initialize, --record-seed-audit, or --execute-native")
     resolution = resolve_source(args.seed)
     if args.check:
@@ -368,6 +404,9 @@ def main() -> int:
         return 0
     if args.execute_native:
         print(json.dumps(execute_native(), indent=2, sort_keys=True))
+        return 0
+    if args.import_pre_repair_responses:
+        print(json.dumps(import_pre_repair_responses(), indent=2, sort_keys=True))
         return 0
     run_id = "AUTONOMOUS-AI-BENCHMARK-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
     artifact = ARTIFACT_ROOT / run_id
