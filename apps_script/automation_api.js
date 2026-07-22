@@ -857,6 +857,22 @@ function apiUpsertEventWindow(params) {
   return apiUpsertEventWindow_(params);
 }
 
+function apiDiagnoseProspectiveEventIdentityRuntime(payload) {
+  var out = {status: 'error', last_stage: 'ENTRYPOINT_STARTED', spreadsheet_id: '', spreadsheet_name: '', sheet_name: '', sheet_row_count: 0, normalized_header_map: {}, event_id_column: -1, batch_id_column: -1, type_column: -1, future_rows_found: 0, eligible_rows_found: 0, missing_event_id_before: 0, missing_batch_id_before: 0, missing_type_before: 0, flush_completed: false, postpass_called: false, postpass_argument_mode: 'undefined_all_rows', postpass_return_type: '', postpass_return_value: null, updated_keys_count: 0, missing_event_id_after: 0, missing_batch_id_after: 0, missing_type_after: 0, writeback_detected: false, error_name: '', error_message: '', error_stage: ''};
+  try {
+    var ss = SpreadsheetApp.getActive(); out.last_stage = 'SPREADSHEET_RESOLVED'; out.spreadsheet_id = String(ss.getId()); out.spreadsheet_name = String(ss.getName());
+    var sh = ss.getSheetByName((typeof CFG !== 'undefined' && CFG.SHEET_EVENT) ? CFG.SHEET_EVENT : 'Event'); if (!sh) throw new Error('EVENT_SHEET_MISSING');
+    out.last_stage = 'EVENT_SHEET_RESOLVED'; out.sheet_name = String(sh.getName()); out.sheet_row_count = Number(sh.getLastRow());
+    var values = sh.getDataRange().getValues(), headers = (values[0] || []).map(function(h){ return String(h || '').trim().toLowerCase(); });
+    headers.forEach(function(h, i){ out.normalized_header_map[h] = i + 1; }); out.event_id_column = headers.indexOf('event_id') + 1; out.batch_id_column = headers.indexOf('batch_id') + 1; out.type_column = headers.indexOf('type') + 1; out.last_stage = 'HEADERS_RESOLVED';
+    var cTs=headers.indexOf('release_ts'), cE=out.event_id_column-1, cB=out.batch_id_column-1, cT=out.type_column-1, now=Date.now();
+    function count(rows, after) { rows.slice(1).forEach(function(r){ var d=new Date(r[cTs]); if (!isNaN(d) && d.getTime()>now) { out.future_rows_found++; if (!String(r[cE]||'') || !String(r[cB]||'') || !String(r[cT]||'')) { out.eligible_rows_found++; out['missing_event_id_'+after] += !String(r[cE]||'') ? 1 : 0; out['missing_batch_id_'+after] += !String(r[cB]||'') ? 1 : 0; out['missing_type_'+after] += !String(r[cT]||'') ? 1 : 0; } } }); }
+    count(values, 'before'); out.last_stage = 'FUTURE_ROWS_IDENTIFIED'; SpreadsheetApp.flush(); out.flush_completed = true; out.last_stage = 'PRE_FLUSH_COMPLETE';
+    out.postpass_called = true; out.last_stage = 'POSTPASS_INVOKED'; var result = applyBatchingForKeys_(sh, undefined); out.postpass_return_type = typeof result; out.postpass_return_value = result || null; out.updated_keys_count = result && result.updatedKeys ? result.updatedKeys.length : 0; out.last_stage = 'POSTPASS_RETURNED';
+    values = sh.getDataRange().getValues(); out.future_rows_found=0; count(values, 'after'); out.writeback_detected = out.missing_event_id_after < out.missing_event_id_before || out.missing_batch_id_after < out.missing_batch_id_before || out.missing_type_after < out.missing_type_before; out.last_stage = 'POST_REPAIR_READ_COMPLETE'; out.status = 'ok'; out.last_stage = 'ENTRYPOINT_RETURNED'; return out;
+  } catch (e) { out.error_name = String(e && e.name || 'Error'); out.error_message = String(e && e.message || e); out.error_stage = out.last_stage; out.last_stage = 'POSTPASS_THROWN'; return out; }
+}
+
 function apiRunPipelineWindow_(params) {
   params = params || {};
   var applied = _apiApplyWindowConfig_(params);
