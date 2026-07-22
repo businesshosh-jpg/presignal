@@ -1,0 +1,15 @@
+{
+  "by_provider": {
+    "Anthropic": 24,
+    "Gemini": 26,
+    "OpenAI": 7
+  },
+  "by_subclass": {
+    "BOTH_ARMS_MISSING": 1,
+    "PACK_A_MISSING": 4,
+    "PACK_E_MISSING": 1,
+    "REQUEST_REJECTION": 51
+  },
+  "definition": "No two valid terminal forecast-arm outputs. Valid NO_SIGNAL pairs are excluded from this category.",
+  "total": 57
+}

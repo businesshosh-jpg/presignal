@@ -1,0 +1,13 @@
+{
+  "directional_selectivity_uncertainty": {
+    "count": 83,
+    "definition": "Valid NO_SIGNAL pair(s) have no directional correctness and cannot be scored under the unchanged directional estimand.",
+    "not_operational_missingness": true
+  },
+  "operational_missingness_sensitivity": {
+    "count": 57,
+    "definition": "True operational or contract incompletion; this is the population eligible for an operational missingness sensitivity analysis.",
+    "not_a_confidence_interval": true
+  },
+  "prior_label_superseded": "The prior generic incomplete-pair label conflated valid non-directional outputs with operational failures."
+}

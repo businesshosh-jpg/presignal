@@ -1,0 +1,22 @@
+{
+  "PACK_A": {
+    "accepted_total": 136,
+    "directional_accepted": 59,
+    "no_signal_accepted": 77,
+    "rejected_or_missing_not_called": 56,
+    "within_valid_terminal_pairs": {
+      "directional": 58,
+      "no_signal": 77
+    }
+  },
+  "PACK_E": {
+    "accepted_total": 139,
+    "directional_accepted": 68,
+    "no_signal_accepted": 71,
+    "rejected_or_missing_not_called": 53,
+    "within_valid_terminal_pairs": {
+      "directional": 65,
+      "no_signal": 70
+    }
+  }
+}

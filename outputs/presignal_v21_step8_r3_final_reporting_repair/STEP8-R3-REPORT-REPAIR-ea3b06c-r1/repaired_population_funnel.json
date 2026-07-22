@@ -1,0 +1,29 @@
+{
+  "accepted_forecast": 192,
+  "directional_pair_evaluable": 52,
+  "rates": {
+    "Directional Pair Yield": {
+      "denominator": 192,
+      "numerator": 52,
+      "rate": 0.2708333333333333
+    },
+    "True Operational/Contract Incompletion Rate": {
+      "denominator": 192,
+      "numerator": 57,
+      "rate": 0.296875
+    },
+    "Valid NO_SIGNAL Pair Rate": {
+      "denominator": 192,
+      "numerator": 83,
+      "rate": 0.4322916666666667
+    },
+    "Valid Terminal Pair Rate": {
+      "denominator": 192,
+      "numerator": 135,
+      "rate": 0.703125
+    }
+  },
+  "reconciliation": 192,
+  "true_incomplete_pair": 57,
+  "valid_no_signal_pair": 83
+}

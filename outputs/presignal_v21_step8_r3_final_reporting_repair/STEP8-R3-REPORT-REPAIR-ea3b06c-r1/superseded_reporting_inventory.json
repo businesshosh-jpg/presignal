@@ -1,0 +1,19 @@
+{
+  "superseded": [
+    {
+      "figure": "229 FORECAST selections",
+      "reason": "37 rejected Attention raw PRIMARY_DRIVER labels excluded.",
+      "replacement": "192 accepted parsed FORECAST selections"
+    },
+    {
+      "figure": "22.7% paired completion",
+      "reason": "NO_SIGNAL is valid non-directional output, not operational incompletion.",
+      "replacement": "Directional Pair Yield 27.1%; Valid Terminal Pair Rate 70.3%; True Operational/Contract Incompletion Rate 29.7%"
+    },
+    {
+      "figure": "83 both-arm all-null evaluations",
+      "reason": "Source reconstruction distinguishes both-arm from one-arm direction-null patterns.",
+      "replacement": "64 both-arm NO_SIGNAL plus 19 one-arm NO_SIGNAL pairs"
+    }
+  ]
+}

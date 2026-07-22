@@ -1,0 +1,5 @@
+{
+  "DIRECTIONAL_PAIR_EVALUABLE": "Both arms directional and 15-minute evaluation boolean.",
+  "TRUE_INCOMPLETE_PAIR": "Two valid terminal forecast outputs were not produced.",
+  "VALID_NO_SIGNAL_PAIR": "Both arms valid terminal outputs and at least one is NO_SIGNAL."
+}

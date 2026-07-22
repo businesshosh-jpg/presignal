@@ -1,0 +1,19 @@
+{
+  "ambiguity_code": "V2_1_STEP8_R3_COMPLETION_GATE_DEFINITION_AMBIGUOUS",
+  "decision": "Do not silently replace the frozen directional implementation. Report both measures and preserve the ambiguity for governance.",
+  "definition_ambiguity": true,
+  "gate_results": {
+    "directional_coverage_interpretation": {
+      "passes_85_percent": false,
+      "rate": 0.2708333333333333
+    },
+    "valid_terminal_execution_interpretation": {
+      "passes_85_percent": false,
+      "rate": 0.703125
+    }
+  },
+  "original_implementation": "The final runner's _is_evaluable_pair requires boolean direction_15m_ok for both arms; the reported 52/192 was therefore a directional-pair yield.",
+  "original_value": 0.85,
+  "original_wording": "paired_completion_target",
+  "valid_terminal_alternative": "Both arms accepted with either directional or valid NO_SIGNAL terminal output: 135/192."
+}

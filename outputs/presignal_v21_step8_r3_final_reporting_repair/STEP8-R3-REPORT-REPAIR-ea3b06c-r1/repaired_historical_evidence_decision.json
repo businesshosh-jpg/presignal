@@ -1,0 +1,10 @@
+{
+  "additional_gate_decision": "V2_1_STEP8_R3_COMPLETION_GATE_DEFINITION_AMBIGUOUS",
+  "decision": "V2_1_STEP8_R3_FINAL_REPORTING_ACCOUNTING_REPAIRED",
+  "evidence_classification": "HISTORICAL_EVIDENCE_REMAINS_INDETERMINATE",
+  "external_calls": 0,
+  "no_signal_given_directional_correctness": false,
+  "no_signal_treated_as_flat": false,
+  "p12_status": "PAUSED_PENDING_HISTORICAL_VALIDATION",
+  "scientific_result_changed": false
+}

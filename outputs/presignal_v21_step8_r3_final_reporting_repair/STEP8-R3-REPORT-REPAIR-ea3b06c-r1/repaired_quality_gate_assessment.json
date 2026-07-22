@@ -1,0 +1,14 @@
+{
+  "directional_pair_yield": {
+    "denominator": 192,
+    "numerator": 52,
+    "rate": 0.2708333333333333
+  },
+  "status": "AMBIGUOUS_DEFINITION_BOTH_RATES_FAIL_85_PERCENT",
+  "threshold": 0.85,
+  "valid_terminal_pair_rate": {
+    "denominator": 192,
+    "numerator": 135,
+    "rate": 0.703125
+  }
+}

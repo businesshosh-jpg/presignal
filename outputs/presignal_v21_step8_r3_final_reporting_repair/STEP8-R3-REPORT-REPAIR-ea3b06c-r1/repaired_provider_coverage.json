@@ -1,0 +1,32 @@
+{
+  "Anthropic": {
+    "accepted_forecast": 53,
+    "both_no_signal": 27,
+    "directional_pair_yield": 0.0,
+    "directional_pairs": 0,
+    "one_arm_no_signal": 2,
+    "true_incomplete_pairs": 24,
+    "valid_no_signal_pairs": 29,
+    "valid_terminal_pair_rate": 0.5471698113207547
+  },
+  "Gemini": {
+    "accepted_forecast": 70,
+    "both_no_signal": 2,
+    "directional_pair_yield": 0.42857142857142855,
+    "directional_pairs": 30,
+    "one_arm_no_signal": 12,
+    "true_incomplete_pairs": 26,
+    "valid_no_signal_pairs": 14,
+    "valid_terminal_pair_rate": 0.6285714285714286
+  },
+  "OpenAI": {
+    "accepted_forecast": 69,
+    "both_no_signal": 35,
+    "directional_pair_yield": 0.3188405797101449,
+    "directional_pairs": 22,
+    "one_arm_no_signal": 5,
+    "true_incomplete_pairs": 7,
+    "valid_no_signal_pairs": 40,
+    "valid_terminal_pair_rate": 0.8985507246376812
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "both_correct": 7,
+  "both_incorrect": 30,
+  "episode_cluster": {
+    "clusters": 45,
+    "draws": 100000,
+    "method": "FIXED_SEED_MONTE_CARLO",
+    "observed": 0.019230769230769232,
+    "plus_one_correction": true,
+    "seed": 20260721,
+    "status": "ISSUED",
+    "two_sided_p_value": 1.0
+  },
+  "exact_mcnemar_p_value": 1.0,
+  "label": "15-Minute Directional Accuracy Among Directionally Evaluable Paired Forecasts",
+  "pack_a_accuracy": 0.28846153846153844,
+  "pack_a_correct": 15,
+  "pack_a_only_correct": 8,
+  "pack_e_accuracy": 0.2692307692307692,
+  "pack_e_correct": 14,
+  "pack_e_only_correct": 7,
+  "paired_difference_pack_a_minus_pack_e": 0.019230769230769232,
+  "total": 52
+}

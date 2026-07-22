@@ -196,3 +196,17 @@ provider-specific handling on the Google authentication and Apps Script
 Execution API route. P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**;
 prospective activation requires a narrow shared-runtime reliability decision,
 not another provider-compatibility phase or automatic historical retest.
+
+## Step 8-R3 Final Reporting Repair
+
+The final accounting now separates 192 accepted FORECAST identities into 52
+directional paired observations, 83 valid pairs containing at least one
+`NO_SIGNAL` output, and 57 true operational or contract incomplete pairs.
+The prior generic 27.1% "paired completion" label is superseded: it is the
+**Directional Pair Yield**, while the **Valid Terminal Pair Rate** is 70.3%.
+The frozen 85% `paired_completion_target` does not specify which definition it
+intended; the original runner implemented directional coverage, and both
+reported interpretations remain below 85%. Historical evidence remains
+indeterminate. P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION** pending a
+narrow repair of the shared Google OAuth and Apps Script Execution API
+reliability boundary.
