@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from automation import reconstruct_presignal_v21_step8_r3_final_evidence_v1 as recon
+from automation import presignal_v21_canonical_states_v1 as states
 
 SOURCE_RUN = recon.SOURCE_RUN
 RECON_RUN = ROOT / "outputs/presignal_v21_step8_r3_final_evidence_reconstruction/STEP8-R3-RECON-7f6968fd-r4"
@@ -29,11 +30,6 @@ def write(path: Path, value: Any) -> None:
 
 def write_jsonl(path: Path, rows: list[Mapping[str, Any]]) -> None:
     path.write_text("".join(recon.canonical(row) + "\n" for row in rows))
-
-
-def transport_reason(reason: Any) -> bool:
-    value = str(reason or "").lower()
-    return any(token in value for token in ("oauth", "timeout", "network", "connection", "server", "token", "transport"))
 
 
 def classify(stages: Mapping[str, Mapping[str, Any]]) -> tuple[str, str, str | None]:
@@ -55,7 +51,9 @@ def classify(stages: Mapping[str, Mapping[str, Any]]) -> tuple[str, str, str | N
         return "TRUE_INCOMPLETE_PAIR", "OUTCOME_FAILURE", "DIRECTIONAL_ENDPOINT_UNAVAILABLE"
     if not (request and request.get("accepted")):
         reason = (request or {}).get("rejection_reason")
-        return "TRUE_INCOMPLETE_PAIR", "REQUEST_TRANSPORT_FAILURE" if transport_reason(reason) else "REQUEST_REJECTION", reason
+        runtime = states.runtime_state(request, selected=True)
+        subclass = "REQUEST_TRANSPORT_FAILURE" if runtime in {states.RuntimeState.TRANSPORT_FAILED, states.RuntimeState.STATUS_UNKNOWN} else "REQUEST_REJECTION"
+        return "TRUE_INCOMPLETE_PAIR", subclass, reason
     if not a_ok and e_ok:
         return "TRUE_INCOMPLETE_PAIR", "PACK_A_MISSING", (a or {}).get("rejection_reason")
     if a_ok and not e_ok:
@@ -68,7 +66,7 @@ def pair_rows() -> list[dict[str, Any]]:
     grouped, _ = recon.stage_index(SOURCE_RUN)
     rows = []
     for key, stages in sorted(grouped.items()):
-        if recon.attention_selection(stages.get("ATTENTION:")) != "FORECAST":
+        if states.selection_state(stages.get("ATTENTION:")) != states.SelectionState.SELECTED:
             continue
         episode_id, provider, model = key
         top, subclass, reason = classify(stages)
@@ -80,7 +78,8 @@ def pair_rows() -> list[dict[str, Any]]:
             forecast = stages.get("FORECAST:" + arm)
             pred = recon.prediction(forecast)
             arms[arm] = {"accepted": bool(forecast and forecast.get("accepted")), "no_signal": bool(pred and pred.get("no_signal_flag")), "rejection_reason": None if forecast and forecast.get("accepted") else (forecast or {}).get("rejection_reason"), "prediction_id": pred.get("prediction_id") if pred else None}
-        rows.append({"episode_id": episode_id, "provider": provider, "model": model, "top_level_status": top, "subclass": subclass, "failure_reason": reason, "request_accepted": bool(stages.get("REQUEST:") and stages["REQUEST:"].get("accepted")), "arms": arms, "attention_primary_driver_genres": sorted({str(item.get("genre") or "UNKNOWN") for item in primary}), "attention_primary_driver_types": sorted({str(item.get("type") or "UNKNOWN") for item in primary}), "attention_primary_driver_ranks": sorted({item.get("attention_rank") for item in primary}), "attention_primary_driver_confidences": sorted({item.get("confidence") for item in primary}), "source_attention": attention.get("_source_file")})
+        canonical = {arm: states.canonical_states(attention=attention, forecast=stages.get("FORECAST:" + arm), evaluation=recon.evaluation(stages.get("EVALUATE:"), arm), outcome=(stages.get("OUTCOME:") or {}).get("output")) for arm in ("PACK_A", "PACK_E")}
+        rows.append({"episode_id": episode_id, "provider": provider, "model": model, "top_level_status": top, "subclass": subclass, "failure_reason": reason, "request_accepted": bool(stages.get("REQUEST:") and stages["REQUEST:"].get("accepted")), "canonical_states": canonical, "arms": arms, "attention_primary_driver_genres": sorted({str(item.get("genre") or "UNKNOWN") for item in primary}), "attention_primary_driver_types": sorted({str(item.get("type") or "UNKNOWN") for item in primary}), "attention_primary_driver_ranks": sorted({item.get("attention_rank") for item in primary}), "attention_primary_driver_confidences": sorted({item.get("confidence") for item in primary}), "source_attention": attention.get("_source_file")})
     if len(rows) != 192:
         raise RuntimeError("ACCEPTED_FORECAST_RECONCILIATION_FAILED:" + str(len(rows)))
     return rows

@@ -27,6 +27,7 @@ if str(ROOT) not in sys.path:
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
 from automation import presignal_v21_historical_verification_r3_compat_r5_contract_v1 as compat_contract
 from automation import presignal_v21_minimal_prospective_lineage_v1 as lineage
+from automation import presignal_v21_canonical_states_v1 as canonical_states
 from automation import run_presignal_v21_single_event_path_pair_v1 as single
 from automation import run_presignal_v21_step8_r2_historical_replication_v1 as replay
 
@@ -258,7 +259,8 @@ class ExecutionLoop:
         paths = state.setdefault("provider_paths", {}).setdefault(episode_id, {})
         paths[provider] = state_name
         terminals = set(paths.values())
-        if all(provider_name in paths and paths[provider_name] in {"COMPLETE", "TERMINAL_INCOMPLETE"} for provider_name in self.gate["provider_routes"]):
+        terminal_states = {"COMPLETE", "TERMINAL_INCOMPLETE", "NOT_FORECAST_SELECTED"}
+        if all(provider_name in paths and paths[provider_name] in terminal_states for provider_name in self.gate["provider_routes"]):
             state.setdefault("episode_states", {})[episode_id] = "COMPLETE" if "COMPLETE" in terminals else "TERMINAL_NO_COMPLETE_PROVIDER"
         else:
             state.setdefault("episode_states", {})[episode_id] = "IN_PROGRESS"
@@ -369,9 +371,10 @@ class ExecutionLoop:
         self._transition(identity, sent)
         try:
             returned = dict(handler())
-            record = {"stage": identity["stage"], "transport_status": returned.get("transport_status", "ok"), "raw_response": returned.get("raw_response"), "raw_response_fingerprint": sha256(returned.get("raw_response")), "parser_result": returned.get("parser_result"), "validator_result": returned.get("validator_result"), "accepted": bool(returned.get("accepted")), "rejection_reason": returned.get("rejection_reason"), "output": returned.get("output"), "output_lineage": returned.get("output_lineage", {}), "provider_call_metadata": returned.get("provider_call_metadata", {}), "started_ts": returned.get("started_ts", now()), "completed_ts": returned.get("completed_ts", now())}
+            record = {"stage": identity["stage"], "transport_status": returned.get("transport_status", "ok"), "raw_response": returned.get("raw_response"), "raw_response_fingerprint": sha256(returned.get("raw_response")), "parser_result": returned.get("parser_result"), "validator_result": returned.get("validator_result"), "accepted": bool(returned.get("accepted")), "rejection_reason": returned.get("rejection_reason"), "output": returned.get("output"), "output_lineage": returned.get("output_lineage", {}), "provider_call_metadata": returned.get("provider_call_metadata", {}), "selection_state": returned.get("selection_state"), "forecast_state": returned.get("forecast_state"), "evaluation_state": returned.get("evaluation_state"), "started_ts": returned.get("started_ts", now()), "completed_ts": returned.get("completed_ts", now())}
         except Exception as exc:
-            record = {"stage": identity["stage"], "transport_status": "exception", "raw_response": None, "raw_response_fingerprint": sha256(None), "parser_result": None, "validator_result": None, "accepted": False, "rejection_reason": str(exc), "output": None, "output_lineage": {}, "provider_call_metadata": {}, "started_ts": now(), "completed_ts": now()}
+            record = {"stage": identity["stage"], "transport_status": "exception", "raw_response": None, "raw_response_fingerprint": sha256(None), "parser_result": None, "validator_result": None, "accepted": False, "rejection_reason": str(exc), "output": None, "output_lineage": {}, "provider_call_metadata": {}, "selection_state": None, "forecast_state": None, "evaluation_state": None, "started_ts": now(), "completed_ts": now()}
+        record["runtime_state"] = canonical_states.runtime_state(record, selected=True)
         self._operation_event(identity, "RESPONSE_RECEIVED", transport_status=record["transport_status"], raw_response_fingerprint=record["raw_response_fingerprint"], provider_request_id=record["provider_call_metadata"].get("provider_request_id"), response_received_at=now())
         persisted = self._persist_result(identity, record)
         self._operation_event(identity, "TERMINAL_ACCEPTED" if record["accepted"] else "TERMINAL_REJECTED", result_persisted_at=now(), final_classification="ACCEPTED" if record["accepted"] else "REJECTED")
@@ -445,7 +448,8 @@ class ExecutionLoop:
                     accepted = False
                     rank_error = str(exc)
             response = result.get("response", {})
-            return {"raw_response": response.get("raw_output_original", response.get("raw_output")), "parser_result": result.get("status"), "validator_result": "VALID" if accepted else rank_error or result.get("status"), "accepted": accepted, "rejection_reason": None if accepted else rank_error or result.get("error") or result.get("status"), "output": result, "provider_call_metadata": response}
+            selection = canonical_states.selection_state({"accepted": accepted, "output": result})
+            return {"raw_response": response.get("raw_output_original", response.get("raw_output")), "parser_result": result.get("status"), "validator_result": "VALID" if accepted else rank_error or result.get("status"), "accepted": accepted, "rejection_reason": None if accepted else rank_error or result.get("error") or result.get("status"), "selection_state": selection, "output": result, "provider_call_metadata": response}
         result = self._call(identity, payload, handler, "ATTENTION_SENT", "ATTENTION_RESPONSE_RECEIVED")
         if result["accepted"]:
             self._transition(identity, "ATTENTION_ACCEPTED", result=result)
@@ -528,7 +532,8 @@ class ExecutionLoop:
                 accepted = True
             except Exception as exc:
                 reason = str(exc)
-            return {"raw_response": response.get("raw_output"), "parser_result": "parsed" if accepted else reason, "validator_result": "accepted" if accepted else reason, "accepted": accepted, "rejection_reason": reason, "output": {"prediction": prediction, "paths": paths}, "provider_call_metadata": response}
+            forecast_state = canonical_states.forecast_state({"accepted": accepted, "transport_status": response.get("transport_status", "ok"), "output": {"prediction": prediction}}, selection=canonical_states.SelectionState.SELECTED)
+            return {"raw_response": response.get("raw_output"), "parser_result": "parsed" if accepted else reason, "validator_result": "accepted" if accepted else reason, "accepted": accepted, "rejection_reason": reason, "forecast_state": forecast_state, "output": {"prediction": prediction, "paths": paths}, "provider_call_metadata": response}
         result = self._call(identity, frozen_payload, handler, "PACK_A_SENT" if arm == "PACK_A" else "PACK_E_SENT", "PACK_A_ACCEPTED" if arm == "PACK_A" else "PACK_E_ACCEPTED")
         self._transition(identity, ("PACK_A_ACCEPTED" if arm == "PACK_A" else "PACK_E_ACCEPTED") if result["accepted"] else ("PACK_A_REJECTED" if arm == "PACK_A" else "PACK_E_REJECTED"), result=result)
         return result
@@ -554,7 +559,7 @@ class ExecutionLoop:
         evaluation_payload = {"outcome_fingerprint": outcome_result["result_fingerprint"], "forecast_fingerprints": {a: r["result_fingerprint"] for a, r in forecasts.items()}}
         self._persist_payload(evaluation_identity, evaluation_payload)
         completed = len(evaluations) == 2
-        evaluation_result = self._persist_result(evaluation_identity, {"stage": "EVALUATE", "transport_status": "deterministic", "raw_response": evaluations, "raw_response_fingerprint": sha256(evaluations), "parser_result": "existing_evaluator", "validator_result": "VALID", "accepted": completed, "rejection_reason": None if completed else "INCOMPLETE_PAIRED", "output": evaluations, "output_lineage": {"same_outcome_identity": outcome_result["output"]["outcome_id"]}, "provider_call_metadata": {}, "started_ts": now(), "completed_ts": now()})
+        evaluation_result = self._persist_result(evaluation_identity, {"stage": "EVALUATE", "transport_status": "deterministic", "raw_response": evaluations, "raw_response_fingerprint": sha256(evaluations), "parser_result": "existing_evaluator", "validator_result": "VALID", "accepted": completed, "rejection_reason": None if completed else "INCOMPLETE_PAIRED", "evaluation_state": {arm: canonical_states.evaluation_state(canonical_states.ForecastState.DIRECTIONAL, evaluations.get(arm), outcome_result["output"]) for arm in evaluations}, "output": evaluations, "output_lineage": {"same_outcome_identity": outcome_result["output"]["outcome_id"]}, "provider_call_metadata": {}, "started_ts": now(), "completed_ts": now()})
         self._transition(evaluation_identity, "EVALUATED", result=evaluation_result)
         self._transition(evaluation_identity, "COMPLETE" if completed else "TERMINAL_INCOMPLETE", result=evaluation_result)
         return {"outcome": outcome_result, "evaluations": evaluations, "complete": completed}
@@ -592,7 +597,7 @@ class ExecutionLoop:
             if action != "FORECAST":
                 identity = self._identity(episode, provider, model, "ATTENTION")
                 self._transition(identity, "NOT_FORECAST_SELECTED", result=attention)
-                terminal[provider] = action; self._record_provider_path(episode_id, provider, "TERMINAL_INCOMPLETE"); continue
+                terminal[provider] = action; self._record_provider_path(episode_id, provider, "NOT_FORECAST_SELECTED"); continue
             request = self._requests(episode, provider, model, attention, source)
             if not request["accepted"]:
                 identity = self._identity(episode, provider, model, "REQUEST")
