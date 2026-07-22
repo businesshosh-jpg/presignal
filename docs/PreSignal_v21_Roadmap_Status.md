@@ -231,3 +231,10 @@ the refresh grant with `invalid_grant` before Apps Script dispatch. No
 prospective call was made. Step 9 readiness remains blocked pending a
 successful replacement of the revoked refresh token; P12 remains
 **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+
+After interactive consent replaced the revoked refresh grant, the bounded R1
+health check successfully called `presignalRuntimeHealthCheck` through the
+Apps Script Execution API with `devMode=true`. The response was `READY` from
+`HEAD`, and the operation journal reconciled with no unresolved operation. The
+shared runtime is ready for the Step 9 decision review; this does not activate
+P12, which remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.

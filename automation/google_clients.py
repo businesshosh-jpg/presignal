@@ -209,6 +209,10 @@ def load_credentials(interactive: bool = False) -> Credentials:
             "Missing or insufficient Google API token. "
             "Run `python3 auth_sheets.py` once to bootstrap persistent auth.")
 
+    return _run_interactive_authorization()
+
+
+def _run_interactive_authorization() -> Credentials:
     flow = InstalledAppFlow.from_client_secrets_file(str(CREDENTIALS_PATH), SCOPES)
     creds = flow.run_local_server(port=0, prompt="consent", include_granted_scopes="true")
     atomic_write_json(TOKEN_PATH, creds.to_json())
@@ -216,7 +220,18 @@ def load_credentials(interactive: bool = False) -> Credentials:
 
 
 def bootstrap_credentials() -> Credentials:
-    return load_credentials(interactive=True)
+    """Acquire credentials interactively when a saved refresh grant is revoked.
+
+    Noninteractive callers retain their strict invalid-grant failure.  The
+    operator-only bootstrap command is the sole path permitted to replace a
+    revoked persistent token with a newly consented one.
+    """
+    try:
+        return load_credentials(interactive=True)
+    except GoogleCredentialError as exc:
+        if exc.code != "GOOGLE_OAUTH_INVALID_GRANT":
+            raise
+        return _run_interactive_authorization()
 
 
 def build_sheets_service(creds: Credentials):

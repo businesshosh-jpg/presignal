@@ -1,0 +1,18 @@
+{
+  "complete": true,
+  "duplicate_operations": 0,
+  "operations": [
+    {
+      "operation_id": "OPR_2964a531a71a70ab45d4",
+      "states": [
+        "RESERVED",
+        "DISPATCH_STARTED",
+        "RESPONSE_RECEIVED",
+        "RESULT_PERSISTED",
+        "TERMINAL_ACCEPTED"
+      ]
+    }
+  ],
+  "raw_response_before_parsing": true,
+  "unresolved_sent_operations": 0
+}

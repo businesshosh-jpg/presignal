@@ -72,7 +72,10 @@ def health_payload(rows: list[dict[str, Any]]) -> dict[str, Any]:
         return {"status": "NOT_ATTEMPTED", "attempts": 0, "successful_attempts": 0}
     final = rows[-1]
     execution = final["execution"]
-    parsed = execution.get("response") if execution.get("ok") else None
+    # google_clients preserves both the raw Execution API envelope and its
+    # decoded Apps Script return value. Health validation is against the
+    # latter; the former remains the durable raw response.
+    parsed = execution.get("result") if execution.get("ok") else None
     valid = isinstance(parsed, dict) and parsed.get("status") in {"READY", "OK"} and parsed.get("dev_mode") is True and bool(parsed.get("timestamp")) and bool(parsed.get("script_version"))
     return {
         "status": "READY" if execution.get("ok") and valid else "INVALID_HEALTH_RESPONSE",

@@ -1,0 +1,31 @@
+{
+  "attempts": 1,
+  "raw_response": {
+    "done": true,
+    "response": {
+      "@type": "type.googleapis.com/google.apps.script.v1.ExecutionResponse",
+      "result": {
+        "dev_mode": true,
+        "script_version": "HEAD",
+        "status": "READY",
+        "timestamp": "2026-07-22T09:01:41.433Z"
+      }
+    }
+  },
+  "raw_response_persisted_before_parse": true,
+  "response": {
+    "done": true,
+    "response": {
+      "@type": "type.googleapis.com/google.apps.script.v1.ExecutionResponse",
+      "result": {
+        "dev_mode": true,
+        "script_version": "HEAD",
+        "status": "READY",
+        "timestamp": "2026-07-22T09:01:41.433Z"
+      }
+    }
+  },
+  "response_fingerprint": "7f955e14e8a12f0dc85d0bed4efe7946ca3b75fd03634bebf0fd04ceab166874",
+  "status": "INVALID_HEALTH_RESPONSE",
+  "successful_attempts": 1
+}

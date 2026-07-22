@@ -1,0 +1,29 @@
+{
+  "actual_state": {
+    "admission_allowed": true,
+    "circuit_state": "CLOSED",
+    "cutoff_margin_required": true,
+    "health_status": "READY",
+    "lease_required": true,
+    "preflight_status": "READY",
+    "reason": "READY"
+  },
+  "healthy_fixture": {
+    "admission_allowed": true,
+    "circuit_state": "CLOSED",
+    "cutoff_margin_required": true,
+    "health_status": "READY",
+    "lease_required": true,
+    "preflight_status": "READY",
+    "reason": "READY"
+  },
+  "unhealthy_fixture": {
+    "admission_allowed": false,
+    "circuit_state": "CLOSED",
+    "cutoff_margin_required": true,
+    "health_status": "READY",
+    "lease_required": true,
+    "preflight_status": "CREDENTIAL_INVALID",
+    "reason": "RUNTIME_ADMISSION_BLOCKED"
+  }
+}

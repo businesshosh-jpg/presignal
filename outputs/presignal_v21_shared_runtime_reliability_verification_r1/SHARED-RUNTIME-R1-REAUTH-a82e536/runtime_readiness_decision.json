@@ -1,0 +1,11 @@
+{
+  "acquisition_calls": 0,
+  "decision": "V2_1_SHARED_RUNTIME_R1_APPS_SCRIPT_EXECUTION_DEFECT_REMAINS",
+  "forecast_calls": 0,
+  "health_attempts": 1,
+  "market_data_calls": 0,
+  "prospective_calls": 0,
+  "provider_calls": 0,
+  "remaining_blocker": "INVALID_HEALTH_RESPONSE",
+  "step9_readiness": "NOT_READY"
+}

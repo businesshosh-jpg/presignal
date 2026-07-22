@@ -1,0 +1,25 @@
+{
+  "attempts": 1,
+  "raw_response": {
+    "done": true,
+    "response": {
+      "@type": "type.googleapis.com/google.apps.script.v1.ExecutionResponse",
+      "result": {
+        "dev_mode": true,
+        "script_version": "HEAD",
+        "status": "READY",
+        "timestamp": "2026-07-22T09:02:10.701Z"
+      }
+    }
+  },
+  "raw_response_persisted_before_parse": true,
+  "response": {
+    "dev_mode": true,
+    "script_version": "HEAD",
+    "status": "READY",
+    "timestamp": "2026-07-22T09:02:10.701Z"
+  },
+  "response_fingerprint": "383fe985e7f2e4200f90f6126d6c46400b9c04ad49c2d8569c50c5f17b2cb2dc",
+  "status": "READY",
+  "successful_attempts": 1
+}

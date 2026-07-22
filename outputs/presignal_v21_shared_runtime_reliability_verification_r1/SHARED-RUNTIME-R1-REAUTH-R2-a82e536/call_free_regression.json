@@ -1,0 +1,11 @@
+{
+  "atomic_persistence": true,
+  "health_retry_cap": 3,
+  "invalid_grant_fails_closed": true,
+  "no_provider_path": true,
+  "prospective_guard_healthy": "READY",
+  "prospective_guard_unhealthy": "FAIL_CLOSED",
+  "refresh_lock": true,
+  "status": "PASS",
+  "valid_token_load": true
+}

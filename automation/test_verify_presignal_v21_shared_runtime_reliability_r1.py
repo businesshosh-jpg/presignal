@@ -8,12 +8,12 @@ from automation import verify_presignal_v21_shared_runtime_reliability_r1 as ver
 
 class SharedRuntimeR1VerificationTests(unittest.TestCase):
     def test_health_payload_rejects_missing_required_fields(self) -> None:
-        row = {"execution": {"ok": True, "response": {"status": "READY"}}}
+        row = {"execution": {"ok": True, "result": {"status": "READY"}}}
         result = verification.health_payload([row])
         self.assertEqual(result["status"], "INVALID_HEALTH_RESPONSE")
 
     def test_health_payload_accepts_complete_health_response(self) -> None:
-        row = {"response_fingerprint": "sha256:test", "execution": {"ok": True, "response": {"status": "READY", "timestamp": "2026-07-22T00:00:00Z", "script_version": "HEAD", "dev_mode": True}}}
+        row = {"response_fingerprint": "sha256:test", "execution": {"ok": True, "result": {"status": "READY", "timestamp": "2026-07-22T00:00:00Z", "script_version": "HEAD", "dev_mode": True}}}
         result = verification.health_payload([row])
         self.assertEqual(result["status"], "READY")
 
