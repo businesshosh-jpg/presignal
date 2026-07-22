@@ -1,0 +1,795 @@
+{
+  "audit_version": "native_response_schema_audit_v1",
+  "authoritative_parser": "automation.run_presignal_v21_single_event_path_pair_v1.parse_provider_output",
+  "common_root_cause": "Prompt requested confidence but did not require numeric [0,1]; nine responses use an ambiguous ordinal confidence scale.",
+  "decision": "EXISTING_RESPONSES_RECOVERABLE_WITH_DETERMINISTIC_PARSE",
+  "prompt_version": "presignal_v21_native_ai_no_research_v1",
+  "responses": [
+    {
+      "call_id": "NATIVE_1af6464b5e0d9197d68557e9",
+      "confidence": "Medium",
+      "content_type": "JSON_OBJECT",
+      "episode_id": "EP_EVENT_58e1701b15c0178692ba",
+      "horizons": [
+        {
+          "continuation_probability": 0.6,
+          "expected_direction": "DOWN",
+          "expected_pips_max": 3,
+          "expected_pips_min": 1,
+          "horizon_min": 5,
+          "reversal_probability": 0.1
+        },
+        {
+          "continuation_probability": 0.7,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 1,
+          "expected_pips_min": 0,
+          "horizon_min": 15,
+          "reversal_probability": 0.2
+        },
+        {
+          "continuation_probability": 0.8,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 1,
+          "expected_pips_min": 0,
+          "horizon_min": 30,
+          "reversal_probability": 0.1
+        },
+        {
+          "continuation_probability": 0.85,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 2,
+          "expected_pips_min": 0,
+          "horizon_min": 60,
+          "reversal_probability": 0.05
+        }
+      ],
+      "identity_fields_returned": [],
+      "mismatch_categories": [
+        "CONFIDENCE_FORMAT_MISMATCH",
+        "PROMPT_DID_NOT_REQUEST_REQUIRED_FIELD"
+      ],
+      "nested_forecast_keys": [
+        "continuation_probability",
+        "expected_direction",
+        "expected_pips_max",
+        "expected_pips_min",
+        "horizon_min",
+        "invalidation_condition",
+        "reversal_probability",
+        "stage_confidence",
+        "stage_reason"
+      ],
+      "no_signal": false,
+      "parser_rejection_reason": "PROVIDER_OUTPUT_TYPES",
+      "proposed_normalization": null,
+      "rationale": "The EIA Natural Gas Stocks Change is expected to be higher than the previous revision, which could put downward pressure on USD/JPY. This is a low importance event, so the impact is likely to be limited and short-lived.",
+      "raw_response_path": "outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses/NATIVE_1af6464b5e0d9197d68557e9.json",
+      "recoverable": false,
+      "required_semantic_content_present": true,
+      "top_level_keys": [
+        "confidence",
+        "expected_initial_direction",
+        "expected_path_summary",
+        "expected_reversal_flag",
+        "expected_reversal_horizon_min",
+        "information_used",
+        "invalidation_condition",
+        "missing_information",
+        "no_signal_flag",
+        "no_signal_reason",
+        "path"
+      ],
+      "valid_json": true,
+      "wrapper": "NONE"
+    },
+    {
+      "call_id": "NATIVE_3741bb83248e0b882ccc8eb0",
+      "confidence": 3,
+      "content_type": "JSON_OBJECT",
+      "episode_id": "EP_EVENT_053c10a3d4a69d6881af",
+      "horizons": [
+        {
+          "continuation_probability": 0.6,
+          "expected_direction": "DOWN",
+          "expected_pips_max": 5,
+          "expected_pips_min": 2,
+          "horizon_min": 5,
+          "reversal_probability": 0.4
+        },
+        {
+          "continuation_probability": 0.4,
+          "expected_direction": "DOWN",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 15,
+          "reversal_probability": 0.6
+        },
+        {
+          "continuation_probability": 0.6,
+          "expected_direction": "UP",
+          "expected_pips_max": 15,
+          "expected_pips_min": 5,
+          "horizon_min": 30,
+          "reversal_probability": 0.4
+        },
+        {
+          "continuation_probability": 0.7,
+          "expected_direction": "UP",
+          "expected_pips_max": 25,
+          "expected_pips_min": 10,
+          "horizon_min": 60,
+          "reversal_probability": 0.3
+        }
+      ],
+      "identity_fields_returned": [],
+      "mismatch_categories": [
+        "CONFIDENCE_FORMAT_MISMATCH",
+        "PROMPT_DID_NOT_REQUEST_REQUIRED_FIELD"
+      ],
+      "nested_forecast_keys": [
+        "continuation_probability",
+        "expected_direction",
+        "expected_pips_max",
+        "expected_pips_min",
+        "horizon_min",
+        "invalidation_condition",
+        "reversal_probability",
+        "stage_confidence",
+        "stage_reason"
+      ],
+      "no_signal": false,
+      "parser_rejection_reason": "PROVIDER_OUTPUT_CONFIDENCE",
+      "proposed_normalization": null,
+      "rationale": "The Leading Index is expected to decline less than the previous month, suggesting a potential slowdown in economic momentum but possibly not as severe as initially feared. This could lead to a brief USD weakness, followed by a reversal as markets digest the nuance.",
+      "raw_response_path": "outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses/NATIVE_3741bb83248e0b882ccc8eb0.json",
+      "recoverable": false,
+      "required_semantic_content_present": true,
+      "top_level_keys": [
+        "confidence",
+        "expected_initial_direction",
+        "expected_path_summary",
+        "expected_reversal_flag",
+        "expected_reversal_horizon_min",
+        "information_used",
+        "invalidation_condition",
+        "missing_information",
+        "no_signal_flag",
+        "no_signal_reason",
+        "path"
+      ],
+      "valid_json": true,
+      "wrapper": "NONE"
+    },
+    {
+      "call_id": "NATIVE_49a22e99af289e01d0ab5af2",
+      "confidence": 3,
+      "content_type": "JSON_OBJECT",
+      "episode_id": "EP_BATCH_6a6fe55ba8eff4d3ce2c",
+      "horizons": [
+        {
+          "continuation_probability": 0.7,
+          "expected_direction": "UP",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 5,
+          "reversal_probability": 0.3
+        },
+        {
+          "continuation_probability": 0.6,
+          "expected_direction": "UP",
+          "expected_pips_max": 20,
+          "expected_pips_min": 10,
+          "horizon_min": 15,
+          "reversal_probability": 0.4
+        },
+        {
+          "continuation_probability": 0.4,
+          "expected_direction": "DOWN",
+          "expected_pips_max": 15,
+          "expected_pips_min": 5,
+          "horizon_min": 30,
+          "reversal_probability": 0.6
+        },
+        {
+          "continuation_probability": 0.5,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 10,
+          "expected_pips_min": 0,
+          "horizon_min": 60,
+          "reversal_probability": 0.5
+        }
+      ],
+      "identity_fields_returned": [],
+      "mismatch_categories": [
+        "CONFIDENCE_FORMAT_MISMATCH",
+        "PROMPT_DID_NOT_REQUEST_REQUIRED_FIELD"
+      ],
+      "nested_forecast_keys": [
+        "continuation_probability",
+        "expected_direction",
+        "expected_pips_max",
+        "expected_pips_min",
+        "horizon_min",
+        "invalidation_condition",
+        "reversal_probability",
+        "stage_confidence",
+        "stage_reason"
+      ],
+      "no_signal": false,
+      "parser_rejection_reason": "PROVIDER_OUTPUT_CONFIDENCE",
+      "proposed_normalization": null,
+      "rationale": "The S&P Global Composite PMI and Services PMI for June are expected to show continued expansion, albeit with a slight deceleration compared to the previous month. However, the consensus values (54.6 and 55.1 respectively) are still well above the 50 expansion mark, suggesting a robust underlying economic activity. This should provide initial support for USD/JPY, pushing it slightly higher. As the market digests these figures and looks ahead to other upcoming US economic data, a potential slight retracement could occur if the figures are perceived as not strong enough to warrant further aggressive appreciation.",
+      "raw_response_path": "outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses/NATIVE_49a22e99af289e01d0ab5af2.json",
+      "recoverable": false,
+      "required_semantic_content_present": true,
+      "top_level_keys": [
+        "confidence",
+        "expected_initial_direction",
+        "expected_path_summary",
+        "expected_reversal_flag",
+        "expected_reversal_horizon_min",
+        "information_used",
+        "invalidation_condition",
+        "missing_information",
+        "no_signal_flag",
+        "no_signal_reason",
+        "path"
+      ],
+      "valid_json": true,
+      "wrapper": "NONE"
+    },
+    {
+      "call_id": "NATIVE_65f36a2aa13e4f21f148ed2d",
+      "confidence": 1,
+      "content_type": "JSON_OBJECT",
+      "episode_id": "EP_EVENT_b5f2d28b12e37e2d9b72",
+      "horizons": [
+        {
+          "continuation_probability": 1.0,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 0,
+          "expected_pips_min": 0,
+          "horizon_min": 5,
+          "reversal_probability": 0.0
+        },
+        {
+          "continuation_probability": 1.0,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 0,
+          "expected_pips_min": 0,
+          "horizon_min": 15,
+          "reversal_probability": 0.0
+        },
+        {
+          "continuation_probability": 1.0,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 0,
+          "expected_pips_min": 0,
+          "horizon_min": 30,
+          "reversal_probability": 0.0
+        },
+        {
+          "continuation_probability": 1.0,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 0,
+          "expected_pips_min": 0,
+          "horizon_min": 60,
+          "reversal_probability": 0.0
+        }
+      ],
+      "identity_fields_returned": [],
+      "mismatch_categories": [
+        "NO_SIGNAL_FORMAT_MISMATCH"
+      ],
+      "nested_forecast_keys": [
+        "continuation_probability",
+        "expected_direction",
+        "expected_pips_max",
+        "expected_pips_min",
+        "horizon_min",
+        "invalidation_condition",
+        "reversal_probability",
+        "stage_confidence",
+        "stage_reason"
+      ],
+      "no_signal": true,
+      "parser_rejection_reason": "PROVIDER_OUTPUT_NO_SIGNAL_PATH",
+      "proposed_normalization": "RECOVERED_FROM_CALL_BINDING; explicit no-signal -> UNCERTAIN/null/empty-path",
+      "rationale": "No significant market impact is expected from this low-importance event.",
+      "raw_response_path": "outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses/NATIVE_65f36a2aa13e4f21f148ed2d.json",
+      "recoverable": true,
+      "required_semantic_content_present": true,
+      "top_level_keys": [
+        "confidence",
+        "expected_initial_direction",
+        "expected_path_summary",
+        "expected_reversal_flag",
+        "expected_reversal_horizon_min",
+        "information_used",
+        "invalidation_condition",
+        "missing_information",
+        "no_signal_flag",
+        "no_signal_reason",
+        "path"
+      ],
+      "valid_json": true,
+      "wrapper": "NONE"
+    },
+    {
+      "call_id": "NATIVE_6633db0e0a95967234aa580a",
+      "confidence": 2,
+      "content_type": "JSON_OBJECT",
+      "episode_id": "EP_EVENT_64e72292b54cab80cc69",
+      "horizons": [
+        {
+          "continuation_probability": 0.6,
+          "expected_direction": "DOWN",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 5,
+          "reversal_probability": 0.4
+        },
+        {
+          "continuation_probability": 0.55,
+          "expected_direction": "DOWN",
+          "expected_pips_max": 15,
+          "expected_pips_min": 8,
+          "horizon_min": 15,
+          "reversal_probability": 0.45
+        },
+        {
+          "continuation_probability": 0.3,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 5,
+          "expected_pips_min": 0,
+          "horizon_min": 30,
+          "reversal_probability": 0.7
+        },
+        {
+          "continuation_probability": 0.7,
+          "expected_direction": "UP",
+          "expected_pips_max": 20,
+          "expected_pips_min": 10,
+          "horizon_min": 60,
+          "reversal_probability": 0.3
+        }
+      ],
+      "identity_fields_returned": [],
+      "mismatch_categories": [
+        "CONFIDENCE_FORMAT_MISMATCH",
+        "PROMPT_DID_NOT_REQUEST_REQUIRED_FIELD"
+      ],
+      "nested_forecast_keys": [
+        "continuation_probability",
+        "expected_direction",
+        "expected_pips_max",
+        "expected_pips_min",
+        "horizon_min",
+        "invalidation_condition",
+        "reversal_probability",
+        "stage_confidence",
+        "stage_reason"
+      ],
+      "no_signal": false,
+      "parser_rejection_reason": "PROVIDER_OUTPUT_CONFIDENCE",
+      "proposed_normalization": null,
+      "rationale": "The release is expected to be significantly worse than the previous month, which could lead to an initial downward move in USD/JPY. However, given the medium importance and the potential for the market to look past this single data point, a reversal is anticipated within 30-60 minutes.",
+      "raw_response_path": "outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses/NATIVE_6633db0e0a95967234aa580a.json",
+      "recoverable": false,
+      "required_semantic_content_present": true,
+      "top_level_keys": [
+        "confidence",
+        "expected_initial_direction",
+        "expected_path_summary",
+        "expected_reversal_flag",
+        "expected_reversal_horizon_min",
+        "information_used",
+        "invalidation_condition",
+        "missing_information",
+        "no_signal_flag",
+        "no_signal_reason",
+        "path"
+      ],
+      "valid_json": true,
+      "wrapper": "NONE"
+    },
+    {
+      "call_id": "NATIVE_66d1139a2a48109573a7decb",
+      "confidence": "Medium",
+      "content_type": "JSON_OBJECT",
+      "episode_id": "EP_BATCH_5db4a9668cccb78d621e",
+      "horizons": [
+        {
+          "continuation_probability": 0.6,
+          "expected_direction": "UP",
+          "expected_pips_max": 3,
+          "expected_pips_min": 1,
+          "horizon_min": 5,
+          "reversal_probability": 0.4
+        },
+        {
+          "continuation_probability": 0.7,
+          "expected_direction": "UP",
+          "expected_pips_max": 5,
+          "expected_pips_min": 2,
+          "horizon_min": 15,
+          "reversal_probability": 0.3
+        },
+        {
+          "continuation_probability": 0.65,
+          "expected_direction": "UP",
+          "expected_pips_max": 7,
+          "expected_pips_min": 3,
+          "horizon_min": 30,
+          "reversal_probability": 0.35
+        },
+        {
+          "continuation_probability": 0.5,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 3,
+          "expected_pips_min": 0,
+          "horizon_min": 60,
+          "reversal_probability": 0.5
+        }
+      ],
+      "identity_fields_returned": [],
+      "mismatch_categories": [
+        "CONFIDENCE_FORMAT_MISMATCH",
+        "PROMPT_DID_NOT_REQUEST_REQUIRED_FIELD"
+      ],
+      "nested_forecast_keys": [
+        "continuation_probability",
+        "expected_direction",
+        "expected_pips_max",
+        "expected_pips_min",
+        "horizon_min",
+        "invalidation_condition",
+        "reversal_probability",
+        "stage_confidence",
+        "stage_reason"
+      ],
+      "no_signal": false,
+      "parser_rejection_reason": "PROVIDER_OUTPUT_TYPES",
+      "proposed_normalization": null,
+      "rationale": "The release of the NAHB Housing Market Index is expected to show a slight improvement. While 'Retail Inventories Ex Autos MoM' and 'Business Inventories MoM' are expected to remain unchanged, the housing index has historically shown a moderate impact. A better-than-expected reading, even by a point, could provide a modest boost to USD/JPY, although the overall impact is likely to be contained due to the 'Medium' importance.",
+      "raw_response_path": "outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses/NATIVE_66d1139a2a48109573a7decb.json",
+      "recoverable": false,
+      "required_semantic_content_present": true,
+      "top_level_keys": [
+        "confidence",
+        "expected_initial_direction",
+        "expected_path_summary",
+        "expected_reversal_flag",
+        "expected_reversal_horizon_min",
+        "information_used",
+        "invalidation_condition",
+        "missing_information",
+        "no_signal_flag",
+        "no_signal_reason",
+        "path"
+      ],
+      "valid_json": true,
+      "wrapper": "NONE"
+    },
+    {
+      "call_id": "NATIVE_6a5d5c99b7187f1f6592ab02",
+      "confidence": "Medium",
+      "content_type": "JSON_OBJECT",
+      "episode_id": "EP_EVENT_2de77b689facc34d5811",
+      "horizons": [
+        {
+          "continuation_probability": 0.6,
+          "expected_direction": "DOWN",
+          "expected_pips_max": 15,
+          "expected_pips_min": 5,
+          "horizon_min": 5,
+          "reversal_probability": 0.4
+        },
+        {
+          "continuation_probability": 0.55,
+          "expected_direction": "DOWN",
+          "expected_pips_max": 25,
+          "expected_pips_min": 10,
+          "horizon_min": 15,
+          "reversal_probability": 0.45
+        },
+        {
+          "continuation_probability": 0.4,
+          "expected_direction": "UP",
+          "expected_pips_max": 20,
+          "expected_pips_min": 5,
+          "horizon_min": 30,
+          "reversal_probability": 0.6
+        },
+        {
+          "continuation_probability": 0.5,
+          "expected_direction": "UP",
+          "expected_pips_max": 25,
+          "expected_pips_min": 10,
+          "horizon_min": 60,
+          "reversal_probability": 0.5
+        }
+      ],
+      "identity_fields_returned": [],
+      "mismatch_categories": [
+        "CONFIDENCE_FORMAT_MISMATCH",
+        "PROMPT_DID_NOT_REQUEST_REQUIRED_FIELD"
+      ],
+      "nested_forecast_keys": [
+        "continuation_probability",
+        "expected_direction",
+        "expected_pips_max",
+        "expected_pips_min",
+        "horizon_min",
+        "invalidation_condition",
+        "reversal_probability",
+        "stage_confidence",
+        "stage_reason"
+      ],
+      "no_signal": false,
+      "parser_rejection_reason": "PROVIDER_OUTPUT_TYPES",
+      "proposed_normalization": null,
+      "rationale": "The index is expected to decline, potentially triggering a temporary USD weakness. However, the trend may reverse as markets re-evaluate broader economic sentiment.",
+      "raw_response_path": "outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses/NATIVE_6a5d5c99b7187f1f6592ab02.json",
+      "recoverable": false,
+      "required_semantic_content_present": true,
+      "top_level_keys": [
+        "confidence",
+        "expected_initial_direction",
+        "expected_path_summary",
+        "expected_reversal_flag",
+        "expected_reversal_horizon_min",
+        "information_used",
+        "invalidation_condition",
+        "missing_information",
+        "no_signal_flag",
+        "no_signal_reason",
+        "path"
+      ],
+      "valid_json": true,
+      "wrapper": "NONE"
+    },
+    {
+      "call_id": "NATIVE_7f9615ed7c1b30dac0336414",
+      "confidence": "Medium",
+      "content_type": "JSON_OBJECT",
+      "episode_id": "EP_EVENT_5a1719c3db61418e808e",
+      "horizons": [
+        {
+          "continuation_probability": 0.8,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 5,
+          "expected_pips_min": 0,
+          "horizon_min": 5,
+          "reversal_probability": 0.2
+        },
+        {
+          "continuation_probability": 0.7,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 10,
+          "expected_pips_min": 0,
+          "horizon_min": 15,
+          "reversal_probability": 0.3
+        },
+        {
+          "continuation_probability": 0.65,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 15,
+          "expected_pips_min": 0,
+          "horizon_min": 30,
+          "reversal_probability": 0.35
+        },
+        {
+          "continuation_probability": 0.6,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 20,
+          "expected_pips_min": 0,
+          "horizon_min": 60,
+          "reversal_probability": 0.4
+        }
+      ],
+      "identity_fields_returned": [],
+      "mismatch_categories": [
+        "CONFIDENCE_FORMAT_MISMATCH",
+        "PROMPT_DID_NOT_REQUEST_REQUIRED_FIELD"
+      ],
+      "nested_forecast_keys": [
+        "continuation_probability",
+        "expected_direction",
+        "expected_pips_max",
+        "expected_pips_min",
+        "horizon_min",
+        "invalidation_condition",
+        "reversal_probability",
+        "stage_confidence",
+        "stage_reason"
+      ],
+      "no_signal": false,
+      "parser_rejection_reason": "PROVIDER_OUTPUT_TYPES",
+      "proposed_normalization": null,
+      "rationale": "The FOMC minutes are unlikely to provide a significant directional shock to USD/JPY unless they contain highly unexpected hawkish or dovish signals. The market has largely priced in current policy expectations. Therefore, the initial reaction is expected to be muted, with any subsequent moves driven by broader market sentiment or other upcoming economic data.",
+      "raw_response_path": "outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses/NATIVE_7f9615ed7c1b30dac0336414.json",
+      "recoverable": false,
+      "required_semantic_content_present": true,
+      "top_level_keys": [
+        "confidence",
+        "expected_initial_direction",
+        "expected_path_summary",
+        "expected_reversal_flag",
+        "expected_reversal_horizon_min",
+        "information_used",
+        "invalidation_condition",
+        "missing_information",
+        "no_signal_flag",
+        "no_signal_reason",
+        "path"
+      ],
+      "valid_json": true,
+      "wrapper": "NONE"
+    },
+    {
+      "call_id": "NATIVE_8ec2253813d1babc758bae94",
+      "confidence": "MEDIUM",
+      "content_type": "JSON_OBJECT",
+      "episode_id": "EP_EVENT_28649186b338eb5b0a22",
+      "horizons": [
+        {
+          "continuation_probability": 0.7,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 1.0,
+          "expected_pips_min": 0.0,
+          "horizon_min": 5,
+          "reversal_probability": 0.3
+        },
+        {
+          "continuation_probability": 0.75,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 2.0,
+          "expected_pips_min": 0.0,
+          "horizon_min": 15,
+          "reversal_probability": 0.25
+        },
+        {
+          "continuation_probability": 0.8,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 3.0,
+          "expected_pips_min": 0.0,
+          "horizon_min": 30,
+          "reversal_probability": 0.2
+        },
+        {
+          "continuation_probability": 0.8,
+          "expected_direction": "FLAT",
+          "expected_pips_max": 3.5,
+          "expected_pips_min": 0.0,
+          "horizon_min": 60,
+          "reversal_probability": 0.2
+        }
+      ],
+      "identity_fields_returned": [],
+      "mismatch_categories": [
+        "CONFIDENCE_FORMAT_MISMATCH",
+        "PROMPT_DID_NOT_REQUEST_REQUIRED_FIELD"
+      ],
+      "nested_forecast_keys": [
+        "continuation_probability",
+        "expected_direction",
+        "expected_pips_max",
+        "expected_pips_min",
+        "horizon_min",
+        "invalidation_condition",
+        "reversal_probability",
+        "stage_confidence",
+        "stage_reason"
+      ],
+      "no_signal": false,
+      "parser_rejection_reason": "PROVIDER_OUTPUT_TYPES",
+      "proposed_normalization": null,
+      "rationale": "The speech is unlikely to cause significant immediate volatility as it is categorized as 'Other' and 'Medium' importance. Without specific market-moving content expected, the price action is likely to remain range-bound.",
+      "raw_response_path": "outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses/NATIVE_8ec2253813d1babc758bae94.json",
+      "recoverable": false,
+      "required_semantic_content_present": true,
+      "top_level_keys": [
+        "confidence",
+        "expected_initial_direction",
+        "expected_path_summary",
+        "expected_reversal_flag",
+        "expected_reversal_horizon_min",
+        "information_used",
+        "invalidation_condition",
+        "missing_information",
+        "no_signal_flag",
+        "no_signal_reason",
+        "path"
+      ],
+      "valid_json": true,
+      "wrapper": "NONE"
+    },
+    {
+      "call_id": "NATIVE_c380c03f09ff1c717684717e",
+      "confidence": 3,
+      "content_type": "JSON_OBJECT",
+      "episode_id": "EP_EVENT_3f0ac9fb4f1a138fee7f",
+      "horizons": [
+        {
+          "continuation_probability": 0.6,
+          "expected_direction": "DOWN",
+          "expected_pips_max": 25,
+          "expected_pips_min": 15,
+          "horizon_min": 5,
+          "reversal_probability": 0.4
+        },
+        {
+          "continuation_probability": 0.5,
+          "expected_direction": "DOWN",
+          "expected_pips_max": 40,
+          "expected_pips_min": 25,
+          "horizon_min": 15,
+          "reversal_probability": 0.5
+        },
+        {
+          "continuation_probability": 0.4,
+          "expected_direction": "UP",
+          "expected_pips_max": 20,
+          "expected_pips_min": 10,
+          "horizon_min": 30,
+          "reversal_probability": 0.6
+        },
+        {
+          "continuation_probability": 0.7,
+          "expected_direction": "UP",
+          "expected_pips_max": 35,
+          "expected_pips_min": 20,
+          "horizon_min": 60,
+          "reversal_probability": 0.3
+        }
+      ],
+      "identity_fields_returned": [],
+      "mismatch_categories": [
+        "CONFIDENCE_FORMAT_MISMATCH",
+        "PROMPT_DID_NOT_REQUEST_REQUIRED_FIELD"
+      ],
+      "nested_forecast_keys": [
+        "continuation_probability",
+        "expected_direction",
+        "expected_pips_max",
+        "expected_pips_min",
+        "horizon_min",
+        "invalidation_condition",
+        "reversal_probability",
+        "stage_confidence",
+        "stage_reason"
+      ],
+      "no_signal": false,
+      "parser_rejection_reason": "PROVIDER_OUTPUT_CONFIDENCE",
+      "proposed_normalization": null,
+      "rationale": "The initial release of the Monetary Policy Report is expected to cause a sharp downward move in USD/JPY. However, as traders digest the report's details and potential implications for future monetary policy, a reversal is anticipated, leading to a gradual upward movement.",
+      "raw_response_path": "outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses/NATIVE_c380c03f09ff1c717684717e.json",
+      "recoverable": false,
+      "required_semantic_content_present": true,
+      "top_level_keys": [
+        "confidence",
+        "expected_initial_direction",
+        "expected_path_summary",
+        "expected_reversal_flag",
+        "expected_reversal_horizon_min",
+        "information_used",
+        "invalidation_condition",
+        "missing_information",
+        "no_signal_flag",
+        "no_signal_reason",
+        "path"
+      ],
+      "valid_json": true,
+      "wrapper": "NONE"
+    }
+  ],
+  "summary": {
+    "identity_recoverable_from_call_binding": 1,
+    "provider_calls_made": 0,
+    "recoverable": 1,
+    "responses": 10,
+    "unrecoverable": 9
+  }
+}

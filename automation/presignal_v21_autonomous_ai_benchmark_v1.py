@@ -312,6 +312,18 @@ def _append_ledger(path: Path, record: Mapping[str, Any]) -> None:
         handle.write(canonical(value) + "\n"); handle.flush()
 
 
+def normalize_native_response(raw_output: str) -> dict[str, Any]:
+    """v1 accepts only an explicit no-signal response; no forecast meaning is inferred."""
+    value = json.loads(raw_output)
+    required = {"no_signal_flag", "no_signal_reason", "confidence", "expected_initial_direction", "expected_reversal_flag", "expected_reversal_horizon_min", "expected_path_summary", "information_used", "missing_information", "invalidation_condition", "path"}
+    if set(value) != required or value.get("no_signal_flag") is not True or not isinstance(value.get("no_signal_reason"), str) or not value["no_signal_reason"]:
+        raise BenchmarkError("RESPONSE_NOT_RECOVERABLE")
+    confidence = value.get("confidence")
+    if not isinstance(confidence, (int, float)) or not 0 <= confidence <= 1:
+        raise BenchmarkError("RESPONSE_NOT_RECOVERABLE")
+    return {**value, "expected_initial_direction": "UNCERTAIN", "expected_reversal_flag": None, "expected_reversal_horizon_min": None, "path": []}
+
+
 def import_pre_repair_responses() -> dict[str, Any]:
     """One-time, parse-only recovery of durable raw responses already in the workbook."""
     from automation.google_clients import build_sheets_service, load_credentials
