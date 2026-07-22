@@ -47,6 +47,12 @@ UNKNOWN_TRANSPORT_STATUSES = {"unknown", "status_unknown", "sent_no_confirmed_re
 
 def selection_state(attention: Mapping[str, Any] | None) -> str:
     """Map accepted parsed Attention evidence to its sole canonical owner."""
+    persisted = (attention or {}).get("selection_state")
+    if persisted in {
+        SelectionState.SELECTED, SelectionState.WATCH, SelectionState.IGNORED,
+        SelectionState.NOT_SELECTED, SelectionState.REJECTED,
+    }:
+        return str(persisted)
     if not attention or not attention.get("accepted"):
         return SelectionState.REJECTED
     rows = ((attention.get("output") or {}).get("rows") or [])
@@ -107,6 +113,12 @@ def evaluation_state(
 ) -> str:
     if forecast != ForecastState.DIRECTIONAL:
         return EvaluationState.NOT_APPLICABLE
+    persisted = (evaluation or {}).get("evaluation_state")
+    if persisted in {
+        EvaluationState.NOT_APPLICABLE, EvaluationState.PENDING_OUTCOME,
+        EvaluationState.CORRECT, EvaluationState.INCORRECT, EvaluationState.OUTCOME_UNAVAILABLE,
+    }:
+        return str(persisted)
     if outcome and outcome.get("status") == "UNAVAILABLE":
         return EvaluationState.OUTCOME_UNAVAILABLE
     if not evaluation:
