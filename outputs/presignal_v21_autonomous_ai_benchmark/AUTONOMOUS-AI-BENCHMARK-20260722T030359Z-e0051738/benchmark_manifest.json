@@ -30,6 +30,13 @@
   },
   "eligible_unique_episode_count": 45,
   "model": "gemini-2.5-flash-lite",
+  "native_ai_no_research": {
+    "completed_episodes": 0,
+    "completion_decision": "NATIVE_AI_EXECUTION_FAILED",
+    "failed_episodes": 10,
+    "reason": "provider execution exited without durable result or per-call ledger; retry blocked to avoid duplicate calls",
+    "recorded_at": "2026-07-22T03:28:17.068657Z"
+  },
   "provider": "Gemini",
   "run_id": "AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738",
   "sample": [
@@ -5576,7 +5583,7 @@
   "selection_fingerprint": "sha256:e58daad6f620e150483c07b1261ba3d4495d2420d44943366b07257b0802e912",
   "source_run": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771",
   "spreadsheet_id": "1W6ZL4kK3Qs_76sgQPw83KS9TQVk2LHHXJ_O2GSahe9s",
-  "status": "AUTONOMOUS_RESEARCH_TRACE_UNAVAILABLE",
+  "status": "NATIVE_AI_EXECUTION_FAILED",
   "terminal_decision": "AUTONOMOUS_RESEARCH_TRACE_UNAVAILABLE",
   "trace_stop": {
     "alternate_repository_search_route": "absent",

@@ -276,15 +276,84 @@ def seed_audit(resolution: Mapping[str, Any]) -> dict[str, Any]:
     return {"original_attempted_seed": 20260722, "seed_progression_rule": "increment integer seed by one until one provider covers all ten frozen sample slots", "tested_seeds": tested, "correctness_fields_read": False, "selection_fields_read": ["episode_id", "provider", "model", "validity", "forecast_cutoff", "path_horizons"]}
 
 
+NATIVE_PROMPT_VERSION = "presignal_v21_native_ai_no_research_v1"
+NATIVE_RUN_ID = "AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738"
+NATIVE_WORKBOOK_ID = "1W6ZL4kK3Qs_76sgQPw83KS9TQVk2LHHXJ_O2GSahe9s"
+NATIVE_ARTIFACT = ARTIFACT_ROOT / NATIVE_RUN_ID
+
+
+def _outcomes() -> dict[str, dict[str, Any]]:
+    found = {}
+    for path in (SOURCE_RUN / "stage_results").glob("*.json"):
+        row = json.loads(path.read_text())
+        if row.get("accepted") and row.get("identity", {}).get("stage") == "OUTCOME" and (row.get("output") or {}).get("status") == "VALID":
+            outcome = row["output"]
+            previous = found.get(outcome["episode_id"])
+            if previous and previous["outcome_id"] != outcome["outcome_id"]:
+                raise BenchmarkError("NATIVE_AI_COMPARISON_LINEAGE_FAILED")
+            found[outcome["episode_id"]] = outcome
+    return found
+
+
+def _native_prompt(episode: Mapping[str, Any]) -> str:
+    payload = {"episode_id": episode["episode_id"], "country": episode["country"], "target_pair": "USD/JPY", "release_timestamp": episode["release_ts"], "forecast_cutoff": episode["forecast_cutoff_ts"], "members": [{key: member.get(key) for key in ("event_id", "indicator_name", "genre", "importance", "consensus_value", "prev_revision", "type")} for member in episode["episode_members"]]}
+    fields = "no_signal_flag,no_signal_reason,confidence,expected_initial_direction,expected_reversal_flag,expected_reversal_horizon_min,expected_path_summary,information_used,missing_information,invalidation_condition,path"
+    stage = "horizon_min,expected_direction,expected_pips_min,expected_pips_max,stage_confidence,continuation_probability,reversal_probability,stage_reason,invalidation_condition"
+    return "You are forecasting as of the supplied historical forecast cutoff. Treat the economic release as not yet released. Do not use the actual released value, subsequent USD/JPY movement, later revisions, retrospective commentary, or any information published after the cutoff. Base the forecast only on the supplied pre-release information and your general reasoning. Return JSON only with exactly: " + fields + ". path must contain ordered 5,15,30,60 minute objects with exactly: " + stage + ". Directions are UP, DOWN, or FLAT; pip magnitudes are nonnegative.\n" + canonical(payload)
+
+
+def _append(service: Any, spreadsheet_id: str, sheet: str, rows: list[dict[str, Any]]) -> None:
+    values = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id, range=f"'{sheet}'!1:1").execute().get("values", [[]])[0]
+    if sheet == "Autonomous_Forecasts" and "arm" not in values:
+        values.append("arm")
+        service.spreadsheets().values().update(spreadsheetId=spreadsheet_id, range=f"'{sheet}'!A1", valueInputOption="RAW", body={"values": [values]}).execute()
+    if rows:
+        service.spreadsheets().values().append(spreadsheetId=spreadsheet_id, range=f"'{sheet}'!A1", valueInputOption="RAW", insertDataOption="INSERT_ROWS", body={"values": [[row.get(header, "") for header in values] for row in rows]}).execute()
+
+
+def execute_native() -> dict[str, Any]:
+    from automation.google_clients import build_sheets_service, load_credentials
+    from automation.run_presignal_v21_single_event_path_pair_v1 import evaluate, parse_provider_output, response_to_contract
+    manifest_path = NATIVE_ARTIFACT / "benchmark_manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    resolution = resolve_source()
+    if manifest.get("selection_fingerprint") != resolution["selection_fingerprint"]:
+        raise BenchmarkError("NATIVE_AI_COMPARISON_LINEAGE_FAILED")
+    outcomes = _outcomes(); service = build_sheets_service(load_credentials(False)); terminal = []; forecast_rows = []; comparison_rows = []; logs = []
+    prompt_fp = fingerprint({"version": NATIVE_PROMPT_VERSION})
+    for item in resolution["sample"]:
+        episode, reference = item["episode"], item["reference"]; started = now(); prompt = _native_prompt(episode); state = "NATIVE_AI_FORECAST_ACCEPTED"; prediction = None; paths = []; evaluation = None; bridge = {}
+        try:
+            if episode["episode_id"] not in outcomes: raise BenchmarkError("NATIVE_AI_INPUT_LINEAGE_FAILED")
+            bridge = _bridge("Gemini", "gemini-2.5-flash-lite", NATIVE_RUN_ID, episode, "NATIVE_AI_NO_RESEARCH", prompt)
+            response = parse_provider_output(bridge.get("raw_output"))
+            input_row = {"information_arm": "PACK_A", "episode_id": episode["episode_id"], "source_session_id": episode["session_id"], "provider": "Gemini", "model": "gemini-2.5-flash-lite", "forecast_cutoff_ts": episode["forecast_cutoff_ts"], "episode_members": episode["episode_members"], "pack_id": "NATIVE_AI_NO_RESEARCH", "pack_fingerprint": None}
+            prediction, paths = response_to_contract(response, input_row, run_id=NATIVE_RUN_ID, created_ts=now(), raw_output=bridge.get("raw_output"), bridge_result={**bridge, "latency_ms": None})
+            evaluation = evaluate(prediction, paths, outcomes[episode["episode_id"]], generated_ts=now())
+        except BenchmarkError as exc: state = str(exc)
+        except Exception as exc: state = "NATIVE_AI_FORECAST_SCHEMA_REJECTED"; bridge = {**bridge, "error": str(exc)}
+        by_horizon = {p["horizon_min"]: p for p in paths}
+        forecast_rows.append({"episode_id": episode["episode_id"], "provider": "Gemini", "model": "gemini-2.5-flash-lite", "forecast_timestamp": now(), "forecast_cutoff": episode["forecast_cutoff_ts"], "direction_5m": by_horizon.get(5, {}).get("expected_direction", ""), "direction_15m": by_horizon.get(15, {}).get("expected_direction", ""), "direction_30m": by_horizon.get(30, {}).get("expected_direction", ""), "direction_60m": by_horizon.get(60, {}).get("expected_direction", ""), "magnitude_5m": canonical([by_horizon.get(5, {}).get("expected_pips_min"), by_horizon.get(5, {}).get("expected_pips_max")]), "magnitude_15m": canonical([by_horizon.get(15, {}).get("expected_pips_min"), by_horizon.get(15, {}).get("expected_pips_max")]), "magnitude_30m": canonical([by_horizon.get(30, {}).get("expected_pips_min"), by_horizon.get(30, {}).get("expected_pips_max")]), "magnitude_60m": canonical([by_horizon.get(60, {}).get("expected_pips_min"), by_horizon.get(60, {}).get("expected_pips_max")]), "continuation_probability": by_horizon.get(15, {}).get("continuation_probability", ""), "reversal_probability": prediction.get("expected_reversal_flag", "") if prediction else "", "likely_reversal_horizon": prediction.get("expected_reversal_horizon_min", "") if prediction else "", "confidence": prediction.get("confidence", "") if prediction else "", "primary_catalyst": prediction.get("expected_path_summary", "") if prediction else "", "causal_interpretation": prediction.get("information_used", "") if prediction else "", "information_used": prediction.get("information_used", "") if prediction else "", "missing_information": prediction.get("missing_information", "") if prediction else "", "invalidation_conditions": prediction.get("invalidation_condition", "") if prediction else "", "no_signal_status": prediction.get("no_signal_flag", "") if prediction else "", "raw_output": bridge.get("raw_output", ""), "validation_status": state, "arm": "NATIVE_AI_NO_RESEARCH"})
+        pre = reference["pack_e_evaluation"] or {}; native = evaluation or {}
+        comparison_rows.append({"episode_id": episode["episode_id"], "provider": "Gemini", "presignal_5m_correctness": pre.get("direction_5m_ok", ""), "autonomous_ai_5m_correctness": native.get("direction_5m_ok", ""), "presignal_15m_correctness": pre.get("direction_15m_ok", ""), "autonomous_ai_15m_correctness": native.get("direction_15m_ok", ""), "presignal_30m_correctness": pre.get("direction_30m_ok", ""), "autonomous_ai_30m_correctness": native.get("direction_30m_ok", ""), "presignal_60m_correctness": pre.get("direction_60m_ok", ""), "autonomous_ai_60m_correctness": native.get("direction_60m_ok", ""), "reversal_correctness": native.get("reversal_ok", ""), "magnitude_error": native.get("magnitude_15m_error", ""), "path_score": native.get("overall_path_score", ""), "completion_status": state, "token_cost": (bridge.get("prompt_tokens") or 0) + (bridge.get("completion_tokens") or 0), "latency_ms": "", "research_source_count": 0, "cutoff_violation_count": 0, "benchmark_winner_for_episode": "", "interpretation_note": "PRESIGNAL_PACK_E vs NATIVE_AI_NO_RESEARCH"})
+        terminal.append(state); logs.append({"timestamp": now(), "run_id": NATIVE_RUN_ID, "level": "INFO" if state == "NATIVE_AI_FORECAST_ACCEPTED" else "ERROR", "event": state, "details": canonical({"episode_id": episode["episode_id"], "prompt_version": NATIVE_PROMPT_VERSION, "prompt_fingerprint": prompt_fp, "input_fingerprint": fingerprint(episode), "requested_provider": "Gemini", "requested_model": "gemini-2.5-flash-lite", "actual_provider": bridge.get("actual_provider"), "actual_model": bridge.get("actual_model")})})
+    _append(service, NATIVE_WORKBOOK_ID, "Autonomous_Forecasts", forecast_rows); _append(service, NATIVE_WORKBOOK_ID, "Outcome_Comparison", comparison_rows); _append(service, NATIVE_WORKBOOK_ID, "log", logs)
+    summary = {"completion_counts": dict(Counter(terminal)), "prompt_version": NATIVE_PROMPT_VERSION, "prompt_fingerprint": prompt_fp, "model_memory_limitation": "The native historical AI arm uses only supplied pre-release inputs and no external research, but latent knowledge contained in the pretrained model cannot be independently excluded.", "rows": comparison_rows}
+    write_json(NATIVE_ARTIFACT / "native_ai_results.json", summary); manifest["native_ai_no_research"] = summary; manifest["status"] = "NATIVE_AI_BENCHMARK_COMPLETE" if len(terminal) == terminal.count("NATIVE_AI_FORECAST_ACCEPTED") else "NATIVE_AI_BENCHMARK_PARTIALLY_COMPLETE"; write_json(manifest_path, manifest)
+    _append(service, NATIVE_WORKBOOK_ID, "Run_Status", [{"experiment_state": manifest["status"], "current_episode": "", "completed_episodes": terminal.count("NATIVE_AI_FORECAST_ACCEPTED"), "failed_episodes": len(terminal)-terminal.count("NATIVE_AI_FORECAST_ACCEPTED"), "active_run": NATIVE_RUN_ID, "start_time": "", "end_time": now(), "terminal_decision": manifest["status"], "interruption_reason": ""}])
+    return summary
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="Read only: resolve the authoritative source and sample.")
     parser.add_argument("--initialize", action="store_true", help="Create the isolated workbook and frozen artifact manifest.")
     parser.add_argument("--record-seed-audit", type=Path, help="Append the reconstructed seed audit to an existing benchmark manifest.")
+    parser.add_argument("--execute-native", action="store_true", help="Execute the frozen no-research Gemini arm.")
     parser.add_argument("--seed", type=int, default=SAMPLE_SEED)
     args = parser.parse_args()
-    if not args.check and not args.initialize and not args.record_seed_audit:
-        parser.error("choose --check, --initialize, or --record-seed-audit")
+    if not args.check and not args.initialize and not args.record_seed_audit and not args.execute_native:
+        parser.error("choose --check, --initialize, --record-seed-audit, or --execute-native")
     resolution = resolve_source(args.seed)
     if args.check:
         print(json.dumps({key: value for key, value in resolution.items() if key != "sample"} | {"episode_ids": [item["episode"]["episode_id"] for item in resolution["sample"]]}, indent=2, sort_keys=True))
@@ -296,6 +365,9 @@ def main() -> int:
         manifest["sampling_attempt_audit"] = seed_audit(resolution)
         write_json(args.record_seed_audit, manifest)
         print(json.dumps({"status": "SEED_ATTEMPT_AUDIT_RECORDED", "tested_seed_count": len(manifest["sampling_attempt_audit"]["tested_seeds"])}))
+        return 0
+    if args.execute_native:
+        print(json.dumps(execute_native(), indent=2, sort_keys=True))
         return 0
     run_id = "AUTONOMOUS-AI-BENCHMARK-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
     artifact = ARTIFACT_ROOT / run_id
