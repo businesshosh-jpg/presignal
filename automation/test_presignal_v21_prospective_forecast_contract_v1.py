@@ -54,6 +54,9 @@ class ProspectiveForecastContractTests(unittest.TestCase):
         a = self.validate(payload("UP")); e = self.validate(payload("DOWN"))
         e["pack_arm"] = "PACK_E"
         self.assertTrue(contract.primary_pair_eligible(a, e, outcome_available=True))
+        e["forecast_target"] = "OTHER"
+        self.assertFalse(contract.primary_pair_eligible(a, e, outcome_available=True))
+        e["forecast_target"] = a["forecast_target"]
         e["primary_directional_eligibility"] = False
         self.assertFalse(contract.primary_pair_eligible(a, e, outcome_available=True))
 

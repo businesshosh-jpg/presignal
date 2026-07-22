@@ -39,7 +39,8 @@ def validate_prospective_forecast(candidate: Mapping[str, Any] | None, *, episod
     """Validate a neutral provider candidate against the prospective contract."""
     payload = dict(candidate or {})
     context = {"episode_id": episode_id, "provider": provider, "model": model,
-               "pack_arm": pack_arm, "forecast_cutoff": forecast_cutoff}
+               "pack_arm": pack_arm, "forecast_cutoff": forecast_cutoff,
+               "forecast_target": payload.get("forecast_target", episode_id)}
     no_signal = payload.get("no_signal_flag") is True
     direction = _path_direction(payload, 15)
     statuses = {
@@ -89,5 +90,5 @@ def non_entry_result(*, selection_state: str) -> dict[str, Any]:
 
 
 def primary_pair_eligible(pack_a: Mapping[str, Any], pack_e: Mapping[str, Any], *, outcome_available: bool) -> bool:
-    identity = ("episode_id", "provider", "model", "forecast_cutoff")
+    identity = ("episode_id", "provider", "model", "forecast_cutoff", "forecast_target")
     return outcome_available and all(pack_a.get(key) == pack_e.get(key) for key in identity) and bool(pack_a.get("primary_directional_eligibility")) and bool(pack_e.get("primary_directional_eligibility"))
