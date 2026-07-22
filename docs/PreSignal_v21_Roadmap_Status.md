@@ -221,3 +221,13 @@ expired or revoked (`invalid_grant`), so no health call or provider call was
 sent. Reauthentication with `python3 auth_sheets.py` is required before the
 idempotent Apps Script health check can establish Step 9 runtime readiness.
 P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+
+## Shared Runtime Reliability Verification R1
+
+The bounded R1 verifier confirmed that `local/token.json` remains readable,
+contains a refresh token, and lists the required scopes, but Google rejected
+the refresh grant with `invalid_grant` before Apps Script dispatch. No
+`presignalRuntimeHealthCheck` call, provider call, forecast call, or
+prospective call was made. Step 9 readiness remains blocked pending a
+successful replacement of the revoked refresh token; P12 remains
+**PAUSED_PENDING_HISTORICAL_VALIDATION**.
