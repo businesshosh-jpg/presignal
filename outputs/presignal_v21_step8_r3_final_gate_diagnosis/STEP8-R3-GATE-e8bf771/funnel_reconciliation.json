@@ -1,0 +1,11 @@
+{
+  "accepted_pack_a_forecasts": 136,
+  "accepted_pack_e_forecasts": 139,
+  "complete_paired_observations": 52,
+  "forecast_selected_pairs": 192,
+  "incomplete_both": 135,
+  "incomplete_pack_a": 4,
+  "incomplete_pack_e": 1,
+  "provider_episode_records": 1197,
+  "unique_evaluable_episodes": 45
+}

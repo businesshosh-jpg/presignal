@@ -1,0 +1,7 @@
+{
+  "assessment": "The 85% target is defined over accepted-Attention FORECAST selections, but the reported denominator included rejected Attention outputs. The corrected 27.1% rate still fails the gate, chiefly due to primary-15m Outcome non-evaluability and Request losses.",
+  "corrected_observed": 0.2708333333333333,
+  "denominator_correct": false,
+  "reported_observed": 0.22707423580786026,
+  "target": 0.85
+}

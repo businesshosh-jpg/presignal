@@ -1,0 +1,9 @@
+{
+  "assessment": "provider-dependent and arm-nearly-symmetric among accepted forecast arms; direction of unobserved pairs is unknown",
+  "bounds": [
+    -0.017467248908296942,
+    0.026200873362445413
+  ],
+  "complete_case_a_minus_e": 0.019230769230769232,
+  "crosses_zero": true
+}

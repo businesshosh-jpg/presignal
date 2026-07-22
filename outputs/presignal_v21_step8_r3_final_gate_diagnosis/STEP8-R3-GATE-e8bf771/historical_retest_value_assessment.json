@@ -1,0 +1,5 @@
+{
+  "drift_classification": "HIGH_RISK_RABBIT_HOLE",
+  "justified": false,
+  "reason": "The reported 229 FORECAST selections include 37 strict Attention rejections whose raw, rejected payloads happened to contain PRIMARY_DRIVER labels. The accepted-Attention FORECAST denominator is 192, so the reported 22.7% paired-completion rate is not reproducible under the frozen selection definition. No retest or Step 9 decision should use the misclassified denominator until final accounting is reconstructed read-only."
+}

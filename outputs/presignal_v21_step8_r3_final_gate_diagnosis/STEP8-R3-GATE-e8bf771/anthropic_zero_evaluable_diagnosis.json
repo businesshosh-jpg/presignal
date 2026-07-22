@@ -1,0 +1,6 @@
+{
+  "accepted_pack_a": 29,
+  "accepted_pack_e": 30,
+  "complete_pairs": 0,
+  "reason": "All 29 paired Anthropic evaluations with both accepted arms have non-boolean direction_15m_ok values; they are primary-15m Outcome-not-evaluable, not missing opposite-arm forecasts."
+}

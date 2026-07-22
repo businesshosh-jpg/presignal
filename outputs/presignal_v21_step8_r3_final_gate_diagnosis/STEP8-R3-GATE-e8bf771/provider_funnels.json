@@ -1,0 +1,62 @@
+{
+  "Anthropic": {
+    "accepted_attention": 55,
+    "accepted_pack_a": 29,
+    "accepted_pack_e": 30,
+    "accepted_requests": 30,
+    "attention_calls": 399,
+    "complete_pairs": 0,
+    "forecast_selected": 53,
+    "pack_pairs_frozen": 30,
+    "primary_15m_evaluable": 0,
+    "request_calls": 53,
+    "terminal_statuses": {
+      "PACK_A_SYSTEM_REJECTION": 1,
+      "PRIMARY_15M_OUTCOME_NOT_EVALUABLE": 29,
+      "REQUEST_PROVIDER_REJECTION": 21,
+      "REQUEST_TRANSPORT_FAILURE": 2
+    },
+    "total_episode_paths": 399
+  },
+  "Gemini": {
+    "accepted_attention": 89,
+    "accepted_pack_a": 44,
+    "accepted_pack_e": 47,
+    "accepted_requests": 48,
+    "attention_calls": 399,
+    "complete_pairs": 30,
+    "forecast_selected": 70,
+    "pack_pairs_frozen": 48,
+    "primary_15m_evaluable": 30,
+    "request_calls": 70,
+    "terminal_statuses": {
+      "BOTH_FORECAST_ARMS_INCOMPLETE": 1,
+      "COMPLETE_PAIRED_EVALUATION": 30,
+      "PACK_A_SYSTEM_REJECTION": 3,
+      "PRIMARY_15M_OUTCOME_NOT_EVALUABLE": 14,
+      "REQUEST_PROVIDER_REJECTION": 19,
+      "REQUEST_TRANSPORT_FAILURE": 3
+    },
+    "total_episode_paths": 399
+  },
+  "OpenAI": {
+    "accepted_attention": 74,
+    "accepted_pack_a": 63,
+    "accepted_pack_e": 62,
+    "accepted_requests": 63,
+    "attention_calls": 399,
+    "complete_pairs": 22,
+    "forecast_selected": 69,
+    "pack_pairs_frozen": 63,
+    "primary_15m_evaluable": 22,
+    "request_calls": 69,
+    "terminal_statuses": {
+      "COMPLETE_PAIRED_EVALUATION": 22,
+      "PACK_E_SYSTEM_REJECTION": 1,
+      "PRIMARY_15M_OUTCOME_NOT_EVALUABLE": 40,
+      "REQUEST_PROVIDER_REJECTION": 4,
+      "REQUEST_TRANSPORT_FAILURE": 2
+    },
+    "total_episode_paths": 399
+  }
+}

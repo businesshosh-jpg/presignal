@@ -1,0 +1,14 @@
+[
+  {
+    "fingerprint": "sha256:3735b4977164050a55ce36d071cb562b2dcd665ba21958fae6562a47880274b2",
+    "path": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/execution_state.json"
+  },
+  {
+    "fingerprint": "sha256:54161a9688d2762e1bd1a4d8d2b433e2f4285e7db1c579ee7c62cdf076e31f8c",
+    "path": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/operation_journal.jsonl"
+  },
+  {
+    "fingerprint": "sha256:7f43b2813e74620718f1cf94be6c0547be8437d1aad6e7b14d16e0d35952351f",
+    "path": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/execution_plan.json"
+  }
+]

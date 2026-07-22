@@ -170,3 +170,14 @@ lease handling: any unresolved sent operation blocks takeover and retry.
 The abandoned Gemini provider/Episode operation is preserved as terminal
 missing for a successor Compat-R5 cohort; it must never be sent again. P12
 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+
+## Step 8-R3 Final Gate Diagnosis
+
+Read-only reconciliation found that the reported 229 FORECAST selections
+included 37 rejected Attention payloads whose raw content contained
+`PRIMARY_DRIVER`; the accepted-Attention denominator is 192, not 229. It also
+found 83 provider/Episode identities with both forecast arms accepted but
+`VALID` evaluations whose directional horizon fields were all null. Final
+historical evidence remains unissued pending read-only accounting
+reconstruction and a targeted evaluation/runtime integrity decision. P12
+remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.

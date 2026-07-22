@@ -1,0 +1,6 @@
+{
+  "confirmed_implementation_defects": "The evaluator emits VALID records with all direction horizon fields null for 83 otherwise paired forecast identities.",
+  "infrastructure": "LIKELY_TO_RECUR_PROSPECTIVELY",
+  "primary_15m_not_evaluable": "LIKELY_TO_RECUR_PROSPECTIVELY",
+  "provider_or_contract_rejections": "LIKELY_TO_RECUR_PROSPECTIVELY"
+}

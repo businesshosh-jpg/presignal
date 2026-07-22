@@ -1,0 +1,7 @@
+{
+  "compat_r5_changed": false,
+  "decision": "V2_1_STEP8_R3_FINAL_GATE_DIAGNOSIS_ACCOUNTING_CONTRADICTION",
+  "historical_retest_value": "LOW_VALUE_DRIFT until accounting is corrected",
+  "provider_calls": 0,
+  "reason": "The reported 229 FORECAST selections include 37 strict Attention rejections whose raw, rejected payloads happened to contain PRIMARY_DRIVER labels. The accepted-Attention FORECAST denominator is 192, so the reported 22.7% paired-completion rate is not reproducible under the frozen selection definition. No retest or Step 9 decision should use the misclassified denominator until final accounting is reconstructed read-only."
+}

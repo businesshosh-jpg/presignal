@@ -1,0 +1,8 @@
+{
+  "complete_paired_observation": "both forecast arms accepted plus shared Outcome and boolean 15m evaluations",
+  "corrected_completion_rate_formula": "52 complete paired observations / 192 accepted-Attention FORECAST selections",
+  "forecast_selected_pair": "accepted Attention maps to FORECAST; labels in rejected Attention payloads are not selections",
+  "provider_episode_record": "one provider x Episode Attention path",
+  "reported_rate_contradiction": "52 / 229 included 37 rejected Attention paths",
+  "unique_evaluable_episode": "Episode with at least one complete paired observation"
+}

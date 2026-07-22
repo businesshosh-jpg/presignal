@@ -1,0 +1,16 @@
+{
+  "combined": {
+    "additional_confirmed_complete_pairs": 0,
+    "reason": "No confirmed runner/evaluator defect was found in the selected-pair terminal records."
+  },
+  "implementation_only": {
+    "additional_confirmed_complete_pairs": 0,
+    "confirmed_implementation_defect_pairs": 0
+  },
+  "infrastructure_only": {
+    "additional_confirmed_complete_pairs": 0,
+    "completion_rate_if_only_known_completed_pairs_count": 0.2708333333333333,
+    "reason": "No frozen evidence establishes that a recovered Request would yield two accepted forecasts and a 15m-evaluable Outcome.",
+    "verified_transport_loss_pairs": 7
+  }
+}

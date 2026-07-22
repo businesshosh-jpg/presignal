@@ -1,0 +1,7 @@
+{
+  "directional_correctness": "implemented evaluator boolean direction_<horizon>m_ok compares each forecast direction to the frozen Outcome at that horizon from the pre-release anchor.",
+  "magnitude": "magnitude_15m_error field; not primary",
+  "mismatch": "No proposal/evaluator mismatch established from retained artifacts.",
+  "path_score": "overall_path_score field; current evaluator output supplies a scalar but no formula is embedded in the run ledger.",
+  "reversal": "reversal_ok field; not primary"
+}
