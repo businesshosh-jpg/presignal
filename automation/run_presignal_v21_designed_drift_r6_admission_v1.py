@@ -52,6 +52,18 @@ def _parse_time(value: str) -> datetime:
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
+def validate_event_batch_semantics(event: Mapping[str, Any]) -> None:
+    event_id, kind, batch = str(event.get("event_id") or ""), str(event.get("type") or ""), str(event.get("batch_id") or "")
+    if not event_id:
+        raise AdmissionError("EVENT_ID_REQUIRED")
+    if kind == "single" and batch:
+        raise AdmissionError("SINGLE_BATCH_ID_MUST_BE_BLANK")
+    if kind == "member" and not batch:
+        raise AdmissionError("MEMBER_BATCH_ID_REQUIRED")
+    if kind not in {"single", "member"}:
+        raise AdmissionError("EVENT_TYPE_UNSUPPORTED")
+
+
 def admission_snapshot(*, episode: Mapping[str, Any], selection_state: str, provider: str, model: str,
                        attention: Mapping[str, Any] | None, requests: Mapping[str, Any] | None,
                        pack_a: Mapping[str, Any] | None, pack_e: Mapping[str, Any] | None,

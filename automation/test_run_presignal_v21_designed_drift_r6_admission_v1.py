@@ -13,6 +13,11 @@ COMMON = {"episode_id": "EP", "provider": "OpenAI", "model": "m", "forecast_cuto
 
 
 class AdmissionTests(unittest.TestCase):
+    def test_conditional_batch_semantics(self):
+        admission.validate_event_batch_semantics({'event_id':'E','type':'single','batch_id':''})
+        admission.validate_event_batch_semantics({'event_id':'E','type':'member','batch_id':'B'})
+        for row, reason in (({'event_id':'E','type':'single','batch_id':'B'},'SINGLE'),({'event_id':'E','type':'member','batch_id':''},'MEMBER'),({'event_id':'','type':'single','batch_id':''},'EVENT_ID'),({'event_id':'E','type':'batch','batch_id':''},'TYPE')):
+            with self.assertRaisesRegex(admission.AdmissionError,reason): admission.validate_event_batch_semantics(row)
     def inputs(self):
         return {"attention": {"identity": "A"}, "requests": {"identity": "R"}, "pack_a": {**COMMON, "identity": "PA"}, "pack_e": {**COMMON, "identity": "PE"}}
 
