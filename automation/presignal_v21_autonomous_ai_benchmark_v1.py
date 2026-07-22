@@ -278,6 +278,7 @@ def seed_audit(resolution: Mapping[str, Any]) -> dict[str, Any]:
 
 NATIVE_PROMPT_VERSION = "presignal_v21_native_ai_no_research_v1"
 NATIVE_PROMPT_V2 = "presignal_v21_native_ai_no_research_v2"
+NATIVE_PROMPT_V3 = "presignal_v21_native_ai_no_research_v3"
 NATIVE_RUN_ID = "AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738"
 NATIVE_WORKBOOK_ID = "1W6ZL4kK3Qs_76sgQPw83KS9TQVk2LHHXJ_O2GSahe9s"
 NATIVE_ARTIFACT = ARTIFACT_ROOT / NATIVE_RUN_ID
@@ -352,6 +353,16 @@ def _native_prompt(episode: Mapping[str, Any]) -> str:
 
 def _native_prompt_v2(episode: Mapping[str, Any]) -> str:
     return _native_prompt(episode) + "\nEvery confidence field must be a JSON number from 0.0 to 1.0 inclusive. Examples: 0.20 low, 0.50 moderate, 0.75 high, 0.90 very high. Never use Low/Medium/High, ordinal 1-5, percentages, strings, or values above 1. When no_signal_flag is true, expected_initial_direction must be UNCERTAIN, expected_reversal_flag and expected_reversal_horizon_min must be null, and path must be empty."
+
+
+def _native_prompt_v3(episode: Mapping[str, Any]) -> str:
+    return _native_prompt_v2(episode) + "\nThe expected pip range at each horizon is expected net displacement from the pre-release anchor at that horizon, not intrahorizon volatility or a trading range. If expected_direction is FLAT, expected_pips_min and expected_pips_max must both be numeric zero: 0 and 0. If price may fluctuate but is expected to return near the anchor by that horizon, use FLAT with 0-0 net pips and describe possible fluctuation only in stage_reason. Valid examples: {\"direction\":\"FLAT\",\"expected_move_pips_min\":0,\"expected_move_pips_max\":0}; {\"direction\":\"UP\",\"expected_move_pips_min\":3,\"expected_move_pips_max\":8}; {\"direction\":\"DOWN\",\"expected_move_pips_min\":4,\"expected_move_pips_max\":10}. Invalid under this benchmark schema: {\"direction\":\"FLAT\",\"expected_move_pips_min\":2,\"expected_move_pips_max\":6}."
+
+
+def _validate_v3_prompt(prompt: str) -> None:
+    required = ("Return JSON only", "5,15,30,60", "number from 0.0 to 1.0 inclusive", "UP, DOWN, or FLAT", "FLAT", "both be numeric zero", "Do not use the actual released value", "Base the forecast only on the supplied pre-release information")
+    if any(text not in prompt for text in required):
+        raise BenchmarkError("NATIVE_V3_PROMPT_CONTRACT_INVALID")
 
 
 def _append(service: Any, spreadsheet_id: str, sheet: str, rows: list[dict[str, Any]]) -> None:
@@ -522,6 +533,103 @@ def reconcile_native_v2() -> dict[str, Any]:
     return summary
 
 
+def _pair_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    def count(arm: str, horizon: int) -> int:
+        return sum(bool(row[arm].get(f"direction_{horizon}m_ok")) for row in rows)
+    primary = {"valid_pairs": len(rows), "presignal_correct": count("presignal", 15), "native_correct": count("native", 15)}
+    primary.update({"both_correct": sum(bool(r["presignal"].get("direction_15m_ok")) and bool(r["native"].get("direction_15m_ok")) for r in rows), "presignal_only_correct": sum(bool(r["presignal"].get("direction_15m_ok")) and not bool(r["native"].get("direction_15m_ok")) for r in rows), "native_only_correct": sum(not bool(r["presignal"].get("direction_15m_ok")) and bool(r["native"].get("direction_15m_ok")) for r in rows), "both_wrong": sum(not bool(r["presignal"].get("direction_15m_ok")) and not bool(r["native"].get("direction_15m_ok")) for r in rows)})
+    return {"primary_15m": primary, "horizons": {str(h): {"presignal_correct": count("presignal", h), "native_correct": count("native", h)} for h in (5, 30, 60)}, "reversal": {"presignal_correct": sum(bool(r["presignal"].get("reversal_ok")) for r in rows), "native_correct": sum(bool(r["native"].get("reversal_ok")) for r in rows)}, "mean_magnitude_15m_error": {arm: (sum(float(r[arm].get("magnitude_15m_error") or 0) for r in rows) / len(rows) if rows else None) for arm in ("presignal", "native")}, "mean_path_score": {arm: (sum(float(r[arm].get("overall_path_score") or 0) for r in rows) / len(rows) if rows else None) for arm in ("presignal", "native")}, "tokens": sum(int(r.get("tokens") or 0) for r in rows), "latency_available_count": sum(r.get("latency_ms") not in (None, "") for r in rows)}
+
+
+def _evaluate_native_response(ep: Mapping[str, Any], raw_path: Path, prompt_version: str) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any], Mapping[str, Any]]:
+    from automation.run_presignal_v21_single_event_path_pair_v1 import evaluate, parse_provider_output, response_to_contract
+    stored = json.loads(raw_path.read_text()); bridge = stored["provider_response"]
+    if bridge.get("actual_provider") != "Gemini" or bridge.get("actual_model") != "gemini-2.5-flash-lite":
+        raise BenchmarkError("NATIVE_AI_MODEL_MISMATCH")
+    response = parse_provider_output(bridge["raw_output"])
+    input_row = {"information_arm": "PACK_A", "episode_id": ep["episode_id"], "source_session_id": ep["session_id"], "provider": "Gemini", "model": "gemini-2.5-flash-lite", "forecast_cutoff_ts": ep["forecast_cutoff_ts"], "episode_members": ep["episode_members"], "pack_id": "NATIVE_AI_NO_RESEARCH_" + prompt_version.upper(), "pack_fingerprint": None}
+    prediction, paths = response_to_contract(response, input_row, run_id=NATIVE_RUN_ID, created_ts=now(), raw_output=bridge["raw_output"], bridge_result={**bridge, "latency_ms": None})
+    return prediction, paths, evaluate(prediction, paths, _outcomes()[ep["episode_id"]], generated_ts=now()), bridge
+
+
+def execute_native_v3() -> dict[str, Any]:
+    """One bounded v3 dispatch for only the four v2 FLAT-pip schema failures."""
+    from automation.google_clients import build_sheets_service, load_credentials
+    resolution = resolve_source(); manifest_path = NATIVE_ARTIFACT / "benchmark_manifest.json"; manifest = json.loads(manifest_path.read_text())
+    prior = json.loads((NATIVE_ARTIFACT / "native_ai_v2_reconciliation.json").read_text())
+    authorized = [row["episode_id"] for row in prior["audit"] if row["terminal_state"] == "NATIVE_AI_FORECAST_SCHEMA_REJECTED" and row["parser_rejection_reason"] == "PATH_NEUTRAL_PIP_RANGE"]
+    if len(authorized) != 4:
+        raise BenchmarkError("NATIVE_AI_V3_COMPARISON_LINEAGE_FAILED")
+    sample = {item["episode"]["episode_id"]: item for item in resolution["sample"]}
+    if set(authorized) - set(sample):
+        raise BenchmarkError("NATIVE_AI_V3_COMPARISON_LINEAGE_FAILED")
+    ledger = NATIVE_ARTIFACT / "native_ai_call_ledger.jsonl"; response_dir = NATIVE_ARTIFACT / "native_responses_v3"; service = build_sheets_service(load_credentials(False))
+    _, existing_forecasts = _native_v2_rows(service, "Autonomous_Forecasts"); _, existing_comparisons = _native_v2_rows(service, "Outcome_Comparison")
+    known_calls = {row.get("call_id") for row in existing_forecasts} | {row.get("call_id") for row in existing_comparisons}
+    v3_existing = [row for row in jsonl(ledger) if row.get("prompt_version") == NATIVE_PROMPT_V3]
+    if v3_existing:
+        return reconcile_native_v3()
+    forecast_rows=[]; comparison_rows=[]; results=[]; terminal=Counter()
+    for episode_id in authorized:
+        item=sample[episode_id]; ep, ref=item["episode"], item["reference"]; prompt=_native_prompt_v3(ep); _validate_v3_prompt(prompt); input_fp=fingerprint(ep)
+        call_id="NATIVEV3_"+hashlib.sha256((NATIVE_RUN_ID+episode_id+NATIVE_PROMPT_V3+input_fp).encode()).hexdigest()[:24]
+        base={"benchmark_run_id":NATIVE_RUN_ID,"call_id":call_id,"episode_id":episode_id,"arm":"NATIVE_AI_NO_RESEARCH","provider":"Gemini","requested_model":"gemini-2.5-flash-lite","prompt_version":NATIVE_PROMPT_V3,"prompt_fingerprint":fingerprint(prompt),"input_fingerprint":input_fp,"request_fingerprint":fingerprint({"prompt":prompt,"episode":episode_id}),"attempt_number":1,"reservation_timestamp":now(),"retry_eligibility":False}
+        _append_ledger(ledger,{**base,"state":"PLANNED","terminal_status":""}); _append_ledger(ledger,{**base,"state":"RESERVED_NOT_SENT","terminal_status":""}); _append_ledger(ledger,{**base,"state":"DISPATCH_STARTED","dispatch_start_timestamp":now(),"terminal_status":""})
+        prediction=None; paths=[]; evaluation=None; bridge={}; state="NATIVE_AI_FORECAST_ACCEPTED"; error=""
+        try:
+            bridge=_bridge("Gemini","gemini-2.5-flash-lite",NATIVE_RUN_ID,ep,"NATIVE_AI_NO_RESEARCH_V3",prompt)
+            response_path=response_dir/(call_id+".json"); _atomic_json(response_path,{"call_id":call_id,"provider_response":dict(bridge),"response_fingerprint":fingerprint(bridge),"prompt":prompt}); _append_ledger(ledger,{**base,"state":"RESPONSE_RECEIVED","response_timestamp":now(),"raw_response_path":str(response_path),"raw_response_fingerprint":fingerprint(bridge),"actual_provider":bridge.get("actual_provider"),"actual_model":bridge.get("actual_model"),"terminal_status":""})
+            prediction,paths,evaluation,_=_evaluate_native_response(ep,response_path,"v3")
+        except Exception as exc:
+            error=str(exc); state="NATIVE_AI_FORECAST_SCHEMA_REJECTED" if "PATH_" in error or "PROVIDER_OUTPUT" in error else "NATIVE_AI_PROVIDER_CALL_FAILED"; _append_ledger(ledger,{**base,"state":state,"completion_timestamp":now(),"terminal_status":state,"error_class":type(exc).__name__,"error_message":error})
+        else: _append_ledger(ledger,{**base,"state":"NATIVE_AI_FORECAST_ACCEPTED","completion_timestamp":now(),"terminal_status":"NATIVE_AI_FORECAST_ACCEPTED","actual_provider":bridge.get("actual_provider"),"actual_model":bridge.get("actual_model")})
+        terminal[state]+=1; h={p["horizon_min"]:p for p in paths}; raw_path=str(response_dir/(call_id+".json")) if bridge else ""
+        forecast_rows.append({"episode_id":episode_id,"provider":"Gemini","model":"gemini-2.5-flash-lite","forecast_timestamp":now(),"forecast_cutoff":ep["forecast_cutoff_ts"],"direction_5m":h.get(5,{}).get("expected_direction",""),"direction_15m":h.get(15,{}).get("expected_direction",""),"direction_30m":h.get(30,{}).get("expected_direction",""),"direction_60m":h.get(60,{}).get("expected_direction",""),"confidence":prediction.get("confidence","") if prediction else "","raw_output":bridge.get("raw_output",""),"validation_status":state,"arm":"NATIVE_AI_NO_RESEARCH","prompt_version":NATIVE_PROMPT_V3,"call_id":call_id,"raw_response_reference":raw_path,"recovery_status":"NOT_NEEDED"})
+        pre,native=ref.get("pack_e_evaluation") or {},evaluation or {}; comparison_rows.append({"episode_id":episode_id,"provider":"Gemini","presignal_5m_correctness":pre.get("direction_5m_ok",""),"autonomous_ai_5m_correctness":native.get("direction_5m_ok",""),"presignal_15m_correctness":pre.get("direction_15m_ok",""),"autonomous_ai_15m_correctness":native.get("direction_15m_ok",""),"presignal_30m_correctness":pre.get("direction_30m_ok",""),"autonomous_ai_30m_correctness":native.get("direction_30m_ok",""),"presignal_60m_correctness":pre.get("direction_60m_ok",""),"autonomous_ai_60m_correctness":native.get("direction_60m_ok",""),"reversal_correctness":native.get("reversal_ok",""),"magnitude_error":native.get("magnitude_15m_error",""),"path_score":native.get("overall_path_score",""),"completion_status":state,"token_cost":(bridge.get("prompt_tokens") or 0)+(bridge.get("completion_tokens") or 0),"latency_ms":bridge.get("latency_ms",""),"research_source_count":0,"cutoff_violation_count":0,"interpretation_note":"FINAL_ACTIVE_V3_RERUN" if evaluation else error,"arm":"NATIVE_AI_NO_RESEARCH","prompt_version":NATIVE_PROMPT_V3,"call_id":call_id})
+        if evaluation: results.append({"episode_id":episode_id,"presignal":pre,"native":evaluation,"tokens":(bridge.get("prompt_tokens") or 0)+(bridge.get("completion_tokens") or 0),"latency_ms":bridge.get("latency_ms","")})
+    _append(service,NATIVE_WORKBOOK_ID,"Autonomous_Forecasts",[row for row in forecast_rows if row["call_id"] not in known_calls]); _append(service,NATIVE_WORKBOOK_ID,"Outcome_Comparison",[row for row in comparison_rows if row["call_id"] not in known_calls])
+    original=[]
+    for audit in prior["audit"]:
+        if audit["terminal_state"] != "NATIVE_AI_FORECAST_ACCEPTED": continue
+        ep=sample[audit["episode_id"]]["episode"]; prediction,paths,evaluation,bridge=_evaluate_native_response(ep,Path(audit["raw_response_path"]),"v2"); original.append({"episode_id":ep["episode_id"],"presignal":sample[ep["episode_id"]]["reference"]["pack_e_evaluation"],"native":evaluation,"tokens":(bridge.get("prompt_tokens") or 0)+(bridge.get("completion_tokens") or 0),"latency_ms":bridge.get("latency_ms","")})
+    combined=original+results; final={"completion_decision":"NATIVE_AI_V3_COMPLETION_RUN_COMPLETE" if len(results)==4 else "NATIVE_AI_V3_COMPLETION_RUN_PARTIALLY_COMPLETE","interpretation_decision":"NATIVE_AI_PILOT_RESULT_MIXED_OR_INDETERMINATE" if len(combined)==10 else "NOT_AVAILABLE_INSUFFICIENT_VALID_COMPARISONS","prompt_version":NATIVE_PROMPT_V3,"prompt_fingerprint":fingerprint(_native_prompt_v3(sample[authorized[0]]["episode"])),"authorized_episode_ids":authorized,"v3_terminal_counts":dict(terminal),"original_six_pair_result":_pair_metrics(original),"added_four_episode_result":_pair_metrics(results),"combined_final_result":_pair_metrics(combined),"schema_compliance":{"v2_accepted":6,"v3_accepted":len(results),"v3_rejected":terminal["NATIVE_AI_FORECAST_SCHEMA_REJECTED"]},"model_memory_limitation":"The native historical AI arm uses only supplied pre-release inputs and no external research, but latent knowledge contained in the pretrained model cannot be independently excluded."}
+    write_json(NATIVE_ARTIFACT/"native_ai_v3_completion.json",final); manifest["native_ai_v3"]={"prompt_text":_native_prompt_v3(sample[authorized[0]]["episode"]),"prompt_fingerprint":final["prompt_fingerprint"],"authorized_episode_ids":authorized,"difference_from_v2":"FLAT net-pip clarification and examples only","result":final}; manifest["status"]=final["completion_decision"]; write_json(manifest_path,manifest)
+    _append(service,NATIVE_WORKBOOK_ID,"Run_Status",[{"experiment_state":final["completion_decision"],"current_episode":"","completed_episodes":len(combined),"failed_episodes":SAMPLE_SIZE-len(combined),"active_run":NATIVE_RUN_ID,"start_time":"","end_time":now(),"terminal_decision":final["completion_decision"],"interruption_reason":""}]); _append(service,NATIVE_WORKBOOK_ID,"log",[{"timestamp":now(),"run_id":NATIVE_RUN_ID,"level":"INFO","event":"NATIVE_AI_V3_COMPLETED","details":canonical(final)}])
+    return final
+
+
+def reconcile_native_v3() -> dict[str, Any]:
+    """Offline-only v3 scoring/finalization for durably persisted v3 responses."""
+    from automation.google_clients import build_sheets_service, load_credentials
+    resolution=resolve_source(); sample={item["episode"]["episode_id"]:item for item in resolution["sample"]}; prior=json.loads((NATIVE_ARTIFACT/"native_ai_v2_reconciliation.json").read_text()); manifest_path=NATIVE_ARTIFACT/"benchmark_manifest.json"; manifest=json.loads(manifest_path.read_text())
+    authorized=[row["episode_id"] for row in prior["audit"] if row["terminal_state"]=="NATIVE_AI_FORECAST_SCHEMA_REJECTED" and row["parser_rejection_reason"]=="PATH_NEUTRAL_PIP_RANGE"]
+    records=defaultdict(list)
+    for row in jsonl(NATIVE_ARTIFACT/"native_ai_call_ledger.jsonl"):
+        if row.get("prompt_version")==NATIVE_PROMPT_V3: records[row["episode_id"]].append(row)
+    if set(records)!=set(authorized): raise BenchmarkError("NATIVE_AI_V3_COMPARISON_LINEAGE_FAILED")
+    service=build_sheets_service(load_credentials(False)); _, forecasts=_native_v2_rows(service,"Autonomous_Forecasts"); _, comparisons=_native_v2_rows(service,"Outcome_Comparison"); known={row.get("call_id") for row in forecasts}|{row.get("call_id") for row in comparisons}
+    rows=[]; forecast_rows=[]; comparison_rows=[]; terminal=Counter(); v3_audit=[]
+    for episode_id in authorized:
+        rs=records[episode_id]; responses=[r for r in rs if r.get("state")=="RESPONSE_RECEIVED" and r.get("raw_response_path")]; terminals=[r for r in rs if r.get("state") in {"NATIVE_AI_FORECAST_ACCEPTED","NATIVE_AI_FORECAST_SCHEMA_REJECTED","NATIVE_AI_PROVIDER_CALL_FAILED","NATIVE_AI_MODEL_MISMATCH","NATIVE_AI_INPUT_LINEAGE_FAILED","NATIVE_AI_EXECUTION_INFRASTRUCTURE_FAILED","DISPATCH_STATE_UNKNOWN"}]
+        if len(responses)!=1 or len(terminals)!=1: raise BenchmarkError("NATIVE_AI_V3_COMPARISON_LINEAGE_FAILED")
+        rr,tr=responses[0],terminals[0]; path=Path(rr["raw_response_path"]); ep,ref=sample[episode_id]["episode"],sample[episode_id]["reference"]; bridge=json.loads(path.read_text())["provider_response"]; state=tr["state"]; prediction=None; paths=[]; evaluation=None; error=tr.get("error_message","")
+        if state=="NATIVE_AI_FORECAST_ACCEPTED": prediction,paths,evaluation,_=_evaluate_native_response(ep,path,"v3")
+        terminal[state]+=1; h={p["horizon_min"]:p for p in paths}; pre,native=ref["pack_e_evaluation"],evaluation or {}; call_id=rr["call_id"]
+        forecast_rows.append({"episode_id":episode_id,"provider":"Gemini","model":"gemini-2.5-flash-lite","forecast_timestamp":now(),"forecast_cutoff":ep["forecast_cutoff_ts"],"direction_5m":h.get(5,{}).get("expected_direction",""),"direction_15m":h.get(15,{}).get("expected_direction",""),"direction_30m":h.get(30,{}).get("expected_direction",""),"direction_60m":h.get(60,{}).get("expected_direction",""),"confidence":prediction.get("confidence","") if prediction else "","raw_output":bridge.get("raw_output",""),"validation_status":state,"arm":"NATIVE_AI_NO_RESEARCH","prompt_version":NATIVE_PROMPT_V3,"call_id":call_id,"raw_response_reference":str(path),"recovery_status":"NOT_NEEDED"})
+        comparison_rows.append({"episode_id":episode_id,"provider":"Gemini","presignal_5m_correctness":pre.get("direction_5m_ok",""),"autonomous_ai_5m_correctness":native.get("direction_5m_ok",""),"presignal_15m_correctness":pre.get("direction_15m_ok",""),"autonomous_ai_15m_correctness":native.get("direction_15m_ok",""),"presignal_30m_correctness":pre.get("direction_30m_ok",""),"autonomous_ai_30m_correctness":native.get("direction_30m_ok",""),"presignal_60m_correctness":pre.get("direction_60m_ok",""),"autonomous_ai_60m_correctness":native.get("direction_60m_ok",""),"reversal_correctness":native.get("reversal_ok",""),"magnitude_error":native.get("magnitude_15m_error",""),"path_score":native.get("overall_path_score",""),"completion_status":state,"token_cost":(bridge.get("prompt_tokens") or 0)+(bridge.get("completion_tokens") or 0),"latency_ms":bridge.get("latency_ms",""),"research_source_count":0,"cutoff_violation_count":0,"interpretation_note":"FINAL_ACTIVE_V3_RERUN" if evaluation else error,"arm":"NATIVE_AI_NO_RESEARCH","prompt_version":NATIVE_PROMPT_V3,"call_id":call_id})
+        v3_audit.append({"episode_id":episode_id,"call_id":call_id,"terminal_state":state,"reason":error,"raw_response_path":str(path)})
+        if evaluation: rows.append({"episode_id":episode_id,"presignal":pre,"native":evaluation,"tokens":(bridge.get("prompt_tokens") or 0)+(bridge.get("completion_tokens") or 0),"latency_ms":bridge.get("latency_ms","")})
+    _append(service,NATIVE_WORKBOOK_ID,"Autonomous_Forecasts",[r for r in forecast_rows if r["call_id"] not in known]); _append(service,NATIVE_WORKBOOK_ID,"Outcome_Comparison",[r for r in comparison_rows if r["call_id"] not in known])
+    original=[]
+    for audit in prior["audit"]:
+        if audit["terminal_state"]!="NATIVE_AI_FORECAST_ACCEPTED": continue
+        ep=sample[audit["episode_id"]]["episode"]; _,_,evaluation,bridge=_evaluate_native_response(ep,Path(audit["raw_response_path"]),"v2"); original.append({"episode_id":ep["episode_id"],"presignal":sample[ep["episode_id"]]["reference"]["pack_e_evaluation"],"native":evaluation,"tokens":(bridge.get("prompt_tokens") or 0)+(bridge.get("completion_tokens") or 0),"latency_ms":bridge.get("latency_ms","")})
+    combined=original+rows; final={"completion_decision":"NATIVE_AI_V3_COMPLETION_RUN_COMPLETE" if len(rows)==4 else "NATIVE_AI_V3_COMPLETION_RUN_PARTIALLY_COMPLETE","interpretation_decision":"NATIVE_AI_PILOT_RESULT_MIXED_OR_INDETERMINATE" if len(combined)==10 else "NOT_AVAILABLE_INSUFFICIENT_VALID_COMPARISONS","prompt_version":NATIVE_PROMPT_V3,"prompt_fingerprint":fingerprint(_native_prompt_v3(sample[authorized[0]]["episode"])),"authorized_episode_ids":authorized,"provider_call_count":4,"retry_count":0,"v3_terminal_counts":dict(terminal),"v3_audit":v3_audit,"original_six_pair_result":_pair_metrics(original),"added_four_episode_result":_pair_metrics(rows),"combined_final_result":_pair_metrics(combined),"schema_compliance":{"v2_accepted":6,"v3_accepted":len(rows),"v3_rejected":terminal["NATIVE_AI_FORECAST_SCHEMA_REJECTED"]},"model_memory_limitation":"The native historical AI arm uses only supplied pre-release inputs and no external research, but latent knowledge contained in the pretrained model cannot be independently excluded."}
+    write_json(NATIVE_ARTIFACT/"native_ai_v3_completion.json",final); manifest["native_ai_v3"]={"prompt_text":_native_prompt_v3(sample[authorized[0]]["episode"]),"prompt_fingerprint":final["prompt_fingerprint"],"authorized_episode_ids":authorized,"difference_from_v2":"FLAT net-pip clarification and examples only","result":final}; manifest["status"]=final["completion_decision"]; write_json(manifest_path,manifest)
+    _append(service,NATIVE_WORKBOOK_ID,"Run_Status",[{"experiment_state":final["completion_decision"],"current_episode":"","completed_episodes":len(combined),"failed_episodes":SAMPLE_SIZE-len(combined),"active_run":NATIVE_RUN_ID,"start_time":"","end_time":now(),"terminal_decision":final["completion_decision"],"interruption_reason":""}]); _append(service,NATIVE_WORKBOOK_ID,"log",[{"timestamp":now(),"run_id":NATIVE_RUN_ID,"level":"INFO","event":"NATIVE_AI_V3_RECONCILED","details":canonical(final)}])
+    return final
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="Read only: resolve the authoritative source and sample.")
@@ -531,9 +639,10 @@ def main() -> int:
     parser.add_argument("--import-pre-repair-responses", action="store_true", help="Import prior durable workbook responses into the call ledger without dispatch.")
     parser.add_argument("--execute-native-v2", action="store_true")
     parser.add_argument("--reconcile-native-v2", action="store_true", help="Offline-only reconciliation of durable v2 responses.")
+    parser.add_argument("--execute-native-v3", action="store_true", help="Dispatch the four authorized FLAT-pip v3 reruns.")
     parser.add_argument("--seed", type=int, default=SAMPLE_SEED)
     args = parser.parse_args()
-    if not args.check and not args.initialize and not args.record_seed_audit and not args.execute_native and not args.import_pre_repair_responses and not args.execute_native_v2 and not args.reconcile_native_v2:
+    if not args.check and not args.initialize and not args.record_seed_audit and not args.execute_native and not args.import_pre_repair_responses and not args.execute_native_v2 and not args.reconcile_native_v2 and not args.execute_native_v3:
         parser.error("choose --check, --initialize, --record-seed-audit, or --execute-native")
     resolution = resolve_source(args.seed)
     if args.check:
@@ -557,6 +666,8 @@ def main() -> int:
         print(json.dumps(execute_native_v2(), indent=2, sort_keys=True)); return 0
     if args.reconcile_native_v2:
         print(json.dumps(reconcile_native_v2(), indent=2, sort_keys=True)); return 0
+    if args.execute_native_v3:
+        print(json.dumps(execute_native_v3(), indent=2, sort_keys=True)); return 0
     run_id = "AUTONOMOUS-AI-BENCHMARK-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
     artifact = ARTIFACT_ROOT / run_id
     spreadsheet_id = create_workbook(resolution, run_id)

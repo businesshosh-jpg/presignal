@@ -731,6 +731,188 @@
       "NATIVE_AI_FORECAST_SCHEMA_REJECTED": 4
     }
   },
+  "native_ai_v3": {
+    "authorized_episode_ids": [
+      "EP_BATCH_5db4a9668cccb78d621e",
+      "EP_EVENT_5a1719c3db61418e808e",
+      "EP_EVENT_28649186b338eb5b0a22",
+      "EP_EVENT_b5f2d28b12e37e2d9b72"
+    ],
+    "difference_from_v2": "FLAT net-pip clarification and examples only",
+    "prompt_fingerprint": "sha256:82548b93b7343b684a52e7e73dc62ad3f84a659667f02b504e7f99949303de26",
+    "prompt_text": "You are forecasting as of the supplied historical forecast cutoff. Treat the economic release as not yet released. Do not use the actual released value, subsequent USD/JPY movement, later revisions, retrospective commentary, or any information published after the cutoff. Base the forecast only on the supplied pre-release information and your general reasoning. Return JSON only with exactly: no_signal_flag,no_signal_reason,confidence,expected_initial_direction,expected_reversal_flag,expected_reversal_horizon_min,expected_path_summary,information_used,missing_information,invalidation_condition,path. path must contain ordered 5,15,30,60 minute objects with exactly: horizon_min,expected_direction,expected_pips_min,expected_pips_max,stage_confidence,continuation_probability,reversal_probability,stage_reason,invalidation_condition. Directions are UP, DOWN, or FLAT; pip magnitudes are nonnegative.\n{\"country\":\"US\",\"episode_id\":\"EP_BATCH_5db4a9668cccb78d621e\",\"forecast_cutoff\":\"2024-07-16T12:20:00Z\",\"members\":[{\"consensus_value\":\"0\",\"event_id\":\"9ed2-10aa-f45a-49e2\",\"genre\":\"Consumption\",\"importance\":\"Low\",\"indicator_name\":\"Retail Inventories Ex Autos MoM (May)\",\"prev_revision\":\"0.2\",\"type\":\"member\"},{\"consensus_value\":\"44\",\"event_id\":\"0e75-bbf1-16e9-1f5d\",\"genre\":\"Housing\",\"importance\":\"Medium\",\"indicator_name\":\"NAHB Housing Market Index (Jul)\",\"prev_revision\":\"43\",\"type\":\"member\"},{\"consensus_value\":\"0.3\",\"event_id\":\"ca30-4470-38f0-a7b0\",\"genre\":\"Trade\",\"importance\":\"Medium\",\"indicator_name\":\"Business Inventories MoM (May)\",\"prev_revision\":\"0.3\",\"type\":\"member\"}],\"release_timestamp\":\"2024-07-16T14:00:00Z\",\"target_pair\":\"USD/JPY\"}\nEvery confidence field must be a JSON number from 0.0 to 1.0 inclusive. Examples: 0.20 low, 0.50 moderate, 0.75 high, 0.90 very high. Never use Low/Medium/High, ordinal 1-5, percentages, strings, or values above 1. When no_signal_flag is true, expected_initial_direction must be UNCERTAIN, expected_reversal_flag and expected_reversal_horizon_min must be null, and path must be empty.\nThe expected pip range at each horizon is expected net displacement from the pre-release anchor at that horizon, not intrahorizon volatility or a trading range. If expected_direction is FLAT, expected_pips_min and expected_pips_max must both be numeric zero: 0 and 0. If price may fluctuate but is expected to return near the anchor by that horizon, use FLAT with 0-0 net pips and describe possible fluctuation only in stage_reason. Valid examples: {\"direction\":\"FLAT\",\"expected_move_pips_min\":0,\"expected_move_pips_max\":0}; {\"direction\":\"UP\",\"expected_move_pips_min\":3,\"expected_move_pips_max\":8}; {\"direction\":\"DOWN\",\"expected_move_pips_min\":4,\"expected_move_pips_max\":10}. Invalid under this benchmark schema: {\"direction\":\"FLAT\",\"expected_move_pips_min\":2,\"expected_move_pips_max\":6}.",
+    "result": {
+      "added_four_episode_result": {
+        "horizons": {
+          "30": {
+            "native_correct": 0,
+            "presignal_correct": 0
+          },
+          "5": {
+            "native_correct": 0,
+            "presignal_correct": 0
+          },
+          "60": {
+            "native_correct": 0,
+            "presignal_correct": 0
+          }
+        },
+        "latency_available_count": 0,
+        "mean_magnitude_15m_error": {
+          "native": 3.575,
+          "presignal": 2.85
+        },
+        "mean_path_score": {
+          "native": 0.0,
+          "presignal": 0.0
+        },
+        "primary_15m": {
+          "both_correct": 0,
+          "both_wrong": 2,
+          "native_correct": 0,
+          "native_only_correct": 0,
+          "presignal_correct": 0,
+          "presignal_only_correct": 0,
+          "valid_pairs": 2
+        },
+        "reversal": {
+          "native_correct": 2,
+          "presignal_correct": 1
+        },
+        "tokens": 3027
+      },
+      "authorized_episode_ids": [
+        "EP_BATCH_5db4a9668cccb78d621e",
+        "EP_EVENT_5a1719c3db61418e808e",
+        "EP_EVENT_28649186b338eb5b0a22",
+        "EP_EVENT_b5f2d28b12e37e2d9b72"
+      ],
+      "combined_final_result": {
+        "horizons": {
+          "30": {
+            "native_correct": 3,
+            "presignal_correct": 1
+          },
+          "5": {
+            "native_correct": 4,
+            "presignal_correct": 2
+          },
+          "60": {
+            "native_correct": 2,
+            "presignal_correct": 1
+          }
+        },
+        "latency_available_count": 0,
+        "mean_magnitude_15m_error": {
+          "native": 6.9,
+          "presignal": 4.35625
+        },
+        "mean_path_score": {
+          "native": 0.28125,
+          "presignal": 0.21875
+        },
+        "primary_15m": {
+          "both_correct": 0,
+          "both_wrong": 5,
+          "native_correct": 0,
+          "native_only_correct": 0,
+          "presignal_correct": 3,
+          "presignal_only_correct": 3,
+          "valid_pairs": 8
+        },
+        "reversal": {
+          "native_correct": 5,
+          "presignal_correct": 3
+        },
+        "tokens": 11304
+      },
+      "completion_decision": "NATIVE_AI_V3_COMPLETION_RUN_PARTIALLY_COMPLETE",
+      "interpretation_decision": "NOT_AVAILABLE_INSUFFICIENT_VALID_COMPARISONS",
+      "model_memory_limitation": "The native historical AI arm uses only supplied pre-release inputs and no external research, but latent knowledge contained in the pretrained model cannot be independently excluded.",
+      "original_six_pair_result": {
+        "horizons": {
+          "30": {
+            "native_correct": 3,
+            "presignal_correct": 1
+          },
+          "5": {
+            "native_correct": 4,
+            "presignal_correct": 2
+          },
+          "60": {
+            "native_correct": 2,
+            "presignal_correct": 1
+          }
+        },
+        "latency_available_count": 0,
+        "mean_magnitude_15m_error": {
+          "native": 8.008333333333335,
+          "presignal": 4.858333333333333
+        },
+        "mean_path_score": {
+          "native": 0.375,
+          "presignal": 0.2916666666666667
+        },
+        "primary_15m": {
+          "both_correct": 0,
+          "both_wrong": 3,
+          "native_correct": 0,
+          "native_only_correct": 0,
+          "presignal_correct": 3,
+          "presignal_only_correct": 3,
+          "valid_pairs": 6
+        },
+        "reversal": {
+          "native_correct": 3,
+          "presignal_correct": 2
+        },
+        "tokens": 8277
+      },
+      "prompt_fingerprint": "sha256:82548b93b7343b684a52e7e73dc62ad3f84a659667f02b504e7f99949303de26",
+      "prompt_version": "presignal_v21_native_ai_no_research_v3",
+      "provider_call_count": 4,
+      "retry_count": 0,
+      "schema_compliance": {
+        "v2_accepted": 6,
+        "v3_accepted": 2,
+        "v3_rejected": 2
+      },
+      "v3_audit": [
+        {
+          "call_id": "NATIVEV3_8650e983b65bacacd7d63923",
+          "episode_id": "EP_BATCH_5db4a9668cccb78d621e",
+          "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v3/NATIVEV3_8650e983b65bacacd7d63923.json",
+          "reason": "PATH_PIPS_MIN",
+          "terminal_state": "NATIVE_AI_FORECAST_SCHEMA_REJECTED"
+        },
+        {
+          "call_id": "NATIVEV3_fdaaff3b82fdaa50c87a62e9",
+          "episode_id": "EP_EVENT_5a1719c3db61418e808e",
+          "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v3/NATIVEV3_fdaaff3b82fdaa50c87a62e9.json",
+          "reason": "PATH_NEUTRAL_PIP_RANGE",
+          "terminal_state": "NATIVE_AI_FORECAST_SCHEMA_REJECTED"
+        },
+        {
+          "call_id": "NATIVEV3_ce3de60337bcd858f9e93b21",
+          "episode_id": "EP_EVENT_28649186b338eb5b0a22",
+          "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v3/NATIVEV3_ce3de60337bcd858f9e93b21.json",
+          "reason": "",
+          "terminal_state": "NATIVE_AI_FORECAST_ACCEPTED"
+        },
+        {
+          "call_id": "NATIVEV3_8fa47f5ff95691d34121dc3f",
+          "episode_id": "EP_EVENT_b5f2d28b12e37e2d9b72",
+          "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v3/NATIVEV3_8fa47f5ff95691d34121dc3f.json",
+          "reason": "",
+          "terminal_state": "NATIVE_AI_FORECAST_ACCEPTED"
+        }
+      ],
+      "v3_terminal_counts": {
+        "NATIVE_AI_FORECAST_ACCEPTED": 2,
+        "NATIVE_AI_FORECAST_SCHEMA_REJECTED": 2
+      }
+    }
+  },
   "pre_repair_dispatch_investigation": "PRE_REPAIR_CALL_IDENTIFIED_WITH_RESPONSE",
   "provider": "Gemini",
   "run_id": "AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738",
@@ -6278,7 +6460,7 @@
   "selection_fingerprint": "sha256:e58daad6f620e150483c07b1261ba3d4495d2420d44943366b07257b0802e912",
   "source_run": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771",
   "spreadsheet_id": "1W6ZL4kK3Qs_76sgQPw83KS9TQVk2LHHXJ_O2GSahe9s",
-  "status": "NATIVE_AI_V2_BENCHMARK_COMPLETE",
+  "status": "NATIVE_AI_V3_COMPLETION_RUN_PARTIALLY_COMPLETE",
   "terminal_decision": "AUTONOMOUS_RESEARCH_TRACE_UNAVAILABLE",
   "trace_stop": {
     "alternate_repository_search_route": "absent",

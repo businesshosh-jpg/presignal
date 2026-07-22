@@ -48,6 +48,26 @@ class NativeV2ReconciliationTests(unittest.TestCase):
         with self.assertRaisesRegex(Exception, "PATH_NEUTRAL_PIP_RANGE"):
             response_to_contract(response, input_row, run_id=benchmark.NATIVE_RUN_ID, created_ts=benchmark.now(), raw_output=raw["raw_output"], bridge_result=raw)
 
+    def test_v3_prompt_requires_flat_zero_zero_net_pips(self):
+        episode = benchmark.resolve_source()["sample"][0]["episode"]
+        prompt = benchmark._native_prompt_v3(episode)
+        benchmark._validate_v3_prompt(prompt)
+        self.assertIn("both be numeric zero", prompt)
+        self.assertIn("not intrahorizon volatility", prompt)
+
+    def test_v3_call_identity_differs_from_v2(self):
+        episode = benchmark.resolve_source()["sample"][0]["episode"]
+        base = benchmark.NATIVE_RUN_ID + episode["episode_id"] + benchmark.fingerprint(episode)
+        v2 = "NATIVEV2_" + __import__("hashlib").sha256((base + benchmark.NATIVE_PROMPT_V2).encode()).hexdigest()[:24]
+        v3 = "NATIVEV3_" + __import__("hashlib").sha256((base + benchmark.NATIVE_PROMPT_V3).encode()).hexdigest()[:24]
+        self.assertNotEqual(v2, v3)
+
+    def test_v3_authorization_is_exactly_the_four_prior_flat_rejections(self):
+        audit = json.loads((benchmark.NATIVE_ARTIFACT / "native_ai_v2_reconciliation.json").read_text())["audit"]
+        authorized = [row["episode_id"] for row in audit if row["terminal_state"] == "NATIVE_AI_FORECAST_SCHEMA_REJECTED" and row["parser_rejection_reason"] == "PATH_NEUTRAL_PIP_RANGE"]
+        self.assertEqual(len(authorized), 4)
+        self.assertNotIn("EP_EVENT_2de77b689facc34d5811", authorized)
+
 
 if __name__ == "__main__":
     unittest.main()
