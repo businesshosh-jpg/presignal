@@ -91,6 +91,29 @@ def normalize_provider_response(*, stage: str, requested_provider: str, requeste
     return result
 
 
+def normalize_prospective_forecast_response(*, requested_provider: str, requested_model: str,
+                                            transport_result: Mapping[str, Any],
+                                            scientific_validator: Callable[[Mapping[str, Any]], Any] | None = None) -> dict[str, Any]:
+    """Prospective forecast entrypoint; validation remains caller-owned.
+
+    The validator may return ``False`` or raise to report a scientific-contract
+    failure.  Neither outcome is a transport or evaluation classification.
+    """
+    result = normalize_provider_response(
+        stage="FORECAST", requested_provider=requested_provider,
+        requested_model=requested_model, transport_result=transport_result,
+    )
+    if result["parse_status"] != ParseStatus.PARSED or scientific_validator is None:
+        return result
+    try:
+        accepted = scientific_validator(result["canonical_payload"])
+        result["validation_status"] = ValidationStatus.INVALID if accepted is False else ValidationStatus.VALID
+    except Exception as exc:
+        result["validation_status"] = ValidationStatus.INVALID
+        result["normalization_notes"].append({"scientific_validation_error": str(exc)})
+    return result
+
+
 def normalize_attention_identity(payload: Mapping[str, Any], provider: str, contract_version: str | None) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     value, notes = dict(payload), []
     if provider != "Anthropic":

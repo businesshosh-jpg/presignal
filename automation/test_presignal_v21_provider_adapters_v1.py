@@ -51,6 +51,20 @@ class ProviderAdapterTests(unittest.TestCase):
         result = adapters.normalize_provider_response(stage="FORECAST", requested_provider="Gemini", requested_model="m", transport_result={"status": "failed"})
         self.assertEqual(result["parse_status"], adapters.ParseStatus.NOT_ATTEMPTED)
 
+    def test_prospective_forecast_validation_stays_outside_adapter_semantics(self):
+        result = adapters.normalize_prospective_forecast_response(
+            requested_provider="Gemini", requested_model="m",
+            transport_result={"raw_output": {"forecast": {"direction": "UP"}, "response_contract": {}}},
+            scientific_validator=lambda payload: payload.get("direction") == "UP",
+        )
+        self.assertEqual(result["parse_status"], adapters.ParseStatus.PARSED)
+        self.assertEqual(result["validation_status"], adapters.ValidationStatus.VALID)
+        invalid = adapters.normalize_prospective_forecast_response(
+            requested_provider="Anthropic", requested_model="m", transport_result={"raw_output": {"direction": "SIDEWAYS"}},
+            scientific_validator=lambda _: False,
+        )
+        self.assertEqual(invalid["validation_status"], adapters.ValidationStatus.INVALID)
+
 
 if __name__ == "__main__":
     unittest.main()
