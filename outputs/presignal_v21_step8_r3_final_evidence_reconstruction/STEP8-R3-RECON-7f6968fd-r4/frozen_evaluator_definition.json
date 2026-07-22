@@ -1,0 +1,7 @@
+{
+  "horizon_anchor": "Each horizon compares its expected direction with outcome.direction_<horizon>m, which is derived from the same pre-release anchor in the frozen Outcome record.",
+  "path_score": "mean(direction_5m_ok, direction_15m_ok, direction_30m_ok, direction_60m_ok) for non-NO_SIGNAL predictions; null for valid NO_SIGNAL predictions.",
+  "primary_15m": "path[15].expected_direction == outcome.direction_15m",
+  "proposal_evaluator_mismatch": "The executor counted accepted forecast arms as lifecycle-complete before requiring the primary directional endpoint; the evaluator itself correctly treats NO_SIGNAL as non-directional.",
+  "valid_no_signal": "status VALID with direction fields and path score null; no_signal_ok records quiet-outcome agreement."
+}

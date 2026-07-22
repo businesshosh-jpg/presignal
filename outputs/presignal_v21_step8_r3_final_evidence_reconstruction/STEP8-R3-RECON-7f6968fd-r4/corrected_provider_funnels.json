@@ -1,0 +1,20 @@
+{
+  "Anthropic": {
+    "accepted_forecast": 53,
+    "null_evaluations": 29,
+    "original_complete": 0,
+    "reconstructed_complete": 0
+  },
+  "Gemini": {
+    "accepted_forecast": 70,
+    "null_evaluations": 14,
+    "original_complete": 30,
+    "reconstructed_complete": 0
+  },
+  "OpenAI": {
+    "accepted_forecast": 69,
+    "null_evaluations": 40,
+    "original_complete": 22,
+    "reconstructed_complete": 0
+  }
+}

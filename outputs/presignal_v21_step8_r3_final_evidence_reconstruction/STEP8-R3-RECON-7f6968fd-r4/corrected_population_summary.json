@@ -1,0 +1,16 @@
+{
+  "accepted_forecast_pairs": 192,
+  "corrected_complete_pairs": 52,
+  "newly_reconstructed_pairs": 0,
+  "original_complete_pairs": 52,
+  "paired_completion_rate": 0.2708333333333333,
+  "remaining_incomplete_pairs": 140,
+  "terminal_status_counts": {
+    "BOTH_FORECASTS_ACCEPTED_NOT_RECOVERABLE": 83,
+    "BOTH_FORECAST_ARMS_MISSING": 1,
+    "COMPLETE_PAIRED_EVALUATION_ORIGINAL": 52,
+    "PACK_A_MISSING_PACK_E_ACCEPTED": 4,
+    "PACK_E_MISSING_PACK_A_ACCEPTED": 1,
+    "REQUEST_REJECTED": 51
+  }
+}

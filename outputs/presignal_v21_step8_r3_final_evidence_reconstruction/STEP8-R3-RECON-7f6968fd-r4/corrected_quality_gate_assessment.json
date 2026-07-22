@@ -1,0 +1,6 @@
+{
+  "paired_completion_rate": 0.2708333333333333,
+  "reason": "Only 52 directional pairs; valid NO_SIGNAL forecasts have no directional endpoint.",
+  "status": "FAIL",
+  "target": 0.85
+}

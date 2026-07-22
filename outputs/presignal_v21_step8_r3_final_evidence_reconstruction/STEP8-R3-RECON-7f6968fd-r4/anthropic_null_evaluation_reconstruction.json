@@ -1,0 +1,7 @@
+{
+  "cause_counts": {
+    "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING": 29
+  },
+  "conclusion": "Anthropic accepted forecasts are valid NO_SIGNAL predictions under the frozen evaluator, not missing Outcomes or provider forecast corruption.",
+  "count": 29
+}

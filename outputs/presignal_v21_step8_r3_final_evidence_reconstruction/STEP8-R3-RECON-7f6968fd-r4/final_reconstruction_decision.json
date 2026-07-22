@@ -1,0 +1,10 @@
+{
+  "evidence_classification": "HISTORICAL_EVIDENCE_REMAINS_INDETERMINATE",
+  "historical_retest_required": false,
+  "primary_decision": "V2_1_STEP8_R3_FINAL_EVIDENCE_RECONSTRUCTED",
+  "reason": "The 83 affected identities replay deterministically as valid NO_SIGNAL outputs. They do not provide directional correctness under the unchanged frozen endpoint, so the original 52 directionally evaluable pairs remain the complete primary evidence. The prior 83-row premise was slightly overstated: 64 have both arms direction-null and 19 have one direction-null arm.",
+  "runtime_reason": "Cross-provider contemporaneous failures occur before provider-specific parsing and share the Google authentication/Execution API route; immutable ledgers cannot isolate token refresh from API connectivity further.",
+  "secondary_runtime_readiness": "V2_1_STEP8_R3_FINAL_EVIDENCE_SHARED_RUNTIME_REPAIR_REQUIRED",
+  "step_8": "Historical execution is technically reconstructed; the frozen primary evidence is indeterminate and misses the directional-completion quality gate.",
+  "step_9": "A Step 9 decision can consider the indeterminate evidence, but prospective activation remains blocked by the shared Google authentication/Execution API reliability boundary."
+}

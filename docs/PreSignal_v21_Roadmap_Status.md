@@ -181,3 +181,18 @@ found 83 provider/Episode identities with both forecast arms accepted but
 historical evidence remains unissued pending read-only accounting
 reconstruction and a targeted evaluation/runtime integrity decision. P12
 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.
+
+## Step 8-R3 Final Evidence Reconstruction
+
+Read-only reconstruction corrected the accepted-Attention FORECAST population
+to 192 and reproduced the 52 directionally evaluable paired rows without
+changing any source ledger. The 83 affected accepted-forecast identities are
+valid `NO_SIGNAL` evaluator branches, not missing Outcomes: 64 have both arms
+without a directional endpoint and 19 have one such arm. They cannot be added
+to the frozen 15-minute directional estimand. The derived result remains
+indeterminate: Pack A 15/52 and Pack E 14/52, with exact McNemar and
+Episode-cluster p-values of 1.0. Shared OAuth/network bursts occurred before
+provider-specific handling on the Google authentication and Apps Script
+Execution API route. P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**;
+prospective activation requires a narrow shared-runtime reliability decision,
+not another provider-compatibility phase or automatic historical retest.

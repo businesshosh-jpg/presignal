@@ -1,0 +1,5 @@
+{
+  "evaluation_function_fingerprint": "sha256:508849428f62e5c2526669ea08ee5f30d9a41c9315cee0dd13f6aa655ce6fc30",
+  "fingerprint": "sha256:dd3e18ed113575bcc0036a4f7b56bc436ea1a360f40faa6f5d41662699a01287",
+  "path": "automation/run_presignal_v21_single_event_path_pair_v1.py"
+}

@@ -1,0 +1,52 @@
+[
+  {
+    "exists": true,
+    "fingerprint": "sha256:7f43b2813e74620718f1cf94be6c0547be8437d1aad6e7b14d16e0d35952351f",
+    "path": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/execution_plan.json"
+  },
+  {
+    "exists": true,
+    "fingerprint": "sha256:3735b4977164050a55ce36d071cb562b2dcd665ba21958fae6562a47880274b2",
+    "path": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/execution_state.json"
+  },
+  {
+    "exists": true,
+    "fingerprint": "sha256:e42226145c6823131c686fcf3d20d7bfb1101a26e75c325540417f9a328758f9",
+    "path": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/frozen_execution_population.json"
+  },
+  {
+    "exists": true,
+    "fingerprint": "sha256:54161a9688d2762e1bd1a4d8d2b433e2f4285e7db1c579ee7c62cdf076e31f8c",
+    "path": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/operation_journal.jsonl"
+  },
+  {
+    "exists": true,
+    "fingerprint": "sha256:c880cb4d3f7da21f31a2f5fc9a0238384d8628deb1ee6cb8ced7832d87339ba3",
+    "path": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/transition_ledger.jsonl"
+  },
+  {
+    "exists": true,
+    "fingerprint": "sha256:0680ae3693311460ffc4129ae4de94ae5e9c2ab8f8a70eef206bf2251a58c1b0",
+    "path": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/progress_checkpoints.jsonl"
+  },
+  {
+    "exists": true,
+    "fingerprint": "sha256:c710ee33dbacade6612c5166f68f1d95a66392913aa52e470b8a7785a712d1d3",
+    "path": "outputs/presignal_v21_step8_r3_final_gate_diagnosis/STEP8-R3-GATE-e8bf771/denominator_definition.json"
+  },
+  {
+    "exists": true,
+    "fingerprint": "sha256:febebb43f9dcf7e131bf0ed1e9675421cd1b2cd2529d1b53f311015b937834bc",
+    "path": "outputs/presignal_v21_step8_r3_final_gate_diagnosis/STEP8-R3-GATE-e8bf771/funnel_reconciliation.json"
+  },
+  {
+    "exists": true,
+    "fingerprint": "sha256:d8e0177fddc46a8324bcd52b126ea25f62527707b39bf33967e0473e2d18bee6",
+    "path": "outputs/presignal_v21_step8_r3_final_gate_diagnosis/STEP8-R3-GATE-e8bf771/connectivity_failure_analysis.json"
+  },
+  {
+    "exists": true,
+    "fingerprint": "sha256:59cee111aa492e48be6258985e7887b9e0a39eb213ca08973ef8505d06af0dcb",
+    "path": "outputs/presignal_v21_step8_r3_final_gate_diagnosis/STEP8-R3-GATE-e8bf771/final_gate_decision.json"
+  }
+]

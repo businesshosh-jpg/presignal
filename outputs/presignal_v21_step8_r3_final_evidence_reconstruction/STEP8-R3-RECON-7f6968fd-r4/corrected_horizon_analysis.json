@@ -1,0 +1,34 @@
+{
+  "15m": {
+    "pack_a_accuracy": 0.28846153846153844,
+    "pack_a_correct": 15,
+    "pack_e_accuracy": 0.2692307692307692,
+    "pack_e_correct": 14,
+    "paired_difference_pack_a_minus_pack_e": 0.019230769230769232,
+    "total": 52
+  },
+  "30m": {
+    "pack_a_accuracy": 0.34615384615384615,
+    "pack_a_correct": 18,
+    "pack_e_accuracy": 0.19230769230769232,
+    "pack_e_correct": 10,
+    "paired_difference_pack_a_minus_pack_e": 0.15384615384615385,
+    "total": 52
+  },
+  "5m": {
+    "pack_a_accuracy": 0.3076923076923077,
+    "pack_a_correct": 16,
+    "pack_e_accuracy": 0.2692307692307692,
+    "pack_e_correct": 14,
+    "paired_difference_pack_a_minus_pack_e": 0.038461538461538464,
+    "total": 52
+  },
+  "60m": {
+    "pack_a_accuracy": 0.3076923076923077,
+    "pack_a_correct": 16,
+    "pack_e_accuracy": 0.28846153846153844,
+    "pack_e_correct": 15,
+    "paired_difference_pack_a_minus_pack_e": 0.019230769230769232,
+    "total": 52
+  }
+}

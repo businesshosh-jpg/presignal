@@ -1,0 +1,22 @@
+{
+  "both_arms_directionally_null": 64,
+  "by_primary_cause": {
+    "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING": 83
+  },
+  "by_provider": {
+    "Anthropic": 29,
+    "Gemini": 14,
+    "OpenAI": 40
+  },
+  "by_recoverability": {
+    "NOT_RECOVERABLE_FORECAST_INVALID": 83
+  },
+  "no_signal_patterns": {
+    "PACK_A": 13,
+    "PACK_A+PACK_E": 64,
+    "PACK_E": 6
+  },
+  "one_arm_directionally_null": 19,
+  "status": "COMPLETE",
+  "total": 83
+}

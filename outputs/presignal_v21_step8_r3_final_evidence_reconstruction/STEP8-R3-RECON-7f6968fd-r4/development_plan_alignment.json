@@ -1,0 +1,15 @@
+{
+  "blockers": [
+    "shared Google OAuth/Execution API reliability",
+    "valid NO_SIGNAL treatment in directional endpoint accounting"
+  ],
+  "historical_retest": "LOW_VALUE_DRIFT before the evaluator/accounting definition is resolved.",
+  "reason": "Final primary directional accounting/evaluator boundary remains unresolved.",
+  "reusable_prospectively": [
+    "frozen population-independent contract",
+    "provider-scoped dispatcher",
+    "raw response persistence",
+    "outcome isolation"
+  ],
+  "step_8_complete": false
+}

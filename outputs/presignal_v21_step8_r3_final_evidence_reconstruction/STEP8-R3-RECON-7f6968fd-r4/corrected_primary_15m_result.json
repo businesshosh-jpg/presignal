@@ -1,0 +1,13 @@
+{
+  "both_correct": 7,
+  "both_incorrect": 30,
+  "exact_mcnemar_p_value": 1.0,
+  "pack_a_accuracy": 0.28846153846153844,
+  "pack_a_correct": 15,
+  "pack_a_only_correct": 8,
+  "pack_e_accuracy": 0.2692307692307692,
+  "pack_e_correct": 14,
+  "pack_e_only_correct": 7,
+  "paired_difference_pack_a_minus_pack_e": 0.019230769230769232,
+  "total": 52
+}

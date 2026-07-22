@@ -1,0 +1,3842 @@
+[
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_01a0105c26d8e284a00e",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-30|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_01a0105c26d8e284a00e",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:f6aeaf01be212645561be2b5caac5ac4edc9af65f98a109d7bd490249b7a7b27.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_01a0105c26d8e284a00e",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-30|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_01a0105c26d8e284a00e",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:c0293514e1f5ee63ac16b002a7920005d36f11ca98a9af7d189510dd0d12b313.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_12b1ceb2500c1ca48ab3",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_12b1ceb2500c1ca48ab3",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:e679515450dc4ef20dd038eb70e12578ac5a50ecfad1db759f16189faec3aa5f.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_19fb130d30544cb793aa",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-12|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_19fb130d30544cb793aa",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:5b4d30e1bee9f75ff0d8ae8347c2fb16c03dfa9eafcbbc5d6ba9754e402cbd6c.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_19fb130d30544cb793aa",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-12|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_19fb130d30544cb793aa",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:f5eeb5619193b96283a2390ebc48247dc99e581d83b8ff4fce0c597c8d20055a.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_21db993a9ea8f793ff26",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_21db993a9ea8f793ff26",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:065db11e4e77fb4e8d6667a502de136c041a0e760c7eacd9f4a90df015faacdb.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_21db993a9ea8f793ff26",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_21db993a9ea8f793ff26",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:37e7e4106f7eb7eaf6fa88c017e87320ac04d24b6c758d08aac2a42f47272acb.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_28c24397c8d061f4324b",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_28c24397c8d061f4324b",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:6c97f23cc7d2900d8336b39fe26c47dfe28775edbda17af55e426900a08e93b6.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_2db6b84baa6d059868b1",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_2db6b84baa6d059868b1",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:2be25bc0cb07da15389cbd841abe86ebbbd4457991eb644f4675b62fd7dd1d24.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_2db6b84baa6d059868b1",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_2db6b84baa6d059868b1",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:1a94b5ae134a894b81c57f2c4ca98082b6b809c31b8b32e04b40152bc7e8e9e0.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_340b3538a77de98a2a70",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-19|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_340b3538a77de98a2a70",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:335649761158ec2bc3a2b17ad5e7f5d659eea383fdabd48799bf8ed311566e85.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_35147e610ac77914112b",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_35147e610ac77914112b",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:4e96e583a86a4e983bb4051f2e1b68f3e704e4bde70b4ae5ad812d951f7795c9.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_35147e610ac77914112b",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_35147e610ac77914112b",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:509f6798d4fe44b6e8b3899025e8198619bd4430057c51c0cf8712af8fa193fd.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_4be66896a3126b9593da",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_4be66896a3126b9593da",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:2355ed222b291193679608d01ddb2a07a8559af1cf74803953eaca77e5a52093.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_4be66896a3126b9593da",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_4be66896a3126b9593da",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:2d67333027f472d8d5e16f8400f2818ac12407c55ae3b45d936caf9bcae5a285.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_507566e4d9d901df8b98",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_507566e4d9d901df8b98",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:84df5e15d2f86668237810076ab9cdf19328d491ed39fa163e3fc4b4dc4d8527.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_56c8082ad5621da18323",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_56c8082ad5621da18323",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:419f6ae033ea857fc484f2016cd94a3f189607a25dc8445e4f628325db6ec230.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_56c8082ad5621da18323",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_56c8082ad5621da18323",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:9b70a266163cc6845ca89b4f640c9b4c0cd7722db248a101576d4c878bee6e7b.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_59e6cad8c6946c11a9d6",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_59e6cad8c6946c11a9d6",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:8ed92fbd1072ec15460e70e484fc51c292635f5cf5f8f1f8a75428579350279d.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_59e6cad8c6946c11a9d6",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_59e6cad8c6946c11a9d6",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:4dc5888f1bf3d6f1b9f83fb729e08f8e05317fecf30cdcddf9d5564667171305.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_5db4a9668cccb78d621e",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_5db4a9668cccb78d621e",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:e8a202310b5710c3162f2ff239af502eba96b0cc4b8c3686bb6b7c8493004bf3.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_5db4a9668cccb78d621e",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_5db4a9668cccb78d621e",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:9fd6bf14bcbb5f2ad0be86844f5bbac3b7e37cbec1df69d65e163bb3f7f7e8dc.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_5db4a9668cccb78d621e",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_5db4a9668cccb78d621e",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:982013d461e616d0331ccac213f980db8ea38c8408b55e8098de2d28a8de0613.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_640548c8150c4610e70a",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-19|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_640548c8150c4610e70a",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:7901c39b4d564bbd9469b671464536a1e8ecbc73b0fbda5ae97376ea2f1b0b24.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_640548c8150c4610e70a",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-19|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_640548c8150c4610e70a",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "OpenAI",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:5f93c08a2dcb6a42ee2667e7c0da56d3704a1b448529902cbca0560886dbba69.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_6a6fe55ba8eff4d3ce2c",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_6a6fe55ba8eff4d3ce2c",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:04c99bad128f6e7eeaa0b271ff59dcfebac6b9ef14ccb1db2db6bc720b0df50a.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_6a6fe55ba8eff4d3ce2c",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_6a6fe55ba8eff4d3ce2c",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:e35e08689f089ce650c990969678fc989b809355d2e501d75423b968b293a6c7.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_6a6fe55ba8eff4d3ce2c",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_6a6fe55ba8eff4d3ce2c",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:81f607b7c515e926e92d550efc39f26972e6891b666397228d413b957005fc51.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_74f480e87d74eacd731f",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_74f480e87d74eacd731f",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:2e9b95eaec1eb3269e7d4e4c085024c50908109468daeac7312ea210fd1ce326.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_74f480e87d74eacd731f",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_74f480e87d74eacd731f",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:95d05362709be0efce6543d7e0805d146a238e88d3f1ae76917314e9fc28f230.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_74f480e87d74eacd731f",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_74f480e87d74eacd731f",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:57a0c76345eb4d3f6013528acd016c2ca2d25b5d6e2dc504ef17aa280f75cc1f.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_787a214cece1437b7d96",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-23|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_787a214cece1437b7d96",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:ab1c8edb1f9bcf54aeb9a966e7a8332564986156726e97df7941c1ccaea44866.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_787a214cece1437b7d96",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-23|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_787a214cece1437b7d96",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:f9ad4cafaea7d71cd4f68f12bc685b5a73ca3a26c345a94ebc7cc150e25a3901.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_7c406a2a8098146ced6e",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-25|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_7c406a2a8098146ced6e",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:0032f0a8d4495f09e264a50c510dd1d5d66d68ac45e08426284d2fd8af02257b.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_7c406a2a8098146ced6e",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-25|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_7c406a2a8098146ced6e",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:07675ddd51da9313e61cbaf7bce0726ba4fea3d0c64751bde8431954fa23556e.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_812a903497dae9312a4d",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-31|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_812a903497dae9312a4d",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:dba98a5f3f0fac558e499aa2ae0231d80bd14a96a8e732983f563ab3953ebf43.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_812a903497dae9312a4d",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-31|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_812a903497dae9312a4d",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:01260c3a6123e7c649232b336093e53dad961f64e500941f54a07636a6783f60.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_91530f7313354c025999",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_91530f7313354c025999",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:a18794865bd9c3b40a5c78ec869352cd44b41bf01a7d300fba5b9c118b3c81fa.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_990722fd7f167c8c830a",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-08|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_990722fd7f167c8c830a",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:98aeb6b539b785dc19704cba18a960d3ff5d7099d71ad32f42819863d957465c.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_9b3386bc98fcbae49203",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_9b3386bc98fcbae49203",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:982af95a7e2006c35850796823c9ba15f286834e2f2c2425811cc717edd198bf.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_9b3386bc98fcbae49203",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_9b3386bc98fcbae49203",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:b9025f6907d94560d3eddff782f6d436e8a92e2af6dcfb4990cca92937861ebc.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_9d7fb0df53c2882e9f23",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_9d7fb0df53c2882e9f23",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:c41f3752be7278be87f3861a635fae19e6cdcb650989d8d6625b24d8a934b328.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_9da0367fea80e654e1fa",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_9da0367fea80e654e1fa",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:a59abaa391a1b1ad3e32263f58286314c358ae243e64a9076735fdf5239b70a7.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_9da0367fea80e654e1fa",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_9da0367fea80e654e1fa",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:d6dcdf0c8f777e0410f869da89770a8ab722a3f37dc6458210a6e871d8d77947.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_9da0367fea80e654e1fa",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_9da0367fea80e654e1fa",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:ab8c35b62c2797819cf31002bcde57e6fdf2eeac106dac32aedfcb9b9f2cf09f.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_a34cbd222a490ff41e0d",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_a34cbd222a490ff41e0d",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:85386b032dddc6f5d2f92b18128a959daff2ea14d4bd7e4637016f8134dd702d.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_a34cbd222a490ff41e0d",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_a34cbd222a490ff41e0d",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:4abc67b28283c1a289cfc2a27c1e66d38e8922ed8a021cebd6fcec2e50575e63.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_a9069e611fc171b595c7",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_a9069e611fc171b595c7",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:75494c5e7f390d0be06da7c82bd0b799bd029fc9c9f77f862cc1f089b3896ce6.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_a98cccf099ffdf56e3c3",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_a98cccf099ffdf56e3c3",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:08f813596a1d6968388a80c6acf3ecea19a05641f18a203cc895dc213d6b06c4.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_b22671bc303407085675",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_b22671bc303407085675",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:f82295e72463c1e76343c332a41257adc61a18aa4bcd4eabf734ae3f31fd73ce.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_b22671bc303407085675",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_b22671bc303407085675",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:98d28c35313bbda03fc06de48b01edccb3f7f519debd7d262df73699cea1c3af.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_b22671bc303407085675",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_b22671bc303407085675",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:c49c2948f52369bbf23e12a0f75add9b36577e185da2cd6c1742e30a4980f732.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_b26aa65538af1f79fbc0",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_b26aa65538af1f79fbc0",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:4477721ae74a5d275f5d11b56480ca5db157169783ed180dbe8ed0c19b37deb4.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_b70c5198286be51658fb",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-31|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_b70c5198286be51658fb",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:af7e7ea4791c0d1787547eaf08437aa7e5f2168ebf18bdae6089f72b06d856d8.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_b70c5198286be51658fb",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-31|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_b70c5198286be51658fb",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:ba608c06aa7d3bda3776eae1bd6b16e73f4cd099a61ebad9173d0df038f47ac9.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_ba4ba91745c4885dcd89",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_ba4ba91745c4885dcd89",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:d45281b6d78a17e649f3821a584f390c8fc77113791351ae24e13d8bf9c76224.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_ba4ba91745c4885dcd89",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_ba4ba91745c4885dcd89",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:17956a005c948243d72a53aaa5b2898334f0f06e58ba2744183db758c0bec90c.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_be2bfdd109b3d1d79dc6",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-22|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_be2bfdd109b3d1d79dc6",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:9520b7868b3697434ad56bd28ad9f9184a5baa79df2a8e97fa5673f48c1bec9b.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_be2bfdd109b3d1d79dc6",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-22|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_be2bfdd109b3d1d79dc6",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:5e3fd66e9b2f3be8990c05b9ee2dc8b5f3690423bdac2dbcdc1a339d697b9d6e.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_c1cc0e24ef6d91ddd6e1",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-25|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_c1cc0e24ef6d91ddd6e1",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:6fa4bd4a6cda785db9416e5605a482a37125584aeeb44c6b94e39f6dd784ff71.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_c1cc0e24ef6d91ddd6e1",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-25|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_c1cc0e24ef6d91ddd6e1",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "OpenAI",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:98f674c18bd7793a72daa28d4ba792866481ec65264a6e5052167fb27b868e60.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_c7cedd13f77b41781490",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_c7cedd13f77b41781490",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:6493147ee2b1b81ac6f475c85f519c3d2fa71e0805a0c9dcff89295b1c545735.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_c7cedd13f77b41781490",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_c7cedd13f77b41781490",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:481a7321f48668c5de90d375543066db4cea06fc78205a1358e1e426cc55c81c.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_d221cf0fa06032ab3126",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_d221cf0fa06032ab3126",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:2cd489cf4c9762b4a365d873f53354f386bf1b756d17184cbad1105dd989cc86.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_d4fce144090fe47262b0",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_d4fce144090fe47262b0",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:9ddb5d2396bdf95861e2a0812a4b878a3d5dc926903f0796faa0586227402ec3.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_d4fce144090fe47262b0",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_d4fce144090fe47262b0",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:cfdc3ff3c3fdee0b4ca5d154c29e61bee52df548e902bd8eb112778ed192a552.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_d4fce144090fe47262b0",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_d4fce144090fe47262b0",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:8f1e8caa240a01bb6671655a023e791ea238f3c59ef9195c5eaad12414d5c87d.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_dd944804a883f9b267b7",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-08|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_dd944804a883f9b267b7",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:19839b89539406bf229790853beee4efb1530a4d34daea0c9de6d70bcfe5e750.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_e0e61125b03cfdf2c84c",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_e0e61125b03cfdf2c84c",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:e78a7ee6427f6cd7d2fa4d2c8b73ad8c48334b1f268be87814d5d9f7b523dd24.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_e0e61125b03cfdf2c84c",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_e0e61125b03cfdf2c84c",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:31c37b42ef119d970d800183fbbba622dadfcc185ed6254a2d950234c94fb8bb.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_e0e61125b03cfdf2c84c",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_e0e61125b03cfdf2c84c",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:148d6da447fa7807056cad362a2f9818828c200abf1c773aa7da30f1b16a6e60.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_ece5b7cb8648cf3a7bda",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_ece5b7cb8648cf3a7bda",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:a7b7dc6fbfc77dc9b52a82dee3d2aa9e8b578b87e96b299f69525fb18b272a82.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_ece5b7cb8648cf3a7bda",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_ece5b7cb8648cf3a7bda",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:e5a507ae67932dc2597f118e6d6772f00a0d1ad4cbde93b28cc2ad2f6da73d43.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_ece5b7cb8648cf3a7bda",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_ece5b7cb8648cf3a7bda",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:4972a329bd0c79c254b2074cdaa3f736752720beab41feb07a50668620ae8bbf.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_BATCH_f8e96996a4fd6bc5ed7c",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-30|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_BATCH_f8e96996a4fd6bc5ed7c",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:581f67de4c18348a8a1674e582314ef4271fa5f8b1437e31f5e18ad3ef696638.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_03ece813e0337411bbb7",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_03ece813e0337411bbb7",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:9fb2aa6f0eba2e38420066be920904a4e114de33bd1e03a87f75b5f90e15b28a.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_03ece813e0337411bbb7",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_03ece813e0337411bbb7",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:374bf284c8d8584760e68045ceab0cfa2dc6fec7b4c344ae04329b82061c9e0b.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_053c10a3d4a69d6881af",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_053c10a3d4a69d6881af",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:7a9634685430beae6b5c3826d30940fa41ba36aa807f30f04bc7481bd2a1c0f0.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_053c10a3d4a69d6881af",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_053c10a3d4a69d6881af",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:87668ed4c58712c9082d487167698e3c0b2050dd577f6cb35cc44e0df5dedc3f.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_06e918c52b676b407c4f",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-25|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_06e918c52b676b407c4f",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:b51aa0000d04235437be24d2615134efb26d04328af433cc70f9089c787cdcfe.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_06e918c52b676b407c4f",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-25|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_06e918c52b676b407c4f",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:c1ae71b55c186c36ce37695a66566d526e3414680adb61aa754004f97961e8ae.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_06e918c52b676b407c4f",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-25|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_06e918c52b676b407c4f",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:2632b630a9f6a965110468a871525b181a3f2fe124cd10f9287f87b7029bde88.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_097fece2ffcfa4f2feb0",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_097fece2ffcfa4f2feb0",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:66fb40f9e1e8637792d7f601fbc00600758c1a39b18fcc2e17a4f3882b7a3705.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_0ca2aceaf194f4694f4e",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-08|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_0ca2aceaf194f4694f4e",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:683c652bda9dc6e67c0d63d84213a64880027019f86ff797adcc519dba08d91b.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_0f10f1f304b90bac56c6",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_0f10f1f304b90bac56c6",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:67fbb6fc73c32c9e26d2c235d567027bd6671ee41d014094572359ec04f36051.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_15461c1d2e0541be391f",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_15461c1d2e0541be391f",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:ec53133b2f41ef79960cab1cff8d3829449cae38afc416eabbe0df12184945c8.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_15461c1d2e0541be391f",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_15461c1d2e0541be391f",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:6b9e45ead31f4dfcbff2e72e25fa2e86dff5a16fa7a376519abba19471939860.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_1c9c518e150d8f1eef19",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-29|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_1c9c518e150d8f1eef19",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:3a1a8c140a63a862ae05b5dbfd0541013750d17e721a263349e84de5d591a4ba.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_28649186b338eb5b0a22",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_28649186b338eb5b0a22",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:389133fd3d125c5dd20be114ae6ed46c79320193d6df237b75537321cac204fd.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_2de77b689facc34d5811",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-22|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_2de77b689facc34d5811",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:23bd30ab98cdd1ac321e25529445d3a44cf3f083814c7ea85719de26bf9a7e79.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_2de77b689facc34d5811",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-22|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_2de77b689facc34d5811",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:9362e5726921e56d6f2fcdde1ea234a6864408688fdd6cd3d5507096689d0e2d.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_2de77b689facc34d5811",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-22|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_2de77b689facc34d5811",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:fa5ff2c362d463976d770fad423e63f19b0cf48b9d1107edb4e60fc7493d2729.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_2f967d5adbe1fb259677",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_2f967d5adbe1fb259677",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:937faf17df64805a0b93afd02fdbd4564ba03281dcb4c21cd57f7dfb8f549b80.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_2f967d5adbe1fb259677",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_2f967d5adbe1fb259677",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:c6fc8faa94c09ba49c35df226043db8d387716d9ea543b7d525794f47012dc76.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_2f967d5adbe1fb259677",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_2f967d5adbe1fb259677",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:b14677f4c5f64e9b926418ce0da73551e36d60e36591b54017875f0f38acabab.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-30|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:e85c4eb03d73abc57d1c2b4c856f19af9acc61f68582be5d64af6f11fd957618.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-30|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:e9cd8eade2e8c240c4de4c243317a8a8cbc2fda5cbb2c1e25753dde252550131.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-30|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:6af27e44fbf513e2742c20c2eaf6c3396dfe592eadf57cb077df574626b0aafc.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_3f0ac9fb4f1a138fee7f",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_3f0ac9fb4f1a138fee7f",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:8ea2c778fbc7c5094b86e32b18ec6cc1e9023948ac18fd30e3730f2cd4ebbb2b.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_3f0ac9fb4f1a138fee7f",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_3f0ac9fb4f1a138fee7f",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:b253a4af7f4e53bbebb0905964e230daf1ed503d2402b6971db5b55da17ac28b.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:8719346afe4cfc9bb9ab4c9c493413021b7d70adea821bc5d2861af9e58030b6.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:0ceb5e7af17b7957fab84a2cc002dbfabb329ba62dd3bf800bce4e8f434b56fd.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:9f5f6610d7a6ceb6888bccff4eeb7726dce956a33296cc7a9785d3bb18d405b4.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_43af04734103cea1c427",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_43af04734103cea1c427",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:034b9160e3c6a7fe0be8c829f81052e5cf36b870f2098d8f880e889f003c0774.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_43af04734103cea1c427",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_43af04734103cea1c427",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:9c9deac8456344cf81c70672e454002916f1bdc7c3b7b650a8cb8d7b05598a40.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_43af04734103cea1c427",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_43af04734103cea1c427",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:38561947cc41afea22be63fa3a5e0efd08dc5d1915dddb494d160fc8b40bbf2d.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_45e781066435470caa08",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_45e781066435470caa08",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:b397ad35f480278fdd2100a349b6d81af53cd9cabd10e43188ba3f1e7512e005.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_5082576b75a849fbfd6c",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_5082576b75a849fbfd6c",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:bb08609e1baacda14be396a5ad7158f837232d7be8bace057933d7c2134ef22f.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_5082576b75a849fbfd6c",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_5082576b75a849fbfd6c",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:0785794927fdf3c0c7704dfdf83bd54cf63154d0e608f565a8f10c011d834a90.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_5082576b75a849fbfd6c",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_5082576b75a849fbfd6c",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:564e65d9b1bbc721716c01169ce4b62faf59e864f36ad0abf106f7bff4179887.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_537cf8010cb62a7720a1",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_537cf8010cb62a7720a1",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:82ec0f8cff41eeed8db1a0722bbc9cbaa8206f7b9a52390765b2716729462bd0.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_537cf8010cb62a7720a1",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_537cf8010cb62a7720a1",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": false,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:4e4b8e4ba196360ccc3132a4dbe1d8f30424ae56b8917216f1e0228324acba20.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_53d96ab109f9f8b5361f",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-23|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_53d96ab109f9f8b5361f",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:c4a0f21df5e013cd211060c03d4b68fb4aae9e41ffbff3afb3d76a5ca3c0f452.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_58e1701b15c0178692ba",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_58e1701b15c0178692ba",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:64921784656cbc28ac43dc4069680fecc53e74408dd60137c1c1b5d7b97904e3.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_58e1701b15c0178692ba",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_58e1701b15c0178692ba",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:ae02159d4432974cb925822ecf3c41fb866f465cdecce3296e28fdc88094b5bb.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_5a1719c3db61418e808e",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_5a1719c3db61418e808e",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:8fb0dea85f1518c423d0ee88e7de521c3d6e152501f474d61fc7b9630068094b.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_5cf1d42e7bf02b803731",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_5cf1d42e7bf02b803731",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:c1e397f939e7f8a185f836ae1f9665c466e7b5db5a55923dd33a323e50c1c3ce.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_5cf1d42e7bf02b803731",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_5cf1d42e7bf02b803731",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:7eb2ffdcaae9d980c0b12a8d534a7237d7756dedba9078956b1c06fc1778522a.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_614284b86a9f85bccb48",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_614284b86a9f85bccb48",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:e3231f0968263f4ef3966ba0d41d8b8a94cfa8b61c5c81d90dc8865d8e2ad4f9.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_62cc613799e0cb6f98fd",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-08|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_62cc613799e0cb6f98fd",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:676d9cb614f8ec851ee6dd532bd02dd62dcf27172ca9774a542dda7ad7c51696.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_64e72292b54cab80cc69",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_64e72292b54cab80cc69",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:021586871baa8e9fed89dfb4959b5c1d9a8513639ae07b78e0e0da8d89894da1.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_64e72292b54cab80cc69",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-11|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_64e72292b54cab80cc69",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:6719d93eddc9b7a5c4ba93cfd5c0d504a05235122002bd7b5f7dcfd54abaadc7.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_65b08dc552e4ac2a9d16",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-30|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_65b08dc552e4ac2a9d16",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:f14cc8204e6254ea86d92b8808dbad60dc84ef5d8d31f2b21f02b729b3d2f3fd.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_65ee00f27466ca68e855",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-08|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_65ee00f27466ca68e855",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:2fca307d6b04c78390c2413438416548ae274502bf84b18a1aba200e97e1b9d9.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_65ee00f27466ca68e855",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-08|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_65ee00f27466ca68e855",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:1c416ab5a4edbe7a11876788889aad4c9542476142a0de79cf8266e8df46042a.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_6fded4bf355bb1e7da04",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_6fded4bf355bb1e7da04",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:11e2b3cad0d9d3eae0e4da0acce25d440708517dd86c9aff6135c5e51d9506ff.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_6fded4bf355bb1e7da04",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_6fded4bf355bb1e7da04",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:412dda929ff40d54e5cd9565a1ad8a488f475fc0319ec021d253413fd6bb4ecb.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_6fded4bf355bb1e7da04",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_6fded4bf355bb1e7da04",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:0f6460d82bddce3ecfffb7b4fc5630f147fafae6c8a092cd7570690610066aa2.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_7053387059a2c31dc095",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_7053387059a2c31dc095",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:b6db5ed203f1b0e7e3b65168d1ed228c418631ff8600ced23cb9169472373d97.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_782a6856f19d86736b0d",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_782a6856f19d86736b0d",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:204d0636add5e37df8b20b3a120d9361c6de49b7832fe1b218a5a3356671e632.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_864b3a2e01ef09f8eabd",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_864b3a2e01ef09f8eabd",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:9ef174f11f152e1f5618567f8866c01de62c922d7aea9bf8f8933861121eebc5.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_864b3a2e01ef09f8eabd",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_864b3a2e01ef09f8eabd",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:7423f08e0ef7f6c309a53bd0d39a75e5273c32fca358755d0e99208d168880ec.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_8d833a01621022980c45",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-19|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_8d833a01621022980c45",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:8131f00e98f5258787db8b94320e1be960f005ec61cf0b5fb5a1c5103a77d7bb.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_8d833a01621022980c45",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-19|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_8d833a01621022980c45",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:db4c0d265d8a01f5a922932432568b53025ed287290efae8f8d98b2c26e703eb.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_8d833a01621022980c45",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-19|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_8d833a01621022980c45",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "OpenAI",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:48bab24658df098ac3bf4b3f84cdc731a9c6b44bb192910bd43a01c1a60ed9a6.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_9140eaff529f3e103e25",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-31|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_9140eaff529f3e103e25",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:fe2798d87bf41c15512e3553f0433c339693dd3395b2e866ae6f41574380dc51.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_9140eaff529f3e103e25",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-31|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_9140eaff529f3e103e25",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "OpenAI",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:42df72f4d3bba2bb0134d91ee9f6fa20fd3dffa3b2482c7a3ec3a856d9fcd575.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_9447337c26ee91d35cef",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_9447337c26ee91d35cef",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:cdcc1f30e1335233475a6a1974f90516520516f553f149d185ab00c227dc5e41.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_9447337c26ee91d35cef",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_9447337c26ee91d35cef",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:a40778b222b15640038d6b1be8546b56a8a3a0058acaf5eba8518d2c6f1f1542.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-12|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:3f44808dbb295c24b699dd31893f7da8199daf566ad78e0075d5f46091ab9de9.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-12|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:aa02499960959708833b9e2dd04940e52c0a959c81f8dabbf41625d3ba809a40.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-12|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:325429488f77a32e1604183543673df9b0c8ba06e7ec10bc033ff06db98add2c.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_9d4f5898b91098f9cd55",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_9d4f5898b91098f9cd55",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:c5536d97656a5c645622f282d1bc3b6c54c5a4d801559a166086b67e581bc19b.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-29|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:7697af00f117f493a5255c5848041cc98871bd407e524d0ad782d95dddf762b2.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-29|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:24a0e5f15c11ca6d931327e9d84848402c58998f9496f17b06c8f65e1f6fda25.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-29|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:f29f6b9f2c23b94669f6e6a3badbdcab971c8f33531ff014e4bfd1cca00d3986.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_b5f2d28b12e37e2d9b72",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-18|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_b5f2d28b12e37e2d9b72",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:8066dbf36850dae03d42b1fa309251720c55ea659373cc6a095831a01e2df1c9.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_bbeda644a68543f43fbb",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-23|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_bbeda644a68543f43fbb",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:866c828954177d3fe800486a5954736e2f30d34f2aeb4df4023f9fb34b512819.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_bbeda644a68543f43fbb",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-23|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_bbeda644a68543f43fbb",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:ac15666025aa054789bd3221320cfff45a7727effa187716b9ed2a1399c0397e.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_bcadac9bf16137d4e17c",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_bcadac9bf16137d4e17c",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:bb2a41b59c6065bb837bd2cc4308b962a05b6f1b0d63f3d1843579e407963fd6.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_be1cbbe45cb86941ee0e",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-26|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_be1cbbe45cb86941ee0e",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:f4a7db5a7a4df312f7166891116041f2d8b6ddfd2086a588f4167ff967e81ee3.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_c6c788eed159215d7220",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-15|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_c6c788eed159215d7220",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:74381281f32b29e8989e403df7ef1be505de638af1bdd770f89ec0de26912be1.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_c6c788eed159215d7220",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-15|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_c6c788eed159215d7220",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:bcee1ca38690958ffb0816c07c3196eb40411c88c7f59463189004977e7accad.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_c6c788eed159215d7220",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-15|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_c6c788eed159215d7220",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:7cfe856b7cb2bea86d2a8104789a10a14e2d8b6dbc74ea4a38cdae6e5f2aee31.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_c86b093a51f812c51674",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-30|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_c86b093a51f812c51674",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:7b8a423453bbc90804d0363826a0b265783086fe7586dc226a662ec009e5b60e.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_cbe2cf37abc76786698f",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_cbe2cf37abc76786698f",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:fd94d5835b9071d3c8deb285ca37fc56f464841d966fb8704da1bf7d2a937b78.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_cbe2cf37abc76786698f",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_cbe2cf37abc76786698f",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "OpenAI",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:a84f4bb60da01ab71304bfc256213dcabb1f44818eb751b5ecf1af7e7ad5505c.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_d0f52c96beec02acf20c",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_d0f52c96beec02acf20c",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:31ef693ff6b81293a5a79c0229392a9573c885b4d193f48f36aee0c8f82b46a7.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_d0f52c96beec02acf20c",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_d0f52c96beec02acf20c",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:3db621cc5c28c71fad7b8f413be59e860fc0028ccd278afbfc75a7edad4b78cf.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_d0f52c96beec02acf20c",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_d0f52c96beec02acf20c",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:f3db708e2cee81b7b32b335ea51e03f32ba489717b836d0852dba557de763497.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_d1afffcb5bb94517291b",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-23|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_d1afffcb5bb94517291b",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:553f1fd31da1715d70d43b0eb740ea702de58b6b6952d30ff19559aa5def91fd.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_d1afffcb5bb94517291b",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-23|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_d1afffcb5bb94517291b",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:7a1a8e7ff2a998d66663008ffed9bd59a2ffc7b4f7df5bfa86873e08b442ddb3.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_d62e3ec54ad7ed77c1bf",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-23|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_d62e3ec54ad7ed77c1bf",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:b698093dd9dfef42a1e0e97e215e75b007636955261bd84e6543738dfe36ae03.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_d8ff224491f01c6dbd63",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_d8ff224491f01c6dbd63",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:2b74e6a5c5d35b54dad60aed3b325ab6ece6958de71d61220d07e8a4cc6005b2.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_d8ff224491f01c6dbd63",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-16|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_d8ff224491f01c6dbd63",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:afe1e2c2bfebdda9fd8c375c8ed9e4588cb7ce7308ab5d5b8fb94add19bc399c.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_dbd735c32e2577d2eedd",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_dbd735c32e2577d2eedd",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:cdc5eec34e70955863d160a8cf5dd2fb89d921feb0b99a2814bc3397f8c0241b.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_dbd735c32e2577d2eedd",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_dbd735c32e2577d2eedd",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:6bee2adabd1ce05d92fb120c4c5c28a6292ad7f9e2d408fc646f92630ba5103d.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_e64e8ac2fd370159eb0e",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_e64e8ac2fd370159eb0e",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:df570443d8913be9f8f9f83752e868dcdac19911fe8805487367c844aee675a1.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_e64e8ac2fd370159eb0e",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_e64e8ac2fd370159eb0e",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:2a4743b3fdf2248894a0d741b7c02381b184e45020f942cdbf21a67d5117579c.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_e9a9ff7a31af8a69ce95",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-12|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_e9a9ff7a31af8a69ce95",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:82a2002982d1bf751e6bb7452365ae51fe02b248d9f133161c7f8f22a4284fc6.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_e9a9ff7a31af8a69ce95",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-12|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_e9a9ff7a31af8a69ce95",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:32cbdd4e0ab56d8ac60d06e1792530fa6fab08315fa1d46380804d0f0bbca206.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_eabb343a931dc2f666e1",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_eabb343a931dc2f666e1",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:aa387f3217478ece7feda8a23ebc5fe1fe6863e6f2515e2d08c014e9287c4703.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_eabb343a931dc2f666e1",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_eabb343a931dc2f666e1",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:9efa31266fa1b504c41a3c4c78ff158fd118e197201d94ab5520ecf61f6e994e.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_eabb343a931dc2f666e1",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-09|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_eabb343a931dc2f666e1",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:f6b1a8a735a30d2c0a7398b09ca09342a089bfec9bafd684cb0cfd0fe1e49c48.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_eb01d75626b1583b506b",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_eb01d75626b1583b506b",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:5844d425a6f6573efbb00d9fdc9ed3a6e94ed2ab9d39de2ac0f9a964bf395f6a.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_eb01d75626b1583b506b",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_eb01d75626b1583b506b",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:34637714bb9dcaf249bc630ce15764bdbeb8e90b4055592660c2d4e7fdbe373f.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_eb5e82b576effbd6d11d",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_eb5e82b576effbd6d11d",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:b5cd3b0342a51c89580c4baaae561049b655f8500ee101d745140ee524937342.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_eb5e82b576effbd6d11d",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_eb5e82b576effbd6d11d",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:b9d96bb9677e47becfe03998355b1875f2c9db548ec7ea53c4da93b18f503105.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_eb5e82b576effbd6d11d",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-05|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_eb5e82b576effbd6d11d",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:15e40f5f8fb4f37b802e3063dc45e97a44570875294f597e9171b2c7e38890aa.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_ec057286c0b51ac7c222",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-10|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_ec057286c0b51ac7c222",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:613ac75f885383edf7346e2a735990b5bd87036d2bc1e7d5aff4e23bb7492a5f.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_eea864aba7e1ece26538",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_eea864aba7e1ece26538",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:756279cfb906714d10d30668b5ab72dddad387cac6a3fe9750214d744e3ad196.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_eea864aba7e1ece26538",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_eea864aba7e1ece26538",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:1a8f01533c4875f81faf5e447e02a7889b204c90e2c0fd1768c4c25125e213c6.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_efc169b690bcbcbbb54d",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-03|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_efc169b690bcbcbbb54d",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:600f9c10d2905237c17e5ae4cfe3b7336707601ac7992960f8746a05a7198ca0.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_f1923c940ad93966d979",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-30|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_f1923c940ad93966d979",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:e9db9679a54b4dd8b7cbac627a906b22c9882e7aa33e9a76450edf3b4464be47.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_f4285f2379fdfb80c38e",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_f4285f2379fdfb80c38e",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:d929955b1217e01b04baa6406fc6241b7ea7aa2bb0fa84d70de1850a68bc6d60.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_f4285f2379fdfb80c38e",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_f4285f2379fdfb80c38e",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:993c6f76730d54356d848a9b73a60fe05bea4e22465f5e170bda7b464a6201cc.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_f8871150cc589388ba49",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_f8871150cc589388ba49",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": true,
+    "provider": "Gemini",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:1133d16747a775b6e68ea606f49a2534b73a91cf2763eea3f4f3bf6a3ca74499.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_f8871150cc589388ba49",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-17|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_f8871150cc589388ba49",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "OpenAI",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:eed91050815d2f52d70d3c65f43cdb2ec492f70a7a2b0baa43fb1a59ce971aac.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-15|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "Anthropic",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:1e650181340f3fca18f2ff60ce91f3cde363a0195bb5ac71dc8ebbe514c4c70c.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+      "information_arm": null,
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-15|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+    "model": "gemini-2.5-flash-lite",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Gemini",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:606db1156a4359fe4204a212326f89018c56b6cd18f1c9d5e1a0c1470a063633.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+      "information_arm": null,
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-15|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_a_accepted": true,
+    "pack_e_accepted": true,
+    "provider": "OpenAI",
+    "request_accepted": true,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:076ef7f235b819b90cbe5fa9b5359894dd9b6d4c09da04aadeb6781b367473c9.json"
+  },
+  {
+    "attention_identity": {
+      "attempt_number": 1,
+      "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+      "episode_id": "EP_EVENT_ffa615993e1d322d8ca9",
+      "information_arm": null,
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic",
+      "run_id": "STEP8-R3-FINAL-R1-e8bf771",
+      "session_id": "US|2024-07-24|CUSTOM_CONFIG_WINDOW",
+      "stage": "ATTENTION"
+    },
+    "episode_id": "EP_EVENT_ffa615993e1d322d8ca9",
+    "model": "claude-haiku-4-5",
+    "pack_a_accepted": false,
+    "pack_e_accepted": false,
+    "provider": "Anthropic",
+    "request_accepted": false,
+    "source": "outputs/presignal_v21_step8_r3_final_historical_verification_r1/STEP8-R3-FINAL-R1-e8bf771/stage_results/sha256:f183ed48c28e300d262b179eaa8d1652bdf2f73ca80b147a7461eab394031034.json"
+  }
+]

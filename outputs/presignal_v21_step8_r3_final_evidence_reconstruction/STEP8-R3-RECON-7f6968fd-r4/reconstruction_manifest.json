@@ -1,0 +1,9 @@
+{
+  "contract_fingerprint": "sha256:b342ce7c93e1ef5dc9a168a24ce31305b82bd1cd7fba690250193a73dcb8991d",
+  "contract_identity": "presignal_event_path_contract_v1_historical_verification_r3_compat_r5",
+  "external_calls": 0,
+  "gate_run": "STEP8-R3-GATE-e8bf771",
+  "run_id": "STEP8-R3-RECON-7f6968fd-r4",
+  "scope": "READ_ONLY_FINAL_HISTORICAL_EVIDENCE_RECONSTRUCTION",
+  "source_run": "STEP8-R3-FINAL-R1-e8bf771"
+}

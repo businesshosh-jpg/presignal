@@ -1,0 +1,50 @@
+{
+  "narrowest_supported_boundary": "LOCAL_GOOGLE_OAUTH_TOKEN_OR_APPS_SCRIPT_EXECUTION_API_CONNECTIVITY",
+  "network_attention_failures": 53,
+  "network_by_provider": [
+    {
+      "count": 18,
+      "provider": "Anthropic",
+      "stage": "ATTENTION",
+      "type": "NETWORK"
+    },
+    {
+      "count": 18,
+      "provider": "Gemini",
+      "stage": "ATTENTION",
+      "type": "NETWORK"
+    },
+    {
+      "count": 17,
+      "provider": "OpenAI",
+      "stage": "ATTENTION",
+      "type": "NETWORK"
+    }
+  ],
+  "oauth_attention_failures": 820,
+  "oauth_by_provider": [
+    {
+      "count": 273,
+      "provider": "Anthropic",
+      "stage": "ATTENTION",
+      "type": "OAUTH"
+    },
+    {
+      "count": 273,
+      "provider": "Gemini",
+      "stage": "ATTENTION",
+      "type": "OAUTH"
+    },
+    {
+      "count": 274,
+      "provider": "OpenAI",
+      "stage": "ATTENTION",
+      "type": "OAUTH"
+    }
+  ],
+  "prospective_relevance": "SHARED_WITH_PROSPECTIVE",
+  "reason": "Cross-provider contemporaneous failures occur before provider-specific parsing and share the Google authentication/Execution API route; immutable ledgers cannot isolate token refresh from API connectivity further.",
+  "repair_required_before_prospective": true,
+  "route": "historical runner -> automation.google_clients credentials/token refresh -> Apps Script Execution API -> provider bridge",
+  "status": "READ_ONLY_BOUNDARY_IDENTIFIED"
+}

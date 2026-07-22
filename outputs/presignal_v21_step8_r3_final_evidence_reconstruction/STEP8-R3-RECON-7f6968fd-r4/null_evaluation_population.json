@@ -1,0 +1,666 @@
+[
+  {
+    "episode_id": "EP_BATCH_12b1ceb2500c1ca48ab3",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_4371f25feb585c278fa5",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_19fb130d30544cb793aa",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_ff330e7d28f150b9faf7",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_21db993a9ea8f793ff26",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_c6542e11c2b4271e86a7",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_28c24397c8d061f4324b",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_057e6d0cd2af0d6c9d96",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_2db6b84baa6d059868b1",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_840c8f93f401f2fe89c1",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_2db6b84baa6d059868b1",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_840c8f93f401f2fe89c1",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_35147e610ac77914112b",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_e0c563f82528048b7e1d",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_35147e610ac77914112b",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_e0c563f82528048b7e1d",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_4be66896a3126b9593da",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_7ffb0604d87d6dad9ccf",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_4be66896a3126b9593da",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_7ffb0604d87d6dad9ccf",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_507566e4d9d901df8b98",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_665aae3f9d18968be2b9",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_56c8082ad5621da18323",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_48b0a8fb1d099fbcbcf4",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_640548c8150c4610e70a",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_827b006805024bc7c9a4",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_787a214cece1437b7d96",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_4b34d93b839dd849ce8d",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_7c406a2a8098146ced6e",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_133bf9504ab2dff53a41",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_812a903497dae9312a4d",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_30e74cca1405bf493e9b",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_990722fd7f167c8c830a",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_ee64cc25ed2884ddc4b9",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_9d7fb0df53c2882e9f23",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_637bae58f925511a08fb",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_9da0367fea80e654e1fa",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_b1a462ead981b97822e9",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_9da0367fea80e654e1fa",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_b1a462ead981b97822e9",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_a34cbd222a490ff41e0d",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_98bc54eb32f7a98221a6",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_a9069e611fc171b595c7",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_15e71f77f2e11d01596c",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_b22671bc303407085675",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_2b68fadbad3dd69a60ee",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_b22671bc303407085675",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_2b68fadbad3dd69a60ee",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_b70c5198286be51658fb",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_28e5b32b68597086288c",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_ba4ba91745c4885dcd89",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_30a1006c1834263d684e",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_be2bfdd109b3d1d79dc6",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_21a77e70477b22a168c8",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_c7cedd13f77b41781490",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_7dd3a68ee17087c3dbc6",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_d221cf0fa06032ab3126",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_853ef349d7eba127436d",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_dd944804a883f9b267b7",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_4cda750bb732be8e8961",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_e0e61125b03cfdf2c84c",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_8146e52dfec8aa6cc9e8",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_e0e61125b03cfdf2c84c",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_8146e52dfec8aa6cc9e8",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_BATCH_ece5b7cb8648cf3a7bda",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_626c4e56704061bb9917",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_03ece813e0337411bbb7",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_6907083cb72366cddfa1",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_03ece813e0337411bbb7",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_6907083cb72366cddfa1",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_06e918c52b676b407c4f",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_2e7285b6d7154aca8d4e",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_06e918c52b676b407c4f",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_2e7285b6d7154aca8d4e",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_0ca2aceaf194f4694f4e",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_8db79bfcc88949de3315",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_15461c1d2e0541be391f",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_41e298a9326122a9d6a4",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_2de77b689facc34d5811",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_98826b1e61d16cc85577",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_2f967d5adbe1fb259677",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_ede2779f84fcdce1c451",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_2f967d5adbe1fb259677",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_ede2779f84fcdce1c451",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_2f967d5adbe1fb259677",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_ede2779f84fcdce1c451",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_f95318b47260086b6b00",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_43af04734103cea1c427",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_507d7494247f76eb643f",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_43af04734103cea1c427",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_507d7494247f76eb643f",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_5082576b75a849fbfd6c",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_ab7aebdf6e86f9571fd8",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_537cf8010cb62a7720a1",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_a4a089259c642adbc91d",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_53d96ab109f9f8b5361f",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_a6028a913c034e999484",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_62cc613799e0cb6f98fd",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_ffdf433e26db3474eaef",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_64e72292b54cab80cc69",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_cead55b08c4a8279f2bf",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_65ee00f27466ca68e855",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_ae9dcd50dc554a5de45c",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_6fded4bf355bb1e7da04",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_32d3a2e3b1e9cab950a0",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_782a6856f19d86736b0d",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_b0802ab8a51a15e6ac53",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_864b3a2e01ef09f8eabd",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_f56ee6c4c14d052debe3",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_8d833a01621022980c45",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_2ec11de78b8292c5ad47",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_9447337c26ee91d35cef",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_9bbec4fef8bbdb3cba1d",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_9447337c26ee91d35cef",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_9bbec4fef8bbdb3cba1d",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_66b9a19382a5c545f82f",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_9d4f5898b91098f9cd55",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_425a41c17d73d8ac70bc",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_aa1c65ed8edbd0d8542f",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_bbeda644a68543f43fbb",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_e39db7404e927ee5e138",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_bbeda644a68543f43fbb",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_e39db7404e927ee5e138",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_bcadac9bf16137d4e17c",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_edf6fed6ba244e93425d",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_c6c788eed159215d7220",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_7ca5d03a2cb0cad929e4",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_d0f52c96beec02acf20c",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_22b5cb92a0cf55dd99aa",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_d0f52c96beec02acf20c",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_22b5cb92a0cf55dd99aa",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_d0f52c96beec02acf20c",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_22b5cb92a0cf55dd99aa",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_d1afffcb5bb94517291b",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_2900b6f5417c9a698d5c",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_d1afffcb5bb94517291b",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_2900b6f5417c9a698d5c",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_d62e3ec54ad7ed77c1bf",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_f0eef33894305bf7ad83",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_d8ff224491f01c6dbd63",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_0e05ab9472e61d020429",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_dbd735c32e2577d2eedd",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_97dd8d273bb032b3356a",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_dbd735c32e2577d2eedd",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_97dd8d273bb032b3356a",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_e64e8ac2fd370159eb0e",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_43e9ea478daab258d9b9",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_e9a9ff7a31af8a69ce95",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_73e78af9511b18e78f35",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_e9a9ff7a31af8a69ce95",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_73e78af9511b18e78f35",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_eabb343a931dc2f666e1",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_1678a6d5e0e9a52076e7",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_eb01d75626b1583b506b",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_5e538fbc5183a60f1930",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_ec057286c0b51ac7c222",
+    "model": "gemini-2.5-flash-lite",
+    "outcome_identity": "OUT_f3cf78e7c0a7e52d2881",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Gemini",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_eea864aba7e1ece26538",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_ac3fd57415657bdfe289",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+    "model": "claude-haiku-4-5",
+    "outcome_identity": "OUT_c7f2fdea3313ddc7e130",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "Anthropic",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  },
+  {
+    "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+    "model": "gpt-4o-mini-2024-07-18",
+    "outcome_identity": "OUT_c7f2fdea3313ddc7e130",
+    "primary_cause": "EVALUATOR_SKIPPED_DIRECTIONAL_SCORING",
+    "provider": "OpenAI",
+    "recoverability": "NOT_RECOVERABLE_FORECAST_INVALID"
+  }
+]

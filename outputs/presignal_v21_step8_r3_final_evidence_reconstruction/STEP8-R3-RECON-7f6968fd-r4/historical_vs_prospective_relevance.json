@@ -1,0 +1,8 @@
+{
+  "missing_historical_prices": "NOT_OBSERVED_IN_83_TARGET",
+  "oauth_network_route": "SHARED_WITH_PROSPECTIVE",
+  "outcome_lineage": "NO_SOURCE_CONTRADICTION_FOUND",
+  "provider_contract_rejections": "LIKELY_TO_RECUR_PROSPECTIVELY",
+  "rejected_raw_primary_driver_accounting": "HISTORICAL_IMPLEMENTATION_DEFECT",
+  "valid_no_signal_directional_nulls": "SHARED_WITH_PROSPECTIVE"
+}

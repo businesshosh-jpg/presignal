@@ -1,0 +1,8 @@
+{
+  "accepted_forecast_denominator": 192,
+  "could_remaining_missingness_reverse_observed_result": true,
+  "original_complete_case_effect": 0.019230769230769232,
+  "reason": "83 valid NO_SIGNAL rows lack directional endpoints; they cannot be assigned Pack A-minus-Pack E directional correctness without changing the frozen estimand.",
+  "remaining_directionally_incomplete": 140,
+  "status": "NOT_RECALCULATED_AS_SCIENTIFIC_EFFECT"
+}
