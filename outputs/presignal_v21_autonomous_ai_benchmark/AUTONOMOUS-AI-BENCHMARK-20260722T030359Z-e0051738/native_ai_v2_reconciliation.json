@@ -1,0 +1,459 @@
+{
+  "accepted_native_forecast_count": 6,
+  "audit": [
+    {
+      "call_id": "NATIVEV2_02cc410aba0a898ac5b86dc6",
+      "confidence": 0.55,
+      "confidence_type": "float",
+      "episode_id": "EP_BATCH_5db4a9668cccb78d621e",
+      "parser_rejection_reason": "PATH_NEUTRAL_PIP_RANGE",
+      "path": [
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 7,
+          "expected_pips_min": 3,
+          "horizon_min": 5,
+          "stage_confidence": 0.65
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 15,
+          "stage_confidence": 0.6
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 5,
+          "expected_pips_min": 2,
+          "horizon_min": 30,
+          "stage_confidence": 0.5
+        },
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 3,
+          "expected_pips_min": 0,
+          "horizon_min": 60,
+          "stage_confidence": 0.45
+        }
+      ],
+      "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v2/NATIVEV2_02cc410aba0a898ac5b86dc6.json",
+      "recovery_permitted": false,
+      "recovery_status": "NOT_NEEDED",
+      "terminal_state": "NATIVE_AI_FORECAST_SCHEMA_REJECTED"
+    },
+    {
+      "call_id": "NATIVEV2_d9037cdbe04a79a8f5db1a49",
+      "confidence": 0.4,
+      "confidence_type": "float",
+      "episode_id": "EP_EVENT_2de77b689facc34d5811",
+      "parser_rejection_reason": "",
+      "path": [
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 3,
+          "expected_pips_min": 1,
+          "horizon_min": 5,
+          "stage_confidence": 0.6
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 6,
+          "expected_pips_min": 3,
+          "horizon_min": 15,
+          "stage_confidence": 0.55
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 30,
+          "stage_confidence": 0.5
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 5,
+          "expected_pips_min": 2,
+          "horizon_min": 60,
+          "stage_confidence": 0.45
+        }
+      ],
+      "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v2/NATIVEV2_d9037cdbe04a79a8f5db1a49.json",
+      "recovery_permitted": false,
+      "recovery_status": "NOT_NEEDED",
+      "terminal_state": "NATIVE_AI_FORECAST_ACCEPTED"
+    },
+    {
+      "call_id": "NATIVEV2_326b104a813f6138c3fd2d09",
+      "confidence": 0.55,
+      "confidence_type": "float",
+      "episode_id": "EP_EVENT_3f0ac9fb4f1a138fee7f",
+      "parser_rejection_reason": "",
+      "path": [
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 15,
+          "expected_pips_min": 5,
+          "horizon_min": 5,
+          "stage_confidence": 0.7
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 25,
+          "expected_pips_min": 10,
+          "horizon_min": 15,
+          "stage_confidence": 0.6
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 15,
+          "expected_pips_min": 5,
+          "horizon_min": 30,
+          "stage_confidence": 0.5
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 25,
+          "expected_pips_min": 10,
+          "horizon_min": 60,
+          "stage_confidence": 0.45
+        }
+      ],
+      "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v2/NATIVEV2_326b104a813f6138c3fd2d09.json",
+      "recovery_permitted": false,
+      "recovery_status": "NOT_NEEDED",
+      "terminal_state": "NATIVE_AI_FORECAST_ACCEPTED"
+    },
+    {
+      "call_id": "NATIVEV2_3466cc850a529400ce7ed293",
+      "confidence": 0.65,
+      "confidence_type": "float",
+      "episode_id": "EP_EVENT_5a1719c3db61418e808e",
+      "parser_rejection_reason": "PATH_NEUTRAL_PIP_RANGE",
+      "path": [
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 25,
+          "expected_pips_min": 10,
+          "horizon_min": 5,
+          "stage_confidence": 0.7
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 40,
+          "expected_pips_min": 20,
+          "horizon_min": 15,
+          "stage_confidence": 0.6
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 35,
+          "expected_pips_min": 15,
+          "horizon_min": 30,
+          "stage_confidence": 0.65
+        },
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 20,
+          "expected_pips_min": 5,
+          "horizon_min": 60,
+          "stage_confidence": 0.5
+        }
+      ],
+      "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v2/NATIVEV2_3466cc850a529400ce7ed293.json",
+      "recovery_permitted": false,
+      "recovery_status": "NOT_NEEDED",
+      "terminal_state": "NATIVE_AI_FORECAST_SCHEMA_REJECTED"
+    },
+    {
+      "call_id": "NATIVEV2_6f702b53e192d8dd890c995f",
+      "confidence": 0.55,
+      "confidence_type": "float",
+      "episode_id": "EP_BATCH_6a6fe55ba8eff4d3ce2c",
+      "parser_rejection_reason": "",
+      "path": [
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 7,
+          "expected_pips_min": 3,
+          "horizon_min": 5,
+          "stage_confidence": 0.6
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 15,
+          "stage_confidence": 0.55
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 8,
+          "expected_pips_min": 3,
+          "horizon_min": 30,
+          "stage_confidence": 0.5
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 12,
+          "expected_pips_min": 5,
+          "horizon_min": 60,
+          "stage_confidence": 0.45
+        }
+      ],
+      "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v2/NATIVEV2_6f702b53e192d8dd890c995f.json",
+      "recovery_permitted": false,
+      "recovery_status": "NOT_NEEDED",
+      "terminal_state": "NATIVE_AI_FORECAST_ACCEPTED"
+    },
+    {
+      "call_id": "NATIVEV2_2b1af74bc7f32863c3710cc1",
+      "confidence": 0.65,
+      "confidence_type": "float",
+      "episode_id": "EP_EVENT_28649186b338eb5b0a22",
+      "parser_rejection_reason": "PATH_NEUTRAL_PIP_RANGE",
+      "path": [
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 5,
+          "stage_confidence": 0.7
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 15,
+          "expected_pips_min": 10,
+          "horizon_min": 15,
+          "stage_confidence": 0.65
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 30,
+          "stage_confidence": 0.6
+        },
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 5,
+          "expected_pips_min": 0,
+          "horizon_min": 60,
+          "stage_confidence": 0.55
+        }
+      ],
+      "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v2/NATIVEV2_2b1af74bc7f32863c3710cc1.json",
+      "recovery_permitted": false,
+      "recovery_status": "NOT_NEEDED",
+      "terminal_state": "NATIVE_AI_FORECAST_SCHEMA_REJECTED"
+    },
+    {
+      "call_id": "NATIVEV2_4b0c88c2fb98fd00f3492e89",
+      "confidence": 0.25,
+      "confidence_type": "float",
+      "episode_id": "EP_EVENT_58e1701b15c0178692ba",
+      "parser_rejection_reason": "",
+      "path": [
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 7,
+          "expected_pips_min": 3,
+          "horizon_min": 5,
+          "stage_confidence": 0.4
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 15,
+          "stage_confidence": 0.35
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 30,
+          "stage_confidence": 0.5
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 15,
+          "expected_pips_min": 8,
+          "horizon_min": 60,
+          "stage_confidence": 0.45
+        }
+      ],
+      "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v2/NATIVEV2_4b0c88c2fb98fd00f3492e89.json",
+      "recovery_permitted": false,
+      "recovery_status": "NOT_NEEDED",
+      "terminal_state": "NATIVE_AI_FORECAST_ACCEPTED"
+    },
+    {
+      "call_id": "NATIVEV2_ef5b10af4ad6dfe892d0fc42",
+      "confidence": 0.55,
+      "confidence_type": "float",
+      "episode_id": "EP_EVENT_64e72292b54cab80cc69",
+      "parser_rejection_reason": "",
+      "path": [
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 12,
+          "expected_pips_min": 8,
+          "horizon_min": 5,
+          "stage_confidence": 0.7
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 20,
+          "expected_pips_min": 15,
+          "horizon_min": 15,
+          "stage_confidence": 0.6
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 25,
+          "expected_pips_min": 18,
+          "horizon_min": 30,
+          "stage_confidence": 0.5
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 15,
+          "expected_pips_min": 8,
+          "horizon_min": 60,
+          "stage_confidence": 0.45
+        }
+      ],
+      "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v2/NATIVEV2_ef5b10af4ad6dfe892d0fc42.json",
+      "recovery_permitted": false,
+      "recovery_status": "NOT_NEEDED",
+      "terminal_state": "NATIVE_AI_FORECAST_ACCEPTED"
+    },
+    {
+      "call_id": "NATIVEV2_6982bdb32bb3df62355e590f",
+      "confidence": 0.4,
+      "confidence_type": "float",
+      "episode_id": "EP_EVENT_053c10a3d4a69d6881af",
+      "parser_rejection_reason": "",
+      "path": [
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 5,
+          "stage_confidence": 0.45
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 15,
+          "expected_pips_min": 10,
+          "horizon_min": 15,
+          "stage_confidence": 0.4
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 10,
+          "expected_pips_min": 5,
+          "horizon_min": 30,
+          "stage_confidence": 0.5
+        },
+        {
+          "expected_direction": "UP",
+          "expected_pips_max": 15,
+          "expected_pips_min": 8,
+          "horizon_min": 60,
+          "stage_confidence": 0.55
+        }
+      ],
+      "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v2/NATIVEV2_6982bdb32bb3df62355e590f.json",
+      "recovery_permitted": false,
+      "recovery_status": "NOT_NEEDED",
+      "terminal_state": "NATIVE_AI_FORECAST_ACCEPTED"
+    },
+    {
+      "call_id": "NATIVEV2_f31f7bd0f647c1cdf6353a7b",
+      "confidence": 0.25,
+      "confidence_type": "float",
+      "episode_id": "EP_EVENT_b5f2d28b12e37e2d9b72",
+      "parser_rejection_reason": "PATH_NEUTRAL_PIP_RANGE",
+      "path": [
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 3,
+          "expected_pips_min": 0,
+          "horizon_min": 5,
+          "stage_confidence": 0.3
+        },
+        {
+          "expected_direction": "DOWN",
+          "expected_pips_max": 5,
+          "expected_pips_min": 0,
+          "horizon_min": 15,
+          "stage_confidence": 0.25
+        },
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 2,
+          "expected_pips_min": 0,
+          "horizon_min": 30,
+          "stage_confidence": 0.2
+        },
+        {
+          "expected_direction": "FLAT",
+          "expected_pips_max": 2,
+          "expected_pips_min": 0,
+          "horizon_min": 60,
+          "stage_confidence": 0.2
+        }
+      ],
+      "raw_response_path": "/Users/junhoshino/projects/presignal/outputs/presignal_v21_autonomous_ai_benchmark/AUTONOMOUS-AI-BENCHMARK-20260722T030359Z-e0051738/native_responses_v2/NATIVEV2_f31f7bd0f647c1cdf6353a7b.json",
+      "recovery_permitted": false,
+      "recovery_status": "NOT_NEEDED",
+      "terminal_state": "NATIVE_AI_FORECAST_SCHEMA_REJECTED"
+    }
+  ],
+  "completion_decision": "NATIVE_AI_V2_BENCHMARK_COMPLETE",
+  "horizon_counts": {
+    "30": {
+      "native_correct": 3,
+      "presignal_correct": 1
+    },
+    "5": {
+      "native_correct": 4,
+      "presignal_correct": 2
+    },
+    "60": {
+      "native_correct": 2,
+      "presignal_correct": 1
+    }
+  },
+  "interpretation_decision": "NOT_AVAILABLE_INSUFFICIENT_VALID_COMPARISONS",
+  "model_memory_limitation": "The native historical AI arm uses only supplied pre-release inputs and no external research, but latent knowledge contained in the pretrained model cannot be independently excluded.",
+  "no_provider_calls_made_by_reconciliation": true,
+  "primary_15m": {
+    "both_correct": 0,
+    "both_wrong": 3,
+    "native_correct": 0,
+    "native_only_correct": 0,
+    "presignal_correct": 3,
+    "presignal_only_correct": 3,
+    "valid_paired_comparison_count": 6
+  },
+  "prompt_fingerprint": "sha256:bb2e78b23727d69a97f3933b21f1801ee325e281e836f1a9674f7d64be81d2a0",
+  "prompt_version": "presignal_v21_native_ai_no_research_v2",
+  "schema_rejection_count": 4,
+  "secondary": {
+    "latency_available_count": 0,
+    "native_magnitude_15m_mean_error": 8.008333333333335,
+    "native_mean_path_score": 0.375,
+    "native_reversal_correct": 3,
+    "presignal_magnitude_15m_mean_error": 4.858333333333333,
+    "presignal_mean_path_score": 0.2916666666666667,
+    "presignal_reversal_correct": 2,
+    "token_total": 8277
+  },
+  "terminal_counts": {
+    "NATIVE_AI_FORECAST_ACCEPTED": 6,
+    "NATIVE_AI_FORECAST_SCHEMA_REJECTED": 4
+  }
+}
