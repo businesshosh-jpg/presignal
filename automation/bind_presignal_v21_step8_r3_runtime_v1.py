@@ -14,6 +14,7 @@ from automation import presignal_v21_historical_verification_r3_compat_r4_contra
 from automation import presignal_v21_historical_verification_r3_compat_r5_contract_v1 as compat_r5
 from automation import presignal_v21_minimal_prospective_lineage_v1 as lineage
 from automation import presignal_v21_prospective_flat_contract_v1 as parent
+from automation import presignal_v21_provider_adapters_v1 as provider_adapters
 
 ROOT = Path(__file__).resolve().parents[1]
 PREP = ROOT / "outputs/presignal_v21_step8_r3_repair/STEP8-R3-REPAIR-df9c25e/fresh_verification_manifest.json"
@@ -74,34 +75,13 @@ def request_instruction(spec: Mapping[str, Any], provider: str) -> str:
 
 def attention_parser(provider: str, raw: Any, spec: Mapping[str, Any] | None = None) -> dict[str, Any]:
     module = contract_module(spec or r3.spec())
-    parsed = module.extract_json_object(raw)
-    if module.CONTRACT_VERSION in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and provider == "Anthropic":
-        rule = compat_r4.NORMALIZATION["anthropic_runtime_identity"]
-        emitted_provider = parsed.get("provider")
-        emitted_model = parsed.get("model")
-        if emitted_provider not in rule["accepted_emitted_provider_identities"] or emitted_model not in rule["accepted_emitted_model_identities"]:
-            raise BindingError("ANTHROPIC_EMITTED_RUNTIME_IDENTITY_CONTRADICTION")
-        parsed["provider"] = rule["runtime_provider"]
-        parsed["_provider_identity_normalization"] = {
-            "runtime_provider": rule["runtime_provider"],
-            "runtime_model": rule["runtime_model"],
-            "model_emitted_provider_identity": emitted_provider,
-            "model_emitted_model_identity": emitted_model,
-            "acceptance_reason": rule["reason"],
-        }
-        return parsed
-    if module.CONTRACT_VERSION == compat_r3.CONTRACT_VERSION and provider == "Anthropic":
-        rule = compat_r3.NORMALIZATION["anthropic_attention_identity"]
-        if parsed.get("provider") == rule["raw_provider"] and parsed.get("model") == rule["raw_model"]:
-            parsed["provider"] = rule["canonical_provider"]
-            parsed["_provider_identity_normalization"] = {
-                "original_provider": rule["raw_provider"],
-                "original_model": rule["raw_model"],
-                "normalized_provider": rule["canonical_provider"],
-                "normalized_model": rule["canonical_model"],
-                "reason": rule["reason"],
-            }
-    return parsed
+    adapted = provider_adapters.normalize_provider_response(stage="ATTENTION", requested_provider=provider, requested_model="", transport_result={"raw_output": raw}, contract_version=module.CONTRACT_VERSION)
+    if adapted["parse_status"] != provider_adapters.ParseStatus.PARSED:
+        reason = adapted["normalization_notes"][-1]["reason"]
+        if reason == "ANTHROPIC_EMITTED_RUNTIME_IDENTITY_CONTRADICTION":
+            raise BindingError(reason)
+        raise ValueError(reason)
+    return adapted["canonical_payload"]
 
 
 def generation_settings(spec: Mapping[str, Any], provider: str, stage: str) -> dict[str, Any]:
@@ -113,20 +93,7 @@ def generation_settings(spec: Mapping[str, Any], provider: str, stage: str) -> d
 
 def normalize_request_item(item: Mapping[str, Any], spec: Mapping[str, Any]) -> tuple[dict[str, Any], dict[str, Any] | None]:
     module = contract_module(spec)
-    normalized = dict(item)
-    changes = []
-    if module.CONTRACT_VERSION in (compat_r2.CONTRACT_VERSION, compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and normalized.get("affected_channel") == compat_r2.NORMALIZATION["input"]:
-        normalized["affected_channel"] = compat_r2.NORMALIZATION["output"]
-        changes.append({"field": "affected_channel", "original_value": "other", "normalized_value": "unknown", "reason": compat_r2.NORMALIZATION["reason"]})
-    if module.CONTRACT_VERSION in (compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and normalized.get("information_category") == compat_r3.NORMALIZATION["information_category"]["input"]:
-        rule = compat_r3.NORMALIZATION["information_category"]
-        normalized["information_category"] = rule["output"]
-        changes.append({"field": rule["field"], "original_value": rule["input"], "normalized_value": rule["output"], "reason": rule["reason"]})
-    if module.CONTRACT_VERSION in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and normalized.get("information_category") == compat_r4.NORMALIZATION["information_category_housing"]["input"]:
-        rule = compat_r4.NORMALIZATION["information_category_housing"]
-        normalized["information_category"] = rule["output"]
-        changes.append({"field": rule["field"], "original_value": rule["input"], "normalized_value": rule["output"], "reason": rule["reason"]})
-    return normalized, {"normalizations": changes} if changes else None
+    return provider_adapters.normalize_information_request_item(item, module.CONTRACT_VERSION)
 
 
 def validate_attention_rank(rows: list[Mapping[str, Any]], spec: Mapping[str, Any]) -> None:

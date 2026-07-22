@@ -1,0 +1,128 @@
+"""Narrow, provider-format normalization boundary for v2.1.
+
+This module deliberately translates response envelopes and established legacy
+aliases only.  Transport, scientific contract validation, and canonical state
+classification remain with their existing owners.
+"""
+from __future__ import annotations
+
+import json
+from enum import Enum
+from typing import Any, Callable, Mapping
+
+from automation import presignal_v21_historical_verification_r3_compat_r2_contract_v1 as compat_r2
+from automation import presignal_v21_historical_verification_r3_compat_r3_contract_v1 as compat_r3
+from automation import presignal_v21_historical_verification_r3_compat_r4_contract_v1 as compat_r4
+from automation import presignal_v21_historical_verification_r3_compat_r5_contract_v1 as compat_r5
+
+
+class ParseStatus(str, Enum):
+    NOT_ATTEMPTED = "NOT_ATTEMPTED"
+    PARSED = "PARSED"
+    PARSE_FAILED = "PARSE_FAILED"
+
+
+class ValidationStatus(str, Enum):
+    NOT_VALIDATED = "NOT_VALIDATED"
+    VALID = "VALID"
+    INVALID = "INVALID"
+
+
+def _json_object(raw: Any) -> dict[str, Any]:
+    if isinstance(raw, Mapping):
+        return dict(raw)
+    if not isinstance(raw, str):
+        raise ValueError("PROVIDER_OUTPUT_NOT_OBJECT")
+    text = raw.strip()
+    if not text:
+        raise ValueError("PROVIDER_OUTPUT_EMPTY")
+    if text.startswith("```") and text.endswith("```"):
+        try:
+            text = text.split("\n", 1)[1].rsplit("```", 1)[0].strip()
+        except IndexError as exc:
+            raise ValueError("PROVIDER_OUTPUT_NOT_JSON") from exc
+    try:
+        value = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError("PROVIDER_OUTPUT_NOT_JSON") from exc
+    if not isinstance(value, Mapping):
+        raise ValueError("PROVIDER_OUTPUT_NOT_OBJECT")
+    return dict(value)
+
+
+def _extract_envelope(payload: dict[str, Any]) -> dict[str, Any]:
+    """Extract the established Gemini forecast response-contract envelope."""
+    if set(payload) != {"forecast", "response_contract"}:
+        return payload
+    if not isinstance(payload["forecast"], Mapping) or not isinstance(payload["response_contract"], Mapping):
+        raise ValueError("PROVIDER_OUTPUT_ENVELOPE")
+    return dict(payload["forecast"])
+
+
+def normalize_provider_response(*, stage: str, requested_provider: str, requested_model: str,
+                                transport_result: Mapping[str, Any], contract_version: str | None = None,
+                                validator: Callable[[Mapping[str, Any]], bool] | None = None) -> dict[str, Any]:
+    """Return neutral response facts without deciding runtime or scientific state."""
+    raw = transport_result.get("raw_output", transport_result.get("raw_response"))
+    result: dict[str, Any] = {
+        "requested_provider": requested_provider, "requested_model": requested_model,
+        "actual_provider": transport_result.get("actual_provider"), "actual_model": transport_result.get("actual_model"),
+        "raw_response": raw, "raw_response_reference": transport_result.get("raw_response_reference"),
+        "canonical_payload": None, "parse_status": ParseStatus.NOT_ATTEMPTED,
+        "validation_status": ValidationStatus.NOT_VALIDATED, "normalization_notes": [],
+        "provider_metadata": {key: transport_result.get(key) for key in ("status", "transport_status", "completed_timestamp", "prompt_tokens", "completion_tokens", "latency_ms") if key in transport_result},
+    }
+    if raw is None:
+        return result
+    try:
+        payload = _json_object(raw)
+        if stage == "FORECAST":
+            payload = _extract_envelope(payload)
+        if stage == "ATTENTION":
+            payload, notes = normalize_attention_identity(payload, requested_provider, contract_version)
+            result["normalization_notes"].extend(notes)
+        result["canonical_payload"] = payload
+        result["parse_status"] = ParseStatus.PARSED
+        if validator is not None:
+            result["validation_status"] = ValidationStatus.VALID if validator(payload) else ValidationStatus.INVALID
+    except (ValueError, TypeError) as exc:
+        result["parse_status"] = ParseStatus.PARSE_FAILED
+        result["normalization_notes"].append({"reason": str(exc)})
+    return result
+
+
+def normalize_attention_identity(payload: Mapping[str, Any], provider: str, contract_version: str | None) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    value, notes = dict(payload), []
+    if provider != "Anthropic":
+        return value, notes
+    if contract_version in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION):
+        rule = compat_r4.NORMALIZATION["anthropic_runtime_identity"]
+        emitted_provider, emitted_model = value.get("provider"), value.get("model")
+        if emitted_provider not in rule["accepted_emitted_provider_identities"] or emitted_model not in rule["accepted_emitted_model_identities"]:
+            raise ValueError("ANTHROPIC_EMITTED_RUNTIME_IDENTITY_CONTRADICTION")
+        value["provider"] = rule["runtime_provider"]
+        note = {"runtime_provider": rule["runtime_provider"], "runtime_model": rule["runtime_model"], "model_emitted_provider_identity": emitted_provider, "model_emitted_model_identity": emitted_model, "acceptance_reason": rule["reason"]}
+        value["_provider_identity_normalization"] = note
+        notes.append(note)
+    elif contract_version == compat_r3.CONTRACT_VERSION:
+        rule = compat_r3.NORMALIZATION["anthropic_attention_identity"]
+        if value.get("provider") == rule["raw_provider"] and value.get("model") == rule["raw_model"]:
+            note = {"original_provider": rule["raw_provider"], "original_model": rule["raw_model"], "normalized_provider": rule["canonical_provider"], "normalized_model": rule["canonical_model"], "reason": rule["reason"]}
+            value["provider"] = rule["canonical_provider"]
+            value["_provider_identity_normalization"] = note
+            notes.append(note)
+    return value, notes
+
+
+def normalize_information_request_item(item: Mapping[str, Any], contract_version: str) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    value, changes = dict(item), []
+    if contract_version in (compat_r2.CONTRACT_VERSION, compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and value.get("affected_channel") == compat_r2.NORMALIZATION["input"]:
+        value["affected_channel"] = compat_r2.NORMALIZATION["output"]
+        changes.append({"field": "affected_channel", "original_value": "other", "normalized_value": "unknown", "reason": compat_r2.NORMALIZATION["reason"]})
+    if contract_version in (compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and value.get("information_category") == compat_r3.NORMALIZATION["information_category"]["input"]:
+        rule = compat_r3.NORMALIZATION["information_category"]
+        value["information_category"] = rule["output"]; changes.append({"field": rule["field"], "original_value": rule["input"], "normalized_value": rule["output"], "reason": rule["reason"]})
+    if contract_version in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and value.get("information_category") == compat_r4.NORMALIZATION["information_category_housing"]["input"]:
+        rule = compat_r4.NORMALIZATION["information_category_housing"]
+        value["information_category"] = rule["output"]; changes.append({"field": rule["field"], "original_value": rule["input"], "normalized_value": rule["output"], "reason": rule["reason"]})
+    return value, {"normalizations": changes} if changes else None

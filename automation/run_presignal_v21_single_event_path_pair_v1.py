@@ -27,6 +27,7 @@ if str(ROOT) not in sys.path:
 from automation import presignal_v21_event_path_contract_v1 as contract
 from automation.build_presignal_v21_event_path_inputs import reject_leakage
 from automation.google_clients import build_script_service, default_script_id, load_credentials, run_script_function
+from automation import presignal_v21_provider_adapters_v1 as provider_adapters
 
 STEP5 = ROOT / "outputs" / "presignal_v21_step5_reuse"
 OUTCOMES = ROOT / "outputs" / "presignal_v21_episode_outcomes" / "outcome_rows.jsonl"
@@ -237,24 +238,10 @@ def prompt_diff(context_a: Mapping[str, Any], context_e: Mapping[str, Any]) -> d
 
 
 def parse_provider_output(raw_output: Any) -> dict[str, Any]:
-    if isinstance(raw_output, Mapping):
-        result = dict(raw_output)
-    elif isinstance(raw_output, str):
-        text = raw_output.strip()
-        if text.startswith("```") and text.endswith("```"):
-            text = text.split("\n", 1)[1].rsplit("```", 1)[0].strip()
-        try:
-            result = json.loads(text)
-        except json.JSONDecodeError as exc:
-            raise Step6Error("PROVIDER_OUTPUT_NOT_JSON") from exc
-    else:
-        raise Step6Error("PROVIDER_OUTPUT_NOT_OBJECT")
-    # Gemini returned the requested forecast in its explicit response-contract
-    # envelope. This is transport formatting, not a second scientific schema.
-    if set(result) == {"forecast", "response_contract"}:
-        if not isinstance(result["forecast"], Mapping) or not isinstance(result["response_contract"], Mapping):
-            raise Step6Error("PROVIDER_OUTPUT_ENVELOPE")
-        result = dict(result["forecast"])
+    adapted = provider_adapters.normalize_provider_response(stage="FORECAST", requested_provider="", requested_model="", transport_result={"raw_output": raw_output})
+    if adapted["parse_status"] != provider_adapters.ParseStatus.PARSED:
+        raise Step6Error(adapted["normalization_notes"][-1]["reason"])
+    result = adapted["canonical_payload"]
     transport_fields = {
         "object", "system_version", "schema_version", "response_contract", "forecast_cutoff_ts",
         "information_pack_fingerprint", "market_state_snapshot_fingerprint", "population_type",
