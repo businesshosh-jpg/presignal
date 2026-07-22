@@ -162,11 +162,13 @@ def _missing_scopes(creds: Credentials) -> List[str]:
     return [scope for scope in SCOPES if scope not in existing]
 
 
-def load_credentials(interactive: bool = False) -> Credentials:
+def load_credentials(interactive: bool = False, *, token_path: Optional[Path] = None, persist_refresh: bool = True) -> Credentials:
+    """Load the configured credential, optionally from an explicit read-only path."""
+    resolved_token_path = Path(token_path or os.environ.get("PRESIGNAL_GOOGLE_TOKEN_PATH") or TOKEN_PATH)
     creds: Optional[Credentials] = None
-    if TOKEN_PATH.exists():
+    if resolved_token_path.exists():
         try:
-            creds = Credentials.from_authorized_user_file(str(TOKEN_PATH), SCOPES)
+            creds = Credentials.from_authorized_user_file(str(resolved_token_path), SCOPES)
         except Exception as exc:
             raise GoogleCredentialError("CREDENTIAL_FILE_CORRUPTION", "Google token file cannot be read: " + type(exc).__name__) from exc
 
@@ -181,17 +183,19 @@ def load_credentials(interactive: bool = False) -> Credentials:
 
     if creds and creds.expired and creds.refresh_token and not _missing_scopes(creds):
         try:
-            with CredentialRefreshLock():
+            with CredentialRefreshLock(resolved_token_path):
                 # A waiting process must reload rather than overwrite a newer refresh.
-                current = Credentials.from_authorized_user_file(str(TOKEN_PATH), SCOPES)
+                current = Credentials.from_authorized_user_file(str(resolved_token_path), SCOPES)
                 if current.valid and not _missing_scopes(current):
                     return current
                 with _GoogleApiIPv4Only():
                     current.refresh(Request())
                 if not current.valid:
                     raise GoogleCredentialError("GOOGLE_OAUTH_REFRESH_FAILED", "Google refresh returned an invalid credential.")
-                atomic_write_json(TOKEN_PATH, current.to_json())
-                persisted = Credentials.from_authorized_user_file(str(TOKEN_PATH), SCOPES)
+                if not persist_refresh:
+                    return current
+                atomic_write_json(resolved_token_path, current.to_json())
+                persisted = Credentials.from_authorized_user_file(str(resolved_token_path), SCOPES)
                 if not persisted.valid or _missing_scopes(persisted):
                     raise GoogleCredentialError("TOKEN_PERSISTENCE_FAILURE", "Refreshed Google token did not persist as a valid credential.")
                 return persisted
