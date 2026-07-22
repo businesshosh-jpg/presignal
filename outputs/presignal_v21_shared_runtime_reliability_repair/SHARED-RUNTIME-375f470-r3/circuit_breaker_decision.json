@@ -1,0 +1,4 @@
+{
+  "added": false,
+  "reason": "Preflight plus fail-closed admission guard and no automatic provider retry are sufficient for the current single-owner runtime; a circuit breaker would duplicate those controls."
+}

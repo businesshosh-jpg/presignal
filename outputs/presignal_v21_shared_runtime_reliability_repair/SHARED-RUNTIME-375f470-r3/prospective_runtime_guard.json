@@ -1,0 +1,9 @@
+{
+  "admission_allowed": false,
+  "circuit_state": "CLOSED",
+  "cutoff_margin_required": true,
+  "health_status": "NOT_ATTEMPTED_CREDENTIAL_INVALID",
+  "lease_required": true,
+  "preflight_status": "CREDENTIAL_INVALID",
+  "reason": "RUNTIME_ADMISSION_BLOCKED"
+}

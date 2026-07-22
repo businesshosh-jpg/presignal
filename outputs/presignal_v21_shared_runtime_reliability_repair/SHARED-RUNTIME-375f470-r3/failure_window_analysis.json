@@ -1,0 +1,44 @@
+{
+  "conclusion": "Synchronized all-provider Attention failures occurred before provider-specific handling on the common Google OAuth/Execution API route.",
+  "network": [
+    {
+      "count": 18,
+      "provider": "Anthropic",
+      "stage": "ATTENTION",
+      "type": "NETWORK"
+    },
+    {
+      "count": 18,
+      "provider": "Gemini",
+      "stage": "ATTENTION",
+      "type": "NETWORK"
+    },
+    {
+      "count": 17,
+      "provider": "OpenAI",
+      "stage": "ATTENTION",
+      "type": "NETWORK"
+    }
+  ],
+  "oauth": [
+    {
+      "count": 273,
+      "provider": "Anthropic",
+      "stage": "ATTENTION",
+      "type": "OAUTH"
+    },
+    {
+      "count": 273,
+      "provider": "Gemini",
+      "stage": "ATTENTION",
+      "type": "OAUTH"
+    },
+    {
+      "count": 274,
+      "provider": "OpenAI",
+      "stage": "ATTENTION",
+      "type": "OAUTH"
+    }
+  ],
+  "status": "HISTORICAL_EVIDENCE_ONLY"
+}

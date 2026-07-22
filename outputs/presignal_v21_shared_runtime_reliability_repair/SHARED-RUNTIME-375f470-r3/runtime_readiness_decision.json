@@ -1,0 +1,11 @@
+{
+  "compat_r5_changed": false,
+  "credential_status": "CREDENTIAL_INVALID",
+  "decision": "V2_1_SHARED_RUNTIME_GOOGLE_REAUTHENTICATION_REQUIRED",
+  "forecast_calls": 0,
+  "health_status": "NOT_ATTEMPTED_CREDENTIAL_INVALID",
+  "prospective_calls": 0,
+  "provider_calls": 0,
+  "required_operator_action": "Run `python3 auth_sheets.py` to replace the revoked Google refresh token, then rerun the bounded health check.",
+  "step9_readiness": "NOT_READY"
+}

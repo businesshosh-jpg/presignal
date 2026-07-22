@@ -210,3 +210,14 @@ reported interpretations remain below 85%. Historical evidence remains
 indeterminate. P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION** pending a
 narrow repair of the shared Google OAuth and Apps Script Execution API
 reliability boundary.
+
+## Shared Runtime Reliability Repair
+
+The shared client now serializes Google token refresh with an OS-backed lock,
+persists refreshed tokens atomically, preserves structured Google/App Script
+transport classifications, and exposes a harmless Execution API health
+function. The bounded verification found the current refresh token has been
+expired or revoked (`invalid_grant`), so no health call or provider call was
+sent. Reauthentication with `python3 auth_sheets.py` is required before the
+idempotent Apps Script health check can establish Step 9 runtime readiness.
+P12 remains **PAUSED_PENDING_HISTORICAL_VALIDATION**.

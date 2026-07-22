@@ -1,0 +1,6 @@
+{
+  "google_script_http_timeout_seconds": 300,
+  "historical_provider_bridge_timeout_seconds": 240,
+  "provider_timeout_changed": false,
+  "unknown_provider_dispatch": "non_retryable"
+}

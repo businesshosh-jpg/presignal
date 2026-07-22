@@ -1,0 +1,16 @@
+{
+  "APPS_SCRIPT_EXECUTION_ERROR": "Apps Script returned a structured execution error.",
+  "APPS_SCRIPT_FUNCTION_NOT_FOUND": "",
+  "APPS_SCRIPT_RESPONSE_MALFORMED": "",
+  "APPS_SCRIPT_TIMEOUT": "",
+  "GOOGLE_API_CONNECTION_ERROR": "Connection failed before confirmed Apps Script execution.",
+  "GOOGLE_API_QUOTA": "",
+  "GOOGLE_API_RATE_LIMIT": "",
+  "GOOGLE_API_TIMEOUT": "",
+  "GOOGLE_OAUTH_INVALID_GRANT": "Refresh token rejected; no external request dispatched.",
+  "GOOGLE_OAUTH_REFRESH_FAILED": "Refresh failed without invalid_grant evidence; no external request dispatched.",
+  "GOOGLE_OAUTH_TOKEN_MISSING": "",
+  "LOCAL_NETWORK_ERROR": "",
+  "REMOTE_PROVIDER_ERROR": "",
+  "UNKNOWN_SHARED_TRANSPORT_ERROR": "Dispatch certainty unknown; never retry provider work automatically."
+}

@@ -1,0 +1,5 @@
+{
+  "network_attention_failures": 53,
+  "oauth_attention_failures": 820,
+  "source": "outputs/presignal_v21_step8_r3_final_gate_diagnosis/STEP8-R3-GATE-e8bf771/connectivity_failure_analysis.json"
+}

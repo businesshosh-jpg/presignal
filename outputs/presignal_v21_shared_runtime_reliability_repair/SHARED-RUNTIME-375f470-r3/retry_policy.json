@@ -1,0 +1,17 @@
+{
+  "health_backoff_seconds": [
+    1,
+    2
+  ],
+  "health_check_max_attempts": 3,
+  "non_retryable": [
+    "SENT_NO_CONFIRMED_RESPONSE",
+    "OWNERSHIP_CONFLICT",
+    "unknown Apps Script/provider dispatch"
+  ],
+  "safe_retry_categories": [
+    "GOOGLE_API_CONNECTION_ERROR",
+    "GOOGLE_API_TIMEOUT",
+    "GOOGLE_API_RATE_LIMIT"
+  ]
+}

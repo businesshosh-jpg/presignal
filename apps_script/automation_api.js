@@ -4,6 +4,16 @@
  * These wrappers avoid menu/UI flows and operate on plain parameter objects.
  */
 
+/** Harmless Execution API health endpoint. It performs no provider or sheet work. */
+function presignalRuntimeHealthCheck() {
+  return {
+    status: 'READY',
+    timestamp: new Date().toISOString(),
+    script_version: 'HEAD',
+    dev_mode: true
+  };
+}
+
 function apiRunPredictionsWindow_(params) {
   params = params || {};
   var applied = _apiApplyWindowConfig_(params);

@@ -1,0 +1,5 @@
+{
+  "network": "GOOGLE_API_CONNECTION_ERROR",
+  "oauth": "GOOGLE_OAUTH_REFRESH_FAILED or GOOGLE_OAUTH_INVALID_GRANT pending exact refresh response",
+  "provider_failures_not_inferred": true
+}

@@ -1,0 +1,8 @@
+{
+  "atomic_token_persistence": true,
+  "credential_lock": true,
+  "health_retry_bounded": true,
+  "provider_retry_policy_unchanged": true,
+  "status": "PASS",
+  "transport_classification": true
+}
