@@ -22,6 +22,8 @@ VALID_CATEGORIES = {
     "upcoming_larger_events", "jpy_intervention_risk", "volatility", "historical_surprise_sensitivity",
     "event_consensus_detail", "other",
 }
+REQUEST_PROMPT_VERSION = "presignal_v21_information_request_prompt_v1"
+REQUEST_CATEGORY_ENUM_BLOCK = "\n".join(sorted(VALID_CATEGORIES))
 VALID_CHANNELS = {
     "fed_path", "treasury_yields", "usd_direction", "jpy_direction", "risk_sentiment",
     "inflation_expectations", "labor_market", "growth_outlook", "market_positioning",
@@ -33,9 +35,14 @@ APPROVED_MODELS = {
 ATTENTION_INSTRUCTION = """You are classifying event attention for a PreSignal v2.0 shadow research layer.
 
 Your task is not to forecast USDJPY direction, estimate pips, give trading advice, browse, or select an Event Episode. For each supplied event assign exactly one attention label and explain briefly. Return strict JSON only, without markdown, using exactly: object, session_id, provider, attention_items, session_attention_summary, status. Set object to session_attention_map and status to ok. Each attention_items object must use exactly: event_id, attention_label, attention_rank, attention_reason, expected_market_channel, driver_role, confidence. Allowed labels: PRIMARY_DRIVER, SECONDARY_DRIVER, WATCHLIST, CONTEXT_ONLY, IGNORE, NO_SIGNAL. Do not include any forecast, price, released actual, or Outcome field."""
-REQUEST_INSTRUCTION = """You are identifying information requirements for a PreSignal v2.0 shadow research layer.
+REQUEST_INSTRUCTION = f"""You are identifying information requirements for a PreSignal v2.0 shadow research layer.
 
-You are given a session, its events, and the same provider's Attention Map. Do not forecast USDJPY direction, estimate pips, give trading advice, browse, or create a Market-State Pack. Return strict JSON only, without markdown, using exactly: object, session_id, provider, information_items, session_information_summary, status. Set object to session_information_requirements and status to ok. Each information_items object must use exactly: request_rank, requested_information, information_category, priority, reason, affected_channel, event_family_relevance, linked_event_ids, linked_attention_labels, available_now, suggested_source, expected_forecast_use, is_market_state_candidate. Do not include any forecast, price, released actual, or Outcome field."""
+You are given a session, its events, and the same provider's Attention Map. Do not forecast USDJPY direction, estimate pips, give trading advice, browse, or create a Market-State Pack. Return strict JSON only, without markdown, using exactly: object, session_id, provider, information_items, session_information_summary, status. Set object to session_information_requirements and status to ok. The session_id must exactly equal the supplied session identity; the supplied Attention Map binds Attention lineage and the request envelope binds schema version. Each information_items object must use exactly: request_rank, requested_information, information_category, priority, reason, affected_channel, event_family_relevance, linked_event_ids, linked_attention_labels, available_now, suggested_source, expected_forecast_use, is_market_state_candidate. information_items must be a non-empty array and each requested_information must be actionable and non-empty.
+
+For each information item, set information_category to exactly one of these machine values:
+{REQUEST_CATEGORY_ENUM_BLOCK}
+
+Do not create category names, use display labels or natural-language alternatives, leave information_category blank, or put multiple categories in one field. Use other only when no specific listed category directly describes the concrete request; do not use it to avoid categorization. Do not include any forecast, price, released actual, Outcome, evaluation, Pack A, or Pack E field."""
 FORBIDDEN_KEYS = {"outcome", "evaluation", "released_value", "actual", "realized", "reversal", "forecast_direction", "expected_move_pips"}
 
 

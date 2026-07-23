@@ -31,7 +31,7 @@ from automation import run_presignal_v21_r6_native_input_final_materialization_v
 OUTPUT = ROOT / "outputs" / "presignal_v21_designed_drift_r6_information_request_execution" / "R6-INFORMATION-REQUEST-EXECUTION-20260723-v1"
 AUTHORIZATION_NAME = "PRESIGNAL_V21_DESIGNED_DRIFT_2_R6_INFORMATION_REQUEST_CALL_AUTHORIZATION_V1"
 PROVIDER, MODEL = "Gemini", "gemini-2.5-flash-lite"
-PROMPT_VERSION, RESPONSE_SCHEMA_VERSION = "existing_v2_information_request_prompt_schema", "v0"
+PROMPT_VERSION, RESPONSE_SCHEMA_VERSION = lineage.REQUEST_PROMPT_VERSION, "v0"
 ROUTE_B_FREEZE = native.ROUTE_B_FREEZE
 R6_V3 = "sha256:c8cb003af94eef2ef9cad8f323ab31b3c1990f3ffdcdab5ee3e6285fda76efb9"
 SELECTION_FINGERPRINT = "sha256:73e8fe3f89126d9129ef6bcbbaeedeaf79d9f148d367248f9dcc778b307827e1"
