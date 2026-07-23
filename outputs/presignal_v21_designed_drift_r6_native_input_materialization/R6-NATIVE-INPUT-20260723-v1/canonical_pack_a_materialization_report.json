@@ -1,0 +1,1 @@
+{"blocker":"CANONICAL_PACK_A_REQUIRES_SELECTED_ATTENTION_AND_CANONICAL_REQUESTS","google_write_attempted":false,"materialization_status":"BLOCKED","pack_a_identity":null,"reason":"stable Pack A is the selected provider's ordered canonical Request set; it cannot be constructed before an accepted selected Attention result and its Request response","selected_episode_identity":null}
