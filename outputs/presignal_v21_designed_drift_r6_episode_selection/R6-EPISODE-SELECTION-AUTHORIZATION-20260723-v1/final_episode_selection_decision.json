@@ -1,0 +1,1 @@
+{"attention_call_budget_remaining":1,"candidate_inventory_checksum":"sha256:6860eb4311d68bf527216f69dc71da73a32f4a5742dbb1182720432be0c7181a","decision":"R6_EPISODE_SELECTED_NATIVE_ATTENTION_EXECUTION_READY","reason":"Candidate was explicitly authorized by the user for one Gemini Attention call only."}
