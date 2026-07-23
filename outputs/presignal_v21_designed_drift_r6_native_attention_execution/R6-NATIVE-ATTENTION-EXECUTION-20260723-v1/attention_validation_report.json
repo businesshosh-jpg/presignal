@@ -1,0 +1,1 @@
+{"actual_value":"macro-research-model","expected_value":"Gemini","first_differing_field":"raw_response.provider","reason":"ATTENTION_RESPONSE_PROVIDER_FIELD_MISMATCH","schema_valid":false,"status":"INVALID"}

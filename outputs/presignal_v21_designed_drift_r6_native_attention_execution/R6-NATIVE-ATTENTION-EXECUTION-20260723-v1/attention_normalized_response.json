@@ -1,0 +1,1 @@
+{"actual_raw_provider":"macro-research-model","error":"NativeAttentionCallError","expected_raw_provider":"Gemini","reason":"ATTENTION_RESPONSE_PROVIDER_FIELD_MISMATCH","status":"INVALID"}

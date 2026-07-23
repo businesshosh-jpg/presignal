@@ -1,0 +1,1 @@
+{"call_attempted":true,"call_count":1,"decision":"NATIVE_ATTENTION_CALL_FAILED","failure":"ATTENTION_RESPONSE_PROVIDER_FIELD_MISMATCH","first_differing_field":"raw_response.provider"}

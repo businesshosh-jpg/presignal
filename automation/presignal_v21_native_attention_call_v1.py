@@ -83,25 +83,48 @@ def select_single_eligible_episode(candidates: Sequence[Mapping[str, Any]], *, a
     return {"decision": "SELECTED", "selected_episode": selected, "eligible_candidates": eligible, "candidates": normalized, "selection_rule": "Exactly one standalone canonical Episode was eligible."}
 
 
-def attention_call_input(*, episode: Mapping[str, Any], effective_timestamp: str, collection_run_id: str) -> dict[str, Any]:
+def attention_call_input(*, episode: Mapping[str, Any], effective_timestamp: str, collection_run_id: str,
+                         member_rows: Sequence[Mapping[str, Any]] | None = None) -> dict[str, Any]:
     """Freeze the established v2 prompt and bridge request for one selected Episode."""
     if parse_utc(effective_timestamp) >= parse_utc(str(episode["forecast_cutoff"])):
         raise NativeAttentionCallError("ATTENTION_AFTER_FORECAST_CUTOFF")
     session = {"session_id": str(episode["episode_identity"]), "country": str(episode.get("country") or "US"), "session_window_name": "R6_SINGLE_EVENT", "session_start_ts": effective_timestamp, "session_end_ts": str(episode["release_ts"])}
-    member = {"event_id": str(episode["primary_event_identity"]), "batch_id": "", "type": "single", "indicator_name": str(episode.get("event_name") or episode["primary_event_identity"]), "genre": str(episode.get("genre") or ""), "importance": str(episode.get("importance") or ""), "release_ts": str(episode["release_ts"]), "consensus_value": str(episode.get("consensus_value") or ""), "prev_revision": str(episode.get("prev_revision") or ""), "member_order": 1}
-    dry = lineage.build_prospective_attention(study_id="PRESIGNAL_V21_R6", collection_run_id=collection_run_id, session_snapshot=session, member_rows=[member], provider=PROVIDER, model=MODEL, information_cutoff_ts=str(episode["forecast_cutoff"]), attention_run_id="PATTN_" + checksum({"episode": episode["episode_identity"], "provider": PROVIDER})[7:27], stage_generated_ts=effective_timestamp)
-    return {"episode": dict(episode), "session": session, "member": member, "prompt": dry["prompt"], "bridge_request": dry["request"], "prompt_template_checksum": checksum(lineage.ATTENTION_INSTRUCTION), "resolved_prompt_checksum": checksum(dry["prompt"]), "episode_checksum": checksum(episode), "response_schema_checksum": checksum({"object": "session_attention_map", "schema_version": RESPONSE_SCHEMA_VERSION, "labels": sorted(lineage.VALID_LABELS)}), "provider_call_parameters_checksum": checksum(dry["request"])}
+    supplied_members = list(member_rows or [])
+    if not supplied_members:
+        supplied_members = [{"event_id": str(episode["primary_event_identity"]), "batch_id": "", "type": "single", "indicator_name": str(episode.get("event_name") or episode["primary_event_identity"]), "genre": str(episode.get("genre") or ""), "importance": str(episode.get("importance") or ""), "release_ts": str(episode["release_ts"]), "consensus_value": str(episode.get("consensus_value") or ""), "prev_revision": str(episode.get("prev_revision") or ""), "member_order": 1}]
+    members = []
+    for order, source in enumerate(supplied_members, 1):
+        row = dict(source)
+        if not row.get("event_id") or not row.get("indicator_name") or str(row.get("release_ts")) != str(episode["release_ts"]):
+            raise NativeAttentionCallError("ATTENTION_MEMBER_LINEAGE_MISMATCH")
+        members.append({"event_id": str(row["event_id"]), "batch_id": str(row.get("batch_id") or ""), "type": str(row.get("type") or "single"), "indicator_name": str(row["indicator_name"]), "genre": str(row.get("genre") or ""), "importance": str(row.get("importance") or ""), "release_ts": str(row["release_ts"]), "consensus_value": str(row.get("consensus_value") or ""), "prev_revision": str(row.get("prev_revision") or ""), "member_order": int(row.get("member_order") or order)})
+    if [row["event_id"] for row in members].count(str(episode["primary_event_identity"])) != 1:
+        raise NativeAttentionCallError("ATTENTION_PRIMARY_MEMBER_MISMATCH")
+    dry = lineage.build_prospective_attention(study_id="PRESIGNAL_V21_R6", collection_run_id=collection_run_id, session_snapshot=session, member_rows=members, provider=PROVIDER, model=MODEL, information_cutoff_ts=str(episode["forecast_cutoff"]), attention_run_id="PATTN_" + checksum({"episode": episode["episode_identity"], "provider": PROVIDER})[7:27], stage_generated_ts=effective_timestamp)
+    return {"episode": dict(episode), "session": session, "members": members, "prompt": dry["prompt"], "bridge_request": dry["request"], "prompt_template_checksum": checksum(lineage.ATTENTION_INSTRUCTION), "resolved_prompt_checksum": checksum(dry["prompt"]), "episode_checksum": checksum(episode), "response_schema_checksum": checksum({"object": "session_attention_map", "schema_version": RESPONSE_SCHEMA_VERSION, "labels": sorted(lineage.VALID_LABELS)}), "provider_call_parameters_checksum": checksum(dry["request"])}
 
 
-def normalize_attention_response(*, episode: Mapping[str, Any], raw_response: Mapping[str, Any], effective_timestamp: str, returned_provider: str, returned_model: str) -> dict[str, Any]:
+def normalize_attention_response(*, episode: Mapping[str, Any], raw_response: Mapping[str, Any], effective_timestamp: str,
+                                 returned_provider: str, returned_model: str,
+                                 member_event_ids: Sequence[str] | None = None) -> dict[str, Any]:
     """Adapt only the authoritative PRIMARY_DRIVER selection to native selected Attention."""
     if returned_provider != PROVIDER or returned_model != MODEL:
         raise NativeAttentionCallError("ATTENTION_PROVIDER_MODEL_MISMATCH")
     if parse_utc(effective_timestamp) > parse_utc(str(episode["forecast_cutoff"])):
         raise NativeAttentionCallError("ATTENTION_AFTER_FORECAST_CUTOFF")
-    if raw_response.get("object") != "session_attention_map" or raw_response.get("provider") != PROVIDER or raw_response.get("status") != "ok":
+    if raw_response.get("object") != "session_attention_map" or raw_response.get("session_id") != episode["episode_identity"] or raw_response.get("status") != "ok":
         raise NativeAttentionCallError("ATTENTION_RESPONSE_SCHEMA_INVALID")
-    items = [item for item in raw_response.get("attention_items", []) if isinstance(item, Mapping) and str(item.get("event_id")) == str(episode["primary_event_identity"])]
+    if raw_response.get("provider") != PROVIDER:
+        raise NativeAttentionCallError("ATTENTION_RESPONSE_PROVIDER_FIELD_MISMATCH")
+    all_items = list(raw_response.get("attention_items", []))
+    if not all(isinstance(item, Mapping) for item in all_items):
+        raise NativeAttentionCallError("ATTENTION_RESPONSE_SCHEMA_INVALID")
+    if member_event_ids is not None:
+        expected = [str(value) for value in member_event_ids]
+        returned = [str(item.get("event_id") or "") for item in all_items]
+        if sorted(returned) != sorted(expected) or len(set(returned)) != len(returned):
+            raise NativeAttentionCallError("ATTENTION_MEMBER_LINEAGE_MISMATCH")
+    items = [item for item in all_items if str(item.get("event_id")) == str(episode["primary_event_identity"])]
     if len(items) != 1:
         raise NativeAttentionCallError("ATTENTION_EPISODE_LINEAGE_MISMATCH")
     item = dict(items[0]); label = str(item.get("attention_label") or "")
@@ -110,7 +133,10 @@ def normalize_attention_response(*, episode: Mapping[str, Any], raw_response: Ma
     # The frozen mapping makes PRIMARY_DRIVER the only FORECAST selection.
     selection_state = "SELECTED_FOR_INFORMATION_REQUESTS" if label == "PRIMARY_DRIVER" else "NOT_SELECTED"
     acceptance_state = "ACCEPTED" if selection_state.startswith("SELECTED") else "REJECTED"
-    normalized = {"episode_identity": episode["episode_identity"], "primary_event_identity": episode["primary_event_identity"], "provider_identity": PROVIDER, "model_identity": MODEL, "prompt_version": PROMPT_VERSION, "selection_state": selection_state, "acceptance_state": acceptance_state, "selection_reason": str(item.get("attention_reason") or ""), "effective_timestamp": effective_timestamp, "forecast_cutoff": episode["forecast_cutoff"], "schema_version": native.ATTENTION_SCHEMA_VERSION, "attention_label": label, "raw_response_checksum": checksum(raw_response)}
+    reason = str(item.get("attention_reason") or "")
+    if not reason:
+        raise NativeAttentionCallError("ATTENTION_REQUIRED_RATIONALE_MISSING")
+    normalized = {"episode_identity": episode["episode_identity"], "primary_event_identity": episode["primary_event_identity"], "provider_identity": PROVIDER, "model_identity": MODEL, "prompt_version": PROMPT_VERSION, "selection_state": selection_state, "acceptance_state": acceptance_state, "selection_reason": reason, "effective_timestamp": effective_timestamp, "forecast_cutoff": episode["forecast_cutoff"], "schema_version": native.ATTENTION_SCHEMA_VERSION, "attention_label": label, "raw_response_checksum": checksum(raw_response)}
     normalized["normalized_response_checksum"] = checksum(normalized)
     return normalized
 

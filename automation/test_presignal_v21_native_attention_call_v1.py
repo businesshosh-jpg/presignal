@@ -29,7 +29,7 @@ class NativeAttentionCallTests(unittest.TestCase):
         self.assertEqual(chosen["selected_episode"]["episode_identity"], "EP_EVENT_TEST")
 
     def test_attention_response_validation_and_selection_mapping(self):
-        raw = {"object": "session_attention_map", "provider": "Gemini", "status": "ok", "attention_items": [{"event_id": "EV_TEST", "attention_label": "PRIMARY_DRIVER", "attention_reason": "high impact"}]}
+        raw = {"object": "session_attention_map", "session_id": "EP_EVENT_TEST", "provider": "Gemini", "status": "ok", "attention_items": [{"event_id": "EV_TEST", "attention_label": "PRIMARY_DRIVER", "attention_reason": "high impact"}]}
         selected = call.normalize_attention_response(episode=EPISODE, raw_response=raw, effective_timestamp="2030-01-01T11:00:00Z", returned_provider="Gemini", returned_model="gemini-2.5-flash-lite")
         self.assertEqual(selected["selection_state"], "SELECTED_FOR_INFORMATION_REQUESTS")
         not_selected = call.normalize_attention_response(episode=EPISODE, raw_response={**raw, "attention_items": [{"event_id": "EV_TEST", "attention_label": "WATCHLIST", "attention_reason": "context"}]}, effective_timestamp="2030-01-01T11:00:00Z", returned_provider="Gemini", returned_model="gemini-2.5-flash-lite")
@@ -38,12 +38,14 @@ class NativeAttentionCallTests(unittest.TestCase):
             call.normalize_attention_response(episode=EPISODE, raw_response=raw, effective_timestamp="2030-01-01T11:00:00Z", returned_provider="Gemini", returned_model="other")
         with self.assertRaisesRegex(call.NativeAttentionCallError, "STATE_INVALID"):
             call.normalize_attention_response(episode=EPISODE, raw_response={**raw, "attention_items": [{"event_id": "EV_TEST", "attention_label": "WATCH", "attention_reason": "bad"}]}, effective_timestamp="2030-01-01T11:00:00Z", returned_provider="Gemini", returned_model="gemini-2.5-flash-lite")
+        with self.assertRaisesRegex(call.NativeAttentionCallError, "PROVIDER_FIELD_MISMATCH"):
+            call.normalize_attention_response(episode=EPISODE, raw_response={**raw, "provider": "macro-research-model"}, effective_timestamp="2030-01-01T11:00:00Z", returned_provider="Gemini", returned_model="gemini-2.5-flash-lite")
 
     def test_injected_runner_dispatches_once_without_retry(self):
         calls = []
         def dispatcher(request):
             calls.append(request)
-            return {"status": "ok", "actual_provider": "Gemini", "actual_model": "gemini-2.5-flash-lite", "completed_timestamp": "2030-01-01T11:00:00Z", "raw_output": {"object": "session_attention_map", "provider": "Gemini", "status": "ok", "attention_items": [{"event_id": "EV_TEST", "attention_label": "PRIMARY_DRIVER", "attention_reason": "fixture"}]}}
+            return {"status": "ok", "actual_provider": "Gemini", "actual_model": "gemini-2.5-flash-lite", "completed_timestamp": "2030-01-01T11:00:00Z", "raw_output": {"object": "session_attention_map", "session_id": "EP_EVENT_TEST", "provider": "Gemini", "status": "ok", "attention_items": [{"event_id": "EV_TEST", "attention_label": "PRIMARY_DRIVER", "attention_reason": "fixture"}]}}
         result = call.execute_one_attention(episode=EPISODE, effective_timestamp="2030-01-01T11:00:00Z", collection_run_id="R6_TEST", dispatcher=dispatcher)
         self.assertEqual(len(calls), 1)
         self.assertEqual(result["provider_calls"], 1)
