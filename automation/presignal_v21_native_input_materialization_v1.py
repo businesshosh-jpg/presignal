@@ -20,8 +20,11 @@ ROUTE_B_FREEZE = "sha256:8c910a343515d88ca63ce4aaf738f28f9b4a8ab22665397077858bf
 MAIN_SPREADSHEET_ID = "1_gZGnd6h3VzdiBvGBHRSxn78KW8tsOi2UEc6Y_Sc23Q"
 ATTENTION_SHEET = "Native_Attention"
 PACK_A_SHEET = "Canonical_Pack_A"
-ATTENTION_HEADERS = ("attention_identity", "episode_identity", "primary_event_identity", "provider_identity", "model_identity", "prompt_version", "selection_state", "acceptance_state", "selection_reason", "effective_timestamp", "forecast_cutoff", "schema_version", "provenance_checksum", "lineage_checksum", "materialization_status")
-PACK_A_HEADERS = ("pack_a_identity", "episode_identity", "primary_event_identity", "forecast_cutoff", "schema_version", "pack_a_items_json", "content_checksum", "input_checksum", "provenance_checksum", "lineage_checksum", "materialization_status")
+# These are append-only bounded-object schemas.  The writer validates this
+# prefix exactly and permits only trailing legacy/documentary columns, never a
+# reordered header.  Both objects remain outside the Route B compute boundary.
+ATTENTION_HEADERS = ("attention_identity", "episode_identity", "primary_event_identity", "provider_identity", "model_identity", "payload_provider_role", "prompt_version", "selection_state", "acceptance_state", "selection_reason", "effective_timestamp", "forecast_cutoff", "schema_version", "raw_response_checksum", "normalized_response_checksum", "content_checksum", "provenance_checksum", "lineage_checksum", "materialization_status")
+PACK_A_HEADERS = ("pack_a_identity", "episode_identity", "primary_event_identity", "provider_identity", "model_identity", "attention_identity", "forecast_cutoff", "schema_version", "request_count", "pack_a_items_json", "content_checksum", "input_checksum", "provenance_checksum", "lineage_checksum", "materialization_status")
 FORBIDDEN = ("outcome", "evaluation", "accuracy", "winner", "pack_e", "acquisition", "source_content", "unavailable")
 
 
@@ -125,6 +128,56 @@ def _row(record: Mapping[str, Any], headers: Sequence[str], *, authorization_fin
     return [record[key] for key in headers]
 
 
+def _column_name(index: int) -> str:
+    """Return the one-based A1 column name without importing a sheet library."""
+    result = ""
+    while index:
+        index, remainder = divmod(index - 1, 26)
+        result = chr(ord("A") + remainder) + result
+    return result
+
+
+def ensure_bounded_object_schema(*, sheets_service: Any, spreadsheet_id: str, sheet_name: str,
+                                 required_headers: Sequence[str]) -> dict[str, Any]:
+    """Create one named bounded object or append its missing schema fields.
+
+    This is intentionally limited to Native_Attention and Canonical_Pack_A.
+    Existing headers are never reordered or removed; a conflicting prefix
+    fails closed rather than attempting a workbook repair.
+    """
+    if spreadsheet_id != MAIN_SPREADSHEET_ID or sheet_name not in {ATTENTION_SHEET, PACK_A_SHEET}:
+        raise NativeInputMaterializationError("NATIVE_INPUT_TARGET_MISMATCH")
+    metadata = sheets_service.spreadsheets().get(
+        spreadsheetId=spreadsheet_id, fields="sheets.properties(sheetId,title)"
+    ).execute()
+    titles = {str(item.get("properties", {}).get("title")) for item in metadata.get("sheets", [])}
+    created = sheet_name not in titles
+    if created:
+        sheets_service.spreadsheets().batchUpdate(
+            spreadsheetId=spreadsheet_id,
+            body={"requests": [{"addSheet": {"properties": {"title": sheet_name}}}]},
+        ).execute()
+        existing: list[str] = []
+    else:
+        existing = sheets_service.spreadsheets().values().get(
+            spreadsheetId=spreadsheet_id, range=f"'{sheet_name}'!1:1"
+        ).execute().get("values", [[]])[0]
+    if existing and list(existing[:len(required_headers)]) != list(required_headers[:len(existing)]):
+        raise NativeInputMaterializationError("NATIVE_INPUT_DESTINATION_SCHEMA_MISMATCH")
+    headers = list(existing)
+    for header in required_headers:
+        if header not in headers:
+            headers.append(header)
+    header_written = headers != existing
+    if header_written:
+        sheets_service.spreadsheets().values().update(
+            spreadsheetId=spreadsheet_id, range=f"'{sheet_name}'!A1", valueInputOption="RAW",
+            body={"values": [headers]},
+        ).execute()
+    return {"sheet_name": sheet_name, "created": created, "header_written": header_written,
+            "headers": headers, "metadata_read": True, "schema_read": not created}
+
+
 def persist_native_attention(*, sheets_service: Any, record: Mapping[str, Any], authorization_fingerprint: str, spreadsheet_id: str, sheet_name: str) -> dict[str, Any]:
     return _persist(sheets_service=sheets_service, record=record, headers=ATTENTION_HEADERS, spreadsheet_id=spreadsheet_id, sheet_name=sheet_name, expected_sheet=ATTENTION_SHEET, authorization_fingerprint=authorization_fingerprint)
 
@@ -138,10 +191,11 @@ def _persist(*, sheets_service: Any, record: Mapping[str, Any], headers: Sequenc
         raise NativeInputMaterializationError("NATIVE_INPUT_TARGET_MISMATCH")
     values = sheets_service.spreadsheets().values()
     header = values.get(spreadsheetId=spreadsheet_id, range=f"'{sheet_name}'!1:1").execute().get("values", [[]])[0]
-    if header != list(headers):
+    if list(header[:len(headers)]) != list(headers):
         raise NativeInputMaterializationError("NATIVE_INPUT_DESTINATION_SCHEMA_MISMATCH")
-    row = _row(record, headers, authorization_fingerprint=authorization_fingerprint)
-    existing = values.get(spreadsheetId=spreadsheet_id, range=f"'{sheet_name}'!A2:O").execute().get("values", [])
+    required_row = _row(record, headers, authorization_fingerprint=authorization_fingerprint)
+    row = required_row + [""] * (len(header) - len(headers))
+    existing = values.get(spreadsheetId=spreadsheet_id, range=f"'{sheet_name}'!A2:{_column_name(len(header))}").execute().get("values", [])
     identity = row[0]
     for prior in existing:
         if prior and prior[0] == identity:
