@@ -1,0 +1,17 @@
+{
+  "manifest_version": "1.0",
+  "proof_status": "FIXTURE_INPUT_MISMATCH",
+  "expected_fingerprint": "f0f26f9c1657af4078dbae5802b721f051c2190c1cc3ebe12646c1a4ab3abba6",
+  "episode_identity": "EP_BATCH_08270f992a13e29e770f",
+  "fixture_components": [
+    {"component":"canonical Event Episode","source_path":"outputs/presignal_v21_episode_builder/episode_rows.jsonl","source_commit":"53683f97b4e336994e5be5fb6b76c6cc45ed7fc9","source_object_identity":"EP_BATCH_08270f992a13e29e770f","extraction_method":"exact JSONL identity selection","checksum":"sha256:3c39f640e950e0f8d2eb8a79592f44cef965e0aab1dddffee0cf9cfc6fec1626","role":"canonical Episode required by the Route B harness"},
+    {"component":"historical Pack E input and raw Gemini Request response","source_path":"outputs/presignal_v21_step5_reuse/event_path_forecast_inputs_pack_e.jsonl","source_commit":"8e57652d002b6791d96328fbaa5c8273fdfd4e62","source_object_identity":"EP_BATCH_08270f992a13e29e770f|Gemini|gemini-2.5-flash-lite","extraction_method":"exact JSONL Episode/provider/model selection","checksum":"sha256:84986d13aff595a6241003d1577f5833cd5d96bbc589f8eb02012ca47a4a41b8","role":"frozen expected Pack E, raw Request response, Attention history, and provider/model evidence"},
+    {"component":"historical fingerprint rule","source_path":"automation/run_phase9_historical_square_one_replay_v0.py","source_commit":"e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f","source_object_identity":"_sha(items) == pack_fingerprint","extraction_method":"Git blob inspection","checksum":"not_applicable_source_code_rule","role":"canonicalization adapter"}
+  ],
+  "unavailable_required_components": [
+    {"component":"canonical Episode at frozen Pack cutoff","required_cutoff":"2024-05-08T06:50:00Z","available_cutoff":"2024-05-08T11:00:00Z","reason":"The sole canonical Episode with the required identity is bound to a different cutoff."},
+    {"component":"complete shared Request fixture","required_provider_origins":["Anthropic","Gemini","OpenAI"],"available_raw_request_fixture_count":1,"reason":"The expected shared Pack has 15 request-originated items across three providers, while the prescribed fixture supplies one provider/model raw response."},
+    {"component":"authoritative source acquisition records in Move 3B schema","reason":"The frozen Pack stores historical derived items, not source records using the Move 3B supplied_acquisition_records schema; conversion would require a new, unproven scientific adapter."}
+  ],
+  "decision":"OFFLINE_EPISODE_TO_PACK_EQUIVALENCE_BLOCKED"
+}
