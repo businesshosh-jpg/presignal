@@ -1,0 +1,1 @@
+{"decision":"VERIFIED_ROUTE_B_CAPABILITY_FROZEN_R6_AUTHORIZATION_REQUIRED","freeze_complete":true,"r6_executed":false,"unresolved_authorizations":["provider identity or selection rule","provider and external acquisition execution","Google read target","Google write target","caller-controlled evidence destination"]}

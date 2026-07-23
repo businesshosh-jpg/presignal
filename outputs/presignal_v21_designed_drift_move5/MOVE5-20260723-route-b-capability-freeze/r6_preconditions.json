@@ -1,0 +1,1 @@
+{"all_capability_preconditions_pass":true,"r6_scope_explicit":false,"rollback_or_no_write":"no write before all preconditions; failed compute returns no successful Pack","unresolved_authorizations":["provider identity or selection rule","provider and external acquisition execution","Google read target","Google write target","caller-controlled evidence destination"]}

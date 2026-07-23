@@ -1,0 +1,1 @@
+{"commands":["Move 3B, Move 4B, Move 4C, and Move 5 focused unittest modules"],"determinism_stable":true,"failed":0,"freeze_fingerprint_reproducible":true,"historical_fingerprint_stable":true,"mutation_matrix_stable":true,"native_proof_stable":true,"passed":29,"skipped":0,"tests_run":29}
