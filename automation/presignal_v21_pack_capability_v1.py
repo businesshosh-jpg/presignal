@@ -126,6 +126,120 @@ def checksum(value: Any) -> str:
     return "sha256:" + hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
+HISTORICAL_SHARED_PACK_SOURCE_COMMIT = "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f"
+HISTORICAL_SHARED_PACK_SOURCE_PATH = "automation/run_phase9_historical_square_one_replay_v0.py"
+
+
+def historical_shared_pack_fingerprint(items: Iterable[Mapping[str, Any]]) -> str:
+    """Return the Phase 9 historical Pack-items SHA-256 without an envelope.
+
+    This is deliberately separate from :func:`checksum`: the frozen historical
+    contract stores an unprefixed digest of its ordered ``items`` list.
+    """
+    return hashlib.sha256(canonical_json(tuple(items)).encode("utf-8")).hexdigest()
+
+
+def _historical_sha(value: Any) -> str:
+    return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
+
+
+def _historical_request_lineage(
+    session_id: str, information_key: str, requests: Iterable[Mapping[str, Any]],
+) -> dict[str, Any]:
+    origins = sorted(
+        ({
+            "provider": _text(row.get("provider")),
+            "provider_request_id": _text(row.get("provider_request_id")),
+            "request_identity": _text(row.get("request_identity")),
+            "requested_information": _text(row.get("requested_information")),
+        } for row in requests),
+        key=lambda row: (row["provider"], row["provider_request_id"]),
+    )
+    if not origins or any(not all(origin.values()) for origin in origins):
+        raise PackCapabilityError("HISTORICAL_REQUEST_LINEAGE_INVALID")
+    candidate_ids = sorted({_text(row.get("candidate_id")) for row in requests if _text(row.get("candidate_id"))})
+    return {
+        "provider_request_origins": origins,
+        "provider_request_ids": [row["provider_request_id"] for row in origins],
+        "normalized_request_id": "SQ1NR_" + _historical_sha({
+            "session_id": session_id, "information_key": information_key,
+        })[:24],
+        "candidate_id": candidate_ids[0] if len(candidate_ids) == 1 else "",
+        "candidate_ids": candidate_ids,
+        "candidate_lineage_status": "PRESERVED" if candidate_ids else "NOT_APPLICABLE_NO_CANDIDATE_RECORD",
+        "requested_by": sorted({row["provider"] for row in origins}),
+    }
+
+
+def assemble_historical_shared_pack_items(
+    historical_session: Mapping[str, Any], historical_requests: Iterable[Mapping[str, Any]],
+    historical_derived_information_inputs: Iterable[Mapping[str, Any],], cutoff: str,
+) -> tuple[dict[str, Any], ...]:
+    """Rebuild frozen Phase 9 Pack items from its historical-only envelope.
+
+    This is an exact, return-only migration of the ``_request_lineage`` and
+    ``_pack_item`` output portion of the historical builder.  Inputs are
+    explicitly *historical derived information*, not native acquisition records.
+    The function has no native Episode or Attention dependency.
+    """
+    session_id = _text(historical_session.get("session_id"))
+    session_cutoff = _utc_text(historical_session.get("forecast_cutoff"), "HISTORICAL_CUTOFF_INVALID")
+    cutoff_text = _utc_text(cutoff, "HISTORICAL_CUTOFF_INVALID")
+    if not session_id or session_cutoff != cutoff_text:
+        raise PackCapabilityError("HISTORICAL_CUTOFF_LINEAGE_MISMATCH")
+    expected_models = historical_session.get("provider_models")
+    if not isinstance(expected_models, Mapping) or not expected_models:
+        raise PackCapabilityError("HISTORICAL_PROVIDER_MODELS_REQUIRED")
+    requests_by_key: dict[str, list[Mapping[str, Any]]] = {}
+    provider_ids: set[tuple[str, str]] = set()
+    for request in historical_requests:
+        key = _text(request.get("information_key"))
+        provider = _text(request.get("provider"))
+        model = _text(request.get("model"))
+        request_id = _text(request.get("provider_request_id"))
+        if not key or not provider or not request_id or _text(request.get("session_id")) != session_id:
+            raise PackCapabilityError("HISTORICAL_REQUEST_INPUT_INVALID")
+        if _text(expected_models.get(provider)) != model:
+            raise PackCapabilityError("HISTORICAL_PROVIDER_MODEL_LINEAGE_MISMATCH")
+        identity = (provider, request_id)
+        if identity in provider_ids:
+            raise PackCapabilityError("HISTORICAL_DUPLICATE_PROVIDER_REQUEST")
+        provider_ids.add(identity)
+        requests_by_key.setdefault(key, []).append(request)
+    if set(expected_models) != {provider for provider, _ in provider_ids}:
+        raise PackCapabilityError("HISTORICAL_PROVIDER_UNION_MISMATCH")
+    derived = list(historical_derived_information_inputs)
+    if not derived:
+        raise PackCapabilityError("HISTORICAL_DERIVED_INFORMATION_REQUIRED")
+    orders = [str(row.get("historical_order")) for row in derived]
+    if orders != [str(index) for index in range(len(derived))]:
+        raise PackCapabilityError("HISTORICAL_STORED_ORDER_INVALID")
+    rebuilt: list[dict[str, Any]] = []
+    for source in derived:
+        payload = source.get("payload")
+        if not isinstance(payload, Mapping):
+            raise PackCapabilityError("HISTORICAL_DERIVED_INFORMATION_INVALID")
+        item = dict(payload)
+        key = _text(item.get("information_key"))
+        if not key or key != _text(item.get("item_key")) or key not in requests_by_key:
+            raise PackCapabilityError("HISTORICAL_DERIVED_REQUEST_LINKAGE_MISMATCH")
+        if _text(item.get("forecast_cutoff")) != cutoff_text or _text(item.get("forecast_timestamp")) != cutoff_text:
+            raise PackCapabilityError("HISTORICAL_DERIVED_CUTOFF_MISMATCH")
+        lineage = _historical_request_lineage(session_id, key, requests_by_key[key])
+        scientific_value = {
+            "session_id": session_id, "information_key": key, "status": _text(item.get("status")),
+            "value": item.get("value"), "source_identity": _text(item.get("source_identity")),
+            "source_timestamp": _text(item.get("source_timestamp")), "forecast_cutoff": cutoff_text,
+            "capability_id": _text(item.get("capability_id")),
+        }
+        item.update(lineage)
+        item["value_fingerprint"] = _historical_sha(scientific_value)
+        rebuilt.append(item)
+    if len({item["information_key"] for item in rebuilt}) != len(rebuilt):
+        raise PackCapabilityError("HISTORICAL_DUPLICATE_INFORMATION_KEY")
+    return tuple(rebuilt)
+
+
 def _short(value: Any) -> str:
     return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()[:24]
 
