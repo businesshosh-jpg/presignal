@@ -78,7 +78,7 @@ def run_offline_move4_fixture_admissibility(repo_root: Path) -> dict[str, Any]:
         },
         "fixture_components": {
             "episode": {"source_path": EPISODE_SOURCE, "source_file_sha256": file_sha256(episode_path), "forecast_cutoff_ts": episode["forecast_cutoff_ts"], "episode_contract_valid": True},
-            "pack_input": {"source_path": PACK_SOURCE, "source_file_sha256": file_sha256(pack_path), "forecast_cutoff_ts": input_row["forecast_cutoff_ts"], "pack_item_count": len(pack["items"]), "provider_origins": provider_origins},
+            "pack_input": {"source_path": PACK_SOURCE, "source_file_sha256": file_sha256(pack_path), "forecast_cutoff_ts": input_row["forecast_cutoff_ts"], "pack_item_count": len(pack["items"]), "provider_origins": provider_origins, "provider_episode_selection": input_row.get("provider_episode_selection", "")},
         },
         "first_divergence": {
             "classification": "FIXTURE_INPUT_MISMATCH" if mismatch else "NONE",

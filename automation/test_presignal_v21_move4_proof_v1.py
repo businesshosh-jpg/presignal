@@ -21,6 +21,7 @@ class Move4ProofTests(unittest.TestCase):
         self.assertEqual(result["expected_fingerprint"], proof.EXPECTED_FINGERPRINT)
         self.assertTrue(result["historical_fingerprint_matches_expected"])
         self.assertEqual(result["fixture_components"]["pack_input"]["pack_item_count"], 15)
+        self.assertEqual(result["fixture_components"]["pack_input"]["provider_episode_selection"], "WATCH")
 
     def test_fixture_manifest_checksums_validate(self):
         manifest = json.loads((ROOT / "contracts/presignal_v21_event_path/move4_episode_to_pack_fixture_manifest.json").read_text())
