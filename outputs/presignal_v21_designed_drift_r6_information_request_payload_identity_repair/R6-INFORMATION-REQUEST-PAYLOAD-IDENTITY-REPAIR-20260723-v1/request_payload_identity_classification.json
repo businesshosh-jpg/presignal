@@ -1,0 +1,1 @@
+{"classification":"REQUEST_PROVIDER_FIELD_OVERLOADED","reason":"Historical successful Request payloads use the same raw provider field for descriptive model roles, while this response contains an institution token; neither form is trusted LLM provider authority."}
