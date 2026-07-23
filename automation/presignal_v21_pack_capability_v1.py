@@ -365,6 +365,12 @@ def _validate_attention(attention: Mapping[str, Any], *, episode_id: str, provid
     labels = _normal_list(attention.get("attention_labels"), uppercase=True)
     if labels and not set(labels) <= VALID_ATTENTION_LABELS:
         raise PackCapabilityError("SELECTED_ATTENTION_LABEL_INVALID")
+    if _text(attention.get("object")) == "NATIVE_SELECTED_ATTENTION":
+        if _text(attention.get("acceptance_state")).upper() != "ACCEPTED":
+            raise PackCapabilityError("SELECTED_ATTENTION_ACCEPTANCE_REQUIRED")
+        _require(_text(attention.get("prompt_version")), "SELECTED_ATTENTION_PROMPT_VERSION_REQUIRED")
+        _require(_text(attention.get("selection_reason")), "SELECTED_ATTENTION_REASON_REQUIRED")
+        _utc_text(attention.get("created_ts"), "SELECTED_ATTENTION_CREATED_TS_REQUIRED")
     fingerprint = checksum({
         "attention_id": attention_id, "episode_id": episode_id, "selection_status": state,
         "provider": provider, "model": model, "forecast_cutoff_ts": cutoff,
@@ -562,6 +568,30 @@ def build_immutable_acquired_information_bundle(
         request_id = _text(record.get("request_identity"))
         if request_id not in request_by_id:
             raise PackCapabilityError("ACQUISITION_REQUEST_LINEAGE_MISMATCH")
+        strict_native = _text(record.get("object")) == "NATIVE_ACQUISITION_RECORD"
+        if strict_native:
+            _require(_text(record.get("acquisition_record_id")), "ACQUISITION_RECORD_ID_REQUIRED")
+            if _text(record.get("episode_id")) != _text(request_by_id[request_id]["lineage"].get("episode_id")):
+                raise PackCapabilityError("ACQUISITION_EPISODE_LINEAGE_MISMATCH")
+            if _utc_text(record.get("forecast_cutoff_ts"), "ACQUISITION_CUTOFF_REQUIRED") != _utc_text(cutoff, "CUTOFF_INVALID"):
+                raise PackCapabilityError("ACQUISITION_CUTOFF_LINEAGE_MISMATCH")
+            _require(_text(record.get("acquisition_method")), "ACQUISITION_METHOD_REQUIRED")
+            source_id = _text(record.get("source_id"))
+            if source_id not in allowed_sources:
+                raise PackCapabilityError("UNAUTHORIZED_SOURCE:" + source_id)
+            _require(_text(record.get("source_identity")), "SOURCE_IDENTITY_REQUIRED")
+            _require(_text(record.get("source_url_or_key")), "SOURCE_URL_OR_KEY_REQUIRED")
+            _require(_text(record.get("source_type")), "SOURCE_TYPE_REQUIRED")
+            retrieval = _utc(record.get("retrieval_timestamp"), "RETRIEVAL_TIMESTAMP_REQUIRED")
+            if retrieval > cutoff_dt:
+                raise PackCapabilityError("POST_CUTOFF_RETRIEVAL")
+            status_for_validation = _text(record.get("status") or "SUPPLIED").upper()
+            if status_for_validation in {"UNAVAILABLE", "NOT_AVAILABLE"}:
+                if _text(record.get("raw_acquired_content")) or _text(record.get("normalized_acquired_content")):
+                    raise PackCapabilityError("UNAVAILABLE_CONTENT_NOT_ALLOWED")
+            else:
+                _require(_text(record.get("raw_acquired_content")), "RAW_ACQUIRED_CONTENT_REQUIRED")
+                _require(_text(record.get("normalized_acquired_content")), "NORMALIZED_ACQUIRED_CONTENT_REQUIRED")
         if request_id in records_by_id:
             raise PackCapabilityError("DUPLICATE_ACQUISITION_RECORD")
         records_by_id[request_id] = record
@@ -588,6 +618,8 @@ def build_immutable_acquired_information_bundle(
             "capability_id": capability_id, "capability_classification": classification, "status": status, "reason": reason,
             "source_items": source_items, "raw_record": raw, "raw_record_fingerprint": checksum(raw),
             "normalized_representation_fingerprint": checksum(source_items),
+            "raw_acquired_content": _text(record.get("raw_acquired_content")) if record is not None else "",
+            "normalized_acquired_content": _text(record.get("normalized_acquired_content")) if record is not None else "",
             "lineage": {"episode_id": request["lineage"]["episode_id"], "request_identity": request_id, "request_fingerprint": checksum(request), "authorized_source_environment_id": environment_id, "forecast_cutoff_ts": cutoff, "bundle_acquisition_timestamp": acquisition_text},
         })
     identity = {"requests": [row["request_identity"] for row in items], "items": items, "environment_id": environment_id, "cutoff": cutoff, "acquisition_timestamp": acquisition_text}

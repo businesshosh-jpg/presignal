@@ -1,0 +1,1 @@
+{"post_cutoff_fails_closed":true,"pre_cutoff_passes":true,"rule":"source/as-of/acquisition/retrieval must not exceed forecast cutoff; missing or malformed timestamps fail closed","timestamp_fields":["source_timestamp","as_of_timestamp","acquisition_timestamp","retrieval_timestamp"],"timezone":"UTC normalized"}
