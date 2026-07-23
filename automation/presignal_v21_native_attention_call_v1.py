@@ -23,6 +23,9 @@ PROVIDER = "Gemini"
 MODEL = "gemini-2.5-flash-lite"
 PROMPT_VERSION = "existing_v2_attention_prompt_schema"
 RESPONSE_SCHEMA_VERSION = "session_attention_map/v0"
+TRUSTED_GEMINI_PAYLOAD_ROLE = "macro-research-model"
+TRUSTED_GEMINI_PROMPT_TEMPLATE_CHECKSUM = "sha256:cadc09041ed55dee5ecc2b2bf285d9b8da772df0de8381b6f6c8f3f7b0d44d96"
+TRUSTED_GEMINI_BRIDGE_SOURCE_CHECKSUM = "sha256:6f20eaacdccdc3eaefb2fc4c86c93fe6e7fa17e7c2184778341401eead6d6c32"
 
 
 class NativeAttentionCallError(ValueError):
@@ -39,6 +42,55 @@ def checksum(value: Any) -> str:
 
 def parse_utc(value: str) -> datetime:
     return datetime.fromisoformat(str(value).replace("Z", "+00:00")).astimezone(timezone.utc)
+
+
+def normalize_trusted_gemini_bridge_identity(*, raw_response: Mapping[str, Any], transport_provider: str,
+                                              transport_model: str, prompt_template_checksum: str,
+                                              bridge_source_checksum: str) -> dict[str, Any]:
+    """Canonicalize one historically established Gemini prompt-agent role.
+
+    The raw payload is never edited.  This narrow adapter owns only the exact
+    descriptive provider value previously normalized by the routed v2 bridge.
+    """
+    if transport_provider != PROVIDER:
+        raise NativeAttentionCallError("ATTENTION_BRIDGE_TRANSPORT_PROVIDER_MISMATCH")
+    if transport_model != MODEL:
+        raise NativeAttentionCallError("ATTENTION_BRIDGE_TRANSPORT_MODEL_MISMATCH")
+    if prompt_template_checksum != TRUSTED_GEMINI_PROMPT_TEMPLATE_CHECKSUM:
+        raise NativeAttentionCallError("ATTENTION_BRIDGE_PROMPT_VERSION_MISMATCH")
+    if bridge_source_checksum != TRUSTED_GEMINI_BRIDGE_SOURCE_CHECKSUM:
+        raise NativeAttentionCallError("ATTENTION_BRIDGE_SOURCE_VERSION_MISMATCH")
+    if raw_response.get("provider") != TRUSTED_GEMINI_PAYLOAD_ROLE:
+        raise NativeAttentionCallError("ATTENTION_BRIDGE_PAYLOAD_ROLE_MISMATCH")
+    canonical_payload = dict(raw_response)
+    canonical_payload["provider"] = PROVIDER
+    return {"canonical_payload": canonical_payload, "canonical_provider_identity": PROVIDER,
+            "transport_provider_identity": transport_provider, "transport_model_identity": transport_model,
+            "payload_provider_role": TRUSTED_GEMINI_PAYLOAD_ROLE,
+            "mapping_rule": "EXACT_GEMINI_ROUTED_TRANSPORT_PLUS_PROMPT_AGENT_ROLE_V1",
+            "bridge_metadata_checksum": checksum({"transport_provider": transport_provider, "transport_model": transport_model,
+                                                     "prompt_template_checksum": prompt_template_checksum,
+                                                     "bridge_source_checksum": bridge_source_checksum,
+                                                     "payload_provider_role": TRUSTED_GEMINI_PAYLOAD_ROLE})}
+
+
+def normalize_preserved_gemini_attention_response(*, episode: Mapping[str, Any], raw_response: Mapping[str, Any],
+                                                   effective_timestamp: str, member_event_ids: Sequence[str],
+                                                   prompt_template_checksum: str, bridge_source_checksum: str,
+                                                   preserved_raw_response_checksum: str | None = None) -> dict[str, Any]:
+    """Apply the exact bridge-role rule before standard native validation."""
+    mapped = normalize_trusted_gemini_bridge_identity(
+        raw_response=raw_response, transport_provider=PROVIDER, transport_model=MODEL,
+        prompt_template_checksum=prompt_template_checksum, bridge_source_checksum=bridge_source_checksum,
+    )
+    normalized = normalize_attention_response(
+        episode=episode, raw_response=mapped["canonical_payload"], effective_timestamp=effective_timestamp,
+        returned_provider=PROVIDER, returned_model=MODEL, member_event_ids=member_event_ids,
+    )
+    normalized.update({key: mapped[key] for key in ("canonical_provider_identity", "transport_provider_identity", "transport_model_identity", "payload_provider_role", "mapping_rule", "bridge_metadata_checksum")})
+    normalized["raw_response_checksum"] = preserved_raw_response_checksum or checksum(raw_response)
+    normalized["normalized_response_checksum"] = checksum({key: value for key, value in normalized.items() if key != "normalized_response_checksum"})
+    return normalized
 
 
 def authorization_manifest() -> dict[str, Any]:
