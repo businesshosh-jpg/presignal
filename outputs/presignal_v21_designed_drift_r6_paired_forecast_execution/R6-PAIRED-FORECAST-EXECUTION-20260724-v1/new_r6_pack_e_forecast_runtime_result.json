@@ -1,0 +1,1 @@
+{"call_count":1,"finish_status":null,"forecast_state":"DIRECTIONAL","provider":"Gemini","request_id":null,"requested_model":"gemini-2.5-flash-lite","retry_count":0,"returned_model":"gemini-2.5-flash-lite","runtime_state":"SUCCESS","usage":{"completion_tokens":992,"prompt_tokens":21564}}
