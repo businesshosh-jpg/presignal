@@ -80,6 +80,16 @@ def invoke(data: dict) -> dict:
 
 
 class ProspectivePackEAcquisitionTests(unittest.TestCase):
+    def test_validation_only_mode_confirms_visibility_without_fetch_or_writer(self) -> None:
+        result = invoke(payload(validation_only=True))
+        self.assertTrue(result["ok"])
+        metadata = result["result"]
+        self.assertEqual(metadata["object"], "PROSPECTIVE_PACK_E_CAPABILITY_METADATA")
+        self.assertTrue(metadata["validation_only"])
+        self.assertEqual(metadata["external_source_dispatch_count"], 0)
+        self.assertEqual(metadata["writer_count"], 0)
+        self.assertEqual(result["calls"], {"FMP": 0, "FRED": 0, "EODHD": 0, "writers": 0})
+
     def test_valid_fred_fixture_emits_one_native_record_and_never_writes(self) -> None:
         result = invoke(payload())
         self.assertTrue(result["ok"])

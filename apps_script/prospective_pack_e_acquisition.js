@@ -123,6 +123,24 @@ function _prospectivePackENormalizeRows_(rows) {
     .sort(function(left, right) { return left.date < right.date ? -1 : (left.date > right.date ? 1 : 0); });
 }
 
+function _prospectivePackEValidationOnly_(request) {
+  request = request || {};
+  return {
+    object: 'PROSPECTIVE_PACK_E_CAPABILITY_METADATA',
+    schema_version: PROSPECTIVE_PACK_E_ADAPTER_VERSION_V1,
+    function_identity: 'apiBuildProspectivePackENativeAcquisitionRecord',
+    adapter_identity: _prospectivePackEText_(request.adapter_identity),
+    source_id: _prospectivePackEText_(request.source_id),
+    validation_only: true,
+    external_source_dispatch_count: 0,
+    writer_count: 0,
+    retry_budget: 0,
+    writer_behavior: 'none',
+    scientific_behavior_changed: false,
+    supported_sources: Object.keys(PROSPECTIVE_PACK_E_SOURCE_SPECS_V1).sort()
+  };
+}
+
 function _prospectivePackEBuildRecordWithFetcher_(request, fetcher) {
   request = request || {};
   var sourceId = _prospectivePackERequire_(request.source_id, 'SOURCE_ID_REQUIRED');
@@ -207,5 +225,7 @@ function _prospectivePackEBuildRecordWithFetcher_(request, fetcher) {
 }
 
 function apiBuildProspectivePackENativeAcquisitionRecord(request) {
+  request = request || {};
+  if (request.validation_only === true) return _prospectivePackEValidationOnly_(request);
   return _prospectivePackEBuildRecordWithFetcher_(request, null);
 }
