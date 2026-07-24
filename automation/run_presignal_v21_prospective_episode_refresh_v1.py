@@ -16,7 +16,7 @@ from automation import presignal_v21_prospective_episode_refresh_v1 as refresh
 
 
 OUT = ROOT / "outputs" / "presignal_v21_designed_drift_r6_episode_refresh" / "R6-EPISODE-REFRESH-20260723-v1"
-FREEZE = "sha256:8c910a343515d88ca63ce4c44f7e73c30805dfd773"
+FREEZE = "sha256:8c910a343515d88ca63ce4aaf738f28f9b4a8ab22665397077858bfaf7e866e4"
 R6_V3 = "sha256:c8cb003af94eef2ef9cad8f323ab31b3c1990f3ffdcdab5ee3e6285fda76efb9"
 ATTENTION_AUTH = "sha256:a5e1dfda5a637dbaf626c43c2bcdf512d36e2b24daff6f6ab3ce4adbd923db50"
 
