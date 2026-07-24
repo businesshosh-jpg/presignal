@@ -848,6 +848,17 @@ function apiUpsertEventWindow_(params) {
     status: 'ok',
     window_from_utc: fromUtcIso,
     window_to_utc: toUtcIso,
+    window_start: fromUtcIso,
+    window_end: toUtcIso,
+    window_semantics: 'UTC calendar-date inclusive: from date through to date',
+    raw_event_count: upsert.raw_event_count,
+    canonical_event_count: upsert.canonical_event_count,
+    inserted_count: upsert.appended,
+    updated_count: upsert.upserts - upsert.unchanged,
+    unchanged_count: upsert.unchanged,
+    failed_count: upsert.skipped,
+    canonical_events: upsert.canonical_events,
+    canonical_event_set_checksum: upsert.canonical_event_set_checksum,
     upsert: upsert,
     batching: batching
   };

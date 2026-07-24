@@ -265,6 +265,45 @@ function normalizeFmpRow_(raw) {
 
 /** ===== Writer (Upsert to Event) ===== **/
 
+/* Compact, non-secret reconciliation evidence for apiUpsertEventWindow. */
+function _calendarResultSha256_(text) {
+  var bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(text), Utilities.Charset.UTF_8);
+  return 'sha256:' + bytes.map(function(b){ var n = b < 0 ? b + 256 : b; return ('0' + n.toString(16)).slice(-2); }).join('');
+}
+
+function _calendarResultContent_(n) {
+  return {
+    country: String(n.country || '').toUpperCase(), indicator_name: String(n.indicator_name || ''),
+    release_ts: String(n.release_ts || ''), source_identity: 'FMP', genre: String(n.genre || ''),
+    importance: String(n.importance || ''), consensus_value: n.consensus_value === undefined || n.consensus_value === null ? '' : n.consensus_value,
+    prev_revision: n.prev_revision === undefined || n.prev_revision === null ? '' : n.prev_revision,
+    released_value: n.released_value === undefined || n.released_value === null ? '' : n.released_value,
+    released_ts: String(n.released_ts || ''), source_provider: String(n.source_provider || ''),
+    source_series_id: String(n.source_series_id || ''), transform: String(n.transform || ''),
+    release_status: String(n.release_status || 'scheduled'), notes: String(n.notes || ''),
+    resolution_method: String(n.resolution_method || ''), confidence_level: String(n.confidence_level || '')
+  };
+}
+
+function _calendarResultEvent_(n, writeDisposition) {
+  var content = _calendarResultContent_(n);
+  var identity = content.country + '|' + content.indicator_name + '|' + content.release_ts;
+  return {
+    event_identity: identity, country: content.country, indicator_name: content.indicator_name,
+    release_ts: content.release_ts, source_identity: content.source_identity,
+    content_checksum: _calendarResultSha256_(JSON.stringify(content)), write_disposition: writeDisposition
+  };
+}
+
+function _calendarResultRowsEqual_(existing, incoming, headers) {
+  var fields = ['object','country','indicator_name','genre','importance','release_ts','source_cal','consensus_value','prev_revision','released_value','released_ts','source_provider','source_series_id','transform','release_status','notes','resolution_method','confidence_level'];
+  for (var i = 0; i < fields.length; i++) {
+    var index = headers.indexOf(fields[i]);
+    if (index >= 0 && String(existing[index] || '') !== String(incoming[index] || '')) return false;
+  }
+  return true;
+}
+
 /**
  * Upsert normalized rows into Event using an in-memory fallback key:
  *   key = country + '|' + indicator_name + '|' + release_ts
@@ -307,8 +346,9 @@ function _upsertEventsToEvent_(normRows) {
     }
   }
 
-  var appended = 0, upserts = 0, skipped = 0;
+  var appended = 0, upserts = 0, unchanged = 0, skipped = 0;
   var skipped_reasons = { missing_indicator_name: 0, missing_release_ts: 0 };
+  var canonicalEvents = [];
 
   var rowsToAppend = [];           // rows to append (as arrays in header order)
   var updates = [];                // {r, values[]} list for in-place updates
@@ -318,8 +358,8 @@ function _upsertEventsToEvent_(normRows) {
     var n = normRows[i] || {};
     var indicatorName = String(n.indicator_name || '');
     var releaseTs = String(n.release_ts || '');
-    if (!indicatorName) { skipped++; skipped_reasons.missing_indicator_name++; continue; }
-    if (!releaseTs) { skipped++; skipped_reasons.missing_release_ts++; continue; }
+    if (!indicatorName) { skipped++; skipped_reasons.missing_indicator_name++; canonicalEvents.push({event_identity:'', country:String(n.country || '').toUpperCase(), indicator_name:'', release_ts:String(n.release_ts || ''), source_identity:'FMP', content_checksum:'', write_disposition:'FAILED'}); continue; }
+    if (!releaseTs) { skipped++; skipped_reasons.missing_release_ts++; canonicalEvents.push({event_identity:'', country:String(n.country || '').toUpperCase(), indicator_name:indicatorName, release_ts:'', source_identity:'FMP', content_checksum:'', write_disposition:'FAILED'}); continue; }
 
     var country = String(n.country || '').toUpperCase();
     var key = country + '|' + indicatorName + '|' + releaseTs;
@@ -375,9 +415,16 @@ function _upsertEventsToEvent_(normRows) {
       // BUT our spec says event_id/batch_id/type are filled later by post-pass anyway.
       updates.push({ r: rindex, values: arr });
       upserts++;
+      if (_calendarResultRowsEqual_(body[rindex], arr, headers)) {
+        unchanged++;
+        canonicalEvents.push(_calendarResultEvent_(n, 'UNCHANGED'));
+      } else {
+        canonicalEvents.push(_calendarResultEvent_(n, 'UPDATED'));
+      }
     } else {
       rowsToAppend.push(arr);
       appended++;
+      canonicalEvents.push(_calendarResultEvent_(n, 'INSERTED'));
     }
   }
 
@@ -417,12 +464,20 @@ function _upsertEventsToEvent_(normRows) {
     // don't block the run on a sort error
   }
 
+  canonicalEvents.sort(function(a, b){
+    var A = [a.release_ts, a.country, a.indicator_name, a.event_identity].join('|');
+    var B = [b.release_ts, b.country, b.indicator_name, b.event_identity].join('|');
+    return A < B ? -1 : (A > B ? 1 : 0);
+  });
   return {
     fetched: normRows.length,
     appended: appended,
     upserts: upserts,
+    unchanged: unchanged,
     skipped: skipped,
-    skipped_reasons: skipped_reasons
+    skipped_reasons: skipped_reasons,
+    canonical_events: canonicalEvents,
+    canonical_event_set_checksum: _calendarResultSha256_(JSON.stringify(canonicalEvents))
   };
 }
 
@@ -565,7 +620,11 @@ function runFmpRangeToEvent_(fromUtcIso, toUtcIso) {
     return 0;
   });
 
-  return _upsertEventsToEvent_(norm);
+  var result = _upsertEventsToEvent_(norm);
+  result.raw_event_count = raw.length;
+  result.canonical_event_count = norm.length;
+  result.window_semantics = 'UTC calendar-date inclusive: from date through to date';
+  return result;
 }
 
 /** ===== FMP Event Catalog (for SeriesMap suggestion workflows) ===== **/

@@ -1,0 +1,1 @@
+{"decision":"CALENDAR_ROW_LEVEL_RECONCILIATION_FAILED","reference_utc":"2026-07-24T04:25:40Z","fixed_window":{"start_utc":"2026-07-24T00:00:00Z","end_utc":"2026-07-31T00:00:00Z"},"contract_fingerprint":"sha256:a2489df0c167ec5a742aab3881f0e4ec1c12db4f2aa757f3f1713bd60930cd8b","attention_authorization_created":false,"normalizer_field_order_repaired":true}
