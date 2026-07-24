@@ -1,0 +1,1 @@
+{"capture_wrapper_identity":"PRESIGNAL_V21_GOOGLE_CALENDAR_DISPATCH_CAPTURE_V1","general_observability_system_added":false,"new_dispatch_permitted":false,"repair_implemented":true,"result_loss_location":"prior shell-to-task-artifact boundary omitted stdout/stderr/result serialization","scope":"apiUpsertEventWindow only","secret_redaction_passed":true}

@@ -1,0 +1,1 @@
+{"actual_return":"not captured into task evidence","expected_return":"structured Apps Script result","path":"Python shell -> google_clients.run_script_function -> Apps Script Execution API -> apiUpsertEventWindow","result_loss_risk":"HIGH"}
