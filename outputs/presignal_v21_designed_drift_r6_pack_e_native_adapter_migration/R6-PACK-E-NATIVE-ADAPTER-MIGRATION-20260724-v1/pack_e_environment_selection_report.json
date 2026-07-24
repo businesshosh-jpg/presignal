@@ -1,0 +1,1 @@
+{"multiple_valid_environments":false,"reason":"The only direct approved Treasury route with a migrated adapter is KSRC_FRED, and its existing runtime configuration binding is unresolved.","required_coverage_complete":false,"selected_environment":"NOT_CREATED","selection_status":"NO_COMPLETE_APPROVED_ENVIRONMENT"}
