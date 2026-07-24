@@ -45,7 +45,7 @@ def utc(value: str) -> datetime:
 
 def relevance(name: str) -> tuple[str, str]:
     text = name.lower()
-    if any(x in text for x in ("fed interest rate", "fed press", "gdp", "pce price", "personal spending", "durable goods", "consumer confidence")):
+    if any(x in text for x in ("fed interest rate", "fed press", "gdp", "pce price", "personal spending", "durable goods", "non defense goods", "consumer confidence", "atlanta fed")):
         return "HIGH", "Direct US monetary-policy, growth, or inflation transmission to Treasury yields and USD/JPY."
     if any(x in text for x in ("chicago pmi", "dallas fed", "new home", "case-shiller", "jobless", "employment")):
         return "MEDIUM", "Relevant US growth or labor signal with an indirect USD/JPY channel."
