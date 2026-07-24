@@ -1,0 +1,1 @@
+{"authoritative_mapping_found":true,"classification":"AUTHORITATIVE_PRIORITY_MAPPING_EXISTS","enum_broadened":false,"low_value_treatment":"Low maps explicitly to low_value; optional remains an independent canonical value","mapping":{"High":"must_have","Low":"low_value","Medium":"useful"}}

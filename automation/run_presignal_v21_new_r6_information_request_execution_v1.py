@@ -21,6 +21,7 @@ if str(ROOT) not in sys.path:
 
 from automation import google_clients
 from automation import presignal_v21_minimal_prospective_lineage_v1 as lineage
+from automation import presignal_v21_pack_capability_v1 as capability
 
 
 SOURCE = ROOT / "outputs/presignal_v21_designed_drift_r6_native_attention_field_ownership/R6-NATIVE-ATTENTION-FIELD-OWNERSHIP-20260724-v1"
@@ -168,7 +169,20 @@ def temporal_error(requested_information: str) -> str | None:
     return None
 
 
-def normalize_response(raw_response: Any, transport: Mapping[str, Any], raw_checksum: str, *, authorization_fingerprint: str = AUTH_FP) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
+def normalize_known_priority(value: Any) -> tuple[str | None, bool]:
+    """Use only the frozen capability's explicit priority aliases.
+
+    The capability's generic fallback-to-useful is intentionally not used here:
+    unknown model wording must remain fail-closed at this boundary.
+    """
+    raw = clean_text(value).lower().replace("-", "_")
+    if raw in lineage.VALID_PRIORITIES:
+        return raw, False
+    mapped = capability.PRIORITY_NORMALIZATION_MAP.get(raw)
+    return (mapped, True) if mapped else (None, False)
+
+
+def normalize_response(raw_response: Any, transport: Mapping[str, Any], raw_checksum: str, *, authorization_fingerprint: str = AUTH_FP, allow_authoritative_priority_normalization: bool = False, priority_contract_fingerprint: str | None = None) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
     if transport.get("actual_provider") != PROVIDER or transport.get("actual_model") != MODEL:
         raise RequestValidationError("REQUEST_TRANSPORT_PROVIDER_MODEL_MISMATCH")
     try:
@@ -190,7 +204,8 @@ def normalize_response(raw_response: Any, transport: Mapping[str, Any], raw_chec
         category = clean_text(item.get("information_category"))
         requested = clean_text(item.get("requested_information"))
         reason = clean_text(item.get("reason"))
-        priority = clean_text(item.get("priority"))
+        raw_priority = clean_text(item.get("priority"))
+        priority, priority_normalized = normalize_known_priority(raw_priority) if allow_authoritative_priority_normalization else (raw_priority, False)
         channel = clean_text(item.get("affected_channel"))
         if category not in lineage.VALID_CATEGORIES:
             divergences.append("REQUEST_CATEGORY_INVALID:" + str(index)); continue
@@ -204,7 +219,7 @@ def normalize_response(raw_response: Any, transport: Mapping[str, Any], raw_chec
         if prior_category is not None and prior_category != category:
             divergences.append("REQUEST_CONFLICTING_DUPLICATE:" + str(index)); continue
         seen_text_category[requested] = category
-        candidate = {"raw_rank": item.get("request_rank"), "information_category": category, "requested_information": requested, "reason": reason, "priority": priority, "affected_channel": channel,
+        candidate = {"raw_rank": item.get("request_rank"), "information_category": category, "requested_information": requested, "reason": reason, "priority": priority, "raw_priority": raw_priority, "priority_normalized": priority_normalized, "affected_channel": channel,
                      "event_family_relevance": clean_text(item.get("event_family_relevance")), "linked_event_ids": [str(value) for value in item.get("linked_event_ids", [])] if isinstance(item.get("linked_event_ids"), list) else [],
                      "linked_attention_labels": [str(value) for value in item.get("linked_attention_labels", [])] if isinstance(item.get("linked_attention_labels"), list) else [], "available_now": item.get("available_now"),
                      "requested_source_identity": clean_text(item.get("suggested_source")) or None, "requested_source_role": "PREFERRED_RESEARCH_PROVIDER" if clean_text(item.get("suggested_source")) else None,
@@ -228,7 +243,7 @@ def normalize_response(raw_response: Any, transport: Mapping[str, Any], raw_chec
     flags = content_flags(normalized_items)
     if any(flags.values()):
         raise RequestValidationError("REQUEST_TEMPORAL_SCOPE_INVALID", [key for key, value in flags.items() if value])
-    normalized = {"object": "session_information_requirements", "schema_version": "v0", "canonical_provider_identity": PROVIDER, "transport_provider_identity": transport.get("actual_provider"), "transport_model_identity": transport.get("actual_model"), "episode_identity": EPISODE, "attention_identity": ATTENTION, "prompt_version": PROMPT_VERSION, "forecast_cutoff": CUTOFF, "raw_payload_provider_value": raw.get("provider"), "raw_payload_session_id": raw.get("session_id"), "untrusted_model_identity_fields": {key: raw.get(key) for key in ("provider", "session_id") if key in raw}, "unexpected_identity_fields_policy": "UNEXPECTED_FIELDS_IGNORED_NONAUTHORITATIVELY", "information_items": normalized_items, "raw_response_checksum": raw_checksum}
+    normalized = {"object": "session_information_requirements", "schema_version": "v0", "canonical_provider_identity": PROVIDER, "transport_provider_identity": transport.get("actual_provider"), "transport_model_identity": transport.get("actual_model"), "episode_identity": EPISODE, "attention_identity": ATTENTION, "prompt_version": PROMPT_VERSION, "forecast_cutoff": CUTOFF, "raw_payload_provider_value": raw.get("provider"), "raw_payload_session_id": raw.get("session_id"), "untrusted_model_identity_fields": {key: raw.get(key) for key in ("provider", "session_id") if key in raw}, "unexpected_identity_fields_policy": "UNEXPECTED_FIELDS_IGNORED_NONAUTHORITATIVELY", "information_items": normalized_items, "raw_response_checksum": raw_checksum, "priority_contract_fingerprint": priority_contract_fingerprint}
     normalized["normalized_response_checksum"] = sha({key: value for key, value in normalized.items() if key != "normalized_response_checksum"})
     rows: list[dict[str, Any]] = []
     for order, item in enumerate(normalized_items, 1):
@@ -236,9 +251,9 @@ def normalize_response(raw_response: Any, transport: Mapping[str, Any], raw_chec
         request_identity = "NREQ_" + sha(identity_basis)[7:27]
         content = {"request_identity": request_identity, "episode_identity": EPISODE, "attention_identity": ATTENTION, "provider": PROVIDER, "model": MODEL, "information_category": item["information_category"], "requested_information": item["requested_information"], "reason": item["reason"], "priority": item["priority"], "affected_channel": item["affected_channel"], "requested_source_identity": item["requested_source_identity"], "requested_source_role": item["requested_source_role"], "requested_source_registry_status": item["requested_source_registry_status"], "temporal_classification": item["temporal_classification"], "canonical_order": order, "schema_version": "v0"}
         content_checksum = sha(content)
-        provenance = {"raw_response_checksum": raw_checksum, "normalized_response_checksum": normalized["normalized_response_checksum"], "request_authorization_fingerprint": authorization_fingerprint, "attention_content_checksum": "sha256:223025d1db8be393b8426fbca149ff19e77cc585328d97f61967116613a4ccbe", "raw_payload_provider_value": raw.get("provider")}
-        lineage_value = {"episode_identity": EPISODE, "attention_identity": ATTENTION, "provider": PROVIDER, "model": MODEL, "forecast_cutoff": CUTOFF, "prompt_checksum": PROMPT_SHA, "category_enum_checksum": CATEGORY_SHA, "temporal_alignment_fingerprint": TEMPORAL_FP, "canonical_order": order}
-        rows.append({**content, "raw_information_category": item["information_category"], "request_text": item["requested_information"], "event_family_relevance": item["event_family_relevance"], "linked_event_ids": item["linked_event_ids"], "linked_attention_labels": item["linked_attention_labels"], "available_now": item["available_now"], "expected_forecast_use": item["expected_forecast_use"], "is_market_state_candidate": item["is_market_state_candidate"], "raw_response_checksum": raw_checksum, "normalized_response_checksum": normalized["normalized_response_checksum"], "content_checksum": content_checksum, "provenance": provenance, "provenance_checksum": sha(provenance), "lineage": lineage_value, "lineage_checksum": sha(lineage_value)})
+        provenance = {"raw_response_checksum": raw_checksum, "normalized_response_checksum": normalized["normalized_response_checksum"], "request_authorization_fingerprint": authorization_fingerprint, "attention_content_checksum": "sha256:223025d1db8be393b8426fbca149ff19e77cc585328d97f61967116613a4ccbe", "raw_payload_provider_value": raw.get("provider"), "raw_priority": item["raw_priority"], "priority_normalized": item["priority_normalized"], "priority_contract_fingerprint": priority_contract_fingerprint}
+        lineage_value = {"episode_identity": EPISODE, "attention_identity": ATTENTION, "provider": PROVIDER, "model": MODEL, "forecast_cutoff": CUTOFF, "prompt_checksum": PROMPT_SHA, "category_enum_checksum": CATEGORY_SHA, "temporal_alignment_fingerprint": TEMPORAL_FP, "priority_contract_fingerprint": priority_contract_fingerprint, "canonical_order": order}
+        rows.append({**content, "raw_information_category": item["information_category"], "raw_priority": item["raw_priority"], "priority_normalized": item["priority_normalized"], "priority_contract_fingerprint": priority_contract_fingerprint, "request_text": item["requested_information"], "event_family_relevance": item["event_family_relevance"], "linked_event_ids": item["linked_event_ids"], "linked_attention_labels": item["linked_attention_labels"], "available_now": item["available_now"], "expected_forecast_use": item["expected_forecast_use"], "is_market_state_candidate": item["is_market_state_candidate"], "raw_response_checksum": raw_checksum, "normalized_response_checksum": normalized["normalized_response_checksum"], "content_checksum": content_checksum, "provenance": provenance, "provenance_checksum": sha(provenance), "lineage": lineage_value, "lineage_checksum": sha(lineage_value)})
     report = {"schema_valid": True, "request_count": len(rows), "raw_request_count": len(items), "canonical_request_count": len(rows), "duplicate_count": len(items) - len(rows), "category_validation": True, "temporal_validation": True, "provider_source_separation": True, "provider_identity_valid": True, "payload_source_roles": [row["requested_source_identity"] for row in rows], "raw_payload_provider_value": raw.get("provider"), "raw_payload_provider_treated_as_gemini_alias": False, "episode_match": True, "attention_match": True, "forecast_content_detected": flags["forecast_content_detected"], "post_release_content_detected": flags["post_release_content_detected"], "request_identities": [row["request_identity"] for row in rows], "request_set_checksum": sha(rows)}
     return normalized, rows, report
 

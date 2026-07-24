@@ -23,7 +23,9 @@ VALID_CATEGORIES = {
     "event_consensus_detail", "other",
 }
 REQUEST_PROMPT_VERSION_V1 = "presignal_v21_information_request_prompt_v1"
-REQUEST_PROMPT_VERSION = "presignal_v21_information_request_prompt_v2"
+REQUEST_PROMPT_VERSION_V2 = "presignal_v21_information_request_prompt_v2"
+REQUEST_PROMPT_VERSION = REQUEST_PROMPT_VERSION_V2
+REQUEST_PROMPT_VERSION_V3 = "presignal_v21_information_request_prompt_v3"
 REQUEST_CATEGORY_ENUM_BLOCK = "\n".join(sorted(VALID_CATEGORIES))
 VALID_CHANNELS = {
     "fed_path", "treasury_yields", "usd_direction", "jpy_direction", "risk_sentiment",
@@ -56,6 +58,8 @@ Do not create category names, use display labels or natural-language alternative
 Valid examples: event_consensus_detail — What are the current consensus estimate, forecast range, and most recent economist revisions for the upcoming Manufacturing PMI release? growth_context — How have recent regional manufacturing surveys and industrial indicators changed expectations for the upcoming PMI release? historical_surprise_sensitivity — How has USD/JPY historically reacted when comparable PMI releases differed materially from consensus? treasury_yields — What is the current pre-release Treasury-yield environment relevant to the expected USD reaction?
 
 Invalid examples (all prohibited because they require Event Outcome or post-release evidence): What was the released Manufacturing PMI value? Did the Manufacturing PMI beat expectations? How did USD/JPY react after the PMI release? What was the realized 15-minute price path? Was the forecast direction correct?"""
+REQUEST_PRIORITY_ENUM_RULE_V3 = """For every information item, priority must be exactly one of these lowercase machine values: must_have, useful, optional, low_value. Return the exact lowercase enum value. Do not return High, Medium, Low, or synonyms. Semantic meaning: must_have is essential pre-release context; useful is material supporting context; optional is supplementary context; low_value is de-prioritized context. Valid compact example: {\"information_category\":\"fed_expectations\",\"priority\":\"must_have\",\"affected_channel\":\"fed_path\"}."""
+REQUEST_INSTRUCTION_V3 = REQUEST_INSTRUCTION + "\n\n" + REQUEST_PRIORITY_ENUM_RULE_V3
 FORBIDDEN_KEYS = {"outcome", "evaluation", "released_value", "actual", "realized", "reversal", "forecast_direction", "expected_move_pips"}
 
 

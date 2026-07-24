@@ -1,0 +1,1 @@
+{"canonical_requests_created":true,"classification":"PRESERVED_REQUEST_RESPONSE_CANONICALIZATION_PERMITTED","new_provider_call_required":false,"reason":"The original V2 call was authorized and the frozen capability already defines the exact display-to-canonical mapping."}
