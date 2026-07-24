@@ -1,0 +1,1 @@
+{"canonical_parser":"datetime.fromisoformat(...Z=>+00:00).astimezone(UTC)","defect":"window-end interpretation, not timestamp normalization","spreadsheet_serial_conversion":"not implicated in preserved valid rows","stored_values":"canonical ISO UTC timestamps for valid rows","timezone_or_precision_difference":false}

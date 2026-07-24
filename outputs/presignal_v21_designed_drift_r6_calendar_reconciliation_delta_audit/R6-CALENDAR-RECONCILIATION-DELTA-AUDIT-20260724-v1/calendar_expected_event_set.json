@@ -1,0 +1,1 @@
+{"adapter_reported_count":91,"adapter_row_level_event_evidence_present":false,"duplicate_expected_identities":"NOT_EVALUABLE","reason":"apiUpsertEventWindow preserved only upsert/batching aggregates; neither captured response contains the 91 normalized FMP rows.","status":"NOT_RECONSTRUCTABLE_ROW_LEVEL_ADAPTER_EVIDENCE_ABSENT"}
