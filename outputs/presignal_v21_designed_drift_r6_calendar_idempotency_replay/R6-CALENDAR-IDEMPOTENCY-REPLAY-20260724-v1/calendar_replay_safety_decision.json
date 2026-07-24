@@ -1,0 +1,1 @@
+{"classification":"CALENDAR_REFRESH_IDEMPOTENT_REPLAY_SAFE","new_dispatch_authorized":true,"reason":"identical replay has zero duplicate canonical rows in the exact lookup-key simulation"}

@@ -1,0 +1,1 @@
+{"attention_authorization_created":false,"decision":"CALENDAR_REFRESH_CAPTURED_FAILED","fixed_window":{"end_utc":"2026-07-31T00:00:00Z","start_utc":"2026-07-24T00:00:00Z"},"idempotency_classification":"CALENDAR_REFRESH_IDEMPOTENT_REPLAY_SAFE","offline_reconciliation_repaired":true,"reference_utc":"2026-07-24T02:49:06Z"}
