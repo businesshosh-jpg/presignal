@@ -22,7 +22,8 @@ VALID_CATEGORIES = {
     "upcoming_larger_events", "jpy_intervention_risk", "volatility", "historical_surprise_sensitivity",
     "event_consensus_detail", "other",
 }
-REQUEST_PROMPT_VERSION = "presignal_v21_information_request_prompt_v1"
+REQUEST_PROMPT_VERSION_V1 = "presignal_v21_information_request_prompt_v1"
+REQUEST_PROMPT_VERSION = "presignal_v21_information_request_prompt_v2"
 REQUEST_CATEGORY_ENUM_BLOCK = "\n".join(sorted(VALID_CATEGORIES))
 VALID_CHANNELS = {
     "fed_path", "treasury_yields", "usd_direction", "jpy_direction", "risk_sentiment",
@@ -35,7 +36,7 @@ APPROVED_MODELS = {
 ATTENTION_INSTRUCTION = """You are classifying event attention for a PreSignal v2.0 shadow research layer.
 
 Your task is not to forecast USDJPY direction, estimate pips, give trading advice, browse, or select an Event Episode. For each supplied event assign exactly one attention label and explain briefly. Return strict JSON only, without markdown, using exactly: object, session_id, provider, attention_items, session_attention_summary, status. Set object to session_attention_map and status to ok. Each attention_items object must use exactly: event_id, attention_label, attention_rank, attention_reason, expected_market_channel, driver_role, confidence. Allowed labels: PRIMARY_DRIVER, SECONDARY_DRIVER, WATCHLIST, CONTEXT_ONLY, IGNORE, NO_SIGNAL. Do not include any forecast, price, released actual, or Outcome field."""
-REQUEST_INSTRUCTION = f"""You are identifying information requirements for a PreSignal v2.0 shadow research layer.
+REQUEST_INSTRUCTION_V1 = f"""You are identifying information requirements for a PreSignal v2.0 shadow research layer.
 
 You are given a session, its events, and the same provider's Attention Map. Do not forecast USDJPY direction, estimate pips, give trading advice, browse, or create a Market-State Pack. Return strict JSON only, without markdown, using exactly: object, session_id, provider, information_items, session_information_summary, status. Set object to session_information_requirements and status to ok. The session_id must exactly equal the supplied session identity; the supplied Attention Map binds Attention lineage and the request envelope binds schema version. Each information_items object must use exactly: request_rank, requested_information, information_category, priority, reason, affected_channel, event_family_relevance, linked_event_ids, linked_attention_labels, available_now, suggested_source, expected_forecast_use, is_market_state_candidate. information_items must be a non-empty array and each requested_information must be actionable and non-empty.
 
@@ -43,6 +44,18 @@ For each information item, set information_category to exactly one of these mach
 {REQUEST_CATEGORY_ENUM_BLOCK}
 
 Do not create category names, use display labels or natural-language alternatives, leave information_category blank, or put multiple categories in one field. Use other only when no specific listed category directly describes the concrete request; do not use it to avoid categorization. Do not include any forecast, price, released actual, Outcome, evaluation, Pack A, or Pack E field."""
+REQUEST_INSTRUCTION = f"""You are identifying information requirements for a PreSignal v2.0 shadow research layer.
+
+You are given a pre-release session, its events, and the same provider's Attention Map. Generate only information requests that can be answered using information available or knowable before the forecast cutoff. The Event has not occurred for purposes of this task: treat its scheduled actual value and any market reaction as unavailable future information. Do not forecast USDJPY direction, estimate pips, give trading advice, browse, or create a Market-State Pack. Return strict JSON only, without markdown, using exactly: object, session_id, provider, information_items, session_information_summary, status. Set object to session_information_requirements and status to ok. The session_id must exactly equal the supplied session identity; the supplied Attention Map binds Attention lineage and the request envelope binds schema version. Each information_items object must use exactly: request_rank, requested_information, information_category, priority, reason, affected_channel, event_family_relevance, linked_event_ids, linked_attention_labels, available_now, suggested_source, expected_forecast_use, is_market_state_candidate. information_items must be a non-empty array and each requested_information must be actionable and non-empty.
+
+For each information item, set information_category to exactly one of these machine values:
+{REQUEST_CATEGORY_ENUM_BLOCK}
+
+Do not create category names, use display labels or natural-language alternatives, leave information_category blank, or put multiple categories in one field. Use other only when no specific listed category directly describes the concrete request; do not use it to avoid categorization. Do not request the actual value of the upcoming Event; whether it beat, matched, or missed consensus; a surprise magnitude for the upcoming Event; any post-release market reaction; a realized price path; Outcome data; or evaluation results. Do not use released actual values, post-release evidence, Pack A, or Pack E fields.
+
+Valid examples: event_consensus_detail — What are the current consensus estimate, forecast range, and most recent economist revisions for the upcoming Manufacturing PMI release? growth_context — How have recent regional manufacturing surveys and industrial indicators changed expectations for the upcoming PMI release? historical_surprise_sensitivity — How has USD/JPY historically reacted when comparable PMI releases differed materially from consensus? treasury_yields — What is the current pre-release Treasury-yield environment relevant to the expected USD reaction?
+
+Invalid examples (all prohibited because they require Event Outcome or post-release evidence): What was the released Manufacturing PMI value? Did the Manufacturing PMI beat expectations? How did USD/JPY react after the PMI release? What was the realized 15-minute price path? Was the forecast direction correct?"""
 FORBIDDEN_KEYS = {"outcome", "evaluation", "released_value", "actual", "realized", "reversal", "forecast_direction", "expected_move_pips"}
 
 
@@ -81,6 +94,27 @@ def _reject_forbidden(value: Any, path: str = "$") -> None:
     elif isinstance(value, list):
         for index, nested in enumerate(value):
             _reject_forbidden(nested, path + "[" + str(index) + "]")
+
+
+def validate_request_temporal_scope(requested_information: Any) -> str | None:
+    """Return a narrow fail-closed code for outcome-dependent Request wording.
+
+    Historical context remains permitted when the request explicitly marks the
+    release or reaction as prior, previous, historical, past, or last-N.
+    """
+    text = " ".join(str(requested_information or "").lower().split())
+    historical = any(marker in text for marker in ("historical", "previous", "prior ", "past ", "last "))
+    if "realized" in text and ("path" in text or "minute" in text):
+        return "REJECTED_PROMPT_PROHIBITED_REALIZED_PATH_REFERENCE"
+    if any(marker in text for marker in ("forecast direction correct", "evaluation result", "was the forecast", "forecast accuracy")):
+        return "REJECTED_PROMPT_PROHIBITED_EVALUATION_REFERENCE"
+    if not historical and any(marker in text for marker in ("beat expectations", "beat consensus", "missed expectations", "missed consensus", "matched consensus", "surprise magnitude")):
+        return "REJECTED_PROMPT_PROHIBITED_OUTCOME_REFERENCE"
+    if not historical and any(marker in text for marker in ("post-release", "post release", "react after", "reaction after", "after this release", "after the pmi release")):
+        return "REJECTED_PROMPT_PROHIBITED_POST_RELEASE_REFERENCE"
+    if not historical and any(marker in text for marker in ("released actual", "released value", "actual value of the upcoming", "actual value for the upcoming", "what was the actual value", "upcoming actual")):
+        return "REJECTED_PROMPT_PROHIBITED_RELEASED_ACTUAL_REFERENCE"
+    return None
 
 
 def _validate_identity(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], provider: str, model: str, information_cutoff_ts: str, stage_run_id: str) -> None:
@@ -178,7 +212,7 @@ def build_prospective_attention(*, study_id: str, collection_run_id: str, sessio
     return {"status": "parsed", "request": request, "response": response, "rows": rows, "provider_identity_normalization": identity_normalization, "provider_calls": 1}
 
 
-def build_prospective_requests(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], attention_result: Mapping[str, Any], provider: str, model: str, information_cutoff_ts: str, request_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None, instruction_override: str | None = None, request_normalizer: Callable[[Mapping[str, Any]], tuple[dict[str, Any], Mapping[str, Any] | None]] | None = None, raw_response_persistor: Callable[[Mapping[str, Any]], None] | None = None) -> dict[str, Any]:
+def build_prospective_requests(*, study_id: str, collection_run_id: str, session_snapshot: Mapping[str, Any], member_rows: Iterable[Mapping[str, Any]], attention_result: Mapping[str, Any], provider: str, model: str, information_cutoff_ts: str, request_run_id: str, stage_generated_ts: str, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None, raw_parser: Callable[[Any], Mapping[str, Any]] | None = None, instruction_override: str | None = None, request_normalizer: Callable[[Mapping[str, Any]], tuple[dict[str, Any], Mapping[str, Any] | None]] | None = None, raw_response_persistor: Callable[[Mapping[str, Any]], None] | None = None, include_attention_identity: bool = True) -> dict[str, Any]:
     """Build one Request call from the same provider's prospective Attention."""
     _validate_identity(study_id=study_id, collection_run_id=collection_run_id, session_snapshot=session_snapshot, provider=provider, model=model, information_cutoff_ts=information_cutoff_ts, stage_run_id=request_run_id)
     if utc(stage_generated_ts) > utc(information_cutoff_ts): raise MinimalProspectiveLineageError("REQUEST_AFTER_INFORMATION_CUTOFF")
@@ -186,6 +220,8 @@ def build_prospective_requests(*, study_id: str, collection_run_id: str, session
     if any(row.get("session_id") != session_snapshot.get("session_id") or row.get("provider") != provider or row.get("model") != model for row in rows): raise MinimalProspectiveLineageError("REQUEST_ATTENTION_IDENTITY_MISMATCH")
     members = _event_payload(member_rows); session_id = str(session_snapshot["session_id"])
     payload = {"object": "presignal_v2_session_information_request_task", "schema_version": "v0", "session": {key: session_snapshot.get(key, "") for key in ("session_id", "country", "session_window_name", "session_start_ts", "session_end_ts")}, "events": members, "provider_attention_map": [{key: row.get(key, "") for key in ("event_id", "attention_label", "attention_rank", "attention_reason", "expected_market_channel", "driver_role")} for row in rows], "task": "List information needed for a later USDJPY forecast. Do not forecast direction or pips."}
+    if include_attention_identity:
+        payload["attention_identity"] = attention_run_id
     prompt = _prompt(instruction_override or REQUEST_INSTRUCTION, payload); request = bridge_request(provider=provider, model=model, prompt=prompt, collection_run_id=collection_run_id, session_id=session_id, stage="REQUESTS")
     base = {"request_run_id": request_run_id, "attention_run_id": attention_run_id, "session_id": session_id, "provider": provider, "model": model, "information_cutoff_ts": information_cutoff_ts, "generated_ts": stage_generated_ts, "request_fingerprint": sha256(request), "source": "existing_v2_information_request_prompt_schema", "raw_output": None}
     if dispatcher is None: return {"status": "DRY_RUN", "request": request, "prompt": prompt, "rows": [], "metadata": base, "provider_calls": 0}
@@ -203,7 +239,11 @@ def build_prospective_requests(*, study_id: str, collection_run_id: str, session
         normalized_item, normalization = request_normalizer(item) if request_normalizer else (dict(item), None)
         category = str(normalized_item.get("information_category") or "other"); priority = str(normalized_item.get("priority") or "useful"); channel = str(normalized_item.get("affected_channel") or "unknown")
         if category not in VALID_CATEGORIES or priority not in VALID_PRIORITIES or channel not in VALID_CHANNELS: return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": "invalid_request_enum", "raw_output": raw_preserved}], "provider_calls": 1}
-        requested = str(normalized_item["requested_information"]); output.append({**base, "status": "parsed", "request_identity": "PINFO_" + _short({"run": request_run_id, "rank": index, "requested": requested}), "request_rank": normalized_item.get("request_rank") or index, "requested_information": requested, "information_category": category, "original_information_category": item.get("information_category"), "priority": priority, "reason": str(normalized_item.get("reason") or "")[:160], "affected_channel": channel, "original_affected_channel": item.get("affected_channel"), "normalization": normalization, "event_family_relevance": normalized_item.get("event_family_relevance"), "linked_event_ids": normalized_item.get("linked_event_ids"), "linked_attention_labels": normalized_item.get("linked_attention_labels"), "available_now": normalized_item.get("available_now"), "suggested_source": normalized_item.get("suggested_source"), "expected_forecast_use": normalized_item.get("expected_forecast_use"), "is_market_state_candidate": normalized_item.get("is_market_state_candidate"), "raw_output": raw_preserved, "response_fingerprint": sha256(response)})
+        requested = str(normalized_item["requested_information"])
+        temporal_error = validate_request_temporal_scope(requested)
+        if temporal_error:
+            return {"status": "provider_contract_error", "request": request, "response": response, "rows": [{**base, "status": "provider_contract_error", "error_message": temporal_error, "raw_output": raw_preserved}], "provider_calls": 1}
+        output.append({**base, "status": "parsed", "request_identity": "PINFO_" + _short({"run": request_run_id, "rank": index, "requested": requested}), "request_rank": normalized_item.get("request_rank") or index, "requested_information": requested, "information_category": category, "original_information_category": item.get("information_category"), "priority": priority, "reason": str(normalized_item.get("reason") or "")[:160], "affected_channel": channel, "original_affected_channel": item.get("affected_channel"), "normalization": normalization, "event_family_relevance": normalized_item.get("event_family_relevance"), "linked_event_ids": normalized_item.get("linked_event_ids"), "linked_attention_labels": normalized_item.get("linked_attention_labels"), "available_now": normalized_item.get("available_now"), "suggested_source": normalized_item.get("suggested_source"), "expected_forecast_use": normalized_item.get("expected_forecast_use"), "is_market_state_candidate": normalized_item.get("is_market_state_candidate"), "raw_output": raw_preserved, "response_fingerprint": sha256(response)})
     return {"status": "parsed", "request": request, "response": response, "rows": output, "provider_calls": 1}
 
 

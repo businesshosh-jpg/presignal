@@ -69,7 +69,7 @@ def authorization_manifest(*, episode: Mapping[str, Any], attention: Mapping[str
         "episode_identity": episode["episode_id"], "episode_checksum": attention_execution.EXPECTED_EPISODE_CHECKSUM,
         "attention_identity": attention["attention_identity"], "attention_content_checksum": legacy.ATTENTION_CONTENT,
         "attention_provenance_checksum": legacy.ATTENTION_PROVENANCE, "attention_lineage_checksum": legacy.ATTENTION_LINEAGE,
-        "prompt_schema_alignment_fingerprint": ALIGNMENT_FINGERPRINT, "prompt_version": lineage.REQUEST_PROMPT_VERSION,
+        "prompt_schema_alignment_fingerprint": ALIGNMENT_FINGERPRINT, "prompt_version": lineage.REQUEST_PROMPT_VERSION_V1,
         "prompt_template_checksum": PROMPT_CHECKSUM, "category_enum_checksum": CATEGORY_ENUM_CHECKSUM,
         "response_schema_version": RESPONSE_SCHEMA_VERSION, "provider": PROVIDER, "model": MODEL,
         "information_request_call_budget": 1, "retry_count": 0,
@@ -90,8 +90,8 @@ def validate_bindings(*, episode: Mapping[str, Any], attention: Mapping[str, Any
         "attention_checksums_valid": legacy.checksum(attention) == legacy.ATTENTION_CONTENT and attention["provenance_checksum"] == legacy.ATTENTION_PROVENANCE and attention["lineage_checksum"] == legacy.ATTENTION_LINEAGE,
         "attention_state_valid": attention["selection_state"] == "SELECTED_FOR_INFORMATION_REQUESTS" and attention["acceptance_state"] == "ACCEPTED",
         "alignment_fingerprint_valid": alignment_fp["alignment_fingerprint"] == ALIGNMENT_FINGERPRINT and alignment_manifest["alignment_name"] == alignment.ALIGNMENT_NAME,
-        "prompt_version_valid": lineage.REQUEST_PROMPT_VERSION == "presignal_v21_information_request_prompt_v1" == legacy.PROMPT_VERSION,
-        "prompt_template_checksum_valid": checksum(lineage.REQUEST_INSTRUCTION) == PROMPT_CHECKSUM == pre["prompt_template_checksum"],
+        "prompt_version_valid": lineage.REQUEST_PROMPT_VERSION_V1 == "presignal_v21_information_request_prompt_v1" == legacy.PROMPT_VERSION,
+        "prompt_template_checksum_valid": checksum(lineage.REQUEST_INSTRUCTION_V1) == PROMPT_CHECKSUM == pre["prompt_template_checksum"],
         "category_enum_checksum_valid": checksum(sorted(lineage.VALID_CATEGORIES)) == CATEGORY_ENUM_CHECKSUM,
         "response_schema_version_valid": RESPONSE_SCHEMA_VERSION == alignment_manifest["response_schema_version"],
         "response_schema_checksum_valid": pre["response_schema_checksum"] == checksum({"object": "session_information_requirements", "schema_version": RESPONSE_SCHEMA_VERSION, "categories": sorted(lineage.VALID_CATEGORIES), "priorities": sorted(lineage.VALID_PRIORITIES), "channels": sorted(lineage.VALID_CHANNELS)}),
@@ -154,7 +154,7 @@ def run(*, output: Path = OUTPUT, dispatch: bool = False, at_utc: str | None = N
         else:
             if not dispatch:
                 raise RepairedRequestExecutionError("DISPATCH_FLAG_REQUIRED")
-            pre_manifest = {"authorization_identity": AUTHORIZATION_NAME, "authorization_fingerprint": authorization_fingerprint, "episode_identity": episode["episode_id"], "episode_checksum": attention_execution.EXPECTED_EPISODE_CHECKSUM, "attention_identity": attention["attention_identity"], "attention_content_checksum": legacy.ATTENTION_CONTENT, "attention_provenance_checksum": legacy.ATTENTION_PROVENANCE, "attention_lineage_checksum": legacy.ATTENTION_LINEAGE, "alignment_fingerprint": ALIGNMENT_FINGERPRINT, "prompt_version": lineage.REQUEST_PROMPT_VERSION, "prompt_template_checksum": pre["prompt_template_checksum"], "resolved_prompt_checksum": pre["resolved_prompt_checksum"], "category_enum_checksum": CATEGORY_ENUM_CHECKSUM, "response_schema_version": RESPONSE_SCHEMA_VERSION, "response_schema_checksum": pre["response_schema_checksum"], "provider": PROVIDER, "model": MODEL, "provider_call_parameters_checksum": pre["provider_call_parameters_checksum"], "call_sequence_number": 1, "retry_count": 0, "cutoff_validation": cutoff}
+            pre_manifest = {"authorization_identity": AUTHORIZATION_NAME, "authorization_fingerprint": authorization_fingerprint, "episode_identity": episode["episode_id"], "episode_checksum": attention_execution.EXPECTED_EPISODE_CHECKSUM, "attention_identity": attention["attention_identity"], "attention_content_checksum": legacy.ATTENTION_CONTENT, "attention_provenance_checksum": legacy.ATTENTION_PROVENANCE, "attention_lineage_checksum": legacy.ATTENTION_LINEAGE, "alignment_fingerprint": ALIGNMENT_FINGERPRINT, "prompt_version": lineage.REQUEST_PROMPT_VERSION_V1, "prompt_template_checksum": pre["prompt_template_checksum"], "resolved_prompt_checksum": pre["resolved_prompt_checksum"], "category_enum_checksum": CATEGORY_ENUM_CHECKSUM, "response_schema_version": RESPONSE_SCHEMA_VERSION, "response_schema_checksum": pre["response_schema_checksum"], "provider": PROVIDER, "model": MODEL, "provider_call_parameters_checksum": pre["provider_call_parameters_checksum"], "call_sequence_number": 1, "retry_count": 0, "cutoff_validation": cutoff}
             state["gemini_repaired_information_request_calls"] = 1
             response = attention_execution._dispatch(pre["bridge_request"], Path("/Users/junhoshino/projects/presignal/local/token.json"))
             raw = response.get("raw_output")

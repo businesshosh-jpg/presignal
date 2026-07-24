@@ -31,7 +31,9 @@ from automation import run_presignal_v21_r6_native_input_final_materialization_v
 OUTPUT = ROOT / "outputs" / "presignal_v21_designed_drift_r6_information_request_execution" / "R6-INFORMATION-REQUEST-EXECUTION-20260723-v1"
 AUTHORIZATION_NAME = "PRESIGNAL_V21_DESIGNED_DRIFT_2_R6_INFORMATION_REQUEST_CALL_AUTHORIZATION_V1"
 PROVIDER, MODEL = "Gemini", "gemini-2.5-flash-lite"
-PROMPT_VERSION, RESPONSE_SCHEMA_VERSION = lineage.REQUEST_PROMPT_VERSION, "v0"
+# Preserve the prompt identity used by the expired v1 call. New prospective
+# calls bind the current lineage prompt in their own authorization boundary.
+PROMPT_VERSION, RESPONSE_SCHEMA_VERSION = lineage.REQUEST_PROMPT_VERSION_V1, "v0"
 ROUTE_B_FREEZE = native.ROUTE_B_FREEZE
 R6_V3 = "sha256:c8cb003af94eef2ef9cad8f323ab31b3c1990f3ffdcdab5ee3e6285fda76efb9"
 SELECTION_FINGERPRINT = "sha256:73e8fe3f89126d9129ef6bcbbaeedeaf79d9f148d367248f9dcc778b307827e1"
@@ -146,13 +148,13 @@ def build_pre_call(*, episode: Mapping[str, Any], members: Sequence[Mapping[str,
         attention_result=attention_result_for_request(episode=episode, members=members, attention=attention, raw_attention=raw_attention),
         provider=PROVIDER, model=MODEL, information_cutoff_ts=episode["forecast_cutoff_ts"],
         request_run_id="PRQ_" + checksum({"episode": episode["episode_id"], "attention": attention["attention_identity"], "provider": PROVIDER})[7:27],
-        stage_generated_ts=at_utc,
+        stage_generated_ts=at_utc, instruction_override=lineage.REQUEST_INSTRUCTION_V1, include_attention_identity=False,
     )
     if result["status"] != "DRY_RUN":
         raise InformationRequestExecutionError("REQUEST_PRE_CALL_CONSTRUCTION_FAILED")
     request = result["request"]
     return {"bridge_request": request, "prompt": result["prompt"], "request_run_id": result["metadata"]["request_run_id"],
-            "prompt_template_checksum": checksum(lineage.REQUEST_INSTRUCTION), "resolved_prompt_checksum": checksum(result["prompt"]),
+            "prompt_template_checksum": checksum(lineage.REQUEST_INSTRUCTION_V1), "resolved_prompt_checksum": checksum(result["prompt"]),
             "response_schema_checksum": checksum({"object": "session_information_requirements", "schema_version": RESPONSE_SCHEMA_VERSION,
                                                     "categories": sorted(lineage.VALID_CATEGORIES), "priorities": sorted(lineage.VALID_PRIORITIES),
                                                     "channels": sorted(lineage.VALID_CHANNELS)}),
@@ -184,6 +186,10 @@ def validate_and_compute(*, episode: Mapping[str, Any], attention: Mapping[str, 
         raise InformationRequestExecutionError("REQUEST_RESPONSE_EMPTY")
     if any(not isinstance(item, Mapping) or item.get("information_category") not in lineage.VALID_CATEGORIES for item in items):
         raise InformationRequestExecutionError("REQUEST_CATEGORY_INVALID")
+    for item in items:
+        temporal_error = lineage.validate_request_temporal_scope(item.get("requested_information"))
+        if temporal_error:
+            raise InformationRequestExecutionError(temporal_error)
     try:
         frozen = capability.compute_canonical_information_requests(
             episode, capability_attention(episode=episode, attention=attention), PROVIDER, MODEL, PROMPT_VERSION,
