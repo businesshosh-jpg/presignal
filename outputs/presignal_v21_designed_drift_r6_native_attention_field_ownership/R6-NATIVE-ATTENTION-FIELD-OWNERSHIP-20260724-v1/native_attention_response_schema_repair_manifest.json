@@ -1,0 +1,1 @@
+{"model_owned_fields":["attention_items","session_attention_summary"],"new_schema":"session_attention_scientific_payload/v1","old_schema":"session_attention_map/v0","scientific_fields_changed":false,"system_envelope_assembled_after_validation":true}

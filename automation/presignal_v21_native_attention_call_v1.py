@@ -23,6 +23,8 @@ PROVIDER = "Gemini"
 MODEL = "gemini-2.5-flash-lite"
 PROMPT_VERSION = "existing_v2_attention_prompt_schema"
 RESPONSE_SCHEMA_VERSION = "session_attention_map/v0"
+FIELD_OWNERSHIP_PROMPT_VERSION = "presignal_v21_native_attention_prompt_v2"
+FIELD_OWNERSHIP_RESPONSE_SCHEMA_VERSION = "session_attention_scientific_payload/v1"
 TRUSTED_GEMINI_PAYLOAD_ROLE = "macro-research-model"
 TRUSTED_GEMINI_PROMPT_TEMPLATE_CHECKSUM = "sha256:cadc09041ed55dee5ecc2b2bf285d9b8da772df0de8381b6f6c8f3f7b0d44d96"
 TRUSTED_GEMINI_BRIDGE_SOURCE_CHECKSUM = "sha256:6f20eaacdccdc3eaefb2fc4c86c93fe6e7fa17e7c2184778341401eead6d6c32"
@@ -30,6 +32,35 @@ TRUSTED_GEMINI_BRIDGE_SOURCE_CHECKSUM = "sha256:6f20eaacdccdc3eaefb2fc4c86c93fe6
 
 class NativeAttentionCallError(ValueError):
     pass
+
+
+def field_ownership_instruction() -> str:
+    """The v2 model contract excludes all deterministic envelope fields."""
+    return """You are classifying event attention for a PreSignal research layer.
+
+Return strict JSON only with exactly two model-owned fields: attention_items and
+session_attention_summary. Each supplied Event must have one attention item.
+Each item must contain event_id, attention_label, attention_rank,
+attention_reason, expected_market_channel, driver_role, and confidence. Allowed
+labels are PRIMARY_DRIVER, SECONDARY_DRIVER, WATCHLIST, CONTEXT_ONLY, IGNORE,
+and NO_SIGNAL. Do not return provider, model, payload role, session or Episode
+identity, authorization metadata, schema metadata, forecast direction, pips,
+price paths, Information Requests, Packs, Outcomes, or evaluation."""
+
+
+def normalize_field_owned_attention_response(*, episode: Mapping[str, Any], raw_response: Mapping[str, Any],
+                                             effective_timestamp: str, returned_provider: str, returned_model: str,
+                                             member_event_ids: Sequence[str]) -> dict[str, Any]:
+    """Combine deterministic envelope ownership with scientific model fields.
+
+    Raw envelope fields are retained by the caller as evidence.  Their model
+    authored values never enter the canonical object.
+    """
+    scientific = {"object": "session_attention_map", "session_id": episode["episode_identity"], "provider": PROVIDER,
+                  "status": "ok", "attention_items": raw_response.get("attention_items", [])}
+    return normalize_attention_response(episode=episode, raw_response=scientific, effective_timestamp=effective_timestamp,
+                                        returned_provider=returned_provider, returned_model=returned_model,
+                                        member_event_ids=member_event_ids)
 
 
 def canonical(value: Any) -> str:
