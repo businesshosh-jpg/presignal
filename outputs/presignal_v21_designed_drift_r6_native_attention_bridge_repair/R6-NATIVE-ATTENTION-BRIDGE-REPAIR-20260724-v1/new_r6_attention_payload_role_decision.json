@@ -1,0 +1,1 @@
+{"canonical_role":null,"classification":"MODEL_GENERATED_UNTRUSTED_VALUE","existing_allowed_role":"macro-research-model","provider_identity_changed":false,"reason":"No repository alias or bridge mapping for macromodel exists; mapping it to the allowed macro-research-model role would invent a payload-role alias.","repair_implemented":false,"role_enum_broadened":false}

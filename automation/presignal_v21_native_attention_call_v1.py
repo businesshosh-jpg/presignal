@@ -171,6 +171,17 @@ def normalize_attention_response(*, episode: Mapping[str, Any], raw_response: Ma
     all_items = list(raw_response.get("attention_items", []))
     if not all(isinstance(item, Mapping) for item in all_items):
         raise NativeAttentionCallError("ATTENTION_RESPONSE_SCHEMA_INVALID")
+    # Collapse only byte-for-byte identical duplicate references at the
+    # response-boundary construction point.  Conflicting claims for one Event
+    # remain invalid rather than being hidden by a final validator.
+    deduplicated: dict[str, Mapping[str, Any]] = {}
+    for candidate in all_items:
+        event_id = str(candidate.get("event_id") or "")
+        prior = deduplicated.get(event_id)
+        if prior is not None and canonical(candidate) != canonical(prior):
+            raise NativeAttentionCallError("ATTENTION_DUPLICATE_MEMBER_CONFLICT")
+        deduplicated.setdefault(event_id, candidate)
+    all_items = list(deduplicated.values())
     if member_event_ids is not None:
         expected = [str(value) for value in member_event_ids]
         returned = [str(item.get("event_id") or "") for item in all_items]
