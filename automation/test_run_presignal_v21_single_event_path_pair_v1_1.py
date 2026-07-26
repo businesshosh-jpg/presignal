@@ -81,6 +81,13 @@ class PromptAndParsingTests(unittest.TestCase):
         self.assertTrue(diff["passed"])
         self.assertEqual(set(diff["differences"]), step6.ALLOWED_PROMPT_DIFFERENCES)
 
+    def test_prompt_includes_no_signal_and_reversal_clarifications(self) -> None:
+        prompt = step6.prompt_text(step6.arm_context(input_row(arm="PACK_A")))
+        self.assertIn("NO_SIGNAL is appropriate only when no defensible directional hypothesis can be formed", prompt)
+        self.assertIn("Uncertainty alone does not require NO_SIGNAL", prompt)
+        self.assertIn("if expected_reversal_flag is true, expected_reversal_horizon_min must be exactly 15, 30, or 60", prompt)
+        self.assertIn("If expected_reversal_flag is false, expected_reversal_horizon_min must be null", prompt)
+
     def test_prompt_diff_rejects_non_pack_change(self) -> None:
         left, right = step6.arm_context(input_row(arm="PACK_A")), step6.arm_context(input_row(arm="PACK_E"))
         right["episode"]["country"] = "JP"
@@ -237,6 +244,33 @@ class PromptAndParsingTests(unittest.TestCase):
         normalized, _ = step6.normalize_provider_output(raw)
         self.assertEqual(normalized["path"][3]["expected_direction"], "FLAT")
         self.assertEqual(normalized["path"][3]["expected_pips_max"], 1.0)
+
+    def test_directional_forecast_requires_boolean_reversal_flag(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = response()
+        raw["expected_reversal_flag"] = None
+        normalized, _ = step6.normalize_provider_output(raw)
+        with self.assertRaisesRegex(Exception, "PREDICTION_REVERSAL_FLAG"):
+            step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+
+    def test_true_reversal_requires_allowed_horizon(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = response()
+        raw["expected_reversal_flag"] = True
+        raw["expected_reversal_horizon_min"] = 25
+        normalized, _ = step6.normalize_provider_output(raw)
+        with self.assertRaisesRegex(Exception, "PREDICTION_REVERSAL_HORIZON"):
+            step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+
+    def test_false_reversal_allows_null_horizon(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = response()
+        raw["expected_reversal_flag"] = False
+        raw["expected_reversal_horizon_min"] = None
+        normalized, _ = step6.normalize_provider_output(raw)
+        prediction, _ = step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+        self.assertFalse(prediction["expected_reversal_flag"])
+        self.assertIsNone(prediction["expected_reversal_horizon_min"])
 
     def test_attention_scope_preserves_structural_neutrality(self) -> None:
         result = step6.attention_adequacy(input_row(arm="PACK_A"))

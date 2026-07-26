@@ -257,6 +257,10 @@ def prompt_text(context: Mapping[str, Any]) -> str:
         "invalidation_condition, path. early_reaction_5m_direction is the EARLY_REACTION_5M forecast and must equal "
         "the 5-minute path direction. immediate_impulse_* is a separate first-persistent-move sidecar for the fixed 120-second target. "
         "If you include immediate_impulse_window_seconds, the only valid value is 120; omission is allowed because the system inserts the fixed protocol value. "
+        "NO_SIGNAL is appropriate only when no defensible directional hypothesis can be formed from the supplied frozen "
+        "historical information. Uncertainty alone does not require NO_SIGNAL; if one direction is more defensible than "
+        "the alternatives, return a directional forecast with the appropriately lower confidence. Missing optional context "
+        "does not by itself require NO_SIGNAL. "
         "Confidence is always a number from 0 to 1. For a "
         "normal forecast, path contains exactly ordered 5, 15, 30, 60 minute rows, each with horizon_min, "
         "expected_direction, expected_pips_min, expected_pips_max, stage_confidence, continuation_probability, "
@@ -265,6 +269,8 @@ def prompt_text(context: Mapping[str, Any]) -> str:
         "expected_pips_min must be 0 and expected_pips_max must be 0. If a nonzero net move is expected, choose UP or DOWN "
         "rather than FLAT and provide a nonnegative absolute pip range consistent with that direction. Valid examples: "
         "UP with 2 to 8 pips, DOWN with 3 to 9 pips, FLAT with 0 to 0 pips. "
+        "For reversal fields: if expected_reversal_flag is true, expected_reversal_horizon_min must be exactly 15, 30, or 60. "
+        "If expected_reversal_flag is false, expected_reversal_horizon_min must be null. "
         "For no signal, immediate_impulse_* fields are null, early_reaction_5m_direction is UNCERTAIN, reversal fields are null, and path is empty.\n\n" + canonical_json(context)
     )
 

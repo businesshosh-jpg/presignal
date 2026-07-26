@@ -9,7 +9,7 @@ from automation.test_run_presignal_v21_single_event_path_pair_v1_1 import respon
 
 
 PARSER = Path(frozen.__file__)
-PARSER_SHA256 = "92d4c0235952753e913075a5e63283c77e79bbc63a4300177ca524686efa68d7"
+PARSER_SHA256 = "83b4dbf82a632343a97dc18e009266818a0cad427cac1dc4ba1909cd5b2f558b"
 
 
 class FrozenForecastParserBridgeTests(unittest.TestCase):
