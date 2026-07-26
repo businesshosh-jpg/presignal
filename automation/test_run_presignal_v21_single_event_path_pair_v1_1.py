@@ -100,17 +100,94 @@ class PromptAndParsingTests(unittest.TestCase):
         wrapped.update({"object": "presignal_event_path_contract_v1_forecast", "schema_version": "2.1.0", "response_contract": "presignal_event_path_contract_v1"})
         self.assertEqual(step6.parse_provider_output(wrapped), response())
 
+    def test_provider_omits_window_and_system_injects_protocol_value(self) -> None:
+        raw = response()
+        raw.pop("immediate_impulse_window_seconds")
+        normalized, audit = step6.normalize_provider_output(raw)
+        self.assertEqual(normalized["immediate_impulse_window_seconds"], 120)
+        self.assertEqual(audit["immediate_window_source"], "SYSTEM_PROTOCOL")
+        self.assertEqual(audit["provider_immediate_window_status"], "OMITTED")
+        self.assertIsNone(audit["provider_returned_immediate_window_seconds"])
+
+    def test_provider_matching_window_is_accepted(self) -> None:
+        normalized, audit = step6.normalize_provider_output(response())
+        self.assertEqual(normalized["immediate_impulse_window_seconds"], 120)
+        self.assertEqual(audit["provider_immediate_window_status"], "MATCHED_PROTOCOL")
+        self.assertEqual(audit["provider_returned_immediate_window_seconds"], 120)
+
+    def test_provider_window_300_is_overridden_by_protocol(self) -> None:
+        raw = response()
+        raw["immediate_impulse_window_seconds"] = 300
+        normalized, audit = step6.normalize_provider_output(raw)
+        self.assertEqual(normalized["immediate_impulse_window_seconds"], 120)
+        self.assertEqual(audit["provider_immediate_window_status"], "OVERRIDDEN_BY_PROTOCOL")
+        self.assertEqual(audit["provider_returned_immediate_window_seconds"], 300)
+
+    def test_provider_window_1200_is_overridden_by_protocol(self) -> None:
+        raw = response()
+        raw["immediate_impulse_window_seconds"] = 1200
+        normalized, audit = step6.normalize_provider_output(raw)
+        self.assertEqual(normalized["immediate_impulse_window_seconds"], 120)
+        self.assertEqual(audit["provider_immediate_window_status"], "OVERRIDDEN_BY_PROTOCOL")
+        self.assertEqual(audit["provider_returned_immediate_window_seconds"], 1200)
+
+    def test_invalid_window_type_is_audited_not_failed(self) -> None:
+        raw = response()
+        raw["immediate_impulse_window_seconds"] = "120"
+        normalized, audit = step6.normalize_provider_output(raw)
+        self.assertEqual(normalized["immediate_impulse_window_seconds"], 120)
+        self.assertEqual(audit["provider_immediate_window_status"], "INVALID_TYPE")
+        self.assertEqual(audit["provider_returned_immediate_window_seconds"], "120")
+
+    def test_raw_provider_output_is_not_rewritten(self) -> None:
+        raw = response()
+        raw["immediate_impulse_window_seconds"] = 300
+        original = copy.deepcopy(raw)
+        step6.normalize_provider_output(raw)
+        self.assertEqual(raw, original)
+
     def test_contract_predictions_and_paths_are_constructed(self) -> None:
         row = input_row(arm="PACK_A")
         prediction, paths = step6.response_to_contract(response(), row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=response(), bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
         self.assertEqual(prediction["information_arm"], "BASELINE")
         self.assertEqual([row["horizon_min"] for row in paths], [5, 15, 30, 60])
 
+    def test_canonical_prediction_records_system_owned_window(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = response()
+        raw["immediate_impulse_window_seconds"] = 300
+        normalized, _ = step6.normalize_provider_output(raw)
+        prediction, _ = step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+        self.assertEqual(prediction["immediate_impulse_window_seconds"], 120)
+
+    def test_malformed_scientific_fields_still_fail_closed(self) -> None:
+        raw = response()
+        raw["immediate_impulse_direction"] = "SIDEWAYS"
+        with self.assertRaisesRegex(step6.Step6Error, "PROVIDER_OUTPUT_IMMEDIATE_DIRECTION"):
+            step6.normalize_provider_output(raw)
+
     def test_attention_scope_preserves_structural_neutrality(self) -> None:
         result = step6.attention_adequacy(input_row(arm="PACK_A"))
         self.assertEqual(result["decision"], "ADEQUATE")
         self.assertTrue(result["dominant_member_identifiable"])
         self.assertFalse(result["would_episode_attention_field_materially_change_task"])
+
+    def test_no_signal_prediction_accepts_protocol_window_compatibly(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = {
+            "no_signal_flag": True, "no_signal_reason": "insufficient conviction", "confidence": 0.41,
+            "immediate_impulse_direction": None, "immediate_impulse_peak_pips_min": None,
+            "immediate_impulse_peak_pips_max": None, "immediate_impulse_confidence": None,
+            "early_reaction_5m_direction": "UNCERTAIN", "expected_reversal_flag": None,
+            "expected_reversal_horizon_min": None, "expected_path_summary": "no directional edge",
+            "information_used": ["rates"], "missing_information": [], "invalidation_condition": "surprise",
+            "path": [],
+        }
+        normalized, audit = step6.normalize_provider_output(raw)
+        prediction, paths = step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+        self.assertEqual(audit["provider_immediate_window_status"], "OMITTED")
+        self.assertEqual(prediction["immediate_impulse_window_seconds"], 120)
+        self.assertEqual(paths, [])
 
 
 if __name__ == "__main__":

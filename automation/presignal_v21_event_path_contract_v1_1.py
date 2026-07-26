@@ -197,7 +197,11 @@ def validate_prediction(record: Mapping[str, Any]) -> None:
         _require(record["early_reaction_5m_direction"] == "UNCERTAIN", "PREDICTION_NO_SIGNAL_DIRECTION")
         _require(record["immediate_impulse_direction"] is None, "PREDICTION_NO_SIGNAL_IMMEDIATE_DIRECTION")
         _require(record["immediate_impulse_peak_pips_min"] is None and record["immediate_impulse_peak_pips_max"] is None, "PREDICTION_NO_SIGNAL_IMMEDIATE_RANGE")
-        _require(record["immediate_impulse_confidence"] is None and record["immediate_impulse_window_seconds"] is None, "PREDICTION_NO_SIGNAL_IMMEDIATE_META")
+        _require(
+            record["immediate_impulse_confidence"] is None
+            and record["immediate_impulse_window_seconds"] in (None, IMMEDIATE_IMPULSE_WINDOW_SECONDS_DEFAULT),
+            "PREDICTION_NO_SIGNAL_IMMEDIATE_META",
+        )
         _require(record["expected_reversal_flag"] is None and record["expected_reversal_horizon_min"] is None, "PREDICTION_NO_SIGNAL_REVERSAL")
     elif record["status"] == "PROVIDER_ERROR":
         _require(record["immediate_impulse_direction"] is None, "PREDICTION_PROVIDER_ERROR_IMMEDIATE_DIRECTION")

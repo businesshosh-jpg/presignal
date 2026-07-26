@@ -247,13 +247,17 @@ def prompt_text(context: Mapping[str, Any]) -> str:
         "frozen pre-release information. Do not use released actual values, subsequent prices, Outcomes, "
         "Evaluation, prior forecasts, or external/current information. Structural component roles are neutral "
         "organization metadata, not causal truth. Interpret all same-time members jointly using the preserved "
-        "member-level Attention evidence. Return one strict JSON object with exactly these top-level keys, and no "
+        "member-level Attention evidence. Immediate Impulse is defined by PreSignal as the first meaningful persistent "
+        "USD/JPY movement during the fixed T through T+120-second window. Do not select or alter this duration; the "
+        "local system owns that protocol metadata. Return one strict JSON object with exactly these top-level keys, and no "
         "wrapper or metadata keys: no_signal_flag, no_signal_reason, confidence, immediate_impulse_direction, "
         "immediate_impulse_peak_pips_min, immediate_impulse_peak_pips_max, immediate_impulse_confidence, "
-        "immediate_impulse_window_seconds, early_reaction_5m_direction, expected_reversal_flag, "
+        "early_reaction_5m_direction, expected_reversal_flag, "
         "expected_reversal_horizon_min, expected_path_summary, information_used, missing_information, "
         "invalidation_condition, path. early_reaction_5m_direction is the EARLY_REACTION_5M forecast and must equal "
-        "the 5-minute path direction. immediate_impulse_* is a separate first-persistent-move sidecar. Confidence is always a number from 0 to 1. For a "
+        "the 5-minute path direction. immediate_impulse_* is a separate first-persistent-move sidecar for the fixed 120-second target. "
+        "If you include immediate_impulse_window_seconds, the only valid value is 120; omission is allowed because the system inserts the fixed protocol value. "
+        "Confidence is always a number from 0 to 1. For a "
         "normal forecast, path contains exactly ordered 5, 15, 30, 60 minute rows, each with horizon_min, "
         "expected_direction, expected_pips_min, expected_pips_max, stage_confidence, continuation_probability, "
         "reversal_probability, stage_reason, invalidation_condition. Directions are UP, DOWN, or FLAT. Pip bounds "
@@ -278,7 +282,13 @@ def prompt_diff(context_a: Mapping[str, Any], context_e: Mapping[str, Any]) -> d
 
 
 def parse_provider_output(raw_output: Any) -> dict[str, Any]:
+    return normalize_provider_output(raw_output)[0]
+
+
+def normalize_provider_output(raw_output: Any) -> tuple[dict[str, Any], dict[str, Any]]:
+    parsed_source: Mapping[str, Any] | None
     if isinstance(raw_output, Mapping):
+        parsed_source = raw_output
         result = dict(raw_output)
     elif isinstance(raw_output, str):
         text = raw_output.strip()
@@ -288,6 +298,7 @@ def parse_provider_output(raw_output: Any) -> dict[str, Any]:
             result = json.loads(text)
         except json.JSONDecodeError as exc:
             raise Step6Error("PROVIDER_OUTPUT_NOT_JSON") from exc
+        parsed_source = result if isinstance(result, Mapping) else None
     else:
         raise Step6Error("PROVIDER_OUTPUT_NOT_OBJECT")
     # Gemini returned the requested forecast in its explicit response-contract
@@ -295,7 +306,10 @@ def parse_provider_output(raw_output: Any) -> dict[str, Any]:
     if set(result) == {"forecast", "response_contract"}:
         if not isinstance(result["forecast"], Mapping) or not isinstance(result["response_contract"], Mapping):
             raise Step6Error("PROVIDER_OUTPUT_ENVELOPE")
+        parsed_source = result["forecast"]
         result = dict(result["forecast"])
+    elif not isinstance(result, Mapping):
+        raise Step6Error("PROVIDER_OUTPUT_NOT_OBJECT")
     transport_fields = {
         "object", "system_version", "schema_version", "response_contract", "forecast_cutoff_ts",
         "information_pack_fingerprint", "market_state_snapshot_fingerprint", "population_type",
@@ -305,29 +319,43 @@ def parse_provider_output(raw_output: Any) -> dict[str, Any]:
     required = {
         "no_signal_flag", "no_signal_reason", "confidence", "immediate_impulse_direction",
         "immediate_impulse_peak_pips_min", "immediate_impulse_peak_pips_max", "immediate_impulse_confidence",
-        "immediate_impulse_window_seconds", "early_reaction_5m_direction",
+        "early_reaction_5m_direction",
         "expected_reversal_flag", "expected_reversal_horizon_min", "expected_path_summary",
         "information_used", "missing_information", "invalidation_condition", "path",
     }
-    unexpected = set(result) - required - transport_fields
+    window_field = "immediate_impulse_window_seconds"
+    unexpected = set(result) - required - transport_fields - {window_field}
     missing = required - set(result)
     if unexpected or missing:
         raise Step6Error("PROVIDER_OUTPUT_FIELDS:" + canonical_json(sorted(unexpected | missing)))
     result = {key: result[key] for key in required}
+    provider_window_present = isinstance(parsed_source, Mapping) and window_field in parsed_source
+    provider_window_raw = parsed_source.get(window_field) if provider_window_present else None
+    if not provider_window_present:
+        provider_window_status = "OMITTED"
+    elif isinstance(provider_window_raw, (int, float)) and not isinstance(provider_window_raw, bool):
+        provider_window_status = "MATCHED_PROTOCOL" if float(provider_window_raw) == float(contract.IMMEDIATE_IMPULSE_WINDOW_SECONDS_DEFAULT) else "OVERRIDDEN_BY_PROTOCOL"
+    else:
+        provider_window_status = "INVALID_TYPE"
+    audit = {
+        "immediate_window_source": "SYSTEM_PROTOCOL",
+        "provider_immediate_window_status": provider_window_status,
+        "provider_returned_immediate_window_seconds": provider_window_raw if provider_window_present else None,
+        "canonical_immediate_window_seconds": contract.IMMEDIATE_IMPULSE_WINDOW_SECONDS_DEFAULT,
+    }
+    result[window_field] = contract.IMMEDIATE_IMPULSE_WINDOW_SECONDS_DEFAULT
     if not isinstance(result["no_signal_flag"], bool) or not isinstance(result["confidence"], (int, float)):
         raise Step6Error("PROVIDER_OUTPUT_TYPES")
     if not 0 <= float(result["confidence"]) <= 1:
         raise Step6Error("PROVIDER_OUTPUT_CONFIDENCE")
     if result["no_signal_flag"]:
-        if any(result[key] is not None for key in ("immediate_impulse_direction", "immediate_impulse_peak_pips_min", "immediate_impulse_peak_pips_max", "immediate_impulse_confidence", "immediate_impulse_window_seconds")):
+        if any(result[key] is not None for key in ("immediate_impulse_direction", "immediate_impulse_peak_pips_min", "immediate_impulse_peak_pips_max", "immediate_impulse_confidence")):
             raise Step6Error("PROVIDER_OUTPUT_NO_SIGNAL_IMMEDIATE_IMPULSE")
         if result["early_reaction_5m_direction"] != "UNCERTAIN" or result["path"]:
             raise Step6Error("PROVIDER_OUTPUT_NO_SIGNAL_PATH")
-        return result
+        return result, audit
     if result["immediate_impulse_direction"] not in {"UP", "DOWN", "FLAT"}:
         raise Step6Error("PROVIDER_OUTPUT_IMMEDIATE_DIRECTION")
-    if result["immediate_impulse_window_seconds"] != contract.IMMEDIATE_IMPULSE_WINDOW_SECONDS_DEFAULT:
-        raise Step6Error("PROVIDER_OUTPUT_IMMEDIATE_WINDOW")
     for key in ("immediate_impulse_peak_pips_min", "immediate_impulse_peak_pips_max", "immediate_impulse_confidence"):
         if not isinstance(result[key], (int, float)):
             raise Step6Error("PROVIDER_OUTPUT_IMMEDIATE_TYPES")
@@ -350,7 +378,7 @@ def parse_provider_output(raw_output: Any) -> dict[str, Any]:
         raise Step6Error("PROVIDER_OUTPUT_HORIZONS")
     if paths[0]["expected_direction"] != result["early_reaction_5m_direction"]:
         raise Step6Error("PROVIDER_OUTPUT_EARLY_REACTION_BINDING")
-    return result
+    return result, audit
 
 
 def response_to_contract(
