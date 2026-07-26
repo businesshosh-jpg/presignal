@@ -166,6 +166,78 @@ class PromptAndParsingTests(unittest.TestCase):
         with self.assertRaisesRegex(step6.Step6Error, "PROVIDER_OUTPUT_IMMEDIATE_DIRECTION"):
             step6.normalize_provider_output(raw)
 
+    def test_flat_zero_zero_path_validates(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = response()
+        raw["path"][2]["expected_direction"] = "FLAT"
+        raw["path"][2]["expected_pips_min"] = 0.0
+        raw["path"][2]["expected_pips_max"] = 0.0
+        normalized, _ = step6.normalize_provider_output(raw)
+        prediction, paths = step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+        self.assertEqual(paths[2]["expected_direction"], "FLAT")
+        self.assertEqual(paths[2]["expected_pips_min"], 0.0)
+        self.assertEqual(paths[2]["expected_pips_max"], 0.0)
+        self.assertFalse(prediction["no_signal_flag"])
+
+    def test_flat_zero_plus_one_fails_neutral_range(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = response()
+        raw["path"][2]["expected_direction"] = "FLAT"
+        raw["path"][2]["expected_pips_min"] = 0.0
+        raw["path"][2]["expected_pips_max"] = 1.0
+        normalized, _ = step6.normalize_provider_output(raw)
+        with self.assertRaisesRegex(Exception, "PATH_NEUTRAL_PIP_RANGE"):
+            step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+
+    def test_flat_zero_plus_five_fails_neutral_range(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = response()
+        raw["path"][2]["expected_direction"] = "FLAT"
+        raw["path"][2]["expected_pips_min"] = 0.0
+        raw["path"][2]["expected_pips_max"] = 5.0
+        normalized, _ = step6.normalize_provider_output(raw)
+        with self.assertRaisesRegex(Exception, "PATH_NEUTRAL_PIP_RANGE"):
+            step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+
+    def test_flat_negative_to_zero_fails_neutral_range(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = response()
+        raw["path"][2]["expected_direction"] = "FLAT"
+        raw["path"][2]["expected_pips_min"] = -1.0
+        raw["path"][2]["expected_pips_max"] = 0.0
+        normalized, _ = step6.normalize_provider_output(raw)
+        with self.assertRaisesRegex(Exception, "PATH_PIPS_MIN"):
+            step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+
+    def test_up_positive_range_validates(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = response()
+        raw["path"][1]["expected_direction"] = "UP"
+        raw["path"][1]["expected_pips_min"] = 2.0
+        raw["path"][1]["expected_pips_max"] = 8.0
+        normalized, _ = step6.normalize_provider_output(raw)
+        _, paths = step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+        self.assertEqual(paths[1]["expected_direction"], "UP")
+
+    def test_down_positive_absolute_range_validates(self) -> None:
+        row = input_row(arm="PACK_A")
+        raw = response()
+        raw["path"][1]["expected_direction"] = "DOWN"
+        raw["path"][1]["expected_pips_min"] = 3.0
+        raw["path"][1]["expected_pips_max"] = 9.0
+        normalized, _ = step6.normalize_provider_output(raw)
+        _, paths = step6.response_to_contract(normalized, row, run_id="RUN", created_ts="2024-01-01T00:00:01Z", raw_output=raw, bridge_result={"prompt_tokens": 1, "completion_tokens": 2, "latency_ms": 3})
+        self.assertEqual(paths[1]["expected_direction"], "DOWN")
+
+    def test_direction_range_inconsistency_is_not_normalized(self) -> None:
+        raw = response()
+        raw["path"][3]["expected_direction"] = "FLAT"
+        raw["path"][3]["expected_pips_min"] = 0.0
+        raw["path"][3]["expected_pips_max"] = 1.0
+        normalized, _ = step6.normalize_provider_output(raw)
+        self.assertEqual(normalized["path"][3]["expected_direction"], "FLAT")
+        self.assertEqual(normalized["path"][3]["expected_pips_max"], 1.0)
+
     def test_attention_scope_preserves_structural_neutrality(self) -> None:
         result = step6.attention_adequacy(input_row(arm="PACK_A"))
         self.assertEqual(result["decision"], "ADEQUATE")

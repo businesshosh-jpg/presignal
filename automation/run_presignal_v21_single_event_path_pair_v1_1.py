@@ -261,7 +261,10 @@ def prompt_text(context: Mapping[str, Any]) -> str:
         "normal forecast, path contains exactly ordered 5, 15, 30, 60 minute rows, each with horizon_min, "
         "expected_direction, expected_pips_min, expected_pips_max, stage_confidence, continuation_probability, "
         "reversal_probability, stage_reason, invalidation_condition. Directions are UP, DOWN, or FLAT. Pip bounds "
-        "are nonnegative absolute magnitudes with minimum less than or equal to maximum; FLAT has zero bounds. "
+        "are nonnegative absolute magnitudes with minimum less than or equal to maximum. If expected_direction is FLAT, "
+        "expected_pips_min must be 0 and expected_pips_max must be 0. If a nonzero net move is expected, choose UP or DOWN "
+        "rather than FLAT and provide a nonnegative absolute pip range consistent with that direction. Valid examples: "
+        "UP with 2 to 8 pips, DOWN with 3 to 9 pips, FLAT with 0 to 0 pips. "
         "For no signal, immediate_impulse_* fields are null, early_reaction_5m_direction is UNCERTAIN, reversal fields are null, and path is empty.\n\n" + canonical_json(context)
     )
 
