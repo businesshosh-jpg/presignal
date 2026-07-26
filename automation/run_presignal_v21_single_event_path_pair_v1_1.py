@@ -29,7 +29,7 @@ from automation.build_presignal_v21_event_path_inputs import reject_leakage
 from automation.google_clients import build_script_service, default_script_id, load_credentials, run_script_function
 
 STEP5 = ROOT / "outputs" / "presignal_v21_step5_reuse"
-OUTCOMES = ROOT / "outputs" / "presignal_v21_episode_outcomes" / "outcome_rows.jsonl"
+PREVALIDATION_POINTER = ROOT / "outputs" / "presignal_v21_pure_prediction_historical_baseline" / "latest_prevalidation_manifest.json"
 OUTPUT_ROOT = ROOT / "outputs" / "presignal_v21_step6_single_pair_v1_1"
 BRIDGE_FUNCTION = "apiCallAuthoritativeProviderJsonObject"
 BRIDGE_SCHEMA_VERSION = "authoritative_historical_replay_bridge_v1"
@@ -67,6 +67,12 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
+def read_json(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        raise Step6Error("MISSING_ARTIFACT:" + str(path))
+    return json.loads(path.read_text())
+
+
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
@@ -87,6 +93,38 @@ def parse_iso(value: str) -> datetime:
 
 def pair_key(row: Mapping[str, Any]) -> tuple[str, str, str]:
     return (str(row["episode_id"]), str(row["provider"]), str(row["model"]))
+
+
+def resolve_v1_1_outcomes_path(prevalidation_manifest: Path | None = None, outcomes_path: Path | None = None) -> Path:
+    if outcomes_path is not None:
+        return outcomes_path
+    manifest_path = prevalidation_manifest or PREVALIDATION_POINTER
+    manifest = read_json(manifest_path)
+    if manifest.get("contract_version") != contract.CONTRACT_VERSION or manifest.get("schema_version") != contract.SCHEMA_VERSION:
+        raise Step6Error("PREVALIDATION_MANIFEST_VERSION_MISMATCH")
+    relative = manifest.get("outcomes_v1_1_path")
+    if not isinstance(relative, str) or not relative:
+        raise Step6Error("PREVALIDATION_MANIFEST_OUTCOMES_PATH_MISSING")
+    path = ROOT / relative
+    if path == ROOT / "outputs" / "presignal_v21_episode_outcomes" / "outcome_rows.jsonl":
+        raise Step6Error("LEGACY_OUTCOME_FALLBACK_FORBIDDEN")
+    return path
+
+
+def load_v1_1_outcomes(path: Path) -> list[dict[str, Any]]:
+    rows = read_jsonl(path)
+    if not rows:
+        raise Step6Error("OUTCOME_SET_EMPTY")
+    versions = {(row.get("schema_version"), row.get("system_version")) for row in rows}
+    if versions != {(contract.SCHEMA_VERSION, contract.SYSTEM_VERSION)}:
+        raise Step6Error("OUTCOME_SET_VERSION_MISMATCH:" + canonical_json(sorted(list(versions))))
+    for row in rows:
+        if row.get("object") != "OUTCOME":
+            raise Step6Error("OUTCOME_SET_OBJECT_MISMATCH")
+        if "immediate_impulse_outcome_state" not in row:
+            raise Step6Error("OUTCOME_SET_IMMEDIATE_IMPULSE_FIELD_MISSING")
+        contract.validate_outcome(row)
+    return rows
 
 
 def normalized_attention(rows: list[Mapping[str, Any]]) -> list[dict[str, Any]]:
@@ -494,10 +532,16 @@ def is_availability_failure(result: Mapping[str, Any]) -> bool:
     return str(result.get("status")) in {"provider_unavailable", "model_not_enforceable", "unsupported_provider", "configuration_error"}
 
 
-def run(*, output_root: Path = OUTPUT_ROOT, dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] = bridge_dispatch) -> tuple[Path, dict[str, Any]]:
+def run(
+    *,
+    output_root: Path = OUTPUT_ROOT,
+    dispatcher: Callable[[Mapping[str, Any]], Mapping[str, Any]] = bridge_dispatch,
+    prevalidation_manifest: Path | None = None,
+    outcomes_path: Path | None = None,
+) -> tuple[Path, dict[str, Any]]:
     inputs_a = read_jsonl(STEP5 / "event_path_forecast_inputs_pack_a.jsonl")
     inputs_e = read_jsonl(STEP5 / "event_path_forecast_inputs_pack_e.jsonl")
-    outcomes = read_jsonl(OUTCOMES)
+    outcomes = load_v1_1_outcomes(resolve_v1_1_outcomes_path(prevalidation_manifest, outcomes_path))
     assessed, eligible = eligible_candidates(inputs_a, inputs_e, outcomes)
     if not eligible:
         raise Step6Error("NO_ELIGIBLE_STEP6_PAIR")
@@ -624,11 +668,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", type=Path, default=OUTPUT_ROOT)
     parser.add_argument("--validate-run", type=Path)
+    parser.add_argument("--prevalidation-manifest", type=Path)
+    parser.add_argument("--outcomes-path", type=Path)
     args = parser.parse_args()
     if args.validate_run:
         print(json.dumps(validate_saved_run(args.validate_run), sort_keys=True))
         return 0
-    run_dir, manifest = run(output_root=args.output_root)
+    run_dir, manifest = run(output_root=args.output_root, prevalidation_manifest=args.prevalidation_manifest, outcomes_path=args.outcomes_path)
     print(json.dumps({"run_dir": str(run_dir), "decision": manifest["decision"]}, sort_keys=True))
     return 0
 
