@@ -1,0 +1,28 @@
+{
+  "contract_name": "prediction_contract_v1",
+  "system_version": "presignal_v2.1",
+  "contract_version": "presignal_event_path_contract_v1_1",
+  "schema_version": "2.1.1",
+  "object": "PREDICTION",
+  "field_order": ["object", "schema_version", "system_version", "run_id", "prediction_id", "episode_id", "session_id", "provider", "model", "information_arm", "pack_id", "pack_fingerprint", "forecast_created_ts", "forecast_cutoff_ts", "prediction_target_type", "prediction_target_id", "primary_event_id", "secondary_event_ids", "no_signal_flag", "no_signal_reason", "confidence", "immediate_impulse_direction", "immediate_impulse_peak_pips_min", "immediate_impulse_peak_pips_max", "immediate_impulse_confidence", "immediate_impulse_window_seconds", "early_reaction_5m_direction", "expected_reversal_flag", "expected_reversal_horizon_min", "expected_path_summary", "information_used", "missing_information", "invalidation_condition", "raw_output", "prompt_tokens", "completion_tokens", "latency_ms", "prediction_fingerprint", "status", "error_message"],
+  "required_fields": "ALL_FIELDS; nullable behavior is status-specific",
+  "nullable_fields": ["pack_fingerprint for BASELINE", "no_signal_reason unless no_signal_flag", "all immediate_impulse_* fields for NO_SIGNAL or PROVIDER_ERROR", "expected_reversal_flag and expected_reversal_horizon_min for NO_SIGNAL", "error_message unless PROVIDER_ERROR or INVALID"],
+  "field_types": {
+    "string": ["object", "schema_version", "system_version", "run_id", "prediction_id", "episode_id", "session_id", "provider", "model", "information_arm", "pack_id", "pack_fingerprint", "forecast_created_ts", "forecast_cutoff_ts", "prediction_target_type", "prediction_target_id", "primary_event_id", "no_signal_reason", "immediate_impulse_direction", "early_reaction_5m_direction", "expected_path_summary", "invalidation_condition", "prediction_fingerprint", "status", "error_message"],
+    "array_or_json": ["secondary_event_ids", "information_used", "missing_information"],
+    "boolean": ["no_signal_flag", "expected_reversal_flag"],
+    "probability_0_to_1": ["confidence", "immediate_impulse_confidence"],
+    "integer_nullable": ["immediate_impulse_window_seconds", "expected_reversal_horizon_min", "prompt_tokens", "completion_tokens", "latency_ms"],
+    "nonnegative_number_nullable": ["immediate_impulse_peak_pips_min", "immediate_impulse_peak_pips_max"],
+    "json_or_string": ["raw_output"]
+  },
+  "identity_rule": "prediction_id = PRD_<sha256(episode_id, provider, model, information_arm, pack_id, pack_fingerprint, forecast_cutoff_ts, prediction_target_type, prediction_target_id, contract_version)[:20]>. One authoritative Prediction is episode x provider x information_arm x frozen model configuration x cutoff.",
+  "target_rule": {"prediction_target_type": "EVENT_EPISODE", "prediction_target_id": "episode_id", "market_session": "prohibited as a primary v2.1 target"},
+  "information_arms": {"BASELINE": "approved baseline forecast information only; pack_id=BASELINE_NO_PACK and pack_fingerprint is null", "FULL_CONTEXT": "the same baseline information plus the approved shared request-driven Market-State Pack; pack_id and pack_fingerprint are required", "fair_comparison": ["same provider", "same model", "same Episode", "same cutoff", "same target", "same output schema", "same Outcome", "only information content differs"]},
+  "directions": ["UP", "DOWN", "FLAT", "UNCERTAIN"],
+  "immediate_impulse_rule": {"window_seconds": 120, "semantic_target": "The first persistent and meaningful USD/JPY direction expected to become established shortly after release.", "allowed_directions": ["UP", "DOWN", "FLAT"], "separate_from_t5": "Immediate Impulse is not the strict sign of the first tick and is not interchangeable with the T+5 Early Reaction field."},
+  "early_reaction_5m_rule": "early_reaction_5m_direction is the explicit EARLY_REACTION_5M forecast field for Contract v1.1. It must equal the 5-minute path direction and must not be described as the strict first move.",
+  "no_signal_rule": "NO_SIGNAL is valid when no_signal_flag=true, status=NO_SIGNAL, no_signal_reason is non-empty, immediate_impulse_* fields are null, early_reaction_5m_direction=UNCERTAIN, and reversal fields are null. It is not a provider failure. PROVIDER_ERROR requires no_signal_flag=false and a non-empty error_message.",
+  "fingerprint_inputs": ["all fields except run_id", "forecast_created_ts", "prompt_tokens", "completion_tokens", "latency_ms", "status", "error_message", "prediction_fingerprint"],
+  "immutable_fields": ["schema_version", "system_version", "prediction_id", "episode_id", "provider", "model", "information_arm", "pack_id", "pack_fingerprint", "forecast_cutoff_ts", "prediction_target_type", "prediction_target_id", "primary_event_id", "secondary_event_ids"]
+}

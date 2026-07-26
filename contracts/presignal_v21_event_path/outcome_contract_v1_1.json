@@ -1,0 +1,32 @@
+{
+  "contract_name": "outcome_contract_v1",
+  "system_version": "presignal_v2.1",
+  "contract_version": "presignal_event_path_contract_v1_1",
+  "schema_version": "2.1.1",
+  "parent_v2_0_conventions": ["USD/JPY pips = price difference / 0.01", "MR_FLAT_MAX_ABS_PIPS default = 1", "UTC timestamp lineage", "provider-neutral canonical Outcome"],
+  "object": "OUTCOME",
+  "field_order": ["object", "schema_version", "system_version", "outcome_id", "episode_id", "session_id", "release_ts", "anchor_price_ts", "anchor_price", "immediate_impulse_outcome_state", "immediate_impulse_method_version", "immediate_impulse_window_seconds", "first_meaningful_excursion_direction", "first_meaningful_excursion_timestamp", "first_meaningful_excursion_pips", "confirmed_initial_direction", "initial_direction_confirmation_timestamp", "initial_peak_pips", "initial_peak_timestamp", "maximum_opposite_excursion_pips", "false_initial_excursion_flag", "false_initial_excursion_direction", "initial_peak_retention_at_t5", "price_5m", "price_15m", "price_30m", "price_60m", "pips_5m", "pips_15m", "pips_30m", "pips_60m", "direction_5m", "direction_15m", "direction_30m", "direction_60m", "max_up_pips", "max_down_pips", "max_up_ts", "max_down_ts", "initial_direction", "reversal_flag", "reversal_ts", "intervening_event_flag", "market_data_provider", "source_lineage", "acquisition_ts", "outcome_fingerprint", "status", "error_message"],
+  "required_fields": "ALL_FIELDS; availability controls nullability",
+  "nullable_fields": ["anchor and horizon fields when status=UNAVAILABLE", "immediate impulse timestamps, peak fields, and retention when no directional impulse can be established", "false_initial_excursion_direction unless false_initial_excursion_flag=true", "reversal_ts when reversal_flag=false", "error_message unless status is UNAVAILABLE or INVALID"],
+  "field_types": {
+    "string": ["object", "schema_version", "system_version", "outcome_id", "episode_id", "session_id", "release_ts", "anchor_price_ts", "immediate_impulse_outcome_state", "immediate_impulse_method_version", "first_meaningful_excursion_direction", "first_meaningful_excursion_timestamp", "confirmed_initial_direction", "initial_direction_confirmation_timestamp", "initial_peak_timestamp", "false_initial_excursion_direction", "max_up_ts", "max_down_ts", "initial_direction", "reversal_ts", "market_data_provider", "acquisition_ts", "outcome_fingerprint", "status", "error_message"],
+    "positive_number": ["anchor_price", "price_5m", "price_15m", "price_30m", "price_60m"],
+    "signed_number": ["first_meaningful_excursion_pips", "initial_peak_pips", "maximum_opposite_excursion_pips", "initial_peak_retention_at_t5", "pips_5m", "pips_15m", "pips_30m", "pips_60m", "max_up_pips", "max_down_pips"],
+    "enum": ["direction_5m", "direction_15m", "direction_30m", "direction_60m"],
+    "boolean": ["false_initial_excursion_flag", "reversal_flag", "intervening_event_flag"],
+    "integer": ["immediate_impulse_window_seconds"],
+    "json": ["source_lineage"]
+  },
+  "identity_rule": "outcome_id = OUT_<sha256(episode_id, release_ts, contract_version)[:20]>. It is provider- and arm-independent; every Prediction for an Episode attaches to this one canonical Outcome.",
+  "price_anchor_rule": {"status": "MODIFIED_FROM_V2_0", "rule": "Use the close of the latest accepted USD/JPY candle at or before release_ts. The timestamp is UTC and may be no more than 60 seconds stale; otherwise Outcome is UNAVAILABLE. This replaces v2.0's reaction-detected anchor because v2.1 evaluates the path from the scheduled catalyst release.", "market_closed": "UNAVAILABLE; do not substitute a later opening price."},
+  "horizon_price_rule": "For T+5, T+15, T+30, and T+60, use the close of an accepted candle timestamped at or before release_ts+horizon and no more than 60 seconds earlier. Persist all observation timestamps in source_lineage.horizon_observation_ts. Any missing or stale horizon makes the Outcome UNAVAILABLE; no fallback-to-last-candle is permitted.",
+  "pip_rule": "realized_pips = round((horizon_price - anchor_price) / 0.01, 2). USD/JPY pips are signed; max_up_pips is non-negative and max_down_pips is non-positive.",
+  "directions": {"allowed": ["UP", "DOWN", "FLAT", "UNAVAILABLE"], "flat_threshold_pips": 1.0, "rule": "abs(realized_pips) < 1.0 is FLAT; otherwise positive is UP and negative is DOWN."},
+  "immediate_impulse_rule": {"window_seconds": 120, "states": ["SUPPORTED", "APPROXIMATION_ONLY", "UNAVAILABLE_UNSUPPORTED_RESOLUTION", "OUTCOME_UNAVAILABLE", "INVALID_MARKET_DATA"], "branching": {"SUPPORTED": "ordered sub-minute observations are sufficient to determine movement sequence and persistence", "APPROXIMATION_ONLY": "one-minute ordered observations are available; the stored sidecar is explicitly approximate and must not claim tick-accurate sequencing", "UNAVAILABLE_UNSUPPORTED_RESOLUTION": "only five-minute bars, endpoints, or otherwise insufficient resolution is available", "OUTCOME_UNAVAILABLE": "required market data could not be retrieved or does not cover the Episode", "INVALID_MARKET_DATA": "timestamps, duplicates, or price lineage violate deterministic acceptance rules"}},
+  "t5_semantic_rule": "direction_5m and pips_5m remain preserved fields but now represent EARLY_REACTION_5M, not the strict first move. They are evaluated relative to the same pre-release anchor as T+15.",
+  "excursion_rule": "max_up_pips, max_down_pips, max_up_ts, and max_down_ts cover release_ts through T+60 minutes inclusive.",
+  "reversal_rule": "initial_direction is direction_5m when directional, otherwise the first directional value at 15, 30, or 60 minutes, otherwise FLAT. reversal_flag is true when the earliest later required horizon is opposite to initial_direction; reversal_ts is exactly that release_ts plus horizon. No free-form reversal interpretation is allowed.",
+  "intervening_event_rule": "true when another non-IGNORE Episode has release_ts strictly after this Episode and at or before T+60. It is flag-only in v1: all available horizons remain eligible and the flag is reported without automatic exclusion.",
+  "fingerprint_inputs": ["all fields except acquisition_ts", "status", "error_message", "outcome_fingerprint"],
+  "immutable_fields": ["schema_version", "system_version", "outcome_id", "episode_id", "session_id", "release_ts", "anchor_price_ts", "anchor_price", "price_5m", "price_15m", "price_30m", "price_60m", "source_lineage"]
+}

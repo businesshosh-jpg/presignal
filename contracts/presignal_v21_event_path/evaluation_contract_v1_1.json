@@ -1,0 +1,30 @@
+{
+  "contract_name": "evaluation_contract_v1",
+  "system_version": "presignal_v2.1",
+  "contract_version": "presignal_event_path_contract_v1_1",
+  "schema_version": "2.1.1",
+  "object": "EVALUATION",
+  "field_order": ["object", "schema_version", "system_version", "evaluation_id", "run_id", "prediction_id", "outcome_id", "episode_id", "provider", "model", "information_arm", "immediate_impulse_direction_result", "immediate_impulse_peak_range_covered", "immediate_impulse_peak_range_distance_error_pips", "immediate_impulse_peak_midpoint_absolute_error_pips", "false_initial_excursion_observed", "direction_5m_ok", "t5_range_covered", "t5_range_distance_error_pips", "t5_midpoint_absolute_error_pips", "initial_peak_retention_at_t5", "initial_impulse_sustained_to_t5", "initial_impulse_faded_by_t5", "initial_impulse_reversed_by_t5", "direction_15m_ok", "direction_30m_ok", "direction_60m_ok", "magnitude_15m_error", "reversal_ok", "no_signal_ok", "primary_endpoint_name", "primary_endpoint_value", "overall_path_score", "evaluation_note", "evaluation_contract_version", "evaluation_fingerprint", "generated_ts", "status", "error_message"],
+  "required_fields": "ALL_FIELDS; unavailable and NO_SIGNAL conditions control nullability",
+  "nullable_fields": ["Immediate Impulse direction and magnitude metrics for APPROXIMATION_ONLY, unavailable Outcome, provider error, or valid NO_SIGNAL", "T+5 range, retention, and sustainability fields for unavailable Outcome, provider error, or valid NO_SIGNAL", "primary_endpoint_value for unavailable Outcome, provider error, or valid NO_SIGNAL", "error_message unless status is UNAVAILABLE or INVALID"],
+  "field_types": {
+    "string": ["object", "schema_version", "system_version", "evaluation_id", "run_id", "prediction_id", "outcome_id", "episode_id", "provider", "model", "information_arm", "immediate_impulse_direction_result", "primary_endpoint_name", "evaluation_note", "evaluation_contract_version", "evaluation_fingerprint", "generated_ts", "status", "error_message"],
+    "boolean_nullable": ["immediate_impulse_peak_range_covered", "false_initial_excursion_observed", "direction_5m_ok", "t5_range_covered", "initial_impulse_sustained_to_t5", "initial_impulse_faded_by_t5", "initial_impulse_reversed_by_t5", "direction_15m_ok", "direction_30m_ok", "direction_60m_ok", "reversal_ok", "no_signal_ok", "primary_endpoint_value"],
+    "number_nullable": ["immediate_impulse_peak_range_distance_error_pips", "immediate_impulse_peak_midpoint_absolute_error_pips", "t5_range_distance_error_pips", "t5_midpoint_absolute_error_pips", "initial_peak_retention_at_t5", "magnitude_15m_error"],
+    "probability_nullable": ["overall_path_score"]
+  },
+  "identity_rule": "evaluation_id = EVL_<sha256(prediction_id, outcome_id, contract_version)[:20]>. It attaches exactly one Prediction to the canonical Outcome for that Prediction's Episode.",
+  "primary_endpoint": {"name": "EPISODE_REACTION_DIRECTION_15M", "definition": "The predicted 15-minute Episode direction equals the canonical realized 15-minute direction under the shared 1-pip FLAT rule.", "co_primary_endpoints": "prohibited"},
+  "supporting_endpoints": ["IMMEDIATE_IMPULSE_DIRECTION", "IMMEDIATE_IMPULSE_PEAK_RANGE", "EARLY_REACTION_5M_DIRECTION", "EARLY_REACTION_5M_RANGE", "EARLY_REACTION_5M_RETENTION", "EPISODE_REACTION_DIRECTION_30M", "EPISODE_REACTION_DIRECTION_60M", "EPISODE_REACTION_MAGNITUDE_15M", "EPISODE_REVERSAL", "COMPLETE_PATH", "NO_SIGNAL_QUALITY"],
+  "direction_scoring": "UP, DOWN, and FLAT score true only on equality. UNCERTAIN is not a correct actionable directional forecast. Unavailable Outcomes and provider errors yield null, never false.",
+  "immediate_impulse_rule": "Immediate Impulse direction_result is evaluated only when Outcome.immediate_impulse_outcome_state=SUPPORTED. APPROXIMATION_ONLY records preserve observed sidecar fields but score NOT_APPLICABLE rather than pretending strict first-move accuracy.",
+  "magnitude_rule": "magnitude_15m_error is zero when abs(realized_pips_15m) lies in the inclusive predicted 15-minute [expected_pips_min, expected_pips_max] interval; otherwise it is distance to the nearest boundary.",
+  "t5_rule": "direction_5m_ok, t5 range metrics, and sustainability fields evaluate EARLY_REACTION_5M. initial_peak_retention_at_t5 is signed T+5 movement divided by signed initial peak movement when a directional initial impulse exists; otherwise it is null.",
+  "reversal_rule": "reversal_ok is equality of predicted and realized reversal_flag when both are available.",
+  "no_signal_rule": "A valid no-signal scores true only when all four realized directions are FLAT and max(abs(max_up_pips), abs(max_down_pips)) < 1.0. It is otherwise false; it is not a free pass for an absent forecast.",
+  "complete_path_rule": "overall_path_score is the unweighted mean of available 5/15/30/60 direction correctness values. Magnitude and reversal are separate supporting fields, not weighted into this v1 score.",
+  "intervening_event_rule": "intervening_event_flag is report-only; it does not automatically exclude a row from v1 endpoints.",
+  "ae_comparison_boundary": ["same Episode", "same provider", "same model", "same forecast target", "same cutoff", "same Outcome", "one BASELINE", "one FULL_CONTEXT"],
+  "fingerprint_inputs": ["all fields except run_id", "generated_ts", "status", "error_message", "evaluation_note", "evaluation_fingerprint"],
+  "immutable_fields": ["schema_version", "system_version", "evaluation_id", "prediction_id", "outcome_id", "episode_id", "provider", "model", "information_arm", "evaluation_contract_version"]
+}
