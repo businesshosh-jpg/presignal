@@ -594,12 +594,14 @@ def build_checksums(run_dir: Path) -> dict[str, str]:
 
 
 def run_enrichment(output_root: Path | None = None) -> dict[str, Any]:
-    source_head = sha256_text((ROOT / ".git" / "HEAD").read_text())  # overwritten below when run from git status context
+    source_head = ""
     try:
         import subprocess
         source_head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     except Exception:
-        pass
+        git_ref = ROOT / ".git"
+        if git_ref.exists():
+            source_head = sha256_text(git_ref.read_text())
 
     cache_manifest = read_json(CACHE_RECOVERY_ROOT / "run_manifest.json")
     _require(cache_manifest["recovered_cache_decision"] == "RECOVERED_CACHE_ADMISSIBLE", "CACHE_NOT_ADMISSIBLE")
