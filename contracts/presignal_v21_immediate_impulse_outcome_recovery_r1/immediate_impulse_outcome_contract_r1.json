@@ -1,0 +1,218 @@
+{
+  "$id": "presignal.immediate_impulse_outcome_recovery.r1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "anchor_fallback_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "anchor_method": {
+      "enum": [
+        "MEDIAN_VALID_MIDPOINT_T_MINUS_10S_TO_T_MINUS_2S",
+        "LAST_VALID_MIDPOINT_STRICTLY_BEFORE_T"
+      ],
+      "type": "string"
+    },
+    "anchor_price": {
+      "type": "number"
+    },
+    "anchor_timestamp": {
+      "pattern": "Z$",
+      "type": "string"
+    },
+    "contract_version": {
+      "const": "presignal_immediate_impulse_outcome_recovery_r1",
+      "type": "string"
+    },
+    "detector_parameters": {
+      "$ref": "immediate_impulse_detector_parameters_r1.json"
+    },
+    "episode_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "evaluator_version": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "forecast_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "generated_timestamp": {
+      "pattern": "Z$",
+      "type": "string"
+    },
+    "immediate_impulse_adverse_pips": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "immediate_impulse_direction": {
+      "enum": [
+        "UP",
+        "DOWN",
+        "FLAT",
+        "UNAVAILABLE"
+      ],
+      "type": "string"
+    },
+    "immediate_impulse_peak_pips": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "immediate_impulse_peak_timestamp": {
+      "pattern": "Z$",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "immediate_impulse_persistence_seconds": {
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "immediate_impulse_reversed_by_120s": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "immediate_impulse_start_timestamp": {
+      "pattern": "Z$",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "immediate_impulse_status": {
+      "enum": [
+        "STRICT_AVAILABLE",
+        "RESOLUTION_LIMITED",
+        "APPROXIMATION_ONLY",
+        "OUTCOME_UNAVAILABLE"
+      ],
+      "type": "string"
+    },
+    "immediate_impulse_threshold_cross_timestamp": {
+      "pattern": "Z$",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "market_data_resolution": {
+      "enum": [
+        "TICK",
+        "SECOND",
+        "FIVE_SECOND",
+        "ONE_MINUTE_OHLC",
+        "OTHER_LIMITED"
+      ],
+      "type": "string"
+    },
+    "market_data_source": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "model": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "net_direction_at_120s": {
+      "enum": [
+        "UP",
+        "DOWN",
+        "FLAT",
+        "UNAVAILABLE"
+      ],
+      "type": "string"
+    },
+    "net_move_at_120s_pips": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "observation_count": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "observation_end_timestamp": {
+      "pattern": "Z$",
+      "type": "string"
+    },
+    "observation_start_timestamp": {
+      "pattern": "Z$",
+      "type": "string"
+    },
+    "pack_arm": {
+      "enum": [
+        "BASELINE",
+        "FULL_CONTEXT"
+      ],
+      "type": "string"
+    },
+    "provider": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "raw_observation_artifact_reference": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "release_timestamp": {
+      "pattern": "Z$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "type": "string"
+    }
+  },
+  "required": [
+    "episode_id",
+    "forecast_id",
+    "provider",
+    "model",
+    "pack_arm",
+    "release_timestamp",
+    "market_data_source",
+    "market_data_resolution",
+    "observation_start_timestamp",
+    "observation_end_timestamp",
+    "observation_count",
+    "raw_observation_artifact_reference",
+    "anchor_method",
+    "anchor_fallback_reason",
+    "anchor_timestamp",
+    "anchor_price",
+    "detector_parameters",
+    "immediate_impulse_status",
+    "immediate_impulse_direction",
+    "immediate_impulse_start_timestamp",
+    "immediate_impulse_threshold_cross_timestamp",
+    "immediate_impulse_peak_timestamp",
+    "immediate_impulse_peak_pips",
+    "immediate_impulse_adverse_pips",
+    "immediate_impulse_persistence_seconds",
+    "immediate_impulse_reversed_by_120s",
+    "net_move_at_120s_pips",
+    "net_direction_at_120s",
+    "contract_version",
+    "schema_version",
+    "evaluator_version",
+    "generated_timestamp"
+  ],
+  "title": "Immediate Impulse Outcome Recovery R1",
+  "type": "object"
+}

@@ -1,0 +1,34 @@
+{
+  "$id": "presignal.immediate_impulse_detector_parameters.r1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "directional_retention_pips": {
+      "type": "number"
+    },
+    "maximum_detection_window_seconds": {
+      "const": 120,
+      "type": "integer"
+    },
+    "maximum_temporary_violations": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "minimum_move_pips": {
+      "type": "number"
+    },
+    "minimum_persistence_seconds": {
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "minimum_move_pips",
+    "minimum_persistence_seconds",
+    "directional_retention_pips",
+    "maximum_temporary_violations",
+    "maximum_detection_window_seconds"
+  ],
+  "title": "Immediate Impulse Detector Parameters R1",
+  "type": "object"
+}
