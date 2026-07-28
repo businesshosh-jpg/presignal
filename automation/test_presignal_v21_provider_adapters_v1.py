@@ -1,7 +1,25 @@
 import unittest
+from pathlib import Path
+import json
 
 from automation import presignal_v21_provider_adapters_v1 as adapters
 from automation import presignal_v21_historical_verification_r3_compat_r4_contract_v1 as compat_r4
+from automation import run_presignal_v21_single_event_path_pair_v1_1 as step6
+
+
+ROOT = Path(__file__).resolve().parents[1]
+TARGETED_VALIDATION_ROOT = (
+    ROOT
+    / "outputs"
+    / "presignal_v21_pure_prediction_historical_baseline"
+    / "PPHB-R1-TARGETED-PROVIDER-VALIDATION-20260726T133327Z-5ed8eeda82cc"
+)
+EXPANDED_VALIDATION_ROOT = (
+    ROOT
+    / "outputs"
+    / "presignal_v21_pure_prediction_historical_baseline"
+    / "PPHB-R1-EXPANDED-VALIDATION-20260726T123833Z-c6afc7952cca"
+)
 
 
 class ProviderAdapterTests(unittest.TestCase):
@@ -64,6 +82,69 @@ class ProviderAdapterTests(unittest.TestCase):
             scientific_validator=lambda _: False,
         )
         self.assertEqual(invalid["validation_status"], adapters.ValidationStatus.INVALID)
+
+    def test_nested_apps_script_transport_result_unwraps_for_anthropic(self):
+        raw = json.loads(
+            (
+                TARGETED_VALIDATION_ROOT
+                / "raw_provider_responses"
+                / "02_EP_EVENT_f2862037fd8c6ab5315a_Anthropic_PACK_E.json"
+            ).read_text()
+        )["transport_result"]
+        result = adapters.normalize_prospective_forecast_response(
+            requested_provider="Anthropic",
+            requested_model="claude-haiku-4-5",
+            transport_result=raw,
+            scientific_validator=lambda payload: bool(step6.normalize_provider_output(payload)),
+        )
+        self.assertEqual(result["parse_status"], adapters.ParseStatus.PARSED)
+        self.assertEqual(result["validation_status"], adapters.ValidationStatus.VALID)
+        self.assertEqual(result["actual_provider"], "Anthropic")
+        self.assertEqual(result["actual_model"], "claude-haiku-4-5")
+
+    def test_nested_apps_script_transport_result_unwraps_for_gemini_and_openai(self):
+        fixtures = [
+            (
+                "Gemini",
+                "gemini-2.5-flash-lite",
+                EXPANDED_VALIDATION_ROOT / "raw_provider_responses" / "03_EP_EVENT_2d777c70a07c631e5f03_Gemini_PACK_A.json",
+            ),
+            (
+                "OpenAI",
+                "gpt-4o-mini-2024-07-18",
+                EXPANDED_VALIDATION_ROOT / "raw_provider_responses" / "09_EP_BATCH_80bbf91b9afbc592880f_OpenAI_PACK_A.json",
+            ),
+        ]
+        for provider, model, path in fixtures:
+            with self.subTest(provider=provider):
+                raw = json.loads(path.read_text())["transport_result"]
+                result = adapters.normalize_prospective_forecast_response(
+                    requested_provider=provider,
+                    requested_model=model,
+                    transport_result=raw,
+                    scientific_validator=lambda payload: bool(step6.normalize_provider_output(payload)),
+                )
+                self.assertEqual(result["parse_status"], adapters.ParseStatus.PARSED)
+                self.assertEqual(result["validation_status"], adapters.ValidationStatus.VALID)
+                self.assertEqual(result["actual_provider"], provider)
+                self.assertEqual(result["actual_model"], model)
+
+    def test_scientific_fields_still_fail_closed_after_wrapper_unwrap(self):
+        transport = {
+            "result": {
+                "actual_provider": "Anthropic",
+                "actual_model": "claude-haiku-4-5",
+                "raw_output": {"confidence": 0.5},
+            }
+        }
+        result = adapters.normalize_prospective_forecast_response(
+            requested_provider="Anthropic",
+            requested_model="claude-haiku-4-5",
+            transport_result=transport,
+            scientific_validator=lambda payload: bool(step6.normalize_provider_output(payload)),
+        )
+        self.assertEqual(result["parse_status"], adapters.ParseStatus.PARSED)
+        self.assertEqual(result["validation_status"], adapters.ValidationStatus.INVALID)
 
 
 if __name__ == "__main__":

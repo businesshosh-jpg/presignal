@@ -59,18 +59,44 @@ def _extract_envelope(payload: dict[str, Any]) -> dict[str, Any]:
     return dict(payload["forecast"])
 
 
+def _unwrap_bridge_transport_result(transport_result: Mapping[str, Any]) -> dict[str, Any]:
+    """Flatten the preserved Apps Script execution wrapper to its result payload."""
+    direct = dict(transport_result)
+    nested_result = transport_result.get("result")
+    if isinstance(nested_result, Mapping) and (
+        "raw_output" in nested_result or "raw_response" in nested_result
+    ):
+        return dict(nested_result)
+    response = transport_result.get("response")
+    if isinstance(response, Mapping):
+        execution_response = response.get("response")
+        if isinstance(execution_response, Mapping):
+            execution_result = execution_response.get("result")
+            if isinstance(execution_result, Mapping) and (
+                "raw_output" in execution_result or "raw_response" in execution_result
+            ):
+                return dict(execution_result)
+    return direct
+
+
 def normalize_provider_response(*, stage: str, requested_provider: str, requested_model: str,
                                 transport_result: Mapping[str, Any], contract_version: str | None = None,
                                 validator: Callable[[Mapping[str, Any]], bool] | None = None) -> dict[str, Any]:
     """Return neutral response facts without deciding runtime or scientific state."""
-    raw = transport_result.get("raw_output", transport_result.get("raw_response"))
+    transport_payload = _unwrap_bridge_transport_result(transport_result)
+    raw = transport_payload.get("raw_output", transport_payload.get("raw_response"))
     result: dict[str, Any] = {
         "requested_provider": requested_provider, "requested_model": requested_model,
-        "actual_provider": transport_result.get("actual_provider"), "actual_model": transport_result.get("actual_model"),
+        "actual_provider": transport_payload.get("actual_provider", transport_result.get("actual_provider")),
+        "actual_model": transport_payload.get("actual_model", transport_result.get("actual_model")),
         "raw_response": raw, "raw_response_reference": transport_result.get("raw_response_reference"),
         "canonical_payload": None, "parse_status": ParseStatus.NOT_ATTEMPTED,
         "validation_status": ValidationStatus.NOT_VALIDATED, "normalization_notes": [],
-        "provider_metadata": {key: transport_result.get(key) for key in ("status", "transport_status", "completed_timestamp", "prompt_tokens", "completion_tokens", "latency_ms") if key in transport_result},
+        "provider_metadata": {
+            key: transport_payload.get(key, transport_result.get(key))
+            for key in ("status", "transport_status", "completed_timestamp", "prompt_tokens", "completion_tokens", "latency_ms")
+            if key in transport_payload or key in transport_result
+        },
     }
     if raw is None:
         return result
