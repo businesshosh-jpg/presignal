@@ -32,6 +32,9 @@ PLAN_ROOT = (
 )
 OUTPUT_ROOT = ROOT / "outputs" / "presignal_v21_full_round_1_attention_execution"
 BATCH_ID = "ATTN_BATCH_001"
+PREDECESSOR_RUN_ID = "PPHB-R1-ATTENTION-EXECUTION-BATCH-001-20260729T012813Z-4a361d6c2add"
+PREDECESSOR_ATTEMPTED_CALLS = 0
+RERUN_REASON = "GOOGLE_AUTHENTICATION_RECOVERED_BEFORE_FIRST_PROVIDER_DISPATCH"
 EXPECTED_HEAD_ANCESTOR = "773fba1d4d643d2a64ca3e42a39edb2b30efe39f"
 EXPECTED_CALL_COUNT = 12
 EXPECTED_FILES = {
@@ -60,6 +63,8 @@ TERMINAL_STATUSES = {
     "FAILED_PARSE",
     "FAILED_VALIDATION",
 }
+STEP8_R2_SESSIONS_ROOT = ROOT / "outputs" / "presignal_v21_step8_r2_historical_replication" / "STEP8-R2-e057ba70c884e0e618cf" / "sessions"
+POPULATION_AUDIT_ROOT = ROOT / "outputs" / "presignal_v21_full_round_1_population_audit" / "PPHB-R1-FULL-POPULATION-AUDIT-20260728T125525Z-b25cd178e7d6"
 
 
 class AttentionBatchError(RuntimeError):
@@ -106,6 +111,12 @@ def write_json(path: Path, value: Any) -> None:
     temp = path.with_suffix(path.suffix + ".tmp")
     temp.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
     os.replace(temp, path)
+
+
+def update_run_manifest(path: Path, **updates: Any) -> None:
+    manifest = read_json(path) if path.exists() else {}
+    manifest.update(updates)
+    write_json(path, manifest)
 
 
 def write_jsonl(path: Path, rows: Iterable[Mapping[str, Any]]) -> None:
@@ -165,12 +176,90 @@ def load_unique_session_inventory() -> dict[str, dict[str, Any]]:
     return {row["source_session_id"]: row for row in rows}
 
 
+def _session_payload_from_step8(session_id: str) -> tuple[dict[str, Any], list[dict[str, Any]]] | None:
+    base = STEP8_R2_SESSIONS_ROOT / session_id / "attention"
+    if not base.exists():
+        return None
+    for provider_file in sorted(base.glob("*.json")):
+        payload = read_json(provider_file)
+        request = payload.get("request") or {}
+        prompt = request.get("prompt") or {}
+        user = prompt.get("user")
+        if not isinstance(user, str) or not user.strip():
+            continue
+        try:
+            prompt_payload = json.loads(user)
+        except json.JSONDecodeError:
+            continue
+        session = dict(prompt_payload.get("session") or {})
+        events = [dict(row) for row in (prompt_payload.get("events") or []) if isinstance(row, Mapping)]
+        if session.get("session_id") == session_id and events:
+            return session, events
+    return None
+
+
+def _population_calendar_rows() -> list[dict[str, Any]]:
+    return read_jsonl(POPULATION_AUDIT_ROOT / "normalized_calendar_event_manifest.jsonl")
+
+
+def _session_payload_from_population_audit(session_id: str) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    parts = session_id.split("|")
+    if len(parts) != 3:
+        raise AttentionBatchError("INVALID_SESSION_ID:" + session_id)
+    country, session_date, session_window_name = parts
+    rows = [
+        row for row in _population_calendar_rows()
+        if row.get("country") == country and str(row.get("canonical_utc_release_timestamp", "")).startswith(session_date)
+    ]
+    if not rows:
+        raise AttentionBatchError("POPULATION_AUDIT_SESSION_MISSING:" + session_id)
+    rows.sort(key=lambda row: (
+        str(row.get("canonical_utc_release_timestamp") or ""),
+        int(((row.get("source_lineage") or {}).get("excel_row_number") or 10**9)),
+        str(row.get("event_id") or ""),
+    ))
+    session = {
+        "session_id": session_id,
+        "country": country,
+        "session_window_name": session_window_name,
+        "session_start_ts": rows[0]["canonical_utc_release_timestamp"],
+        "session_end_ts": rows[-1]["canonical_utc_release_timestamp"],
+    }
+    events = []
+    for index, row in enumerate(rows, 1):
+        events.append(
+            {
+                "event_id": row.get("event_id", ""),
+                "batch_id": row.get("batch_id", ""),
+                "type": row.get("type", ""),
+                "indicator_name": row.get("normalized_indicator_name") or row.get("raw_indicator_name") or "",
+                "genre": row.get("event_family", ""),
+                "importance": row.get("importance", ""),
+                "release_ts": row.get("canonical_utc_release_timestamp", ""),
+                "consensus_value": "",
+                "prev_revision": "",
+                "member_order": index,
+            }
+        )
+    return session, events
+
+
 def read_source_sessions() -> tuple[dict[str, Any], dict[str, list[dict[str, Any]]]]:
-    _manifest, sessions, members, _packs = replay.source_population()
-    session_by_id = {row["session_id"]: row for row in sessions}
-    members_by_session: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    for row in members:
-        members_by_session[row["session_id"]].append(dict(row))
+    session_inventory = load_unique_session_inventory()
+    session_by_id: dict[str, dict[str, Any]] = {}
+    members_by_session: dict[str, list[dict[str, Any]]] = {}
+    for session_id in sorted(session_inventory):
+        exact = _session_payload_from_step8(session_id)
+        session_payload, event_rows = exact or _session_payload_from_population_audit(session_id)
+        session_by_id[session_id] = {
+            "session_id": session_payload.get("session_id", session_id),
+            "country": session_payload.get("country", session_id.split("|")[0]),
+            "session_window_name": session_payload.get("session_window_name", session_id.split("|")[2]),
+            "session_start_ts": session_payload.get("session_start_ts", ""),
+            "session_end_ts": session_payload.get("session_end_ts", ""),
+            "forecast_cutoff": session_payload.get("session_start_ts", "") or session_payload.get("session_end_ts", ""),
+        }
+        members_by_session[session_id] = [dict(row) for row in event_rows]
     return session_by_id, members_by_session
 
 
@@ -531,6 +620,9 @@ def initialize_run_files(run_dir: Path, batch_calls: list[dict[str, Any]], finge
                 "market_data_calls": 0,
                 "web_calls": 0,
                 "google_writes": 0,
+                "predecessor_run_id": PREDECESSOR_RUN_ID,
+                "predecessor_attempted_calls": PREDECESSOR_ATTEMPTED_CALLS,
+                "rerun_reason": RERUN_REASON,
             },
         )
     if not (run_dir / "governing_artifact_manifest.json").exists():
@@ -632,7 +724,7 @@ def execute_batch(
             reconciliation = summarize_run(run_dir, batch_calls, blocked_reason=blocked_reason)
             decision = {
                 "execution_status": "ATTENTION_BATCH_001_BLOCKED",
-                "contract_decision": "LIVE_ATTENTION_CONTRACT_FAILURE",
+                "contract_decision": "NO_LIVE_CONTRACT_EVIDENCE",
                 "resume_decision": "RESUME_PROTECTION_VALIDATED",
                 "scaling_decision": "REPAIR_BEFORE_FURTHER_BATCHES",
                 "blocked_reason": blocked_reason,
@@ -640,6 +732,7 @@ def execute_batch(
                 "plan_contract_identity": plan_contract["attention_output_contract"]["object"],
                 "runtime_contract_version": contract["contract_version"],
             }
+            update_run_manifest(run_dir / "run_manifest.json", provider_calls_executed=0)
             write_json(run_dir / "batch_decision.json", decision)
             return {
                 "run_dir": run_dir,
@@ -677,11 +770,21 @@ def execute_batch(
         + reconciliation["failed_parse_calls"]
         + reconciliation["failed_validation_calls"]
     )
+    update_run_manifest(run_dir / "run_manifest.json", provider_calls_executed=reconciliation["attempted_calls"])
+    if failures == 0:
+        contract_decision = "ALL_BATCH_RESULTS_VALID"
+        scaling_decision = "READY_FOR_REMAINING_ATTENTION_BATCHES"
+    elif successful == 0:
+        contract_decision = "LIVE_ATTENTION_CONTRACT_FAILURE"
+        scaling_decision = "REPAIR_BEFORE_FURTHER_BATCHES"
+    else:
+        contract_decision = "VALID_RESULTS_WITH_FAILED_CALLS"
+        scaling_decision = "RETRY_FAILED_BATCH_001_CALLS_REQUIRES_AUTHORIZATION"
     decision = {
         "execution_status": "ATTENTION_BATCH_001_COMPLETE" if successful == EXPECTED_CALL_COUNT else "ATTENTION_BATCH_001_PARTIALLY_COMPLETE",
-        "contract_decision": "ALL_BATCH_RESULTS_VALID" if failures == 0 else "VALID_RESULTS_WITH_FAILED_CALLS",
+        "contract_decision": contract_decision,
         "resume_decision": "RESUME_PROTECTION_VALIDATED",
-        "scaling_decision": "READY_FOR_REMAINING_ATTENTION_BATCHES" if failures == 0 else "RETRY_FAILED_BATCH_001_CALLS_REQUIRES_AUTHORIZATION",
+        "scaling_decision": scaling_decision,
     }
     write_json(run_dir / "batch_decision.json", decision)
     return {
