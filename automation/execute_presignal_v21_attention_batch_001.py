@@ -384,6 +384,7 @@ def execute_call(
     transport_holder: dict[str, Any] = {}
 
     def wrapped_dispatch(payload: Mapping[str, Any]) -> Mapping[str, Any]:
+        transport_holder["request"] = dict(payload)
         response = dict(dispatcher(payload))
         transport_holder["response"] = response
         return response
@@ -415,7 +416,12 @@ def execute_call(
         result = None
 
     transport = transport_holder.get("response")
+    request_payload = transport_holder.get("request") or {}
     if transport is not None:
+        raw_output_preserved = transport.get("raw_output_original", transport.get("raw_output"))
+        raw_output_length = None
+        if isinstance(raw_output_preserved, str):
+            raw_output_length = len(raw_output_preserved)
         append_jsonl(
             raw_transport_path,
             {
@@ -430,6 +436,11 @@ def execute_call(
                 "prompt_tokens": transport.get("prompt_tokens"),
                 "completion_tokens": transport.get("completion_tokens"),
                 "latency_ms": transport.get("latency_ms"),
+                "stop_reason": transport.get("stop_reason"),
+                "usage_metadata": transport.get("usage_metadata"),
+                "configured_max_output_tokens": transport.get("configured_max_output_tokens", request_payload.get("max_output_tokens")),
+                "preserve_raw_before_parse": bool(request_payload.get("preserve_raw_before_parse") is True),
+                "response_length": raw_output_length,
                 "response_fingerprint": sha256_text(transport),
             },
         )
@@ -440,8 +451,9 @@ def execute_call(
                 "provider": call["provider"],
                 "model": call["model"],
                 "source_session_id": call["source_session_id"],
-                "raw_output": transport.get("raw_output_original", transport.get("raw_output")),
-                "raw_output_fingerprint": sha256_text(transport.get("raw_output_original", transport.get("raw_output"))),
+                "raw_output": raw_output_preserved,
+                "raw_output_fingerprint": sha256_text(raw_output_preserved),
+                "raw_output_returned": bool(raw_output_preserved not in (None, "")),
             },
         )
         journal_event(journal, "TRANSPORT_COMPLETED", call_id=call["call_id"], transport_status=transport.get("status"))
