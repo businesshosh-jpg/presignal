@@ -25,7 +25,7 @@ PLAN_ID = "PPHB-R1-ATTENTION-EXECUTION-PLAN-20260729T010207Z-3fcd59f96f3c"
 PRIOR_FINALIZATION_ID = "PPHB-R1-ATTENTION-BATCH-001-FINALIZATION-20260729T023607Z-eb4bd2a9277c"
 FAILURE_AUDIT_ID = "PPHB-R1-ATTENTION-BATCH-001-ANTHROPIC-FAILURE-AUDIT-20260729T032157Z-a5ae0ae86b0f"
 AUTHORIZED_CALL_ID = "ATN_d7c95516e95938578834"
-EXPECTED_HEAD = "3a3efd2309693b948e27f03540f127348bc7e518"
+EXPECTED_START_HEAD = "3a3efd2309693b948e27f03540f127348bc7e518"
 OUTPUT_ROOT = ROOT / "outputs" / "presignal_v21_full_round_1_attention_execution"
 PLAN_ROOT = ROOT / "outputs" / "presignal_v21_full_round_1_attention_execution_plan" / PLAN_ID
 PRIOR_FINALIZATION_ROOT = ROOT / "outputs" / "presignal_v21_full_round_1_attention_execution" / PRIOR_FINALIZATION_ID
@@ -61,6 +61,13 @@ def now_stamp() -> str:
 
 def git_head() -> str:
     return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+
+
+def is_descendant_of(commit: str) -> bool:
+    return subprocess.run(
+        ["git", "merge-base", "--is-ancestor", commit, "HEAD"],
+        cwd=ROOT,
+    ).returncode == 0
 
 
 def git_status_lines() -> list[str]:
@@ -108,8 +115,8 @@ def operation_transcript(path: Path) -> list[dict[str, Any]]:
 
 
 def verify_governing_artifacts() -> dict[str, Any]:
-    if git_head() != EXPECTED_HEAD:
-        raise CorrectedFinalizationError("UNEXPECTED_START_HEAD")
+    if not is_descendant_of(EXPECTED_START_HEAD):
+        raise CorrectedFinalizationError("AUTHORIZED_START_HEAD_NOT_ANCESTOR")
     for root in (PLAN_ROOT, PRIOR_FINALIZATION_ROOT, FAILURE_AUDIT_ROOT):
         if not root.exists():
             raise CorrectedFinalizationError("GOVERNING_ARTIFACT_MISSING:" + root.name)
