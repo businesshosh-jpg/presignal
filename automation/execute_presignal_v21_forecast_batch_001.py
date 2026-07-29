@@ -67,6 +67,37 @@ class ForecastBatchError(RuntimeError):
     """Batch 001 cannot proceed under the frozen execution contract."""
 
 
+def batch_number_from_user_label(user_batch_label: str) -> str:
+    return user_batch_label.rsplit("_", 1)[-1]
+
+
+def batch_status_name(user_batch_label: str, terminal_state: str) -> str:
+    number = batch_number_from_user_label(user_batch_label)
+    return f"FORECAST_BATCH_{number}_{terminal_state}"
+
+
+def contract_decision_name(user_batch_label: str, has_failures: bool) -> str:
+    number = batch_number_from_user_label(user_batch_label)
+    if number == "001":
+        return "FORECAST_CONTRACT_FAILURES_PRESENT" if has_failures else "ALL_FORECAST_RESULTS_CONTRACT_VALID"
+    return (
+        f"BATCH_{number}_FORECAST_CONTRACT_FAILURES_PRESENT"
+        if has_failures
+        else f"ALL_BATCH_{number}_FORECAST_RESULTS_CONTRACT_VALID"
+    )
+
+
+def provider_decision_name(user_batch_label: str, has_failures: bool) -> str:
+    number = batch_number_from_user_label(user_batch_label)
+    if number == "001":
+        return "PROVIDER_AUTHORITY_FAILURES_PRESENT" if has_failures else "ALL_PROVIDER_IDENTITIES_AUTHORITATIVELY_BOUND"
+    return (
+        f"BATCH_{number}_PROVIDER_AUTHORITY_FAILURES_PRESENT"
+        if has_failures
+        else f"ALL_BATCH_{number}_PROVIDER_IDENTITIES_AUTHORITATIVELY_BOUND"
+    )
+
+
 def canonical_json(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
 
@@ -88,7 +119,15 @@ def git_branch() -> str:
 
 
 def is_descendant_of(commit: str) -> bool:
-    return subprocess.run(["git", "merge-base", "--is-ancestor", commit, "HEAD"], cwd=ROOT).returncode == 0
+    return (
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", commit, "HEAD"],
+            cwd=ROOT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        ).returncode
+        == 0
+    )
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -123,10 +162,6 @@ def append_jsonl(path: Path, row: Mapping[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a") as handle:
         handle.write(canonical_json(dict(row)) + "\n")
-
-
-def batch_number_from_user_label(user_batch_label: str) -> str:
-    return user_batch_label.rsplit("_", 1)[-1]
 
 
 def build_batch_config(*, user_batch_label: str, frozen_batch_id: str) -> dict[str, str]:
@@ -356,6 +391,20 @@ def classify_transport_failure(transport_result: Mapping[str, Any] | None) -> st
     return "FAILED_TRANSPORT"
 
 
+def provider_error_without_forecast_payload(transport_result: Mapping[str, Any] | None) -> bool:
+    if not isinstance(transport_result, Mapping):
+        return False
+    response_status = str(transport_result.get("response_status") or "")
+    provider_body = transport_result.get("provider_response_body")
+    raw_output = transport_result.get("raw_output")
+    success_statuses = {"ok", "success"}
+    return (
+        response_status not in success_statuses
+        or provider_body in (None, "")
+        or raw_output in (None, "")
+    )
+
+
 def provider_authority_result(call: Mapping[str, Any], transport_result: Mapping[str, Any]) -> dict[str, Any]:
     actual_provider = transport_result.get("actual_provider")
     actual_model = transport_result.get("actual_model")
@@ -402,7 +451,7 @@ def initialize_run(
             "maximum_provider_calls": EXPECTED_CALL_COUNT,
             "branch": repo_state["branch"],
             "start_head": repo_state["head"],
-            "expected_start_head": EXPECTED_START_HEAD,
+            "expected_start_head": repo_state["expected_start_head"],
             "google_preflight": auth_result,
             batch_config["run_manifest_key"]: 0,
             "provider_calls_executed": 0,
@@ -471,19 +520,22 @@ def execute_batch(
     frozen_batch_id: str = FROZEN_BATCH_ID,
     auth_preflight: Callable[[], Mapping[str, Any]] = verify_google_preflight,
     dispatch: Callable[[Any, str, Mapping[str, Any]], Mapping[str, Any]] = default_dispatch,
+    expected_start_head: str = EXPECTED_START_HEAD,
+    script_service_factory_override: tuple[Callable[[], Any], str] | None = None,
 ) -> dict[str, Any]:
     branch = git_branch()
     head = git_head()
     if branch != "codex/immediate-impulse-outcome-recovery-r1":
         raise ForecastBatchError("BRANCH_MISMATCH")
-    if enforce_head and head != EXPECTED_START_HEAD:
-        if not is_descendant_of(EXPECTED_START_HEAD):
+    if enforce_head and head != expected_start_head:
+        if not is_descendant_of(expected_start_head):
             raise ForecastBatchError("HEAD_ANCESTRY_NOT_CLEAN")
     repo_state = {
         "branch": branch,
         "head": head,
-        "expected_head_matched": head == EXPECTED_START_HEAD,
-        "clean_descendant_of_expected_head": is_descendant_of(EXPECTED_START_HEAD),
+        "expected_head_matched": head == expected_start_head,
+        "clean_descendant_of_expected_head": is_descendant_of(expected_start_head),
+        "expected_start_head": expected_start_head,
     }
 
     bundle = verified_batch_bundle(user_batch_label=user_batch_label, frozen_batch_id=frozen_batch_id)
@@ -494,7 +546,9 @@ def execute_batch(
     validated_call_ids = load_validated_call_ids(output_root)
     script_service_factory: Callable[[], Any]
     script_id = None
-    if dispatch is default_dispatch:
+    if script_service_factory_override is not None:
+        script_service_factory, script_id = script_service_factory_override
+    elif dispatch is default_dispatch:
         script_service_factory, script_id = build_default_script_service_factory()
     else:
         script_service_factory = lambda: object()
@@ -556,6 +610,7 @@ def execute_batch(
 
         raw_transport_row = {
             "forecast_call_id": call_id,
+            "batch_id": bundle["batch_config"]["frozen_batch_id"],
             "episode_id": call["episode_id"],
             "provider": call["provider"],
             "model": call["model"],
@@ -567,8 +622,16 @@ def execute_batch(
             "transport_request": transport_meta.get("request") if isinstance(transport_meta, Mapping) else None,
             "transport_classification": transport_meta.get("classification") if isinstance(transport_meta, Mapping) else None,
             "raw_transport_result": transport_result,
+            "requested_provider": transport_result.get("requested_provider") if isinstance(transport_result, Mapping) else None,
+            "requested_model": transport_result.get("requested_model") if isinstance(transport_result, Mapping) else None,
+            "selected_adapter": transport_result.get("provider") if isinstance(transport_result, Mapping) else None,
             "actual_provider": transport_result.get("actual_provider") if isinstance(transport_result, Mapping) else None,
             "actual_model": transport_result.get("actual_model") if isinstance(transport_result, Mapping) else None,
+            "request_status": transport_result.get("request_status") if isinstance(transport_result, Mapping) else None,
+            "response_status": transport_result.get("response_status") if isinstance(transport_result, Mapping) else None,
+            "terminal_status": transport_result.get("terminal_status") if isinstance(transport_result, Mapping) else None,
+            "provider_request_id": transport_result.get("request_id") if isinstance(transport_result, Mapping) else None,
+            "provider_error": transport_result.get("error") if isinstance(transport_result, Mapping) else None,
             "stop_reason": transport_result.get("stop_reason") if isinstance(transport_result, Mapping) else None,
             "prompt_tokens": transport_result.get("prompt_tokens") if isinstance(transport_result, Mapping) else None,
             "completion_tokens": transport_result.get("completion_tokens") if isinstance(transport_result, Mapping) else None,
@@ -617,6 +680,21 @@ def execute_batch(
                 "reason": status,
             }
             append_jsonl(run_dir / "provider_authority_results.jsonl", provider_authority_result(call, transport_result))
+            append_jsonl(run_dir / "failed_call_ledger.jsonl", failed_row)
+            append_jsonl(run_dir / "operation_journal.jsonl", {"event": "FAILED_PROVIDER", **failed_row})
+            call_results.append(failed_row)
+            continue
+
+        if provider_error_without_forecast_payload(transport_result):
+            failed_row = {
+                "forecast_call_id": call_id,
+                "episode_id": call["episode_id"],
+                "provider": call["provider"],
+                "model": call["model"],
+                "pack_type": call["pack_type"],
+                "terminal_state": "FAILED_PROVIDER",
+                "reason": "PROVIDER_RESPONSE_NOT_USABLE_FOR_FORECAST_PARSING",
+            }
             append_jsonl(run_dir / "failed_call_ledger.jsonl", failed_row)
             append_jsonl(run_dir / "operation_journal.jsonl", {"event": "FAILED_PROVIDER", **failed_row})
             call_results.append(failed_row)
@@ -798,14 +876,20 @@ def execute_batch(
     write_json(run_dir / "batch_summary.json", reconciliation)
 
     if terminal_counts["FAILED_TRANSPORT"] or terminal_counts["FAILED_PROVIDER"] or terminal_counts["FAILED_PROVIDER_AUTHORITY"] or terminal_counts["FAILED_PARSE"] or terminal_counts["FAILED_VALIDATION"]:
-        batch_status = "FORECAST_BATCH_001_PARTIALLY_COMPLETE"
-        contract_decision = "FORECAST_CONTRACT_FAILURES_PRESENT" if (terminal_counts["FAILED_PARSE"] or terminal_counts["FAILED_VALIDATION"]) else "ALL_FORECAST_RESULTS_CONTRACT_VALID"
-        provider_decision = "PROVIDER_AUTHORITY_FAILURES_PRESENT" if terminal_counts["FAILED_PROVIDER_AUTHORITY"] else "ALL_PROVIDER_IDENTITIES_AUTHORITATIVELY_BOUND"
+        batch_status = batch_status_name(bundle["batch_config"]["user_batch_label"], "PARTIALLY_COMPLETE")
+        contract_decision = contract_decision_name(
+            bundle["batch_config"]["user_batch_label"],
+            bool(terminal_counts["FAILED_PARSE"] or terminal_counts["FAILED_VALIDATION"]),
+        )
+        provider_decision = provider_decision_name(
+            bundle["batch_config"]["user_batch_label"],
+            bool(terminal_counts["FAILED_PROVIDER_AUTHORITY"]),
+        )
         scaling_decision = "RETRY_FAILED_CALLS_REQUIRES_AUTHORIZATION"
     else:
-        batch_status = "FORECAST_BATCH_001_COMPLETE"
-        contract_decision = "ALL_FORECAST_RESULTS_CONTRACT_VALID"
-        provider_decision = "ALL_PROVIDER_IDENTITIES_AUTHORITATIVELY_BOUND"
+        batch_status = batch_status_name(bundle["batch_config"]["user_batch_label"], "COMPLETE")
+        contract_decision = contract_decision_name(bundle["batch_config"]["user_batch_label"], False)
+        provider_decision = provider_decision_name(bundle["batch_config"]["user_batch_label"], False)
         scaling_decision = "READY_FOR_NEXT_FORECAST_BATCH_RANGE"
     leakage_decision = "NO_HISTORICAL_LEAKAGE_DETECTED"
     resume_decision = "RESUME_PROTECTION_VALIDATED"
