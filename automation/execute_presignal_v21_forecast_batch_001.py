@@ -52,6 +52,13 @@ TERMINAL_STATES = {
     "FAILED_VALIDATION",
     "SKIPPED_ALREADY_SUCCEEDED",
 }
+DEFAULT_BATCH_CONFIG = {
+    "user_batch_label": USER_BATCH_LABEL,
+    "frozen_batch_id": FROZEN_BATCH_ID,
+    "run_id_prefix": "PPHB-R1-FORECAST-EXECUTION-BATCH-001-",
+    "run_manifest_key": "batch_002_calls_executed",
+    "forbidden_next_batch_id": "FCB_PACK_A_002",
+}
 
 
 class ForecastBatchError(RuntimeError):
@@ -116,16 +123,31 @@ def append_jsonl(path: Path, row: Mapping[str, Any]) -> None:
         handle.write(canonical_json(dict(row)) + "\n")
 
 
-def materialize_run(output_root: Path, fixed_timestamp: str | None = None) -> Path:
+def batch_number_from_user_label(user_batch_label: str) -> str:
+    return user_batch_label.rsplit("_", 1)[-1]
+
+
+def build_batch_config(*, user_batch_label: str, frozen_batch_id: str) -> dict[str, str]:
+    number = batch_number_from_user_label(user_batch_label)
+    return {
+        "user_batch_label": user_batch_label,
+        "frozen_batch_id": frozen_batch_id,
+        "run_id_prefix": f"PPHB-R1-FORECAST-EXECUTION-BATCH-{number}-",
+        "run_manifest_key": f"batch_{int(number) + 1:03d}_calls_executed",
+        "forbidden_next_batch_id": f"FCB_PACK_A_{int(number) + 1:03d}",
+    }
+
+
+def materialize_run(output_root: Path, batch_config: Mapping[str, str], fixed_timestamp: str | None = None) -> Path:
     timestamp = fixed_timestamp or now()
     seed = {
         "plan_id": PLAN_ID,
-        "frozen_batch_id": FROZEN_BATCH_ID,
-        "user_batch_label": USER_BATCH_LABEL,
+        "frozen_batch_id": batch_config["frozen_batch_id"],
+        "user_batch_label": batch_config["user_batch_label"],
         "timestamp": timestamp,
     }
     run_id = (
-        "PPHB-R1-FORECAST-EXECUTION-BATCH-001-"
+        batch_config["run_id_prefix"]
         + timestamp.replace(":", "").replace("-", "")
         + "-"
         + hashlib.sha256(canonical_json(seed).encode("utf-8")).hexdigest()[:12]
@@ -133,30 +155,32 @@ def materialize_run(output_root: Path, fixed_timestamp: str | None = None) -> Pa
     return output_root / run_id
 
 
-def verified_batch_bundle() -> dict[str, Any]:
+def verified_batch_bundle(*, user_batch_label: str = USER_BATCH_LABEL, frozen_batch_id: str = FROZEN_BATCH_ID) -> dict[str, Any]:
+    batch_config = build_batch_config(user_batch_label=user_batch_label, frozen_batch_id=frozen_batch_id)
     batch_rows = read_jsonl(PLAN_ROOT / "forecast_batch_manifest.jsonl")
     if not batch_rows:
         raise ForecastBatchError("FORECAST_BATCH_MANIFEST_EMPTY")
-    batch = batch_rows[0]
-    if batch["batch_id"] != FROZEN_BATCH_ID:
-        raise ForecastBatchError(f"FIRST_BATCH_ID_MISMATCH:{batch['batch_id']}")
+    batch = next((row for row in batch_rows if row["batch_id"] == frozen_batch_id), None)
+    if batch is None:
+        raise ForecastBatchError(f"FROZEN_BATCH_NOT_FOUND:{frozen_batch_id}")
     if int(batch["call_count"]) != EXPECTED_CALL_COUNT:
-        raise ForecastBatchError("BATCH_001_CALL_COUNT_MISMATCH")
+        raise ForecastBatchError(f"{user_batch_label}_CALL_COUNT_MISMATCH")
     if len(set(batch["ordered_call_ids"])) != EXPECTED_CALL_COUNT:
-        raise ForecastBatchError("BATCH_001_CALL_IDS_NOT_UNIQUE")
+        raise ForecastBatchError(f"{user_batch_label}_CALL_IDS_NOT_UNIQUE")
     if batch.get("pack_type") not in {"PACK_A", "PACK_E"}:
-        raise ForecastBatchError("BATCH_001_PACK_TYPE_INVALID")
+        raise ForecastBatchError(f"{user_batch_label}_PACK_TYPE_INVALID")
 
     ledger_rows = read_jsonl(PLAN_ROOT / "authorized_forecast_call_ledger.jsonl")
     by_call_id = {row["forecast_call_id"]: row for row in ledger_rows}
     calls = [dict(by_call_id[call_id]) for call_id in batch["ordered_call_ids"]]
-    if any(row["batch_id"] != FROZEN_BATCH_ID for row in calls):
-        raise ForecastBatchError("BATCH_001_LEDGER_BATCH_MISMATCH")
-    if [row["execution_order"] for row in calls] != list(range(1, EXPECTED_CALL_COUNT + 1)):
-        raise ForecastBatchError("BATCH_001_EXECUTION_ORDER_MISMATCH")
+    if any(row["batch_id"] != frozen_batch_id for row in calls):
+        raise ForecastBatchError(f"{user_batch_label}_LEDGER_BATCH_MISMATCH")
+    first_execution_order = int(batch["first_execution_order"])
+    if [row["execution_order"] for row in calls] != list(range(first_execution_order, first_execution_order + EXPECTED_CALL_COUNT)):
+        raise ForecastBatchError(f"{user_batch_label}_EXECUTION_ORDER_MISMATCH")
     pack_type = str(batch["pack_type"])
     if any(row["pack_type"] != pack_type for row in calls):
-        raise ForecastBatchError("BATCH_001_PACK_TYPE_NOT_UNIFORM")
+        raise ForecastBatchError(f"{user_batch_label}_PACK_TYPE_NOT_UNIFORM")
 
     prompt_manifest = {row["forecast_call_id"]: row for row in read_jsonl(PLAN_ROOT / "prompt_payload_manifest.jsonl")}
     prompt_fingerprints = {row["forecast_call_id"]: row for row in read_jsonl(PLAN_ROOT / "prompt_fingerprint_ledger.jsonl")}
@@ -171,30 +195,30 @@ def verified_batch_bundle() -> dict[str, Any]:
         prompt_fp = prompt_fingerprints.get(call_id)
         pack_row = pack_rows.get(call["pack_row_identity"])
         if prompt_row is None:
-            raise ForecastBatchError(f"BATCH_001_PROMPT_MANIFEST_MISSING:{call_id}")
+            raise ForecastBatchError(f"{user_batch_label}_PROMPT_MANIFEST_MISSING:{call_id}")
         if prompt_fp is None:
-            raise ForecastBatchError(f"BATCH_001_PROMPT_FINGERPRINT_MISSING:{call_id}")
+            raise ForecastBatchError(f"{user_batch_label}_PROMPT_FINGERPRINT_MISSING:{call_id}")
         if pack_row is None:
-            raise ForecastBatchError(f"BATCH_001_PACK_ROW_MISSING:{call['pack_row_identity']}")
+            raise ForecastBatchError(f"{user_batch_label}_PACK_ROW_MISSING:{call['pack_row_identity']}")
         if pack_type == "PACK_A" and "pack_a_canonical_payload" not in pack_row:
-            raise ForecastBatchError(f"BATCH_001_PACK_A_PAYLOAD_MISSING:{call_id}")
+            raise ForecastBatchError(f"{user_batch_label}_PACK_A_PAYLOAD_MISSING:{call_id}")
         if pack_type == "PACK_E" and "pack_e_canonical_payload" not in pack_row:
-            raise ForecastBatchError(f"BATCH_001_PACK_E_PAYLOAD_MISSING:{call_id}")
+            raise ForecastBatchError(f"{user_batch_label}_PACK_E_PAYLOAD_MISSING:{call_id}")
         if call["provider"] != pack_row["provider"] or call["model"] != pack_row["model"]:
-            raise ForecastBatchError(f"BATCH_001_PROVIDER_MODEL_MISMATCH:{call_id}")
+            raise ForecastBatchError(f"{user_batch_label}_PROVIDER_MODEL_MISMATCH:{call_id}")
         if planning.PROVIDER_MODEL_ASSIGNMENTS.get(call["provider"]) != call["model"]:
             raise ForecastBatchError(f"FROZEN_PROVIDER_ASSIGNMENT_MISMATCH:{call_id}")
         if call["pack_row_fingerprint"] != sha256_value(pack_row):
-            raise ForecastBatchError(f"BATCH_001_PACK_FINGERPRINT_MISMATCH:{call_id}")
+            raise ForecastBatchError(f"{user_batch_label}_PACK_FINGERPRINT_MISMATCH:{call_id}")
         if prompt_fp["prompt_text_fingerprint"] != sha256_value(prompt_row["prompt_text"]):
-            raise ForecastBatchError(f"BATCH_001_PROMPT_FINGERPRINT_MISMATCH:{call_id}")
+            raise ForecastBatchError(f"{user_batch_label}_PROMPT_FINGERPRINT_MISMATCH:{call_id}")
         if prompt_fp["prompt_context_fingerprint"] != sha256_value(prompt_row["prompt_payload"]):
-            raise ForecastBatchError(f"BATCH_001_PROMPT_CONTEXT_FINGERPRINT_MISMATCH:{call_id}")
+            raise ForecastBatchError(f"{user_batch_label}_PROMPT_CONTEXT_FINGERPRINT_MISMATCH:{call_id}")
         payload = pack_row["pack_a_canonical_payload"] if pack_type == "PACK_A" else pack_row["pack_e_canonical_payload"]
         if call["pack_payload_input_fingerprint"] != payload["input_fingerprint"]:
-            raise ForecastBatchError(f"BATCH_001_PAYLOAD_INPUT_FINGERPRINT_MISMATCH:{call_id}")
+            raise ForecastBatchError(f"{user_batch_label}_PAYLOAD_INPUT_FINGERPRINT_MISMATCH:{call_id}")
         if prompt_row["pack_type"] != pack_type or prompt_fp["pack_row_fingerprint"] != call["pack_row_fingerprint"]:
-            raise ForecastBatchError(f"BATCH_001_PROMPT_PACK_BINDING_MISMATCH:{call_id}")
+            raise ForecastBatchError(f"{user_batch_label}_PROMPT_PACK_BINDING_MISMATCH:{call_id}")
         bundles.append(
             {
                 "call": call,
@@ -206,11 +230,12 @@ def verified_batch_bundle() -> dict[str, Any]:
         )
 
     return {
-        "user_batch_label": USER_BATCH_LABEL,
-        "frozen_batch_id": FROZEN_BATCH_ID,
+        "user_batch_label": user_batch_label,
+        "frozen_batch_id": frozen_batch_id,
         "pack_type": pack_type,
         "batch_manifest": batch,
         "bundles": bundles,
+        "batch_config": batch_config,
     }
 
 
@@ -349,12 +374,13 @@ def initialize_run(
     repo_state: Mapping[str, Any],
     auth_result: Mapping[str, Any],
 ) -> None:
+    batch_config = bundle["batch_config"]
     run_dir.mkdir(parents=True, exist_ok=True)
     write_json(
         run_dir / "run_manifest.json",
         {
-            "user_batch_label": USER_BATCH_LABEL,
-            "frozen_batch_id": FROZEN_BATCH_ID,
+            "user_batch_label": batch_config["user_batch_label"],
+            "frozen_batch_id": batch_config["frozen_batch_id"],
             "pack_type": bundle["pack_type"],
             "plan_id": PLAN_ID,
             "pack_construction_id": PACK_CONSTRUCTION_ID,
@@ -364,7 +390,7 @@ def initialize_run(
             "start_head": repo_state["head"],
             "expected_start_head": EXPECTED_START_HEAD,
             "google_preflight": auth_result,
-            "batch_002_calls_executed": 0,
+            batch_config["run_manifest_key"]: 0,
             "provider_calls_executed": 0,
             "google_writes_executed": 0,
             "market_data_calls_executed": 0,
@@ -395,15 +421,15 @@ def initialize_run(
     write_json(
         run_dir / "batch_execution_contract.json",
         {
-            "user_batch_label": USER_BATCH_LABEL,
-            "frozen_batch_id": FROZEN_BATCH_ID,
+            "user_batch_label": batch_config["user_batch_label"],
+            "frozen_batch_id": batch_config["frozen_batch_id"],
             "pack_type": bundle["pack_type"],
             "allowed_terminal_states": sorted(TERMINAL_STATES),
             "provider_authority_rule": read_json(PLAN_ROOT / "provider_model_contract.json")["provider_authority_rule"],
             "forecast_contract": read_json(PLAN_ROOT / "forecast_execution_contract.json"),
             "historical_leakage_control_contract": read_json(PLAN_ROOT / "historical_leakage_control_contract.json"),
             "no_automatic_retry": True,
-            "no_batch_002_execution": True,
+            f"no_{batch_config['forbidden_next_batch_id'].lower()}_execution": True,
         },
     )
     write_jsonl(run_dir / "batch_call_manifest.jsonl", [row["call"] for row in bundle["bundles"]])
@@ -427,6 +453,8 @@ def execute_batch(
     output_root: Path = OUTPUT_ROOT,
     fixed_timestamp: str | None = None,
     enforce_head: bool = True,
+    user_batch_label: str = USER_BATCH_LABEL,
+    frozen_batch_id: str = FROZEN_BATCH_ID,
     auth_preflight: Callable[[], Mapping[str, Any]] = verify_google_preflight,
     dispatch: Callable[[Any, str, Mapping[str, Any]], Mapping[str, Any]] = default_dispatch,
 ) -> dict[str, Any]:
@@ -444,9 +472,9 @@ def execute_batch(
         "clean_descendant_of_expected_head": is_descendant_of(EXPECTED_START_HEAD),
     }
 
-    bundle = verified_batch_bundle()
+    bundle = verified_batch_bundle(user_batch_label=user_batch_label, frozen_batch_id=frozen_batch_id)
     auth_result = dict(auth_preflight())
-    run_dir = materialize_run(output_root, fixed_timestamp=fixed_timestamp)
+    run_dir = materialize_run(output_root, bundle["batch_config"], fixed_timestamp=fixed_timestamp)
     initialize_run(run_dir, bundle, repo_state, auth_result)
 
     validated_call_ids = load_validated_call_ids(output_root)
@@ -491,8 +519,8 @@ def execute_batch(
             {
                 "event": "CALL_STARTED",
                 "forecast_call_id": call_id,
-                "batch_id": FROZEN_BATCH_ID,
-                "user_batch_label": USER_BATCH_LABEL,
+                "batch_id": bundle["batch_config"]["frozen_batch_id"],
+                "user_batch_label": bundle["batch_config"]["user_batch_label"],
                 "execution_order": call["execution_order"],
                 "attempt_number": 1,
                 "provider": call["provider"],
@@ -730,8 +758,8 @@ def execute_batch(
     )
 
     reconciliation = {
-        "user_batch_label": USER_BATCH_LABEL,
-        "frozen_batch_id": FROZEN_BATCH_ID,
+        "user_batch_label": bundle["batch_config"]["user_batch_label"],
+        "frozen_batch_id": bundle["batch_config"]["frozen_batch_id"],
         "pack_type_executed": bundle["pack_type"],
         "authorized_calls": EXPECTED_CALL_COUNT,
         "attempted_provider_calls": sum(1 for row in call_results if row["terminal_state"] != "SKIPPED_ALREADY_SUCCEEDED"),
@@ -751,7 +779,7 @@ def execute_batch(
         "manifest_transport_conflicts": conflicts,
         "raw_claimed_provider_identities": raw_claimed_provider_identities,
         "normalized_result_count": len(normalized_rows),
-        "batch_002_calls_executed": 0,
+        f"{bundle['batch_config']['forbidden_next_batch_id'].lower()}_calls_executed": 0,
         "exact_failed_calls": failed_rows,
     }
     write_json(run_dir / "batch_reconciliation.json", reconciliation)
@@ -789,6 +817,7 @@ def execute_batch(
         failed_validation_calls=reconciliation["failed_validation_calls"],
         skipped_already_successful_calls=reconciliation["skipped_already_successful_calls"],
         normalized_result_count=reconciliation["normalized_result_count"],
+        **{bundle["batch_config"]["run_manifest_key"]: 0},
     )
     return {
         "run_dir": run_dir,
