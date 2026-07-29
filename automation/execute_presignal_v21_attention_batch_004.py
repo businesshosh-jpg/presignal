@@ -35,6 +35,15 @@ TOKEN_PATH = Path("/Users/junhoshino/projects/presignal/local/token.json")
 GOVERNING_BATCH_001_CLOSURE_ID = "PPHB-R1-ATTENTION-BATCH-001-CLOSED-20260729T035345Z-e3bc0c2909ca"
 GOVERNING_BATCH_002_CLOSURE_ID = "PPHB-R1-ATTENTION-BATCH-002-CLOSED-20260729T044448Z-97d9ec4cf579"
 GOVERNING_BATCH_003_CLOSURE_ID = "PPHB-R1-ATTENTION-BATCH-003-COMPLETENESS-RETRY-20260729T053347Z-3bbe67af1930"
+PRIOR_BATCH_IDS = ("ATTN_BATCH_001", "ATTN_BATCH_002", "ATTN_BATCH_003")
+RUN_ID_PREFIX = "PPHB-R1-ATTENTION-EXECUTION-BATCH-004-"
+EXECUTION_STATUS_COMPLETE = "ATTENTION_BATCH_004_COMPLETE"
+EXECUTION_STATUS_PARTIAL = "ATTENTION_BATCH_004_PARTIALLY_COMPLETE"
+EXECUTION_STATUS_BLOCKED = "ATTENTION_BATCH_004_BLOCKED"
+SCALING_READY = "READY_FOR_ATTENTION_BATCH_005"
+SCALING_REPAIR = "REPAIR_BEFORE_BATCH_005"
+SCALING_RETRY = "RETRY_FAILED_BATCH_004_CALLS_REQUIRES_AUTHORIZATION"
+FAILED_CALL_RETRY_RECOMMENDATION = "NO_AUTOMATIC_RETRY_IN_BATCH_004"
 
 
 def canonical_json(value: Any) -> str:
@@ -92,9 +101,9 @@ def load_batch_calls() -> list[dict[str, Any]]:
     calls = base.load_batch_calls(BATCH_ID)
     if len(calls) != EXPECTED_CALL_COUNT:
         raise base.AttentionBatchError("BATCH_004_CALL_COUNT_MISMATCH")
-    prior_ids = {row["call_id"] for row in base.load_batch_calls(base.BATCH_ID)}
-    prior_ids.update(row["call_id"] for row in batch002.load_batch_calls())
-    prior_ids.update(row["call_id"] for row in batch003.load_batch_calls())
+    prior_ids: set[str] = set()
+    for prior_batch_id in PRIOR_BATCH_IDS:
+        prior_ids.update(row["call_id"] for row in base.load_batch_calls(prior_batch_id))
     overlap = [row["call_id"] for row in calls if row["call_id"] in prior_ids]
     if overlap:
         raise base.AttentionBatchError("BATCH_004_OVERLAPS_PRIOR_BATCH:" + ",".join(overlap))
@@ -206,7 +215,7 @@ def materialize_run(
     ts = fixed_timestamp or now()
     seed = {"plan_id": PLAN_ID, "batch_id": BATCH_ID, "timestamp": ts}
     run_id = (
-        "PPHB-R1-ATTENTION-EXECUTION-BATCH-004-"
+        RUN_ID_PREFIX
         + ts.replace(":", "").replace("-", "")
         + "-"
         + hashlib.sha256(canonical_json(seed).encode("utf-8")).hexdigest()[:12]
@@ -562,7 +571,7 @@ def execute_call(
                 "failure_stage": final_state,
                 "exact_error": error_code or error_summary,
                 "raw_evidence_reference": path_ref(raw_output_path),
-                "retry_recommendation": "NO_AUTOMATIC_RETRY_IN_BATCH_004",
+                "retry_recommendation": FAILED_CALL_RETRY_RECOMMENDATION,
             },
         )
         journal_event(journal, "CALL_FAILED", call_id=call["call_id"], provider=call["provider"], model=call["model"], final_state=final_state)
@@ -628,11 +637,12 @@ def execute_batch(
             reconciliation = summarize_run(run_dir, batch_calls, blocked_reason=blocked_reason)
             decision = {
                 "execution_status": "ATTENTION_BATCH_004_BLOCKED",
+                "execution_status": EXECUTION_STATUS_BLOCKED,
                 "contract_decision": "EXECUTION_ENVIRONMENT_FAILURE",
                 "provider_authority_decision": "PROVIDER_AUTHORITY_NOT_REACHED",
                 "completeness_decision": "COMPLETENESS_NOT_REACHED",
                 "resume_decision": "RESUME_PROTECTION_VALIDATED",
-                "scaling_decision": "REPAIR_BEFORE_BATCH_005",
+                "scaling_decision": SCALING_REPAIR,
                 "blocked_reason": blocked_reason,
                 "credential_route_status": credential_status,
                 "plan_contract_identity": plan_contract["attention_output_contract"]["object"],
@@ -678,12 +688,12 @@ def execute_batch(
         contract_decision = "ALL_BATCH_RESULTS_VALID"
         provider_authority_decision = "ALL_PROVIDER_IDENTITIES_AUTHORITATIVELY_BOUND"
         completeness_decision = "ALL_EXPECTED_EVENT_ROWS_RETURNED"
-        scaling_decision = "READY_FOR_ATTENTION_BATCH_005"
+        scaling_decision = SCALING_READY
     elif successful == 0:
         contract_decision = "LIVE_ATTENTION_CONTRACT_FAILURE"
         provider_authority_decision = "PROVIDER_AUTHORITY_FAILURES_PRESENT" if reconciliation["failed_provider_authority_calls"] else "PROVIDER_AUTHORITY_NOT_REACHED"
         completeness_decision = "COMPLETENESS_NOT_REACHED" if reconciliation["completeness_not_reached_calls"] else "EVENT_COMPLETENESS_FAILURES_PRESENT"
-        scaling_decision = "REPAIR_BEFORE_BATCH_005"
+        scaling_decision = SCALING_REPAIR
     else:
         contract_decision = "VALID_RESULTS_WITH_FAILED_CALLS"
         provider_authority_decision = "PROVIDER_AUTHORITY_FAILURES_PRESENT" if reconciliation["failed_provider_authority_calls"] else "ALL_PROVIDER_IDENTITIES_AUTHORITATIVELY_BOUND"
@@ -692,9 +702,9 @@ def execute_batch(
             if reconciliation["completeness_failed_calls"]
             else "COMPLETENESS_NOT_REACHED" if reconciliation["completeness_not_reached_calls"] else "ALL_EXPECTED_EVENT_ROWS_RETURNED"
         )
-        scaling_decision = "RETRY_FAILED_BATCH_004_CALLS_REQUIRES_AUTHORIZATION"
+        scaling_decision = SCALING_RETRY
     decision = {
-        "execution_status": "ATTENTION_BATCH_004_COMPLETE" if successful == EXPECTED_CALL_COUNT else "ATTENTION_BATCH_004_PARTIALLY_COMPLETE",
+        "execution_status": EXECUTION_STATUS_COMPLETE if successful == EXPECTED_CALL_COUNT else EXECUTION_STATUS_PARTIAL,
         "contract_decision": contract_decision,
         "provider_authority_decision": provider_authority_decision,
         "completeness_decision": completeness_decision,
