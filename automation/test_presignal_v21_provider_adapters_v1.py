@@ -36,6 +36,59 @@ class ProviderAdapterTests(unittest.TestCase):
         self.assertEqual(result["parse_status"], adapters.ParseStatus.PARSED)
         self.assertEqual(result["canonical_payload"]["provider"], rule["runtime_provider"])
 
+    def test_historical_attention_provider_authority_binding_uses_manifest_and_transport(self):
+        raw = {
+            "object": "session_attention_map",
+            "session_id": "S",
+            "provider": "macro_model",
+            "attention_items": [],
+            "session_attention_summary": "x",
+            "status": "ok",
+        }
+        result = adapters.normalize_provider_response(
+            stage="ATTENTION",
+            requested_provider="OpenAI",
+            requested_model="gpt-4o-mini-2024-07-18",
+            transport_result={
+                "status": "ok",
+                "actual_provider": "OpenAI",
+                "actual_model": "gpt-4o-mini-2024-07-18",
+                "raw_output": raw,
+            },
+            authoritative_attention_provider_binding=True,
+        )
+        self.assertEqual(result["parse_status"], adapters.ParseStatus.PARSED)
+        self.assertEqual(result["canonical_payload"]["provider"], "OpenAI")
+        self.assertEqual(result["canonical_payload"]["_raw_claimed_provider"], "macro_model")
+        self.assertEqual(
+            result["canonical_payload"]["_provider_identity_normalization"]["normalization_type"],
+            "attention_provider_authority_binding",
+        )
+
+    def test_historical_attention_provider_authority_binding_fails_closed_on_conflict(self):
+        raw = {
+            "object": "session_attention_map",
+            "session_id": "S",
+            "provider": "macro_research",
+            "attention_items": [],
+            "session_attention_summary": "x",
+            "status": "ok",
+        }
+        result = adapters.normalize_provider_response(
+            stage="ATTENTION",
+            requested_provider="OpenAI",
+            requested_model="gpt-4o-mini-2024-07-18",
+            transport_result={
+                "status": "ok",
+                "actual_provider": "Gemini",
+                "actual_model": "gemini-2.5-flash-lite",
+                "raw_output": raw,
+            },
+            authoritative_attention_provider_binding=True,
+        )
+        self.assertEqual(result["parse_status"], adapters.ParseStatus.PARSE_FAILED)
+        self.assertEqual(result["normalization_notes"][-1]["reason"], "ATTENTION_PROVIDER_AUTHORITY_CONFLICT")
+
     def test_gemini_envelope_and_openai_raw_are_neutral_payloads(self):
         forecast = {"no_signal_flag": True}
         gemini = self.normalize("Gemini", {"forecast": forecast, "response_contract": {"version": "x"}})

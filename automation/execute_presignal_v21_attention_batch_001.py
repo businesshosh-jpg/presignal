@@ -406,7 +406,15 @@ def execute_call(
             attention_run_id="LIVE_" + call["call_id"],
             stage_generated_ts=session["forecast_cutoff"],
             dispatcher=wrapped_dispatch,
-            raw_parser=lambda raw: binding.attention_parser(call["provider"], raw, contract),
+            raw_parser=lambda raw: binding.attention_parser(
+                call["provider"],
+                raw,
+                contract,
+                actual_provider=(transport_holder.get("response") or {}).get("actual_provider"),
+                actual_model=(transport_holder.get("response") or {}).get("actual_model"),
+                requested_model=call["model"],
+                authoritative_provider_binding=True,
+            ),
             instruction_override=binding.attention_instruction(contract, call["provider"]),
             generation_settings=binding.generation_settings(contract, call["provider"], "ATTENTION"),
         )

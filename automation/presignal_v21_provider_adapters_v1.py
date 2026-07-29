@@ -103,7 +103,8 @@ def _unwrap_bridge_transport_result(transport_result: Mapping[str, Any]) -> dict
 
 def normalize_provider_response(*, stage: str, requested_provider: str, requested_model: str,
                                 transport_result: Mapping[str, Any], contract_version: str | None = None,
-                                validator: Callable[[Mapping[str, Any]], bool] | None = None) -> dict[str, Any]:
+                                validator: Callable[[Mapping[str, Any]], bool] | None = None,
+                                authoritative_attention_provider_binding: bool = False) -> dict[str, Any]:
     """Return neutral response facts without deciding runtime or scientific state."""
     transport_payload = _unwrap_bridge_transport_result(transport_result)
     raw = transport_payload.get("raw_output", transport_payload.get("raw_response"))
@@ -134,6 +135,7 @@ def normalize_provider_response(*, stage: str, requested_provider: str, requeste
                 actual_provider=result["actual_provider"],
                 actual_model=result["actual_model"],
                 requested_model=requested_model,
+                authoritative_provider_binding=authoritative_attention_provider_binding,
             )
             result["normalization_notes"].extend(notes)
         result["canonical_payload"] = payload
@@ -177,12 +179,36 @@ def normalize_attention_identity(
     actual_provider: str | None = None,
     actual_model: str | None = None,
     requested_model: str | None = None,
+    authoritative_provider_binding: bool = False,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     value, notes = dict(payload), []
+    if value.get("object") == "session_attention_map":
+        emitted_provider = value.get("provider")
+        if authoritative_provider_binding:
+            if not provider or not requested_model:
+                raise ValueError("ATTENTION_PROVIDER_AUTHORITY_REQUEST_MISSING")
+            if not actual_provider or not actual_model:
+                raise ValueError("ATTENTION_PROVIDER_AUTHORITY_METADATA_MISSING")
+            if actual_provider != provider or actual_model != requested_model:
+                raise ValueError("ATTENTION_PROVIDER_AUTHORITY_CONFLICT")
+            note = {
+                "normalization_type": "attention_provider_authority_binding",
+                "raw_claimed_provider": emitted_provider,
+                "canonical_provider": provider,
+                "requested_provider": provider,
+                "requested_model": requested_model,
+                "actual_provider": actual_provider,
+                "actual_model": actual_model,
+                "reason": "Historical session_attention_map canonical provider is bound from the frozen call manifest when transport-confirmed provider/model match exactly; model-returned provider text is preserved only as a raw claim.",
+            }
+            value["provider"] = provider
+            value["_raw_claimed_provider"] = emitted_provider
+            value["_provider_identity_normalization"] = note
+            notes.append(note)
+            return value, notes
     if value.get("object") == "session_attention_map" and not (
         provider == "Anthropic" and contract_version in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION)
     ):
-        emitted_provider = value.get("provider")
         alias_map = ATTENTION_PROVIDER_IDENTITY_ALIASES.get(provider, {})
         if emitted_provider in alias_map:
             if (

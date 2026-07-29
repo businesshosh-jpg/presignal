@@ -80,9 +80,29 @@ def request_instruction(spec: Mapping[str, Any], provider: str) -> str:
     return lineage.REQUEST_INSTRUCTION
 
 
-def attention_parser(provider: str, raw: Any, spec: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def attention_parser(
+    provider: str,
+    raw: Any,
+    spec: Mapping[str, Any] | None = None,
+    *,
+    actual_provider: str | None = None,
+    actual_model: str | None = None,
+    requested_model: str = "",
+    authoritative_provider_binding: bool = False,
+) -> dict[str, Any]:
     module = contract_module(spec or r3.spec())
-    adapted = provider_adapters.normalize_provider_response(stage="ATTENTION", requested_provider=provider, requested_model="", transport_result={"raw_output": raw}, contract_version=module.CONTRACT_VERSION)
+    adapted = provider_adapters.normalize_provider_response(
+        stage="ATTENTION",
+        requested_provider=provider,
+        requested_model=requested_model,
+        transport_result={
+            "raw_output": raw,
+            "actual_provider": actual_provider,
+            "actual_model": actual_model,
+        },
+        contract_version=module.CONTRACT_VERSION,
+        authoritative_attention_provider_binding=authoritative_provider_binding,
+    )
     if adapted["parse_status"] != provider_adapters.ParseStatus.PARSED:
         reason = adapted["normalization_notes"][-1]["reason"]
         if reason == "ANTHROPIC_EMITTED_RUNTIME_IDENTITY_CONTRADICTION":
