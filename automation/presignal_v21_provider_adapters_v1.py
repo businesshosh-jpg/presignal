@@ -28,6 +28,26 @@ class ValidationStatus(str, Enum):
     INVALID = "INVALID"
 
 
+ATTENTION_PROVIDER_IDENTITY_ALIASES: dict[str, dict[str, str]] = {
+    "Anthropic": {
+        "presignal_v2": "Anthropic",
+        "macroeconomic_research_model": "Anthropic",
+    },
+    "Gemini": {
+        "macro_model": "Gemini",
+        "presignal_v2_0": "Gemini",
+        "ps_v2_macro_research_model": "Gemini",
+        "presignal_v2_market_session_attention_task": "Gemini",
+    },
+    "OpenAI": {
+        "macro_research_model": "OpenAI",
+        "PreSignal v2.0": "OpenAI",
+        "macroeconomic_research": "OpenAI",
+        "market_research_model": "OpenAI",
+    },
+}
+
+
 def _json_object(raw: Any) -> dict[str, Any]:
     if isinstance(raw, Mapping):
         return dict(raw)
@@ -142,6 +162,22 @@ def normalize_prospective_forecast_response(*, requested_provider: str, requeste
 
 def normalize_attention_identity(payload: Mapping[str, Any], provider: str, contract_version: str | None) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     value, notes = dict(payload), []
+    if value.get("object") == "session_attention_map" and not (
+        provider == "Anthropic" and contract_version in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION)
+    ):
+        emitted_provider = value.get("provider")
+        alias_map = ATTENTION_PROVIDER_IDENTITY_ALIASES.get(provider, {})
+        if emitted_provider in alias_map:
+            note = {
+                "normalization_type": "attention_provider_identity_alias",
+                "original_provider": emitted_provider,
+                "normalized_provider": alias_map[emitted_provider],
+                "requested_provider": provider,
+                "reason": "Preserved historical Attention outputs proved this provider label as an exact legacy alias for the manifest-bound provider route.",
+            }
+            value["provider"] = alias_map[emitted_provider]
+            value["_provider_identity_normalization"] = note
+            notes.append(note)
     if provider != "Anthropic":
         return value, notes
     if contract_version in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION):
