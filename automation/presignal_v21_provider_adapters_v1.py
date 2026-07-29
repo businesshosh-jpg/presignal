@@ -32,6 +32,7 @@ ATTENTION_PROVIDER_IDENTITY_ALIASES: dict[str, dict[str, str]] = {
     "Anthropic": {
         "presignal_v2": "Anthropic",
         "macroeconomic_research_model": "Anthropic",
+        "PreSignal_v2.0_shadow_research": "Anthropic",
     },
     "Gemini": {
         "macro_model": "Gemini",
@@ -125,7 +126,14 @@ def normalize_provider_response(*, stage: str, requested_provider: str, requeste
         if stage == "FORECAST":
             payload = _extract_envelope(payload)
         if stage == "ATTENTION":
-            payload, notes = normalize_attention_identity(payload, requested_provider, contract_version)
+            payload, notes = normalize_attention_identity(
+                payload,
+                requested_provider,
+                contract_version,
+                actual_provider=result["actual_provider"],
+                actual_model=result["actual_model"],
+                requested_model=requested_model,
+            )
             result["normalization_notes"].extend(notes)
         result["canonical_payload"] = payload
         result["parse_status"] = ParseStatus.PARSED
@@ -160,7 +168,15 @@ def normalize_prospective_forecast_response(*, requested_provider: str, requeste
     return result
 
 
-def normalize_attention_identity(payload: Mapping[str, Any], provider: str, contract_version: str | None) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+def normalize_attention_identity(
+    payload: Mapping[str, Any],
+    provider: str,
+    contract_version: str | None,
+    *,
+    actual_provider: str | None = None,
+    actual_model: str | None = None,
+    requested_model: str | None = None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     value, notes = dict(payload), []
     if value.get("object") == "session_attention_map" and not (
         provider == "Anthropic" and contract_version in (compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION)
@@ -168,6 +184,16 @@ def normalize_attention_identity(payload: Mapping[str, Any], provider: str, cont
         emitted_provider = value.get("provider")
         alias_map = ATTENTION_PROVIDER_IDENTITY_ALIASES.get(provider, {})
         if emitted_provider in alias_map:
+            if (
+                emitted_provider == "PreSignal_v2.0_shadow_research"
+                and (
+                    provider != "Anthropic"
+                    or (actual_provider is not None and actual_provider != "Anthropic")
+                    or (actual_model is not None and actual_model not in {"", "claude-haiku-4-5"})
+                    or (requested_model is not None and requested_model not in {"", "claude-haiku-4-5"})
+                )
+            ):
+                raise ValueError("ANTHROPIC_SHADOW_ALIAS_RUNTIME_MISMATCH")
             note = {
                 "normalization_type": "attention_provider_identity_alias",
                 "original_provider": emitted_provider,
