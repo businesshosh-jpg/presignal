@@ -60,6 +60,8 @@ DEFAULT_BATCH_CONFIG = {
     "forbidden_next_batch_id": "FCB_PACK_A_002",
 }
 
+SCRIPT_HTTP_TIMEOUT_SECONDS = 300
+
 
 class ForecastBatchError(RuntimeError):
     """Batch 001 cannot proceed under the frozen execution contract."""
@@ -315,6 +317,18 @@ def default_dispatch(script_service: Any, script_id: str, payload: Mapping[str, 
     )
 
 
+def build_default_script_service_factory() -> tuple[Callable[[], Any], str]:
+    credentials = google_clients.load_credentials(False, token_path=TOKEN_PATH, persist_refresh=False)
+    script_id = google_clients.default_script_id()
+
+    def factory() -> Any:
+        # Rebuild the Apps Script client per dispatch so a timed-out or broken
+        # socket does not poison subsequent forecast calls in the same batch.
+        return google_clients.build_script_service(credentials, SCRIPT_HTTP_TIMEOUT_SECONDS)
+
+    return factory, script_id
+
+
 def load_validated_call_ids(output_root: Path) -> set[str]:
     call_ids: set[str] = set()
     if not output_root.exists():
@@ -478,14 +492,12 @@ def execute_batch(
     initialize_run(run_dir, bundle, repo_state, auth_result)
 
     validated_call_ids = load_validated_call_ids(output_root)
-    script_service = None
+    script_service_factory: Callable[[], Any]
     script_id = None
     if dispatch is default_dispatch:
-        credentials = google_clients.load_credentials(False, token_path=TOKEN_PATH, persist_refresh=False)
-        script_service = google_clients.build_script_service(credentials, 300)
-        script_id = google_clients.default_script_id()
+        script_service_factory, script_id = build_default_script_service_factory()
     else:
-        script_service = object()
+        script_service_factory = lambda: object()
         script_id = EXPECTED_SCRIPT_ID
 
     call_results: list[dict[str, Any]] = []
@@ -537,7 +549,7 @@ def execute_batch(
 
         arm = "BASELINE" if call["pack_type"] == "PACK_A" else "FULL_CONTEXT"
         payload = step6.bridge_payload(pack_payload, prompt_row["prompt_text"], run_id=run_dir.name, arm=arm)
-        transport_meta = dispatch(script_service, script_id, payload)
+        transport_meta = dispatch(script_service_factory(), script_id, payload)
         transport_result = transport_meta.get("result") if isinstance(transport_meta, Mapping) else None
         raw_output = transport_result.get("raw_output") if isinstance(transport_result, Mapping) else None
         raw_claimed_provider = None

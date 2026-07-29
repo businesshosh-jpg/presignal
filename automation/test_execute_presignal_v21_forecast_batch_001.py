@@ -3,8 +3,10 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from automation import execute_presignal_v21_forecast_batch_001 as batch001
+from automation import google_clients
 
 
 def valid_raw_output() -> dict[str, object]:
@@ -226,6 +228,36 @@ class ForecastBatch001Test(unittest.TestCase):
             self.assertEqual(len(normalized), 0)
             self.assertEqual(len(failed), 12)
             self.assertTrue(all(row["terminal_state"] == "FAILED_PARSE" for row in failed))
+
+    def test_default_script_service_factory_rebuilds_service_per_dispatch(self) -> None:
+        fake_credentials = object()
+        built_services: list[object] = []
+
+        def fake_build(_creds: object, timeout_seconds: int) -> object:
+            self.assertEqual(timeout_seconds, batch001.SCRIPT_HTTP_TIMEOUT_SECONDS)
+            service = object()
+            built_services.append(service)
+            return service
+
+        with mock.patch.object(batch001.google_clients, "load_credentials", return_value=fake_credentials), mock.patch.object(
+            batch001.google_clients,
+            "default_script_id",
+            return_value="SCRIPT_ID",
+        ), mock.patch.object(batch001.google_clients, "build_script_service", side_effect=fake_build):
+            factory, script_id = batch001.build_default_script_service_factory()
+            first = factory()
+            second = factory()
+        self.assertEqual(script_id, "SCRIPT_ID")
+        self.assertEqual(len(built_services), 2)
+        self.assertIs(first, built_services[0])
+        self.assertIs(second, built_services[1])
+        self.assertIsNot(first, second)
+
+    def test_server_not_found_is_classified_as_confirmed_not_sent(self) -> None:
+        exc = google_clients.ServerNotFoundError("Unable to find the server at script.googleapis.com")
+        classified = google_clients.classify_google_exception(exc)
+        self.assertEqual(classified["category"], "GOOGLE_API_CONNECTION_ERROR")
+        self.assertEqual(classified["dispatch_certainty"], "CONFIRMED_NOT_SENT")
 
 
 if __name__ == "__main__":

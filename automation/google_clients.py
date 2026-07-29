@@ -15,6 +15,11 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+try:
+    from httplib2.error import ServerNotFoundError
+except Exception:  # pragma: no cover - fallback when httplib2 internals shift
+    ServerNotFoundError = tuple()  # type: ignore[assignment]
+
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCAL_DIR = ROOT / "local"
@@ -116,7 +121,17 @@ def classify_google_exception(exc: Exception) -> dict[str, Any]:
         return result
     if isinstance(exc, (socket.timeout, TimeoutError)) or "timed out" in lower:
         result.update({"category": "GOOGLE_API_TIMEOUT", "retry_eligible": True, "dispatch_certainty": "UNKNOWN"})
-    elif any(marker in lower for marker in ("nodename", "connection", "name or service not known", "network is unreachable")):
+    elif isinstance(exc, ServerNotFoundError) or any(
+        marker in lower
+        for marker in (
+            "nodename",
+            "connection",
+            "name or service not known",
+            "network is unreachable",
+            "unable to find the server",
+            "temporary failure in name resolution",
+        )
+    ):
         result.update({"category": "GOOGLE_API_CONNECTION_ERROR", "retry_eligible": True, "dispatch_certainty": "CONFIRMED_NOT_SENT"})
     else:
         result["category"] = "UNKNOWN_SHARED_TRANSPORT_ERROR"
