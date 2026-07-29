@@ -31,6 +31,7 @@ class ValidationStatus(str, Enum):
 ATTENTION_PROVIDER_IDENTITY_ALIASES: dict[str, dict[str, str]] = {
     "Anthropic": {
         "presignal_v2": "Anthropic",
+        "presignal_v2_shadow_research": "Anthropic",
         "macroeconomic_research_model": "Anthropic",
         "PreSignal_v2.0_shadow_research": "Anthropic",
     },
@@ -185,7 +186,7 @@ def normalize_attention_identity(
         alias_map = ATTENTION_PROVIDER_IDENTITY_ALIASES.get(provider, {})
         if emitted_provider in alias_map:
             if (
-                emitted_provider == "PreSignal_v2.0_shadow_research"
+                emitted_provider in {"PreSignal_v2.0_shadow_research", "presignal_v2_shadow_research"}
                 and (
                     provider != "Anthropic"
                     or (actual_provider is not None and actual_provider != "Anthropic")
