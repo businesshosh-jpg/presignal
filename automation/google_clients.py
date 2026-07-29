@@ -3,6 +3,7 @@ import os
 import socket
 import time
 import fcntl
+import contextlib
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
@@ -267,6 +268,52 @@ def build_script_service(creds: Credentials, timeout_seconds: Optional[int] = No
     with _GoogleApiIPv4Only():
         http = AuthorizedHttp(creds, http=httplib2.Http(timeout=timeout))
         return build("script", "v1", http=http, cache_discovery=False)
+
+
+def describe_google_service_transport(service: Any) -> dict[str, Any]:
+    """Return non-secret transport metadata for lifecycle and reuse audits."""
+    authorized_http = getattr(service, "_http", None)
+    underlying_http = getattr(authorized_http, "http", None)
+    connections = getattr(underlying_http, "connections", None)
+    connection_keys: list[str] = []
+    if isinstance(connections, dict):
+        connection_keys = sorted(str(key) for key in connections.keys())
+    return {
+        "service_object_id": id(service),
+        "authorized_http_object_id": id(authorized_http) if authorized_http is not None else None,
+        "underlying_http_object_id": id(underlying_http) if underlying_http is not None else None,
+        "authorized_http_type": type(authorized_http).__name__ if authorized_http is not None else None,
+        "underlying_http_type": type(underlying_http).__name__ if underlying_http is not None else None,
+        "connection_count": len(connection_keys),
+        "connection_keys": connection_keys,
+    }
+
+
+def close_google_service(service: Any) -> dict[str, Any]:
+    """Close the Resource and underlying HTTP transport best-effort."""
+    authorized_http = getattr(service, "_http", None)
+    underlying_http = getattr(authorized_http, "http", None)
+    closed_paths: list[str] = []
+    errors: list[str] = []
+
+    for label, target in (
+        ("service.close", service),
+        ("authorized_http.close", authorized_http),
+        ("underlying_http.close", underlying_http),
+    ):
+        close = getattr(target, "close", None)
+        if not callable(close):
+            continue
+        try:
+            with contextlib.suppress(Exception):
+                close()
+            closed_paths.append(label)
+        except Exception as exc:  # pragma: no cover - defensive only
+            errors.append(f"{label}:{type(exc).__name__}")
+
+    post = describe_google_service_transport(service)
+    post.update({"closed_paths": closed_paths, "close_errors": errors})
+    return post
 
 
 def run_script_function(
