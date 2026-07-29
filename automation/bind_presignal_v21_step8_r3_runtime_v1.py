@@ -55,7 +55,14 @@ def load_manifest(path: Path = PREP) -> dict[str, Any]:
 
 def attention_instruction(spec: Mapping[str, Any], provider: str) -> str:
     module = contract_module(spec)
-    if provider == "Anthropic" and module.CONTRACT_VERSION in (compat_r1.CONTRACT_VERSION, compat_r2.CONTRACT_VERSION, compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION):
+    if provider == "Anthropic" and module.CONTRACT_VERSION in (
+        r3.CONTRACT_VERSION,
+        compat_r1.CONTRACT_VERSION,
+        compat_r2.CONTRACT_VERSION,
+        compat_r3.CONTRACT_VERSION,
+        compat_r4.CONTRACT_VERSION,
+        compat_r5.CONTRACT_VERSION,
+    ):
         return lineage.ATTENTION_INSTRUCTION + "\n\n" + compat_r1.ANTHROPIC_ATTENTION_RULE
     return lineage.ATTENTION_INSTRUCTION
 
@@ -86,7 +93,13 @@ def attention_parser(provider: str, raw: Any, spec: Mapping[str, Any] | None = N
 
 def generation_settings(spec: Mapping[str, Any], provider: str, stage: str) -> dict[str, Any]:
     module = contract_module(spec)
-    if module.CONTRACT_VERSION in (compat_r2.CONTRACT_VERSION, compat_r3.CONTRACT_VERSION, compat_r4.CONTRACT_VERSION, compat_r5.CONTRACT_VERSION) and provider == "Anthropic" and stage == "ATTENTION":
+    if module.CONTRACT_VERSION in (
+        r3.CONTRACT_VERSION,
+        compat_r2.CONTRACT_VERSION,
+        compat_r3.CONTRACT_VERSION,
+        compat_r4.CONTRACT_VERSION,
+        compat_r5.CONTRACT_VERSION,
+    ) and provider == "Anthropic" and stage == "ATTENTION":
         return {"max_output_tokens": compat_r2.ANTHROPIC_ATTENTION_MAX_TOKENS, "preserve_raw_before_parse": True}
     return {}
 
