@@ -19,6 +19,7 @@ if str(ROOT) not in sys.path:
 
 from automation import bind_presignal_v21_step8_r3_runtime_v1 as binding
 from automation import google_clients
+from automation import presignal_v21_provider_adapters_v1 as provider_adapters
 from automation import presignal_v21_minimal_prospective_lineage_v1 as lineage
 from automation import run_presignal_v21_single_event_path_pair_v1_1 as single
 from automation import run_presignal_v21_step8_r2_historical_replication_v1 as replay
@@ -62,6 +63,7 @@ TERMINAL_STATUSES = {
     "FAILED_PROVIDER",
     "FAILED_PARSE",
     "FAILED_VALIDATION",
+    "FAILED_PROVIDER_AUTHORITY",
 }
 STEP8_R2_SESSIONS_ROOT = ROOT / "outputs" / "presignal_v21_step8_r2_historical_replication" / "STEP8-R2-e057ba70c884e0e618cf" / "sessions"
 POPULATION_AUDIT_ROOT = ROOT / "outputs" / "presignal_v21_full_round_1_population_audit" / "PPHB-R1-FULL-POPULATION-AUDIT-20260728T125525Z-b25cd178e7d6"
@@ -356,6 +358,7 @@ def execute_call(
     journal = run_dir / "operation_journal.jsonl"
     raw_transport_path = run_dir / "raw_transport_results.jsonl"
     raw_output_path = run_dir / "raw_provider_outputs.jsonl"
+    provider_authority_path = run_dir / "provider_authority_results.jsonl"
     normalized_path = run_dir / "normalized_attention_results.jsonl"
     validation_path = run_dir / "attention_validation_results.jsonl"
     episode_map_path = run_dir / "episode_attention_result_map.jsonl"
@@ -425,11 +428,29 @@ def execute_call(
 
     transport = transport_holder.get("response")
     request_payload = transport_holder.get("request") or {}
+    raw_claimed_provider = None
+    authority_agreement = False
+    canonical_provider = None
+    authority_decision = "PROVIDER_AUTHORITY_NOT_REACHED"
     if transport is not None:
         raw_output_preserved = transport.get("raw_output_original", transport.get("raw_output"))
+        raw_claimed_provider = provider_adapters.extract_raw_provider_claim(raw_output_preserved)
         raw_output_length = None
         if isinstance(raw_output_preserved, str):
             raw_output_length = len(raw_output_preserved)
+        actual_provider = transport.get("actual_provider")
+        actual_model = transport.get("actual_model")
+        authority_agreement = (
+            actual_provider == call["provider"]
+            and actual_model == call["model"]
+        )
+        if actual_provider is None or actual_model is None:
+            authority_decision = "TRANSPORT_METADATA_MISSING"
+        elif authority_agreement:
+            canonical_provider = call["provider"]
+            authority_decision = "MANIFEST_TRANSPORT_MATCH"
+        else:
+            authority_decision = "MANIFEST_TRANSPORT_CONFLICT"
         append_jsonl(
             raw_transport_path,
             {
@@ -464,6 +485,20 @@ def execute_call(
                 "raw_output_returned": bool(raw_output_preserved not in (None, "")),
             },
         )
+        append_jsonl(
+            provider_authority_path,
+            {
+                "call_id": call["call_id"],
+                "manifest_provider": call["provider"],
+                "manifest_model": call["model"],
+                "transport_provider": actual_provider,
+                "transport_model": actual_model,
+                "raw_claimed_provider": raw_claimed_provider,
+                "authority_agreement": authority_agreement,
+                "canonical_provider": canonical_provider,
+                "authority_decision": authority_decision,
+            },
+        )
         journal_event(journal, "TRANSPORT_COMPLETED", call_id=call["call_id"], transport_status=transport.get("status"))
 
     if result is not None:
@@ -473,6 +508,9 @@ def execute_call(
             if transport_status in PROVIDER_FAILURE_STATUSES:
                 final_state = "FAILED_PROVIDER"
                 error_code = transport_status or "PROVIDER_CONTRACT_ERROR"
+            elif str(((result.get("rows") or [{}])[0]).get("error_message") or "").startswith("ATTENTION_PROVIDER_AUTHORITY_"):
+                final_state = "FAILED_PROVIDER_AUTHORITY"
+                error_code = str(((result.get("rows") or [{}])[0]).get("error_message") or result.get("status"))
             else:
                 final_state = "FAILED_PARSE"
                 error_code = str(((result.get("rows") or [{}])[0]).get("error_message") or result.get("status"))
@@ -614,6 +652,7 @@ def initialize_run_files(run_dir: Path, batch_calls: list[dict[str, Any]], finge
         "operation_journal.jsonl",
         "raw_transport_results.jsonl",
         "raw_provider_outputs.jsonl",
+        "provider_authority_results.jsonl",
         "normalized_attention_results.jsonl",
         "attention_validation_results.jsonl",
         "episode_attention_result_map.jsonl",
@@ -666,6 +705,7 @@ def initialize_run_files(run_dir: Path, batch_calls: list[dict[str, Any]], finge
                 "normalized_result_contract": "session_attention_map via binding.attention_parser plus strict member/rank validation",
                 "duplicate_protection": "terminal call states in attention_validation_results.jsonl prevent repeat dispatch",
                 "immutability_rule": "append-only run artifacts only; no matrix update in this Move",
+                "historical_attention_provider_authority": "canonical provider binds from manifest plus matching transport provider/model; raw claimed provider preserved separately",
             },
         )
 
@@ -692,6 +732,7 @@ def summarize_run(run_dir: Path, batch_calls: list[dict[str, Any]], blocked_reas
         "failed_provider_calls": status_counts.get("FAILED_PROVIDER", 0),
         "failed_parse_calls": status_counts.get("FAILED_PARSE", 0),
         "failed_validation_calls": status_counts.get("FAILED_VALIDATION", 0),
+        "failed_provider_authority_calls": status_counts.get("FAILED_PROVIDER_AUTHORITY", 0),
         "skipped_already_successful_calls": skipped_success,
         "unexpected_calls": max(0, attempted - EXPECTED_CALL_COUNT),
         "duplicate_successful_calls": max(0, status_counts.get("SUCCEEDED_VALID", 0) - len(normalized_rows)),

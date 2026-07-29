@@ -72,6 +72,16 @@ def _json_object(raw: Any) -> dict[str, Any]:
     return dict(value)
 
 
+def extract_raw_provider_claim(raw: Any) -> str | None:
+    """Best-effort access to model-returned provider text without normalizing it."""
+    try:
+        payload = _json_object(raw)
+    except Exception:
+        return None
+    provider = payload.get("provider")
+    return str(provider) if provider is not None else None
+
+
 def _extract_envelope(payload: dict[str, Any]) -> dict[str, Any]:
     """Extract the established Gemini forecast response-contract envelope."""
     if set(payload) != {"forecast", "response_contract"}:
