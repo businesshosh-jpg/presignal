@@ -4,14 +4,14 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted execution HEAD for Batch 009: `512a740e8c97785909da6d2803bfc212aeb1e03a`
+- Accepted execution HEAD for Batch 010: `940bb7d98d29af58f9221d7517a6984028a554b7`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
 
 ## Completed stages
 
-Attention population and consolidation, Pack lineage repair, Pack A/E construction, forecast planning, Forecast Batches 001–009, Batch 003 closure, and the future-only NO_SIGNAL prompt migration are accepted.
+Attention population and consolidation, Pack lineage repair, Pack A/E construction, forecast planning, Forecast Batches 001–010, Batch 003 closure, and the future-only NO_SIGNAL prompt migration are accepted.
 
 ## Current counts
 
@@ -26,8 +26,10 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch 007 authoritative valid: `12`
 - Batch 008 authoritative valid: `12`
 - Batch 009 authoritative valid: `12`
-- Cumulative authoritative valid forecasts: `107`
-- Unexecuted calls: `456`
+- Batch 010 authoritative valid: `11`
+- Batch 010 terminal parse-invalid completed calls: `1`
+- Cumulative authoritative valid forecasts: `118`
+- Unexecuted calls: `444`
 - Remote-state-unknown calls: `0`
 
 ## Accepted authoritative runs
@@ -41,6 +43,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch 007: `PPHB-R1-FORECAST-EXECUTION-BATCH-007-20260801T154757Z-c8b6730975c1`
 - Batch 008: `PPHB-R1-FORECAST-EXECUTION-BATCH-008-20260801T174224Z-118a5dce57f7`
 - Batch 009: `PPHB-R1-FORECAST-EXECUTION-BATCH-009-20260801T183009Z-524657addc89`
+- Batch 010: `PPHB-R1-FORECAST-EXECUTION-BATCH-010-20260801T190644Z-17f70b192668`
 
 ## Prompt boundary
 
@@ -53,13 +56,15 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 
 `FCL_27720b8b23236b173b96fdee` (Anthropic / `claude-haiku-4-5`) is closed as terminal provider schema noncompliance after two `confidence=null` responses. It is not authoritative and must not enter evaluation without exceptional new authorization.
 
+`FCL_3d10ae8285471f4e3a980b79` (OpenAI / `gpt-4o-mini-2024-07-18`) is closed as a terminal parse failure in Batch 010 (`PROVIDER_OUTPUT_PATH_COUNT`). It is not authoritative and is not automatically retried.
+
 ## Active scientific boundary
 
 Pack A and Pack E remain separate. Provider/model lineage remains frozen. No provider weighting, ranking, consensus, winner selection, Outcome attachment, accuracy calculation, market-data access, matrix update, or Google write is authorized by this state file.
 
 ## Exact next Move
 
-Execute migrated `FCB_PACK_A_010` only, using the accepted migration run as its manifest source. Do not execute Batch 011, Pack E, or any other call in that Move.
+Execute migrated `FCB_PACK_A_011` only, using the accepted migration run as its manifest source. Do not execute Batch 012, Pack E, or any other call in that Move.
 
 ## Prohibited reopening
 
