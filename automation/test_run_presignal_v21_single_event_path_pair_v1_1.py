@@ -87,6 +87,29 @@ class PromptAndParsingTests(unittest.TestCase):
         self.assertIn("Uncertainty alone does not require NO_SIGNAL", prompt)
         self.assertIn("if expected_reversal_flag is true, expected_reversal_horizon_min must be exactly 15, 30, or 60", prompt)
         self.assertIn("If expected_reversal_flag is false, expected_reversal_horizon_min must be null", prompt)
+        self.assertNotIn(step6.FUTURE_NO_SIGNAL_CONFIDENCE_SENTENCE.strip(), prompt)
+
+    def test_future_prompt_adds_exact_no_signal_confidence_sentence(self) -> None:
+        context = step6.arm_context(input_row(arm="PACK_A"))
+        prompt = step6.future_prompt_text(context)
+        self.assertIn(step6.FUTURE_NO_SIGNAL_CONFIDENCE_SENTENCE.strip(), prompt)
+        self.assertEqual(prompt.count(step6.FUTURE_NO_SIGNAL_CONFIDENCE_SENTENCE.strip()), 1)
+
+    def test_future_prompt_fingerprint_differs_from_frozen_prompt(self) -> None:
+        context = step6.arm_context(input_row(arm="PACK_A"))
+        frozen = step6.prompt_text(context)
+        future = step6.future_prompt_text(context)
+        self.assertNotEqual(frozen, future)
+        self.assertNotEqual(
+            step6.prompt_text_fingerprint(frozen),
+            step6.prompt_text_fingerprint(future),
+        )
+        self.assertNotEqual(
+            step6.prompt_instruction_fingerprint(),
+            step6.prompt_instruction_fingerprint(
+                include_future_no_signal_confidence_clarification=True,
+            ),
+        )
 
     def test_prompt_diff_rejects_non_pack_change(self) -> None:
         left, right = step6.arm_context(input_row(arm="PACK_A")), step6.arm_context(input_row(arm="PACK_E"))
@@ -294,6 +317,71 @@ class PromptAndParsingTests(unittest.TestCase):
         self.assertEqual(audit["provider_immediate_window_status"], "OMITTED")
         self.assertEqual(prediction["immediate_impulse_window_seconds"], 120)
         self.assertEqual(paths, [])
+
+    def test_no_signal_confidence_zero_boundary_is_valid(self) -> None:
+        raw = {
+            "no_signal_flag": True, "no_signal_reason": "insufficient conviction", "confidence": 0.0,
+            "immediate_impulse_direction": None, "immediate_impulse_peak_pips_min": None,
+            "immediate_impulse_peak_pips_max": None, "immediate_impulse_confidence": None,
+            "early_reaction_5m_direction": "UNCERTAIN", "expected_reversal_flag": None,
+            "expected_reversal_horizon_min": None, "expected_path_summary": "no directional edge",
+            "information_used": ["rates"], "missing_information": [], "invalidation_condition": "surprise",
+            "path": [],
+        }
+        normalized, _ = step6.normalize_provider_output(raw)
+        self.assertEqual(normalized["confidence"], 0.0)
+
+    def test_no_signal_confidence_midpoint_is_valid(self) -> None:
+        raw = {
+            "no_signal_flag": True, "no_signal_reason": "insufficient conviction", "confidence": 0.5,
+            "immediate_impulse_direction": None, "immediate_impulse_peak_pips_min": None,
+            "immediate_impulse_peak_pips_max": None, "immediate_impulse_confidence": None,
+            "early_reaction_5m_direction": "UNCERTAIN", "expected_reversal_flag": None,
+            "expected_reversal_horizon_min": None, "expected_path_summary": "no directional edge",
+            "information_used": ["rates"], "missing_information": [], "invalidation_condition": "surprise",
+            "path": [],
+        }
+        normalized, _ = step6.normalize_provider_output(raw)
+        self.assertEqual(normalized["confidence"], 0.5)
+
+    def test_no_signal_confidence_one_boundary_is_valid(self) -> None:
+        raw = {
+            "no_signal_flag": True, "no_signal_reason": "insufficient conviction", "confidence": 1.0,
+            "immediate_impulse_direction": None, "immediate_impulse_peak_pips_min": None,
+            "immediate_impulse_peak_pips_max": None, "immediate_impulse_confidence": None,
+            "early_reaction_5m_direction": "UNCERTAIN", "expected_reversal_flag": None,
+            "expected_reversal_horizon_min": None, "expected_path_summary": "no directional edge",
+            "information_used": ["rates"], "missing_information": [], "invalidation_condition": "surprise",
+            "path": [],
+        }
+        normalized, _ = step6.normalize_provider_output(raw)
+        self.assertEqual(normalized["confidence"], 1.0)
+
+    def test_no_signal_confidence_null_is_rejected(self) -> None:
+        raw = {
+            "no_signal_flag": True, "no_signal_reason": "insufficient conviction", "confidence": None,
+            "immediate_impulse_direction": None, "immediate_impulse_peak_pips_min": None,
+            "immediate_impulse_peak_pips_max": None, "immediate_impulse_confidence": None,
+            "early_reaction_5m_direction": "UNCERTAIN", "expected_reversal_flag": None,
+            "expected_reversal_horizon_min": None, "expected_path_summary": "no directional edge",
+            "information_used": ["rates"], "missing_information": [], "invalidation_condition": "surprise",
+            "path": [],
+        }
+        with self.assertRaisesRegex(step6.Step6Error, "PROVIDER_OUTPUT_TYPES"):
+            step6.normalize_provider_output(raw)
+
+    def test_no_signal_confidence_omitted_is_rejected(self) -> None:
+        raw = {
+            "no_signal_flag": True, "no_signal_reason": "insufficient conviction",
+            "immediate_impulse_direction": None, "immediate_impulse_peak_pips_min": None,
+            "immediate_impulse_peak_pips_max": None, "immediate_impulse_confidence": None,
+            "early_reaction_5m_direction": "UNCERTAIN", "expected_reversal_flag": None,
+            "expected_reversal_horizon_min": None, "expected_path_summary": "no directional edge",
+            "information_used": ["rates"], "missing_information": [], "invalidation_condition": "surprise",
+            "path": [],
+        }
+        with self.assertRaisesRegex(step6.Step6Error, "PROVIDER_OUTPUT_FIELDS"):
+            step6.normalize_provider_output(raw)
 
 
 if __name__ == "__main__":

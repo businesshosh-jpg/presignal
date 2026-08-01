@@ -34,6 +34,10 @@ OUTPUT_ROOT = ROOT / "outputs" / "presignal_v21_step6_single_pair_v1_1"
 BRIDGE_FUNCTION = "apiCallAuthoritativeProviderJsonObject"
 BRIDGE_SCHEMA_VERSION = "authoritative_historical_replay_bridge_v1"
 PROMPT_VERSION = "presignal_event_path_contract_v1_1_single_pair_validation"
+FUTURE_NO_SIGNAL_PROMPT_VERSION = "presignal_event_path_contract_v1_1_single_pair_validation_no_signal_confidence_explicit_v1"
+FUTURE_NO_SIGNAL_CONFIDENCE_SENTENCE = (
+    "Even when no_signal_flag is true, confidence must be a numeric value from 0 to 1 and must not be null. "
+)
 ALLOWED_PROMPT_DIFFERENCES = {
     "information_arm",
     "information_pack",
@@ -241,7 +245,15 @@ def arm_context(row: Mapping[str, Any]) -> dict[str, Any]:
     return context
 
 
-def prompt_text(context: Mapping[str, Any]) -> str:
+def prompt_instruction_text(
+    *,
+    include_future_no_signal_confidence_clarification: bool = False,
+) -> str:
+    no_signal_confidence_sentence = (
+        FUTURE_NO_SIGNAL_CONFIDENCE_SENTENCE
+        if include_future_no_signal_confidence_clarification
+        else ""
+    )
     return (
         "You are producing a PreSignal v2.1 Event-Path forecast. Reason only from the supplied "
         "frozen pre-release information. Do not use released actual values, subsequent prices, Outcomes, "
@@ -261,7 +273,9 @@ def prompt_text(context: Mapping[str, Any]) -> str:
         "historical information. Uncertainty alone does not require NO_SIGNAL; if one direction is more defensible than "
         "the alternatives, return a directional forecast with the appropriately lower confidence. Missing optional context "
         "does not by itself require NO_SIGNAL. "
-        "Confidence is always a number from 0 to 1. For a "
+        "Confidence is always a number from 0 to 1. "
+        + no_signal_confidence_sentence +
+        "For a "
         "normal forecast, path contains exactly ordered 5, 15, 30, 60 minute rows, each with horizon_min, "
         "expected_direction, expected_pips_min, expected_pips_max, stage_confidence, continuation_probability, "
         "reversal_probability, stage_reason, invalidation_condition. Directions are UP, DOWN, or FLAT. Pip bounds "
@@ -271,7 +285,43 @@ def prompt_text(context: Mapping[str, Any]) -> str:
         "UP with 2 to 8 pips, DOWN with 3 to 9 pips, FLAT with 0 to 0 pips. "
         "For reversal fields: if expected_reversal_flag is true, expected_reversal_horizon_min must be exactly 15, 30, or 60. "
         "If expected_reversal_flag is false, expected_reversal_horizon_min must be null. "
-        "For no signal, immediate_impulse_* fields are null, early_reaction_5m_direction is UNCERTAIN, reversal fields are null, and path is empty.\n\n" + canonical_json(context)
+        "For no signal, immediate_impulse_* fields are null, early_reaction_5m_direction is UNCERTAIN, reversal fields are null, and path is empty."
+    )
+
+
+def prompt_text(
+    context: Mapping[str, Any],
+    *,
+    include_future_no_signal_confidence_clarification: bool = False,
+) -> str:
+    return (
+        prompt_instruction_text(
+            include_future_no_signal_confidence_clarification=include_future_no_signal_confidence_clarification,
+        )
+        + "\n\n"
+        + canonical_json(context)
+    )
+
+
+def future_prompt_text(context: Mapping[str, Any]) -> str:
+    return prompt_text(
+        context,
+        include_future_no_signal_confidence_clarification=True,
+    )
+
+
+def prompt_text_fingerprint(prompt: str) -> str:
+    return sha256(prompt)
+
+
+def prompt_instruction_fingerprint(
+    *,
+    include_future_no_signal_confidence_clarification: bool = False,
+) -> str:
+    return prompt_text_fingerprint(
+        prompt_instruction_text(
+            include_future_no_signal_confidence_clarification=include_future_no_signal_confidence_clarification,
+        )
     )
 
 
