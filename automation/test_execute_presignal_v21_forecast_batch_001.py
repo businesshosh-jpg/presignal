@@ -239,6 +239,88 @@ class ForecastBatch001Test(unittest.TestCase):
             self.assertEqual(len(failed), 12)
             self.assertTrue(all(row["terminal_state"] == "FAILED_PARSE" for row in failed))
 
+    def test_usable_raw_output_is_valid_when_provider_response_body_is_empty(self) -> None:
+        def fake_preflight() -> dict[str, object]:
+            return {
+                "token_path": "/Users/junhoshino/projects/presignal/local/token.json",
+                "token_path_external": True,
+                "authentication_method": "test",
+                "scope_names": [],
+                "scope_verification_result": "PASSED",
+                "read_only_preflight_result": "PASSED",
+                "resource_identity_result": "PASSED",
+                "google_writes": 0,
+            }
+
+        def fake_dispatch(_service: object, _script_id: str, payload: dict[str, object]) -> dict[str, object]:
+            return {
+                "ok": True,
+                "request": {"function": "apiCallAuthoritativeProviderJsonObject"},
+                "classification": {"category": "READY"},
+                "result": {
+                    "status": "ok",
+                    "response_status": "ok",
+                    "provider_response_body": "",
+                    "actual_provider": payload["provider"],
+                    "actual_model": payload["model"],
+                    "provider": payload["provider"],
+                    "model": payload["model"],
+                    "request_id": f"req_{payload['forecast_identity']}",
+                    "raw_output": valid_raw_output(),
+                    "completed_timestamp": "2026-07-29T12:35:00Z",
+                },
+            }
+
+        with tempfile.TemporaryDirectory() as tmp:
+            result = batch001.execute_batch(
+                output_root=Path(tmp),
+                fixed_timestamp="2026-07-29T12:34:56Z",
+                enforce_head=False,
+                auth_preflight=fake_preflight,
+                dispatch=fake_dispatch,
+            )
+        self.assertEqual(result["reconciliation"]["successful_valid_calls"], 12)
+        self.assertEqual(result["reconciliation"]["failed_provider_calls"], 0)
+
+    def test_each_dispatch_disposes_the_isolated_google_service(self) -> None:
+        services: list[object] = []
+        closed: list[object] = []
+
+        def fake_factory() -> object:
+            service = object()
+            services.append(service)
+            return service
+
+        def fake_close(service: object) -> dict[str, object]:
+            closed.append(service)
+            return {"closed_paths": ["service.close", "authorized_http.close", "underlying_http.close"]}
+
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(
+            batch001.google_clients,
+            "close_google_service",
+            side_effect=fake_close,
+        ):
+            batch001.execute_batch(
+                output_root=Path(tmp),
+                fixed_timestamp="2026-07-29T12:34:56Z",
+                enforce_head=False,
+                auth_preflight=lambda: {"google_writes": 0},
+                dispatch=lambda _service, _script_id, payload: {
+                    "ok": True,
+                    "result": {
+                        "status": "ok",
+                        "response_status": "ok",
+                        "provider_response_body": "",
+                        "actual_provider": payload["provider"],
+                        "actual_model": payload["model"],
+                        "raw_output": valid_raw_output(),
+                    },
+                },
+                script_service_factory_override=(fake_factory, "SCRIPT_ID"),
+            )
+        self.assertEqual(len(services), 12)
+        self.assertEqual(closed, services)
+
     def test_default_script_service_factory_rebuilds_service_per_dispatch(self) -> None:
         fake_credentials = object()
         built_services: list[object] = []

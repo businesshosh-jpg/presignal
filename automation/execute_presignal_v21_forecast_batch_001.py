@@ -445,7 +445,6 @@ def provider_error_without_forecast_payload(transport_result: Mapping[str, Any] 
     success_statuses = {"ok", "success"}
     return (
         response_status not in success_statuses
-        or provider_body in (None, "")
         or raw_output in (None, "")
     )
 
@@ -654,7 +653,23 @@ def execute_batch(
 
         arm = "BASELINE" if call["pack_type"] == "PACK_A" else "FULL_CONTEXT"
         payload = step6.bridge_payload(pack_payload, prompt_row["prompt_text"], run_id=run_dir.name, arm=arm)
-        transport_meta = dispatch(script_service_factory(), script_id, payload)
+        script_service = script_service_factory()
+        transport_before = google_clients.describe_google_service_transport(script_service)
+        try:
+            transport_meta = dispatch(script_service, script_id, payload)
+        except Exception as exc:
+            transport_meta = {
+                "ok": False,
+                "request": {"function": step6.BRIDGE_FUNCTION},
+                "classification": {
+                    "category": "DISPATCH_EXCEPTION",
+                    "exception_type": type(exc).__name__,
+                    "exception_message": str(exc),
+                },
+                "result": None,
+            }
+        finally:
+            transport_after = google_clients.close_google_service(script_service)
         transport_result = transport_meta.get("result") if isinstance(transport_meta, Mapping) else None
         raw_output = transport_result.get("raw_output") if isinstance(transport_result, Mapping) else None
         raw_claimed_provider = None
@@ -673,6 +688,10 @@ def execute_batch(
             "transport_request": transport_meta.get("request") if isinstance(transport_meta, Mapping) else None,
             "transport_classification": transport_meta.get("classification") if isinstance(transport_meta, Mapping) else None,
             "raw_transport_result": transport_result,
+            "transport_lifecycle": {
+                "before_dispatch": transport_before,
+                "after_dispatch_and_disposal": transport_after,
+            },
             "requested_provider": transport_result.get("requested_provider") if isinstance(transport_result, Mapping) else None,
             "requested_model": transport_result.get("requested_model") if isinstance(transport_result, Mapping) else None,
             "selected_adapter": transport_result.get("provider") if isinstance(transport_result, Mapping) else None,
