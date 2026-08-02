@@ -1,0 +1,141 @@
+{
+  "authorization_status": "DRAFT_NOT_ACTIVE",
+  "destination": "new append-only local Outcome collection run under outputs/presignal_v21_full_round_1_forecast_execution; no Google Sheet write in this Move",
+  "duplicate_prevention": "one reservation per episode/day and one outcome_id per episode; fail closed on existing conflicting outcome identity",
+  "episode_count": 12,
+  "episode_manifest": [
+    {
+      "episode_id": "EP_BATCH_851b7d8bd3661e168de1",
+      "first_forecast_call_id": "FCL_ff4897e2f55a0fb2a08b47bd",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "release_ts": "2024-05-01T11:00:00Z",
+      "selection_order": 1
+    },
+    {
+      "episode_id": "EP_EVENT_b908a729dc4fa10f46a6",
+      "first_forecast_call_id": "FCL_ddabd49c887b4a4dfe215f63",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "release_ts": "2024-05-01T11:30:00Z",
+      "selection_order": 2
+    },
+    {
+      "episode_id": "EP_EVENT_d5d7aa4435b9e6bab424",
+      "first_forecast_call_id": "FCL_97de2ec456c917a0c39f165b",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "release_ts": "2024-05-01T12:15:00Z",
+      "selection_order": 3
+    },
+    {
+      "episode_id": "EP_BATCH_bf1ad05b4d84df1b733a",
+      "first_forecast_call_id": "FCL_e87e51e2097c8e80d8ed63be",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "release_ts": "2024-05-01T14:00:00Z",
+      "selection_order": 4
+    },
+    {
+      "episode_id": "EP_EVENT_bfcff4089c331ae1d2c8",
+      "first_forecast_call_id": "FCL_fa55f9a2a73bc09a3c917b32",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "release_ts": "2024-05-01T18:00:00Z",
+      "selection_order": 5
+    },
+    {
+      "episode_id": "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+      "first_forecast_call_id": "FCL_40ab9e816d74bd8bd12d6afb",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "release_ts": "2024-05-01T18:30:00Z",
+      "selection_order": 6
+    },
+    {
+      "episode_id": "EP_BATCH_f7f52f894ce4f1929d5a",
+      "first_forecast_call_id": "FCL_befd6d6947490cc19f4754b9",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-02T06:50:00Z",
+      "release_ts": "2024-05-02T12:30:00Z",
+      "selection_order": 7
+    },
+    {
+      "episode_id": "EP_BATCH_eeae6fee09edc60d1e7d",
+      "first_forecast_call_id": "FCL_1e7b6936b48bf931a7ed5e7d",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-02T06:50:00Z",
+      "release_ts": "2024-05-02T14:00:00Z",
+      "selection_order": 8
+    },
+    {
+      "episode_id": "EP_BATCH_1c2cb957d0760e40f81e",
+      "first_forecast_call_id": "FCL_64c262f5f677009a4ce5c45a",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "release_ts": "2024-05-03T05:30:00Z",
+      "selection_order": 9
+    },
+    {
+      "episode_id": "EP_BATCH_af76f644b423101d91f2",
+      "first_forecast_call_id": "FCL_d72f741393a7643ea859edb8",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "release_ts": "2024-05-03T07:00:00Z",
+      "selection_order": 10
+    },
+    {
+      "episode_id": "EP_BATCH_0ba598718d3db4688437",
+      "first_forecast_call_id": "FCL_113f8f44422ad80fd0ad67b1",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "release_ts": "2024-05-03T12:30:00Z",
+      "selection_order": 11
+    },
+    {
+      "episode_id": "EP_BATCH_58e0d92ad8520bb926bb",
+      "first_forecast_call_id": "FCL_606b05216ccfb825e13803d2",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "release_ts": "2024-05-03T14:00:00Z",
+      "selection_order": 12
+    }
+  ],
+  "max_apps_script_google_reads": 3,
+  "max_google_writes": 0,
+  "max_market_data_provider_attempts": 12,
+  "max_total_external_network_requests": 15,
+  "move": "OUTCOME_SOURCE_PREFLIGHT_AND_IMMUTABLE_COLLECTION",
+  "prohibited_scope": [
+    "forecast calls",
+    "retries beyond bounded source attempt",
+    "Outcome attachment",
+    "Google writes",
+    "evaluation",
+    "accuracy",
+    "market data outside selected 12-Episode manifest",
+    "Pack or forecast changes"
+  ],
+  "required_evidence": [
+    "source preflight",
+    "immutable raw observations",
+    "provider request lineage",
+    "normalized outcome rows",
+    "outcome validation",
+    "duplicate ledger",
+    "completion reconciliation"
+  ],
+  "retry_boundary": "no automatic retries; one bounded attempt per missing UTC day; provider fallback is route-defined, not forecast retry; stop on shared auth, transport, schema, lineage, duplicate, or timestamp defect",
+  "schema_authority": "presignal_event_path_contract_v1_1 / 2.1.1 plus additive Immediate Impulse supplement 1.0.0",
+  "selection_rule": "first 12 unique valid forecast Episode identities ordered by earliest frozen forecast execution_order; exact identities in this artifact",
+  "source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+  "stop_conditions": [
+    "source/schema authority conflict",
+    "Google/OAuth transport instability",
+    "provider identity or lineage conflict",
+    "duplicate identity",
+    "missing/stale required observations beyond contract tolerance",
+    "historical leakage",
+    "attempt ceiling reached"
+  ]
+}

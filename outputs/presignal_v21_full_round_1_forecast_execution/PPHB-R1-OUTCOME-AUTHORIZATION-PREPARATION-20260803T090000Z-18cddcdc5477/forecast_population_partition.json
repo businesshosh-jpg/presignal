@@ -1,0 +1,3994 @@
+{
+  "authoritative_valid_forecasts": 561,
+  "complete_pack_a_e_pairs": 279,
+  "complete_pairs": [
+    {
+      "episode_id": "EP_BATCH_021dc91a3b7c1cf1fed7",
+      "historical_cutoff": "2024-06-27T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_4e52ecdec034b45174eaecf8",
+      "pack_e_call_id": "FCL_4b40d95b94f6fab71f3348ab",
+      "pair_key": [
+        "EP_BATCH_021dc91a3b7c1cf1fed7",
+        "2024-06-27T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_021dc91a3b7c1cf1fed7",
+      "historical_cutoff": "2024-06-27T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_a5827ecf6fa1a7991bcee466",
+      "pack_e_call_id": "FCL_7d17bec805a8632e2a707b85",
+      "pair_key": [
+        "EP_BATCH_021dc91a3b7c1cf1fed7",
+        "2024-06-27T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_021dc91a3b7c1cf1fed7",
+      "historical_cutoff": "2024-06-27T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_4aca3d03f4d00c04901afad4",
+      "pack_e_call_id": "FCL_10602b582b6a16a25f20c807",
+      "pair_key": [
+        "EP_BATCH_021dc91a3b7c1cf1fed7",
+        "2024-06-27T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_0aca5f1e0ebb1905712c",
+      "historical_cutoff": "2024-06-06T11:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_c97d7ca950ffdddb9588561b",
+      "pack_e_call_id": "FCL_ecb8b5fdfa07c4420f66ea0c",
+      "pair_key": [
+        "EP_BATCH_0aca5f1e0ebb1905712c",
+        "2024-06-06T11:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_0aca5f1e0ebb1905712c",
+      "historical_cutoff": "2024-06-06T11:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_257cde42febc7dd6c659ea1c",
+      "pack_e_call_id": "FCL_55667240994900e6a8e3f99d",
+      "pair_key": [
+        "EP_BATCH_0aca5f1e0ebb1905712c",
+        "2024-06-06T11:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_0ba598718d3db4688437",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_113f8f44422ad80fd0ad67b1",
+      "pack_e_call_id": "FCL_01aa08f00772c1e29269ae05",
+      "pair_key": [
+        "EP_BATCH_0ba598718d3db4688437",
+        "2024-05-03T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_0ba598718d3db4688437",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_bfea493d192be2cd369f3bc3",
+      "pack_e_call_id": "FCL_5dcf743ebf3ef85dfc8268bc",
+      "pair_key": [
+        "EP_BATCH_0ba598718d3db4688437",
+        "2024-05-03T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_0ba598718d3db4688437",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_3b785365e98d8042efa606d8",
+      "pack_e_call_id": "FCL_692dac514581399114ea4347",
+      "pair_key": [
+        "EP_BATCH_0ba598718d3db4688437",
+        "2024-05-03T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_0cf5e270557880a488b8",
+      "historical_cutoff": "2024-05-17T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_deacd25d0ea5dca6eab24cdf",
+      "pack_e_call_id": "FCL_55cd8246f7f0d724cd12cefc",
+      "pair_key": [
+        "EP_BATCH_0cf5e270557880a488b8",
+        "2024-05-17T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_0d27cc0903be89b3922f",
+      "historical_cutoff": "2024-06-17T08:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_982657b495bf2d639409de07",
+      "pack_e_call_id": "FCL_95d6007d8cd5c5ab0ce1f9d3",
+      "pair_key": [
+        "EP_BATCH_0d27cc0903be89b3922f",
+        "2024-06-17T08:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_1248dc6390428a4bf6e9",
+      "historical_cutoff": "2024-05-31T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_313b7eb1ff1f9c3eb3b2b70f",
+      "pack_e_call_id": "FCL_3231e260c3eea348d68ec62a",
+      "pair_key": [
+        "EP_BATCH_1248dc6390428a4bf6e9",
+        "2024-05-31T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_1248dc6390428a4bf6e9",
+      "historical_cutoff": "2024-05-31T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_28d2df3ff8b8860ebe35381e",
+      "pack_e_call_id": "FCL_deab0247feb4e67dc34e581a",
+      "pair_key": [
+        "EP_BATCH_1248dc6390428a4bf6e9",
+        "2024-05-31T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_1248dc6390428a4bf6e9",
+      "historical_cutoff": "2024-05-31T12:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_fae0e90b93f876d9e2cd7252",
+      "pack_e_call_id": "FCL_5e4cc3e56c921a68d96e4079",
+      "pair_key": [
+        "EP_BATCH_1248dc6390428a4bf6e9",
+        "2024-05-31T12:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_19fb130d30544cb793aa",
+      "historical_cutoff": "2024-07-12T08:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_0a033fa32c34b262276a8366",
+      "pack_e_call_id": "FCL_ee9be343f01670fa4c75bf75",
+      "pair_key": [
+        "EP_BATCH_19fb130d30544cb793aa",
+        "2024-07-12T08:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_1c2cb957d0760e40f81e",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_64c262f5f677009a4ce5c45a",
+      "pack_e_call_id": "FCL_fe7830b4cb4c8af4e957dac3",
+      "pair_key": [
+        "EP_BATCH_1c2cb957d0760e40f81e",
+        "2024-05-03T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_1ff2d721e3e93c9a9ac4",
+      "historical_cutoff": "2024-05-16T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_fcb229f453f69ff087aff9ed",
+      "pack_e_call_id": "FCL_652c40276b6e2ba6bf77f441",
+      "pair_key": [
+        "EP_BATCH_1ff2d721e3e93c9a9ac4",
+        "2024-05-16T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_1ff2d721e3e93c9a9ac4",
+      "historical_cutoff": "2024-05-16T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_5344d0c3fcd089b26de8da63",
+      "pack_e_call_id": "FCL_ec6bd97258fef5a0c240d69e",
+      "pair_key": [
+        "EP_BATCH_1ff2d721e3e93c9a9ac4",
+        "2024-05-16T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_20ee2cf49843a481ea22",
+      "historical_cutoff": "2024-07-25T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_c66503feef093f4e4a6d90c3",
+      "pack_e_call_id": "FCL_2618a25c2382c29234c78ecd",
+      "pair_key": [
+        "EP_BATCH_20ee2cf49843a481ea22",
+        "2024-07-25T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_20ee2cf49843a481ea22",
+      "historical_cutoff": "2024-07-25T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_45e5c1aee5b3a44f5ab36a3d",
+      "pack_e_call_id": "FCL_ac89f351fba1c8d93bee9cbf",
+      "pair_key": [
+        "EP_BATCH_20ee2cf49843a481ea22",
+        "2024-07-25T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_20ee2cf49843a481ea22",
+      "historical_cutoff": "2024-07-25T12:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_9c0f9c19151196c2f4f647f9",
+      "pack_e_call_id": "FCL_13b421ae5c833fe1882de6d4",
+      "pair_key": [
+        "EP_BATCH_20ee2cf49843a481ea22",
+        "2024-07-25T12:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_22da8ecd59aa2c93ef26",
+      "historical_cutoff": "2024-06-26T07:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_51808d53ba793983fa80835a",
+      "pack_e_call_id": "FCL_248a2682242274b20b61f570",
+      "pair_key": [
+        "EP_BATCH_22da8ecd59aa2c93ef26",
+        "2024-06-26T07:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_32586c99dc80f96698d1",
+      "historical_cutoff": "2024-06-12T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_a23314e2322d89d30417f256",
+      "pack_e_call_id": "FCL_fcd3f51e135b296e6fe251d0",
+      "pair_key": [
+        "EP_BATCH_32586c99dc80f96698d1",
+        "2024-06-12T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_32586c99dc80f96698d1",
+      "historical_cutoff": "2024-06-12T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_d8150e4685049ae047580aa8",
+      "pack_e_call_id": "FCL_4b44a251643dd056e8fce1d2",
+      "pair_key": [
+        "EP_BATCH_32586c99dc80f96698d1",
+        "2024-06-12T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_32586c99dc80f96698d1",
+      "historical_cutoff": "2024-06-12T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_37994bc26cc7c8a087884238",
+      "pack_e_call_id": "FCL_32f1b224d81a0207b402645d",
+      "pair_key": [
+        "EP_BATCH_32586c99dc80f96698d1",
+        "2024-06-12T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_340b3538a77de98a2a70",
+      "historical_cutoff": "2024-07-19T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_3d84c7e8e856427471949171",
+      "pack_e_call_id": "FCL_bdf5336d750c5f7d9f3f8ca6",
+      "pair_key": [
+        "EP_BATCH_340b3538a77de98a2a70",
+        "2024-07-19T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_340b3538a77de98a2a70",
+      "historical_cutoff": "2024-07-19T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_faabf772233b3e088520c5a5",
+      "pack_e_call_id": "FCL_9baabe12ad55f746f89ef4c2",
+      "pair_key": [
+        "EP_BATCH_340b3538a77de98a2a70",
+        "2024-07-19T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_3936fb37a49185a84ba9",
+      "historical_cutoff": "2024-07-05T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_929c3efe71246d8b0d638027",
+      "pack_e_call_id": "FCL_f36d436e31057c84ace66605",
+      "pair_key": [
+        "EP_BATCH_3936fb37a49185a84ba9",
+        "2024-07-05T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_3936fb37a49185a84ba9",
+      "historical_cutoff": "2024-07-05T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_e585d28f3d5797d0d52dc56d",
+      "pack_e_call_id": "FCL_b10868463ce679deb7bd0181",
+      "pair_key": [
+        "EP_BATCH_3936fb37a49185a84ba9",
+        "2024-07-05T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_3936fb37a49185a84ba9",
+      "historical_cutoff": "2024-07-05T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_e68a4cd4c71ad929d4dbd599",
+      "pack_e_call_id": "FCL_c68364411b3e72aa0c89399b",
+      "pair_key": [
+        "EP_BATCH_3936fb37a49185a84ba9",
+        "2024-07-05T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_3fbfe50e63dd93f25efd",
+      "historical_cutoff": "2024-07-02T11:00:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_be6bdfc19f6754096e2cbdea",
+      "pack_e_call_id": "FCL_d95559a0d1e0ae408a7c779c",
+      "pair_key": [
+        "EP_BATCH_3fbfe50e63dd93f25efd",
+        "2024-07-02T11:00:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_43d05e3b42f13722626d",
+      "historical_cutoff": "2024-07-16T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_6dbaa58b9581509e857c8082",
+      "pack_e_call_id": "FCL_601c384d0ed4fbfdfc7bc2a8",
+      "pair_key": [
+        "EP_BATCH_43d05e3b42f13722626d",
+        "2024-07-16T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_43d05e3b42f13722626d",
+      "historical_cutoff": "2024-07-16T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_b64dc2fb951a5265ee989341",
+      "pack_e_call_id": "FCL_70e9467dfbc2cae0c50f5fb6",
+      "pair_key": [
+        "EP_BATCH_43d05e3b42f13722626d",
+        "2024-07-16T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_43d05e3b42f13722626d",
+      "historical_cutoff": "2024-07-16T12:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_948b6e7de748df8cc93d0228",
+      "pack_e_call_id": "FCL_8d8656325af2565cc714a938",
+      "pair_key": [
+        "EP_BATCH_43d05e3b42f13722626d",
+        "2024-07-16T12:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_45488a279c6b958f7e5b",
+      "historical_cutoff": "2024-06-28T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_670afc0424540a92986aaf87",
+      "pack_e_call_id": "FCL_42b232a5c17ef6711fc4a127",
+      "pair_key": [
+        "EP_BATCH_45488a279c6b958f7e5b",
+        "2024-06-28T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_45488a279c6b958f7e5b",
+      "historical_cutoff": "2024-06-28T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_4d0f8920919558a9913fe0ae",
+      "pack_e_call_id": "FCL_54e5728b91498f8e5fb73125",
+      "pair_key": [
+        "EP_BATCH_45488a279c6b958f7e5b",
+        "2024-06-28T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_45488a279c6b958f7e5b",
+      "historical_cutoff": "2024-06-28T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_d44916786887c7bae5147589",
+      "pack_e_call_id": "FCL_b5eb05b66f69a2620333e951",
+      "pair_key": [
+        "EP_BATCH_45488a279c6b958f7e5b",
+        "2024-06-28T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_4ce53a0a5d661cb30d8a",
+      "historical_cutoff": "2024-06-19T23:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_286209db6a620b5913254082",
+      "pack_e_call_id": "FCL_44e49d49eae9b3bdbb6e0325",
+      "pair_key": [
+        "EP_BATCH_4ce53a0a5d661cb30d8a",
+        "2024-06-19T23:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_4ce53a0a5d661cb30d8a",
+      "historical_cutoff": "2024-06-19T23:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_60800d850c48fc593190665e",
+      "pack_e_call_id": "FCL_9bd85ff010f6082cb863371f",
+      "pair_key": [
+        "EP_BATCH_4ce53a0a5d661cb30d8a",
+        "2024-06-19T23:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_4d7f79cce0f991b2673c",
+      "historical_cutoff": "2024-06-04T05:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_6937820d3410d58aff0e3372",
+      "pack_e_call_id": "FCL_9071ff8373fdacb87335b692",
+      "pair_key": [
+        "EP_BATCH_4d7f79cce0f991b2673c",
+        "2024-06-04T05:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_4d7f79cce0f991b2673c",
+      "historical_cutoff": "2024-06-04T05:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_c8b2e045ffdf0eb80ad074bb",
+      "pack_e_call_id": "FCL_1d09a3e621ddb517e4a7b799",
+      "pair_key": [
+        "EP_BATCH_4d7f79cce0f991b2673c",
+        "2024-06-04T05:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_4d7f79cce0f991b2673c",
+      "historical_cutoff": "2024-06-04T05:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_e6a0e0b6b0837c7ae6f4cdb0",
+      "pack_e_call_id": "FCL_189fa51a4d41e2e041de6054",
+      "pair_key": [
+        "EP_BATCH_4d7f79cce0f991b2673c",
+        "2024-06-04T05:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_4d821b5e72e39df76069",
+      "historical_cutoff": "2024-07-11T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_1f15f894239237f55c6a793b",
+      "pack_e_call_id": "FCL_e144876af1fe5e05728700bd",
+      "pair_key": [
+        "EP_BATCH_4d821b5e72e39df76069",
+        "2024-07-11T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_4d821b5e72e39df76069",
+      "historical_cutoff": "2024-07-11T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_ed7af09bf231295eab58c255",
+      "pack_e_call_id": "FCL_f35772e8f7a19585d0647aec",
+      "pair_key": [
+        "EP_BATCH_4d821b5e72e39df76069",
+        "2024-07-11T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_4d821b5e72e39df76069",
+      "historical_cutoff": "2024-07-11T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_bdb9af9a856784b07407fb9d",
+      "pack_e_call_id": "FCL_ddd9a7f511735c940fa7bef0",
+      "pair_key": [
+        "EP_BATCH_4d821b5e72e39df76069",
+        "2024-07-11T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_55166f262d069c0e7828",
+      "historical_cutoff": "2024-07-01T13:35:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_8fccf697b949ef97a6eac3b6",
+      "pack_e_call_id": "FCL_50adca8260899db14fe8ee81",
+      "pair_key": [
+        "EP_BATCH_55166f262d069c0e7828",
+        "2024-07-01T13:35:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_55166f262d069c0e7828",
+      "historical_cutoff": "2024-07-01T13:35:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_e0b9d2de43f426e4c7cf85d3",
+      "pack_e_call_id": "FCL_a342084e2ca8e2173d105dde",
+      "pair_key": [
+        "EP_BATCH_55166f262d069c0e7828",
+        "2024-07-01T13:35:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_55618f3282f5c812c160",
+      "historical_cutoff": "2024-05-21T07:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_5f15d65e13a97437b5dcb771",
+      "pack_e_call_id": "FCL_bc2f6612c7f66c0f70b90223",
+      "pair_key": [
+        "EP_BATCH_55618f3282f5c812c160",
+        "2024-05-21T07:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_55618f3282f5c812c160",
+      "historical_cutoff": "2024-05-21T07:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_cc4b668a12169675c9fc1fa1",
+      "pack_e_call_id": "FCL_d13ccc10746328eac5dcade3",
+      "pair_key": [
+        "EP_BATCH_55618f3282f5c812c160",
+        "2024-05-21T07:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_55618f3282f5c812c160",
+      "historical_cutoff": "2024-05-21T07:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_9e6224df1f1d4c3c39c0b523",
+      "pack_e_call_id": "FCL_57ff271916ddbfd813b0796d",
+      "pair_key": [
+        "EP_BATCH_55618f3282f5c812c160",
+        "2024-05-21T07:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_58e0d92ad8520bb926bb",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_606b05216ccfb825e13803d2",
+      "pack_e_call_id": "FCL_534ce9aa71a4945472d935a1",
+      "pair_key": [
+        "EP_BATCH_58e0d92ad8520bb926bb",
+        "2024-05-03T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_5fe2f38977eb016fa947",
+      "historical_cutoff": "2024-05-15T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_fc4afde07cd33dbf040b61f3",
+      "pack_e_call_id": "FCL_c2c171867bbadbff5c66bb4d",
+      "pair_key": [
+        "EP_BATCH_5fe2f38977eb016fa947",
+        "2024-05-15T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_5fe2f38977eb016fa947",
+      "historical_cutoff": "2024-05-15T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_d86cfefd23a7af314aba474f",
+      "pack_e_call_id": "FCL_034a609584f81c99049f71f1",
+      "pair_key": [
+        "EP_BATCH_5fe2f38977eb016fa947",
+        "2024-05-15T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_5fe2f38977eb016fa947",
+      "historical_cutoff": "2024-05-15T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_24699b847e3e6efb33e105b9",
+      "pack_e_call_id": "FCL_616df9af2ae454cd46fac22a",
+      "pair_key": [
+        "EP_BATCH_5fe2f38977eb016fa947",
+        "2024-05-15T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_633a5a3b9389a895b622",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_2c3863281e970f3190c97320",
+      "pack_e_call_id": "FCL_8cef058ea3a11b16d224e933",
+      "pair_key": [
+        "EP_BATCH_633a5a3b9389a895b622",
+        "2024-07-03T04:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_640548c8150c4610e70a",
+      "historical_cutoff": "2024-07-19T12:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_15b69f1701d65eaf86679b3e",
+      "pack_e_call_id": "FCL_5824284c12adddd37be60d88",
+      "pair_key": [
+        "EP_BATCH_640548c8150c4610e70a",
+        "2024-07-19T12:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_69dba1499b19dda97ef6",
+      "historical_cutoff": "2024-06-13T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_0f7d704577418e7c2115e219",
+      "pack_e_call_id": "FCL_74a622ecec29887aa6257f78",
+      "pair_key": [
+        "EP_BATCH_69dba1499b19dda97ef6",
+        "2024-06-13T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_69dba1499b19dda97ef6",
+      "historical_cutoff": "2024-06-13T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_9a73f2ac43a18920b2dcdbc1",
+      "pack_e_call_id": "FCL_156587df68a0b262e189ec92",
+      "pair_key": [
+        "EP_BATCH_69dba1499b19dda97ef6",
+        "2024-06-13T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_69dba1499b19dda97ef6",
+      "historical_cutoff": "2024-06-13T12:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_07635714509e64a6b3a74955",
+      "pack_e_call_id": "FCL_3f399bb0357c65ab725c6fca",
+      "pair_key": [
+        "EP_BATCH_69dba1499b19dda97ef6",
+        "2024-06-13T12:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_6a6fe55ba8eff4d3ce2c",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_d738d2ecc53355d6063d5daa",
+      "pack_e_call_id": "FCL_e9c9c959a61a5146688889aa",
+      "pair_key": [
+        "EP_BATCH_6a6fe55ba8eff4d3ce2c",
+        "2024-07-03T04:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_6c539b74501349cffd89",
+      "historical_cutoff": "2024-05-29T10:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_041b27491572f9de99b36043",
+      "pack_e_call_id": "FCL_6a72e8db09f19c81cbba5699",
+      "pair_key": [
+        "EP_BATCH_6c539b74501349cffd89",
+        "2024-05-29T10:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_6c539b74501349cffd89",
+      "historical_cutoff": "2024-05-29T10:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_b2417bfa36a55a5296832c72",
+      "pack_e_call_id": "FCL_25606cac18e424d2e5c73284",
+      "pair_key": [
+        "EP_BATCH_6c539b74501349cffd89",
+        "2024-05-29T10:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_6fe19af827bb13a0511e",
+      "historical_cutoff": "2024-05-24T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_fcf51c9911f59375d9b9cae5",
+      "pack_e_call_id": "FCL_09edc48ce7b22970f5dbe74b",
+      "pair_key": [
+        "EP_BATCH_6fe19af827bb13a0511e",
+        "2024-05-24T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_6fe19af827bb13a0511e",
+      "historical_cutoff": "2024-05-24T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_e79ad8545bf498a8aea0b0d4",
+      "pack_e_call_id": "FCL_cded4b21bd546e8eb6a8d217",
+      "pair_key": [
+        "EP_BATCH_6fe19af827bb13a0511e",
+        "2024-05-24T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_6fe19af827bb13a0511e",
+      "historical_cutoff": "2024-05-24T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_0c1ab73c32cb7421eaf8d998",
+      "pack_e_call_id": "FCL_a5ef4c5d0e8b3f6faac5148a",
+      "pair_key": [
+        "EP_BATCH_6fe19af827bb13a0511e",
+        "2024-05-24T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_74f480e87d74eacd731f",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_efac7440a915f81b36fac5fd",
+      "pack_e_call_id": "FCL_d105faee1ead540b044ab509",
+      "pair_key": [
+        "EP_BATCH_74f480e87d74eacd731f",
+        "2024-07-03T04:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_74f480e87d74eacd731f",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_2a3d0b254e4367173bb0e8b9",
+      "pack_e_call_id": "FCL_4b081bf62353569dc2fc713c",
+      "pair_key": [
+        "EP_BATCH_74f480e87d74eacd731f",
+        "2024-07-03T04:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_787a214cece1437b7d96",
+      "historical_cutoff": "2024-07-23T09:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_e41d651d83fd8daf4b1eb2c3",
+      "pack_e_call_id": "FCL_73fd6a6f14db2819fac8ffdd",
+      "pair_key": [
+        "EP_BATCH_787a214cece1437b7d96",
+        "2024-07-23T09:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_7bb40ec168a4601201e0",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_17673cbad3f0b6c4539db665",
+      "pack_e_call_id": "FCL_372b64c9a01148e8f538f6e0",
+      "pair_key": [
+        "EP_BATCH_7bb40ec168a4601201e0",
+        "2024-07-03T04:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_7bb40ec168a4601201e0",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_32f579e769ffdbfe6bf29d13",
+      "pack_e_call_id": "FCL_27ca37c019360e29202ee555",
+      "pair_key": [
+        "EP_BATCH_7bb40ec168a4601201e0",
+        "2024-07-03T04:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_7c7591deb77f4734925f",
+      "historical_cutoff": "2024-06-12T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_4868965fc559b82e4b631d38",
+      "pack_e_call_id": "FCL_d9cb09b0ed3e7559388de3a9",
+      "pair_key": [
+        "EP_BATCH_7c7591deb77f4734925f",
+        "2024-06-12T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_7c7591deb77f4734925f",
+      "historical_cutoff": "2024-06-12T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_22194bf94311b0a02beb3e2e",
+      "pack_e_call_id": "FCL_5152d91e4d69a657802bb87c",
+      "pair_key": [
+        "EP_BATCH_7c7591deb77f4734925f",
+        "2024-06-12T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_808a1ebc9070cef5664d",
+      "historical_cutoff": "2024-06-18T00:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_4b0aeb7da91c70c19ae9ea86",
+      "pack_e_call_id": "FCL_3718229e47d5e1d43c228e1f",
+      "pair_key": [
+        "EP_BATCH_808a1ebc9070cef5664d",
+        "2024-06-18T00:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_8137d0e6d3459f2b4ff7",
+      "historical_cutoff": "2024-06-24T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_96c94d5ada36ca5aea06119f",
+      "pack_e_call_id": "FCL_7cfbb836328e78457b4ecfdf",
+      "pair_key": [
+        "EP_BATCH_8137d0e6d3459f2b4ff7",
+        "2024-06-24T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_8302e4869c801cd1f4ef",
+      "historical_cutoff": "2024-06-07T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_9bdbdd64b0be10c114579b0b",
+      "pack_e_call_id": "FCL_9b6639667a145b0f78401fb2",
+      "pair_key": [
+        "EP_BATCH_8302e4869c801cd1f4ef",
+        "2024-06-07T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_8302e4869c801cd1f4ef",
+      "historical_cutoff": "2024-06-07T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_3b560ecd8a8c44dfc1486146",
+      "pack_e_call_id": "FCL_857c0d21a9ccc60d3d2ef4f5",
+      "pair_key": [
+        "EP_BATCH_8302e4869c801cd1f4ef",
+        "2024-06-07T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_8302e4869c801cd1f4ef",
+      "historical_cutoff": "2024-06-07T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_52e76a761fd17e9b5bbca4f5",
+      "pack_e_call_id": "FCL_5ebb39a7fb6fc3bdd1167f7e",
+      "pair_key": [
+        "EP_BATCH_8302e4869c801cd1f4ef",
+        "2024-06-07T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_851b7d8bd3661e168de1",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_ff4897e2f55a0fb2a08b47bd",
+      "pack_e_call_id": "FCL_aef4fa50decf2eb728d948bf",
+      "pair_key": [
+        "EP_BATCH_851b7d8bd3661e168de1",
+        "2024-05-01T07:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_851b7d8bd3661e168de1",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_36d437ce8ec8c859f532b46c",
+      "pack_e_call_id": "FCL_915d2cda57e26ee46c773a8f",
+      "pair_key": [
+        "EP_BATCH_851b7d8bd3661e168de1",
+        "2024-05-01T07:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_851b7d8bd3661e168de1",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_23a61227425d02e7b62e2903",
+      "pack_e_call_id": "FCL_002172e59e98f1832319eebb",
+      "pair_key": [
+        "EP_BATCH_851b7d8bd3661e168de1",
+        "2024-05-01T07:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_945dba9178b9382f5d8b",
+      "historical_cutoff": "2024-06-18T00:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_c135184c19bb5135e7672264",
+      "pack_e_call_id": "FCL_ffc22052c7284b406b82e48e",
+      "pair_key": [
+        "EP_BATCH_945dba9178b9382f5d8b",
+        "2024-06-18T00:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_945dba9178b9382f5d8b",
+      "historical_cutoff": "2024-06-18T00:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_460d264e14c60b4954a6a852",
+      "pack_e_call_id": "FCL_c2cec839b1a1edd79f1021a9",
+      "pair_key": [
+        "EP_BATCH_945dba9178b9382f5d8b",
+        "2024-06-18T00:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_945dba9178b9382f5d8b",
+      "historical_cutoff": "2024-06-18T00:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_693f2a1748f4c6198d62ea19",
+      "pack_e_call_id": "FCL_b3a7232de06ba70e30b41baf",
+      "pair_key": [
+        "EP_BATCH_945dba9178b9382f5d8b",
+        "2024-06-18T00:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_9aa4926ab119d6df42bc",
+      "historical_cutoff": "2024-07-17T07:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_883b55aeab1d7759a3cacab4",
+      "pack_e_call_id": "FCL_a599c8286c0f8686e992a1f5",
+      "pair_key": [
+        "EP_BATCH_9aa4926ab119d6df42bc",
+        "2024-07-17T07:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_9aa4926ab119d6df42bc",
+      "historical_cutoff": "2024-07-17T07:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_71ed59e97f10cf06ee0735ef",
+      "pack_e_call_id": "FCL_a4225c77e33d4f29914730d8",
+      "pair_key": [
+        "EP_BATCH_9aa4926ab119d6df42bc",
+        "2024-07-17T07:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_9aa4926ab119d6df42bc",
+      "historical_cutoff": "2024-07-17T07:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_ffc94d4c8038e1964fc94668",
+      "pack_e_call_id": "FCL_725680f86980fd8fd3682464",
+      "pair_key": [
+        "EP_BATCH_9aa4926ab119d6df42bc",
+        "2024-07-17T07:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_9ec7ac559f39aa6c3fe5",
+      "historical_cutoff": "2024-07-17T07:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_e12558c8aa7b6d27849d528c",
+      "pack_e_call_id": "FCL_3219cd286d1263e40cb2d61f",
+      "pair_key": [
+        "EP_BATCH_9ec7ac559f39aa6c3fe5",
+        "2024-07-17T07:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_9f048e805a002ad4e240",
+      "historical_cutoff": "2024-06-27T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_a44a162f6b9c9bb8805c231a",
+      "pack_e_call_id": "FCL_f4e87e59813964f4bf2f435b",
+      "pair_key": [
+        "EP_BATCH_9f048e805a002ad4e240",
+        "2024-06-27T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_9f048e805a002ad4e240",
+      "historical_cutoff": "2024-06-27T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_773b96950df82a3b2d7a47c8",
+      "pack_e_call_id": "FCL_76698447e025f85054bc1e8f",
+      "pair_key": [
+        "EP_BATCH_9f048e805a002ad4e240",
+        "2024-06-27T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_9f048e805a002ad4e240",
+      "historical_cutoff": "2024-06-27T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_2fb4ec9940bce8dc6e7a8f30",
+      "pack_e_call_id": "FCL_aa7e117949c9b336ce221b12",
+      "pair_key": [
+        "EP_BATCH_9f048e805a002ad4e240",
+        "2024-06-27T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_a9069e611fc171b595c7",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_524434fb4d1ae3ac2cf57870",
+      "pack_e_call_id": "FCL_dc1b5dce3c6104e562bc5977",
+      "pair_key": [
+        "EP_BATCH_a9069e611fc171b595c7",
+        "2024-07-24T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_a98cccf099ffdf56e3c3",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_81dfd1c0eecd720be1478e1a",
+      "pack_e_call_id": "FCL_74c47d035eed9b9a72810d7a",
+      "pair_key": [
+        "EP_BATCH_a98cccf099ffdf56e3c3",
+        "2024-07-18T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_af76f644b423101d91f2",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_d72f741393a7643ea859edb8",
+      "pack_e_call_id": "FCL_78aeb095a1802ff63093a81d",
+      "pair_key": [
+        "EP_BATCH_af76f644b423101d91f2",
+        "2024-05-03T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_af76f644b423101d91f2",
+      "historical_cutoff": "2024-05-03T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_6d2f46ed54d14a3397ce7d08",
+      "pack_e_call_id": "FCL_ace07235cdd9911b6f255588",
+      "pair_key": [
+        "EP_BATCH_af76f644b423101d91f2",
+        "2024-05-03T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_b554a03dccfdbbd22623",
+      "historical_cutoff": "2024-07-25T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_c01b01b43c2d3d3c9b8ba078",
+      "pack_e_call_id": "FCL_7b2a7d8b2bc77c559aae9955",
+      "pair_key": [
+        "EP_BATCH_b554a03dccfdbbd22623",
+        "2024-07-25T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_b554a03dccfdbbd22623",
+      "historical_cutoff": "2024-07-25T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_c9483eaec86ffcc40d7dee79",
+      "pack_e_call_id": "FCL_62da988e2490610f658f7083",
+      "pair_key": [
+        "EP_BATCH_b554a03dccfdbbd22623",
+        "2024-07-25T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_b554a03dccfdbbd22623",
+      "historical_cutoff": "2024-07-25T12:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_853fc0d1f22bc2506e07b478",
+      "pack_e_call_id": "FCL_1561a6e6fcd5488968143a7f",
+      "pair_key": [
+        "EP_BATCH_b554a03dccfdbbd22623",
+        "2024-07-25T12:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_b60ae087ec3a120ecd6e",
+      "historical_cutoff": "2024-06-07T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_4d2107bd2145f3e0475b8b04",
+      "pack_e_call_id": "FCL_00fd0bd9c6104966f8205f4f",
+      "pair_key": [
+        "EP_BATCH_b60ae087ec3a120ecd6e",
+        "2024-06-07T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_b60ae087ec3a120ecd6e",
+      "historical_cutoff": "2024-06-07T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_027109aa022f681b8f24bc96",
+      "pack_e_call_id": "FCL_63e3820d98dda61d6671cb96",
+      "pair_key": [
+        "EP_BATCH_b60ae087ec3a120ecd6e",
+        "2024-06-07T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_b60ae087ec3a120ecd6e",
+      "historical_cutoff": "2024-06-07T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_7a284ca4761aea1d7e7f9766",
+      "pack_e_call_id": "FCL_2e621e4aa66c3c6aef7c9c84",
+      "pair_key": [
+        "EP_BATCH_b60ae087ec3a120ecd6e",
+        "2024-06-07T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_b70c5198286be51658fb",
+      "historical_cutoff": "2024-07-31T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_23b684c7fff0fee16093c523",
+      "pack_e_call_id": "FCL_b51503209c139af2b665a459",
+      "pair_key": [
+        "EP_BATCH_b70c5198286be51658fb",
+        "2024-07-31T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_b70c5198286be51658fb",
+      "historical_cutoff": "2024-07-31T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_e4bd36d0793660989511675c",
+      "pack_e_call_id": "FCL_11c6255b4dd54809a75de0a5",
+      "pair_key": [
+        "EP_BATCH_b70c5198286be51658fb",
+        "2024-07-31T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_ba4ba91745c4885dcd89",
+      "historical_cutoff": "2024-07-10T03:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_bfb3522cd32598687f4afcd3",
+      "pack_e_call_id": "FCL_6cd97008304f5a793d49b7a9",
+      "pair_key": [
+        "EP_BATCH_ba4ba91745c4885dcd89",
+        "2024-07-10T03:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_ba4ba91745c4885dcd89",
+      "historical_cutoff": "2024-07-10T03:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_4540c55dd874d430ece030ca",
+      "pack_e_call_id": "FCL_db8d7a74771ac0f45e3b1eb5",
+      "pair_key": [
+        "EP_BATCH_ba4ba91745c4885dcd89",
+        "2024-07-10T03:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_ba4ba91745c4885dcd89",
+      "historical_cutoff": "2024-07-10T03:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_71b2175754c3476a94933f5c",
+      "pack_e_call_id": "FCL_d590fe40d60aecd20f48fa0a",
+      "pair_key": [
+        "EP_BATCH_ba4ba91745c4885dcd89",
+        "2024-07-10T03:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_bf1ad05b4d84df1b733a",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_e87e51e2097c8e80d8ed63be",
+      "pack_e_call_id": "FCL_245208f3756d367b6b450aa4",
+      "pair_key": [
+        "EP_BATCH_bf1ad05b4d84df1b733a",
+        "2024-05-01T07:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_c6ef5b08263dbc6a8c39",
+      "historical_cutoff": "2024-05-30T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_7fea4e68dbd8d45d33106f19",
+      "pack_e_call_id": "FCL_3e6176e32ae9dcf8172aec2f",
+      "pair_key": [
+        "EP_BATCH_c6ef5b08263dbc6a8c39",
+        "2024-05-30T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_c6ef5b08263dbc6a8c39",
+      "historical_cutoff": "2024-05-30T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_13ecd49603f09671130b41ab",
+      "pack_e_call_id": "FCL_d529d807c5728988ef486f52",
+      "pair_key": [
+        "EP_BATCH_c6ef5b08263dbc6a8c39",
+        "2024-05-30T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_c7cedd13f77b41781490",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_2e56900137d662002fd5eb1e",
+      "pack_e_call_id": "FCL_f0765f3e446b307522f7e051",
+      "pair_key": [
+        "EP_BATCH_c7cedd13f77b41781490",
+        "2024-07-24T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_c7fcaf85ec5aed86bd5b",
+      "historical_cutoff": "2024-07-26T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_f3b8bac1e2d753a53ca353dc",
+      "pack_e_call_id": "FCL_e06efaa6d265b3895af849ab",
+      "pair_key": [
+        "EP_BATCH_c7fcaf85ec5aed86bd5b",
+        "2024-07-26T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_c7fcaf85ec5aed86bd5b",
+      "historical_cutoff": "2024-07-26T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_144a93b27ba241b547a4b5c8",
+      "pack_e_call_id": "FCL_bf571a95616f903eb8cc4a32",
+      "pair_key": [
+        "EP_BATCH_c7fcaf85ec5aed86bd5b",
+        "2024-07-26T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_c7fcaf85ec5aed86bd5b",
+      "historical_cutoff": "2024-07-26T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_0ebbeb1f46eb35df13398e3e",
+      "pack_e_call_id": "FCL_ee0fe68fc2d8fa3401e5e561",
+      "pair_key": [
+        "EP_BATCH_c7fcaf85ec5aed86bd5b",
+        "2024-07-26T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_d4fce144090fe47262b0",
+      "historical_cutoff": "2024-07-11T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_000f426f70fe5a7daef47881",
+      "pack_e_call_id": "FCL_55b426264e9716fc088e6afe",
+      "pair_key": [
+        "EP_BATCH_d4fce144090fe47262b0",
+        "2024-07-11T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_d4fce144090fe47262b0",
+      "historical_cutoff": "2024-07-11T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_755d6d2ef669dfb944b44164",
+      "pack_e_call_id": "FCL_bba902bd2d993ae2721e6a36",
+      "pair_key": [
+        "EP_BATCH_d4fce144090fe47262b0",
+        "2024-07-11T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_d4fce144090fe47262b0",
+      "historical_cutoff": "2024-07-11T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_5b7e3b62a69fab8f69f1b8ee",
+      "pack_e_call_id": "FCL_96e7724ff05ef8e0547dce93",
+      "pair_key": [
+        "EP_BATCH_d4fce144090fe47262b0",
+        "2024-07-11T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_d91ac82d9b8b0b8dd0fd",
+      "historical_cutoff": "2024-06-14T12:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_3d10ae8285471f4e3a980b79",
+      "pack_e_call_id": "FCL_c06e5239f6144df313429a73",
+      "pair_key": [
+        "EP_BATCH_d91ac82d9b8b0b8dd0fd",
+        "2024-06-14T12:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_daba715d85af4068890b",
+      "historical_cutoff": "2024-06-05T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_1938d833b22a2911ad5b75ef",
+      "pack_e_call_id": "FCL_5de97767650d568f4a329c81",
+      "pair_key": [
+        "EP_BATCH_daba715d85af4068890b",
+        "2024-06-05T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_daba715d85af4068890b",
+      "historical_cutoff": "2024-06-05T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_265866242fe704ce03ca9a69",
+      "pack_e_call_id": "FCL_346b7c4b3251284787b2b6a1",
+      "pair_key": [
+        "EP_BATCH_daba715d85af4068890b",
+        "2024-06-05T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_daba715d85af4068890b",
+      "historical_cutoff": "2024-06-05T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_5047629ea16ead991c11ed57",
+      "pack_e_call_id": "FCL_f1a39d68798cf6cbcc9e59b6",
+      "pair_key": [
+        "EP_BATCH_daba715d85af4068890b",
+        "2024-06-05T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_dd944804a883f9b267b7",
+      "historical_cutoff": "2024-07-08T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_0fdbc1b9e5866276cb53e2d2",
+      "pack_e_call_id": "FCL_484bd57aa1abdf6260713aa5",
+      "pair_key": [
+        "EP_BATCH_dd944804a883f9b267b7",
+        "2024-07-08T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_df82c1416aa58d9948d0",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_30858f51f2e6e64c8a7cce71",
+      "pack_e_call_id": "FCL_19d8846ece623bb027abce90",
+      "pair_key": [
+        "EP_BATCH_df82c1416aa58d9948d0",
+        "2024-07-03T04:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_df82c1416aa58d9948d0",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_248ef80d3aaa3d5622414462",
+      "pack_e_call_id": "FCL_b7537576539eea72e7c917d3",
+      "pair_key": [
+        "EP_BATCH_df82c1416aa58d9948d0",
+        "2024-07-03T04:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_e14769aca1aaacc9c230",
+      "historical_cutoff": "2024-05-13T12:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_d576400379b9741913d6ec6f",
+      "pack_e_call_id": "FCL_cb40905e9d82b875db434ffd",
+      "pair_key": [
+        "EP_BATCH_e14769aca1aaacc9c230",
+        "2024-05-13T12:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_e2d0edff2e4da76d2613",
+      "historical_cutoff": "2024-06-12T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_b90e3d26ab5aa4d8211bedd6",
+      "pack_e_call_id": "FCL_57c5948dd241b08d2dd95b58",
+      "pair_key": [
+        "EP_BATCH_e2d0edff2e4da76d2613",
+        "2024-06-12T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_e2d0edff2e4da76d2613",
+      "historical_cutoff": "2024-06-12T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_d947e1d6b9fe7bca1295a58a",
+      "pack_e_call_id": "FCL_9a1f325605eb4bb42b87cedb",
+      "pair_key": [
+        "EP_BATCH_e2d0edff2e4da76d2613",
+        "2024-06-12T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_eb483970b852f13af46d",
+      "historical_cutoff": "2024-06-21T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_93d91f68bf965efacee58426",
+      "pack_e_call_id": "FCL_ddddc7738ec3cc0faf95ef57",
+      "pair_key": [
+        "EP_BATCH_eb483970b852f13af46d",
+        "2024-06-21T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_eb483970b852f13af46d",
+      "historical_cutoff": "2024-06-21T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_3bcc4b4b81aaf30240e4f72f",
+      "pack_e_call_id": "FCL_3e498f60c3c8891394b4536e",
+      "pair_key": [
+        "EP_BATCH_eb483970b852f13af46d",
+        "2024-06-21T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_ee85856234debe8c7bfc",
+      "historical_cutoff": "2024-06-03T13:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_ade5cfea7fcdfa2d5470bcc8",
+      "pack_e_call_id": "FCL_753ca8f79c88e6bc56e55766",
+      "pair_key": [
+        "EP_BATCH_ee85856234debe8c7bfc",
+        "2024-06-03T13:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_ee85856234debe8c7bfc",
+      "historical_cutoff": "2024-06-03T13:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_21a04950a737b0a73ace2d14",
+      "pack_e_call_id": "FCL_14247a48496aa67301f3ca6f",
+      "pair_key": [
+        "EP_BATCH_ee85856234debe8c7bfc",
+        "2024-06-03T13:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_ee85856234debe8c7bfc",
+      "historical_cutoff": "2024-06-03T13:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_2b5a9985941c04fc71bfbc7b",
+      "pack_e_call_id": "FCL_adaffd1ac7efa15cf5785d9b",
+      "pair_key": [
+        "EP_BATCH_ee85856234debe8c7bfc",
+        "2024-06-03T13:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_eeae6fee09edc60d1e7d",
+      "historical_cutoff": "2024-05-02T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_1e7b6936b48bf931a7ed5e7d",
+      "pack_e_call_id": "FCL_502545dc5fbc80770d4b6d02",
+      "pair_key": [
+        "EP_BATCH_eeae6fee09edc60d1e7d",
+        "2024-05-02T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_f537c8eb93513ab66253",
+      "historical_cutoff": "2024-05-16T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_9cffdbc1cdc8bbbee7bcc4ed",
+      "pack_e_call_id": "FCL_19a5c9da1758f073e21a27c0",
+      "pair_key": [
+        "EP_BATCH_f537c8eb93513ab66253",
+        "2024-05-16T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_f7f52f894ce4f1929d5a",
+      "historical_cutoff": "2024-05-02T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_befd6d6947490cc19f4754b9",
+      "pack_e_call_id": "FCL_fbcf662fdfebab69144fe83e",
+      "pair_key": [
+        "EP_BATCH_f7f52f894ce4f1929d5a",
+        "2024-05-02T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_f7f52f894ce4f1929d5a",
+      "historical_cutoff": "2024-05-02T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_1ce38eb60f0865beca69bb31",
+      "pack_e_call_id": "FCL_23d0d5bd9c2ad99073ef8dcc",
+      "pair_key": [
+        "EP_BATCH_f7f52f894ce4f1929d5a",
+        "2024-05-02T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_f8e96996a4fd6bc5ed7c",
+      "historical_cutoff": "2024-07-30T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_8b9a5a6d8358b744eb8a9b63",
+      "pack_e_call_id": "FCL_df0e4aab748b6bba7fa4be12",
+      "pair_key": [
+        "EP_BATCH_f8e96996a4fd6bc5ed7c",
+        "2024-07-30T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_f8e96996a4fd6bc5ed7c",
+      "historical_cutoff": "2024-07-30T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_94fa183c8e3192d4c796093f",
+      "pack_e_call_id": "FCL_9fc749a0f939dbab5906f407",
+      "pair_key": [
+        "EP_BATCH_f8e96996a4fd6bc5ed7c",
+        "2024-07-30T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_f8e96996a4fd6bc5ed7c",
+      "historical_cutoff": "2024-07-30T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_d88646d487a48999023e2646",
+      "pack_e_call_id": "FCL_7ba0f4408280bc1184ac23ef",
+      "pair_key": [
+        "EP_BATCH_f8e96996a4fd6bc5ed7c",
+        "2024-07-30T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_fa0e65ddc655920ab142",
+      "historical_cutoff": "2024-06-05T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_7db8ffcb413173fad883d440",
+      "pack_e_call_id": "FCL_fe71d2d2d5e280b7c62da512",
+      "pair_key": [
+        "EP_BATCH_fa0e65ddc655920ab142",
+        "2024-06-05T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_fa0e65ddc655920ab142",
+      "historical_cutoff": "2024-06-05T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_b6be068f4b2bdf113ea7bc5a",
+      "pack_e_call_id": "FCL_46ddffe72467545e5c4f37a6",
+      "pair_key": [
+        "EP_BATCH_fa0e65ddc655920ab142",
+        "2024-06-05T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_fa0e65ddc655920ab142",
+      "historical_cutoff": "2024-06-05T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_6dfcc8ce4bcf3b560d43458d",
+      "pack_e_call_id": "FCL_9b78ec0d3d144e35eba9aca4",
+      "pair_key": [
+        "EP_BATCH_fa0e65ddc655920ab142",
+        "2024-06-05T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_fb061059bdfaba9b80f9",
+      "historical_cutoff": "2024-07-12T08:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_bf0815c9faa71105acdc2f91",
+      "pack_e_call_id": "FCL_538c5e40c38e4f7dc196a55e",
+      "pair_key": [
+        "EP_BATCH_fb061059bdfaba9b80f9",
+        "2024-07-12T08:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_fb061059bdfaba9b80f9",
+      "historical_cutoff": "2024-07-12T08:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_52852861e032fbc1bde6c1c6",
+      "pack_e_call_id": "FCL_b6b55c8556061eff4fa2d8c0",
+      "pair_key": [
+        "EP_BATCH_fb061059bdfaba9b80f9",
+        "2024-07-12T08:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_01893936c223ec52cb7a",
+      "historical_cutoff": "2024-05-26T23:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_6a1ff9ca30bfd12569d19f16",
+      "pack_e_call_id": "FCL_62ff4ca43e9833c4f70c72e2",
+      "pair_key": [
+        "EP_EVENT_01893936c223ec52cb7a",
+        "2024-05-26T23:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_053c10a3d4a69d6881af",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_ddb42fd7079ca651b1e1c237",
+      "pack_e_call_id": "FCL_915f2c3557627a6170db5ccd",
+      "pair_key": [
+        "EP_EVENT_053c10a3d4a69d6881af",
+        "2024-07-18T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_08219d7669dbc263d9f6",
+      "historical_cutoff": "2024-05-30T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_bf97b9bd8239f814c018ffdd",
+      "pack_e_call_id": "FCL_7617e91faa7335a8160c95ee",
+      "pair_key": [
+        "EP_EVENT_08219d7669dbc263d9f6",
+        "2024-05-30T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_08246fe90d4f62b05721",
+      "historical_cutoff": "2024-05-08T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_eb02f508140281ab6020b46b",
+      "pack_e_call_id": "FCL_fefcee1edaf00d68dbd1385d",
+      "pair_key": [
+        "EP_EVENT_08246fe90d4f62b05721",
+        "2024-05-08T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_097fece2ffcfa4f2feb0",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_15d8323142059cd607302ea1",
+      "pack_e_call_id": "FCL_a273220de6e6748ba0fd8815",
+      "pair_key": [
+        "EP_EVENT_097fece2ffcfa4f2feb0",
+        "2024-07-18T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_097fece2ffcfa4f2feb0",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_5712f125b37c6eb029ba2112",
+      "pack_e_call_id": "FCL_0b349f03f50236b8ba26f3fd",
+      "pair_key": [
+        "EP_EVENT_097fece2ffcfa4f2feb0",
+        "2024-07-18T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_0a29355d170f1e951aad",
+      "historical_cutoff": "2024-06-14T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_a18475db6530a0e0b008ff9d",
+      "pack_e_call_id": "FCL_4738e34a7573fd17ae55058c",
+      "pair_key": [
+        "EP_EVENT_0a29355d170f1e951aad",
+        "2024-06-14T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_0a29355d170f1e951aad",
+      "historical_cutoff": "2024-06-14T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_a02f18109c838de58969915a",
+      "pack_e_call_id": "FCL_2b47e5ab0b7f13372f07aa81",
+      "pair_key": [
+        "EP_EVENT_0a29355d170f1e951aad",
+        "2024-06-14T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_0bdc3a14a83964458ed4",
+      "historical_cutoff": "2024-05-23T12:10:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_8cd20e6e509f0bbb8db3ba24",
+      "pack_e_call_id": "FCL_2eddc45c4c01c2e5f3802538",
+      "pair_key": [
+        "EP_EVENT_0bdc3a14a83964458ed4",
+        "2024-05-23T12:10:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_0bdc3a14a83964458ed4",
+      "historical_cutoff": "2024-05-23T12:10:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_dc68a49bb6fca85d3f64318c",
+      "pack_e_call_id": "FCL_b3ea34fa7a41a39c6414aa7a",
+      "pair_key": [
+        "EP_EVENT_0bdc3a14a83964458ed4",
+        "2024-05-23T12:10:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_0f10f1f304b90bac56c6",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_ad0ce895d048014ad5121c91",
+      "pack_e_call_id": "FCL_f04577a3e43cf637f286e097",
+      "pair_key": [
+        "EP_EVENT_0f10f1f304b90bac56c6",
+        "2024-07-24T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_10bb8b09f0707ed45e3b",
+      "historical_cutoff": "2024-07-31T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_8a9ba1e198d10819ad0298f0",
+      "pack_e_call_id": "FCL_48c662cb06ed1ae924481169",
+      "pair_key": [
+        "EP_EVENT_10bb8b09f0707ed45e3b",
+        "2024-07-31T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_10bb8b09f0707ed45e3b",
+      "historical_cutoff": "2024-07-31T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_dd494d3a6e49e34f65e4b7de",
+      "pack_e_call_id": "FCL_77f35d2830f001641f6d2dc7",
+      "pair_key": [
+        "EP_EVENT_10bb8b09f0707ed45e3b",
+        "2024-07-31T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_10bb8b09f0707ed45e3b",
+      "historical_cutoff": "2024-07-31T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_75e7cdf64628ebd960a77692",
+      "pack_e_call_id": "FCL_3ede5e94f72e343620d58ec6",
+      "pair_key": [
+        "EP_EVENT_10bb8b09f0707ed45e3b",
+        "2024-07-31T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_13e6e3247eaea46e42de",
+      "historical_cutoff": "2024-05-07T12:45:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_5cf8a9cd9f5ac7b59bd42b4e",
+      "pack_e_call_id": "FCL_2b8d3bbfed52cb99c6b0046b",
+      "pair_key": [
+        "EP_EVENT_13e6e3247eaea46e42de",
+        "2024-05-07T12:45:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_13ebe48f84ac98f2eef4",
+      "historical_cutoff": "2024-06-26T07:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_b11528f6724a7da80b603bc7",
+      "pack_e_call_id": "FCL_4df24d7bea1ff335329d48c7",
+      "pair_key": [
+        "EP_EVENT_13ebe48f84ac98f2eef4",
+        "2024-06-26T07:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_13ebe48f84ac98f2eef4",
+      "historical_cutoff": "2024-06-26T07:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_6467a5ca14330f9b641edbd9",
+      "pack_e_call_id": "FCL_8731692d08b2fd8ff15558d5",
+      "pair_key": [
+        "EP_EVENT_13ebe48f84ac98f2eef4",
+        "2024-06-26T07:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_15461c1d2e0541be391f",
+      "historical_cutoff": "2024-07-09T09:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_450492ba6e53ce006263b699",
+      "pack_e_call_id": "FCL_9f37a1c2beaa3db77357f65b",
+      "pair_key": [
+        "EP_EVENT_15461c1d2e0541be391f",
+        "2024-07-09T09:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_15461c1d2e0541be391f",
+      "historical_cutoff": "2024-07-09T09:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_d5e9874b3d788b619d0fd52d",
+      "pack_e_call_id": "FCL_965dc8ed4032ff1ed18ff028",
+      "pair_key": [
+        "EP_EVENT_15461c1d2e0541be391f",
+        "2024-07-09T09:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_192edf701510c6f5e4ca",
+      "historical_cutoff": "2024-07-31T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_da8209966ad48e8cd0e73065",
+      "pack_e_call_id": "FCL_6b754bbab1423580e46abaaf",
+      "pair_key": [
+        "EP_EVENT_192edf701510c6f5e4ca",
+        "2024-07-31T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_192edf701510c6f5e4ca",
+      "historical_cutoff": "2024-07-31T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_cf186919d92e5a25bd183c8b",
+      "pack_e_call_id": "FCL_1e1b31169a70a3fcd7c51c06",
+      "pair_key": [
+        "EP_EVENT_192edf701510c6f5e4ca",
+        "2024-07-31T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_1a0b20ccc3808c220a9f",
+      "historical_cutoff": "2024-06-05T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_0cb74bf75b412eb1692abaf5",
+      "pack_e_call_id": "FCL_440615e7c7626195be96ef80",
+      "pair_key": [
+        "EP_EVENT_1a0b20ccc3808c220a9f",
+        "2024-06-05T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_1c9c518e150d8f1eef19",
+      "historical_cutoff": "2024-07-29T14:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_8a5b2cb9e55cfc27caf39825",
+      "pack_e_call_id": "FCL_90843b254c05a5c71542870f",
+      "pair_key": [
+        "EP_EVENT_1c9c518e150d8f1eef19",
+        "2024-07-29T14:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_1c9c518e150d8f1eef19",
+      "historical_cutoff": "2024-07-29T14:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_8bd61a80c0075e0de1e834c7",
+      "pack_e_call_id": "FCL_bc4847676a4ae4959e387484",
+      "pair_key": [
+        "EP_EVENT_1c9c518e150d8f1eef19",
+        "2024-07-29T14:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_1eb58a8dd29907ace6d9",
+      "historical_cutoff": "2024-05-23T12:10:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_7f94da12cea5a4b4e9e3f5da",
+      "pack_e_call_id": "FCL_ff18938e8deb747646a06d8f",
+      "pair_key": [
+        "EP_EVENT_1eb58a8dd29907ace6d9",
+        "2024-05-23T12:10:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_2b14c4d89e903bbc91a3",
+      "historical_cutoff": "2024-07-17T07:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_140e73a3d34dcba2de066b1e",
+      "pack_e_call_id": "FCL_a082c63db8f8fab653be6680",
+      "pair_key": [
+        "EP_EVENT_2b14c4d89e903bbc91a3",
+        "2024-07-17T07:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_2d825f23b45ef7ca130d",
+      "historical_cutoff": "2024-05-29T10:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_dfc769561c2ae92dcdc2ecc8",
+      "pack_e_call_id": "FCL_0107aa8b66e0510ed8d1df63",
+      "pair_key": [
+        "EP_EVENT_2d825f23b45ef7ca130d",
+        "2024-05-29T10:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_2de77b689facc34d5811",
+      "historical_cutoff": "2024-07-22T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_804500ad745395a69dfc70cf",
+      "pack_e_call_id": "FCL_384533561d53172e89d59820",
+      "pair_key": [
+        "EP_EVENT_2de77b689facc34d5811",
+        "2024-07-22T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_2de77b689facc34d5811",
+      "historical_cutoff": "2024-07-22T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_6e935ee89300f69067ceeda6",
+      "pack_e_call_id": "FCL_ae51913ce1e55d2510621a87",
+      "pair_key": [
+        "EP_EVENT_2de77b689facc34d5811",
+        "2024-07-22T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_2de77b689facc34d5811",
+      "historical_cutoff": "2024-07-22T12:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_72f521738fac95a19f4a4a8f",
+      "pack_e_call_id": "FCL_88091ec0ce696ee22813e013",
+      "pair_key": [
+        "EP_EVENT_2de77b689facc34d5811",
+        "2024-07-22T12:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_2efc8caf43d7a31210c9",
+      "historical_cutoff": "2024-06-18T00:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_1a4e1a6f2cabb5135e7b8570",
+      "pack_e_call_id": "FCL_cfe5badce039f26272f2649f",
+      "pair_key": [
+        "EP_EVENT_2efc8caf43d7a31210c9",
+        "2024-06-18T00:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_344de7b994c341242ab0",
+      "historical_cutoff": "2024-07-01T13:35:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_e945e18b7ffa68196c17db35",
+      "pack_e_call_id": "FCL_6b6b051ac250d5e1a47a0c43",
+      "pair_key": [
+        "EP_EVENT_344de7b994c341242ab0",
+        "2024-07-01T13:35:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_344de7b994c341242ab0",
+      "historical_cutoff": "2024-07-01T13:35:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_e65b98f886df1761e5095e7c",
+      "pack_e_call_id": "FCL_89068884e94b028b3a019f02",
+      "pair_key": [
+        "EP_EVENT_344de7b994c341242ab0",
+        "2024-07-01T13:35:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_344de7b994c341242ab0",
+      "historical_cutoff": "2024-07-01T13:35:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_f5c534d9e3909dd0f0b966f9",
+      "pack_e_call_id": "FCL_c771479a27e08c50f613a87a",
+      "pair_key": [
+        "EP_EVENT_344de7b994c341242ab0",
+        "2024-07-01T13:35:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_3822b4f2936811d4b2f8",
+      "historical_cutoff": "2024-06-12T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_8c65cc50bc81a209f240da4d",
+      "pack_e_call_id": "FCL_c1b8a158816fcac144a247e8",
+      "pair_key": [
+        "EP_EVENT_3822b4f2936811d4b2f8",
+        "2024-06-12T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+      "historical_cutoff": "2024-07-30T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_7e8d08c8fe14ccfe54cc7929",
+      "pack_e_call_id": "FCL_ef9a9189341f30df00ddfb34",
+      "pair_key": [
+        "EP_EVENT_39346b74b1c5a1f649ed",
+        "2024-07-30T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+      "historical_cutoff": "2024-07-30T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_1df5eb4d323ae94a231bd29c",
+      "pack_e_call_id": "FCL_99581e99e9069f03156731cb",
+      "pair_key": [
+        "EP_EVENT_39346b74b1c5a1f649ed",
+        "2024-07-30T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+      "historical_cutoff": "2024-07-30T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_50c11131d0a5dfaf6abbc255",
+      "pack_e_call_id": "FCL_30906e7ea87d7d86e35dd5d8",
+      "pair_key": [
+        "EP_EVENT_39346b74b1c5a1f649ed",
+        "2024-07-30T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_3a6311a0105e9ef22109",
+      "historical_cutoff": "2024-06-25T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_052a5195bdd681adef47b4a0",
+      "pack_e_call_id": "FCL_b9cb3b3e9f022a4849de9bdc",
+      "pair_key": [
+        "EP_EVENT_3a6311a0105e9ef22109",
+        "2024-06-25T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_40ab9e816d74bd8bd12d6afb",
+      "pack_e_call_id": "FCL_3d6af8e201b586ece27a68a7",
+      "pair_key": [
+        "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+        "2024-05-01T07:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_4efc1fc9d37c6dbacc5bdb0e",
+      "pack_e_call_id": "FCL_32358cb3cd8ad7ef6a732675",
+      "pair_key": [
+        "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+        "2024-05-01T07:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_1ff9d1dd73492c5cb00b1c39",
+      "pack_e_call_id": "FCL_aac1e417e93670076d265c62",
+      "pair_key": [
+        "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+        "2024-05-01T07:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_3cf33832dc4ce9030be9",
+      "historical_cutoff": "2024-06-14T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_ff21b21d1ca0c5b96f181fa9",
+      "pack_e_call_id": "FCL_8225b2302eaee84cdaaa122e",
+      "pair_key": [
+        "EP_EVENT_3cf33832dc4ce9030be9",
+        "2024-06-14T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_3cf33832dc4ce9030be9",
+      "historical_cutoff": "2024-06-14T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_8e729184b34fbfa1748bd422",
+      "pack_e_call_id": "FCL_1ec63dbbf0d9e6dc2aca57ac",
+      "pair_key": [
+        "EP_EVENT_3cf33832dc4ce9030be9",
+        "2024-06-14T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_3f0ac9fb4f1a138fee7f",
+      "historical_cutoff": "2024-07-05T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_59c8d3fb473ac20ac6ce02a2",
+      "pack_e_call_id": "FCL_c89d2d71d835588713664ede",
+      "pair_key": [
+        "EP_EVENT_3f0ac9fb4f1a138fee7f",
+        "2024-07-05T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_3f0ac9fb4f1a138fee7f",
+      "historical_cutoff": "2024-07-05T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_8c57c758eaea7f2ce7cd5612",
+      "pack_e_call_id": "FCL_5b50122f092c41899e7ead31",
+      "pair_key": [
+        "EP_EVENT_3f0ac9fb4f1a138fee7f",
+        "2024-07-05T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_3f0ac9fb4f1a138fee7f",
+      "historical_cutoff": "2024-07-05T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_6ab4abd94211c873c183b2f8",
+      "pack_e_call_id": "FCL_0a0351da734f30cdee376d20",
+      "pair_key": [
+        "EP_EVENT_3f0ac9fb4f1a138fee7f",
+        "2024-07-05T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_83ff9d6d96f6a6cf0047c7dd",
+      "pack_e_call_id": "FCL_fb77e1674c0f30f775f51e1e",
+      "pair_key": [
+        "EP_EVENT_436060b9ef51cddd6534",
+        "2024-07-18T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_cdef2fc33f46f82f8148b577",
+      "pack_e_call_id": "FCL_e0249cea382e4ceac72ca8ae",
+      "pair_key": [
+        "EP_EVENT_436060b9ef51cddd6534",
+        "2024-07-18T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_4b80366594480b554889",
+      "historical_cutoff": "2024-05-04T18:10:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_15c6f4e6f1fc413c5c3845b7",
+      "pack_e_call_id": "FCL_5230a7bccd1ea38969bafbe9",
+      "pair_key": [
+        "EP_EVENT_4b80366594480b554889",
+        "2024-05-04T18:10:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_4b80366594480b554889",
+      "historical_cutoff": "2024-05-04T18:10:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_ff54346ab7650976cfdf2a77",
+      "pack_e_call_id": "FCL_2e848bf237c19f8df0f0a1e0",
+      "pair_key": [
+        "EP_EVENT_4b80366594480b554889",
+        "2024-05-04T18:10:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_4b80366594480b554889",
+      "historical_cutoff": "2024-05-04T18:10:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_a5c7157c4cf958b3e63af1c9",
+      "pack_e_call_id": "FCL_6fde6348e4a26fd62d85c6df",
+      "pair_key": [
+        "EP_EVENT_4b80366594480b554889",
+        "2024-05-04T18:10:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_4c7017820e55586a2667",
+      "historical_cutoff": "2024-05-24T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_678f198a203012a66d25b3d2",
+      "pack_e_call_id": "FCL_466022e0240a4e488d93f09c",
+      "pair_key": [
+        "EP_EVENT_4c7017820e55586a2667",
+        "2024-05-24T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_4c7017820e55586a2667",
+      "historical_cutoff": "2024-05-24T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_624567af5385e199365c9b80",
+      "pack_e_call_id": "FCL_eaa1faae63b82e5f298d8da4",
+      "pair_key": [
+        "EP_EVENT_4c7017820e55586a2667",
+        "2024-05-24T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_52c80bd0e3ba80e984ae",
+      "historical_cutoff": "2024-06-19T23:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_61cbdf12562d2d7ccd588be8",
+      "pack_e_call_id": "FCL_c1eead2eb8b8e502f46f80c5",
+      "pair_key": [
+        "EP_EVENT_52c80bd0e3ba80e984ae",
+        "2024-06-19T23:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_537cf8010cb62a7720a1",
+      "historical_cutoff": "2024-07-10T03:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_27dcd12f6d354241ac9218fb",
+      "pack_e_call_id": "FCL_e3a63f7130a65cb421c87614",
+      "pair_key": [
+        "EP_EVENT_537cf8010cb62a7720a1",
+        "2024-07-10T03:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_53d96ab109f9f8b5361f",
+      "historical_cutoff": "2024-07-23T09:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_722ad63660766ce2eb967c8a",
+      "pack_e_call_id": "FCL_8c808effe19c3959e70c66a9",
+      "pair_key": [
+        "EP_EVENT_53d96ab109f9f8b5361f",
+        "2024-07-23T09:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_556c59fe6ef36f4ac156",
+      "historical_cutoff": "2024-05-06T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_29c51488fec0eda92d5310ee",
+      "pack_e_call_id": "FCL_9f96632ee1d54b9b77d7e342",
+      "pair_key": [
+        "EP_EVENT_556c59fe6ef36f4ac156",
+        "2024-05-06T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_556c59fe6ef36f4ac156",
+      "historical_cutoff": "2024-05-06T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_9819cb8d804223e9f0c3448c",
+      "pack_e_call_id": "FCL_077bafb688675cd61c99d242",
+      "pair_key": [
+        "EP_EVENT_556c59fe6ef36f4ac156",
+        "2024-05-06T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_58fd1d21c3161e785641",
+      "historical_cutoff": "2024-06-17T08:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_78acf4b0cca5ec43502037d0",
+      "pack_e_call_id": "FCL_0c7121e41f0becfb9981f98a",
+      "pair_key": [
+        "EP_EVENT_58fd1d21c3161e785641",
+        "2024-06-17T08:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_58fd1d21c3161e785641",
+      "historical_cutoff": "2024-06-17T08:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_a00c8f621a939e10f78eee32",
+      "pack_e_call_id": "FCL_f950a52d14e5f1972c4a7961",
+      "pair_key": [
+        "EP_EVENT_58fd1d21c3161e785641",
+        "2024-06-17T08:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_5a1719c3db61418e808e",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_c18ef560d07d84252699fd21",
+      "pack_e_call_id": "FCL_972a46b5e8081e2a09d9e836",
+      "pair_key": [
+        "EP_EVENT_5a1719c3db61418e808e",
+        "2024-07-03T04:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_5a1719c3db61418e808e",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_6d60b16a9b7a5d12bd5b9e30",
+      "pack_e_call_id": "FCL_2010119d650970eaa50df3f0",
+      "pair_key": [
+        "EP_EVENT_5a1719c3db61418e808e",
+        "2024-07-03T04:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_5ce2984d95abd1a5c6d4",
+      "historical_cutoff": "2024-06-11T03:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_41399f9c7ac6356fea3f71ad",
+      "pack_e_call_id": "FCL_4c562f883a137da9faa856a4",
+      "pair_key": [
+        "EP_EVENT_5ce2984d95abd1a5c6d4",
+        "2024-06-11T03:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_5ce2984d95abd1a5c6d4",
+      "historical_cutoff": "2024-06-11T03:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_8f3b022c1b2221ef0d8ca4fe",
+      "pack_e_call_id": "FCL_eb7aa853a88c366ea5675c22",
+      "pair_key": [
+        "EP_EVENT_5ce2984d95abd1a5c6d4",
+        "2024-06-11T03:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_5cf1d42e7bf02b803731",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_a12c86a9053f68d4c35e0d08",
+      "pack_e_call_id": "FCL_700413431d8eb7f5a41b1269",
+      "pair_key": [
+        "EP_EVENT_5cf1d42e7bf02b803731",
+        "2024-07-03T04:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_5cf1d42e7bf02b803731",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_82a8d94b74f9a76e6a6c6e27",
+      "pack_e_call_id": "FCL_dd48455bbeb08fdc161b2538",
+      "pair_key": [
+        "EP_EVENT_5cf1d42e7bf02b803731",
+        "2024-07-03T04:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_614284b86a9f85bccb48",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_6d43b5148cd0b58777d54855",
+      "pack_e_call_id": "FCL_8c2d71fe1481784b8d1f48ff",
+      "pair_key": [
+        "EP_EVENT_614284b86a9f85bccb48",
+        "2024-07-24T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_614284b86a9f85bccb48",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_0918e9987c268e267c6a69fd",
+      "pack_e_call_id": "FCL_f5cc70bf113582e2ed56a799",
+      "pair_key": [
+        "EP_EVENT_614284b86a9f85bccb48",
+        "2024-07-24T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_6b2a7573b7a620dc98b8",
+      "historical_cutoff": "2024-06-25T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_a25624132de80995dfac218f",
+      "pack_e_call_id": "FCL_38780e706ab7604aed086564",
+      "pair_key": [
+        "EP_EVENT_6b2a7573b7a620dc98b8",
+        "2024-06-25T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_6b2a7573b7a620dc98b8",
+      "historical_cutoff": "2024-06-25T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_a0f4fc7857a7ea422c8d4963",
+      "pack_e_call_id": "FCL_783dbb2fa80a9eaffc8788a7",
+      "pair_key": [
+        "EP_EVENT_6b2a7573b7a620dc98b8",
+        "2024-06-25T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_78e58e097504cb19b6e3",
+      "historical_cutoff": "2024-06-21T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_0664ce36d77cd67e2b75df44",
+      "pack_e_call_id": "FCL_e19706b1bdb0f6d444141192",
+      "pair_key": [
+        "EP_EVENT_78e58e097504cb19b6e3",
+        "2024-06-21T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_7d76a6239f0c00798038",
+      "historical_cutoff": "2024-06-28T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_235b39d471c295f2f5d46dfb",
+      "pack_e_call_id": "FCL_c081f782e6bad42e055c516c",
+      "pair_key": [
+        "EP_EVENT_7d76a6239f0c00798038",
+        "2024-06-28T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_82563db31e94ae9d1799",
+      "historical_cutoff": "2024-05-18T21:35:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_e8c505f4d3886f3f3fae1133",
+      "pack_e_call_id": "FCL_c9f1a0fd9e86e8f7a8231c51",
+      "pair_key": [
+        "EP_EVENT_82563db31e94ae9d1799",
+        "2024-05-18T21:35:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_84dbc3fa51c46f7727c1",
+      "historical_cutoff": "2024-05-29T10:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_1b2fd75b1735bb9cdaee6173",
+      "pack_e_call_id": "FCL_8a0d0e202ccb523f1da3190b",
+      "pair_key": [
+        "EP_EVENT_84dbc3fa51c46f7727c1",
+        "2024-05-29T10:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_8609bdc395af79a46e84",
+      "historical_cutoff": "2024-06-11T03:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_aef11a0a805e3bdafaf0748a",
+      "pack_e_call_id": "FCL_cf01fe7790ed77aea90a5809",
+      "pair_key": [
+        "EP_EVENT_8609bdc395af79a46e84",
+        "2024-06-11T03:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_8d833a01621022980c45",
+      "historical_cutoff": "2024-07-19T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_b04e0add77d7df7b33c27723",
+      "pack_e_call_id": "FCL_4b949f4acb10fd17676dbf7c",
+      "pair_key": [
+        "EP_EVENT_8d833a01621022980c45",
+        "2024-07-19T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_8d833a01621022980c45",
+      "historical_cutoff": "2024-07-19T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_e6783d61515de8730d661115",
+      "pack_e_call_id": "FCL_3d2ecea99024ac764bd445dc",
+      "pair_key": [
+        "EP_EVENT_8d833a01621022980c45",
+        "2024-07-19T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_8ee96c7cc3941b3c584b",
+      "historical_cutoff": "2024-07-08T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_e0cbc0516ab15772735ea991",
+      "pack_e_call_id": "FCL_21a2f71339207c676024cbb5",
+      "pair_key": [
+        "EP_EVENT_8ee96c7cc3941b3c584b",
+        "2024-07-08T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_9057e45c0a3429423d83",
+      "historical_cutoff": "2024-05-28T04:45:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_8aee02435faf087a01c3a81f",
+      "pack_e_call_id": "FCL_ab13943643737d429b1232a3",
+      "pair_key": [
+        "EP_EVENT_9057e45c0a3429423d83",
+        "2024-05-28T04:45:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_9057e45c0a3429423d83",
+      "historical_cutoff": "2024-05-28T04:45:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_5d1013143b3403a526cf6524",
+      "pack_e_call_id": "FCL_d5b3504f29e83d87c42646db",
+      "pair_key": [
+        "EP_EVENT_9057e45c0a3429423d83",
+        "2024-05-28T04:45:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_9057e45c0a3429423d83",
+      "historical_cutoff": "2024-05-28T04:45:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_11287874fca39baf440a3de0",
+      "pack_e_call_id": "FCL_cae141cdf48d7cdcecf389b3",
+      "pair_key": [
+        "EP_EVENT_9057e45c0a3429423d83",
+        "2024-05-28T04:45:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_91b98f3b4aae91bc740f",
+      "historical_cutoff": "2024-06-11T03:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_084df8e7613d43794182aeb3",
+      "pack_e_call_id": "FCL_6486edb3e6d4a8c8c5bfa38d",
+      "pair_key": [
+        "EP_EVENT_91b98f3b4aae91bc740f",
+        "2024-06-11T03:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_91b98f3b4aae91bc740f",
+      "historical_cutoff": "2024-06-11T03:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_d8ee0bfdcee9e8c11f92736b",
+      "pack_e_call_id": "FCL_921928fb2ae9c2261237cbd4",
+      "pair_key": [
+        "EP_EVENT_91b98f3b4aae91bc740f",
+        "2024-06-11T03:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_91b98f3b4aae91bc740f",
+      "historical_cutoff": "2024-06-11T03:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_f30583c3f1a9ced4e65fd8c2",
+      "pack_e_call_id": "FCL_ad021bc0a3293f3ba57502d5",
+      "pair_key": [
+        "EP_EVENT_91b98f3b4aae91bc740f",
+        "2024-06-11T03:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_9abf6d24da667544c615",
+      "historical_cutoff": "2024-05-30T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_8b858710ce027c96ee02fa09",
+      "pack_e_call_id": "FCL_ffdbb52f3f6d91575c2aebe2",
+      "pair_key": [
+        "EP_EVENT_9abf6d24da667544c615",
+        "2024-05-30T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+      "historical_cutoff": "2024-07-12T08:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_e6fa745d6b76efa0843a8205",
+      "pack_e_call_id": "FCL_da6a497512908a6cedd914a0",
+      "pair_key": [
+        "EP_EVENT_9b85a57ccc18c6c1fe48",
+        "2024-07-12T08:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_a01f648a656d72f3cf6e",
+      "historical_cutoff": "2024-06-17T08:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_87d4369f55320df4dc828ff4",
+      "pack_e_call_id": "FCL_639cd86f589162c18fe9bdff",
+      "pair_key": [
+        "EP_EVENT_a01f648a656d72f3cf6e",
+        "2024-06-17T08:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+      "historical_cutoff": "2024-07-29T14:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_d2fad4395093323d81567925",
+      "pack_e_call_id": "FCL_cb581c81970467ecd94773c1",
+      "pair_key": [
+        "EP_EVENT_a0b824687cdcc10ffc56",
+        "2024-07-29T14:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_a72903fa33e0416764ac",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_2bca4c2cba919ba6865285fc",
+      "pack_e_call_id": "FCL_6544cbb46a176d7a8aa29372",
+      "pair_key": [
+        "EP_EVENT_a72903fa33e0416764ac",
+        "2024-07-18T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_a72903fa33e0416764ac",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_358e8eb464737878c96e2779",
+      "pack_e_call_id": "FCL_dc05904ef8fa8a038d9644e1",
+      "pair_key": [
+        "EP_EVENT_a72903fa33e0416764ac",
+        "2024-07-18T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_a8905547406656cf53ae",
+      "historical_cutoff": "2024-05-10T08:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_99c46a5f924cf6617c74370b",
+      "pack_e_call_id": "FCL_28b54600d39210318290e59e",
+      "pair_key": [
+        "EP_EVENT_a8905547406656cf53ae",
+        "2024-05-10T08:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_a8905547406656cf53ae",
+      "historical_cutoff": "2024-05-10T08:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_215cbe7ebee83be08888dbc5",
+      "pack_e_call_id": "FCL_f3d9ffb70afca981b3ec273d",
+      "pair_key": [
+        "EP_EVENT_a8905547406656cf53ae",
+        "2024-05-10T08:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_aa41226bcb8107901555",
+      "historical_cutoff": "2024-05-17T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_5ffa9e10262ccdccaea1a64c",
+      "pack_e_call_id": "FCL_02c997b37b7e3f54e8187d93",
+      "pair_key": [
+        "EP_EVENT_aa41226bcb8107901555",
+        "2024-05-17T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_ac12e6d3e66e6b92e1ef",
+      "historical_cutoff": "2024-05-17T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_03d116f1d699b93ea7acbeda",
+      "pack_e_call_id": "FCL_5b9421ae66bb25ce24786957",
+      "pair_key": [
+        "EP_EVENT_ac12e6d3e66e6b92e1ef",
+        "2024-05-17T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_ac12e6d3e66e6b92e1ef",
+      "historical_cutoff": "2024-05-17T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_5157e806c42331db00aeba9d",
+      "pack_e_call_id": "FCL_4b3e1f5223e3dca7698db626",
+      "pair_key": [
+        "EP_EVENT_ac12e6d3e66e6b92e1ef",
+        "2024-05-17T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_b218a803c0f58f752e26",
+      "historical_cutoff": "2024-06-24T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_b776484bf335dd3c0076edaa",
+      "pack_e_call_id": "FCL_2460f933b7d507334b823fab",
+      "pair_key": [
+        "EP_EVENT_b218a803c0f58f752e26",
+        "2024-06-24T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_b218a803c0f58f752e26",
+      "historical_cutoff": "2024-06-24T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_f228d7e4fe51ca3ab4281100",
+      "pack_e_call_id": "FCL_de36347ee3c661ff28673e74",
+      "pair_key": [
+        "EP_EVENT_b218a803c0f58f752e26",
+        "2024-06-24T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_b3ab3fdbe3b0e23dfa77",
+      "historical_cutoff": "2024-06-26T07:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_b9f09544b16b666a0c786bb8",
+      "pack_e_call_id": "FCL_c7addb3a05adf765efb5f9cc",
+      "pair_key": [
+        "EP_EVENT_b3ab3fdbe3b0e23dfa77",
+        "2024-06-26T07:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_b908a729dc4fa10f46a6",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_ddabd49c887b4a4dfe215f63",
+      "pack_e_call_id": "FCL_ae78b401ea6dc91ee1438914",
+      "pair_key": [
+        "EP_EVENT_b908a729dc4fa10f46a6",
+        "2024-05-01T07:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_bcadac9bf16137d4e17c",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_be2e6e80933f548fb373f9ce",
+      "pack_e_call_id": "FCL_e29165aae347c75406eb93fc",
+      "pair_key": [
+        "EP_EVENT_bcadac9bf16137d4e17c",
+        "2024-07-24T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_bfcff4089c331ae1d2c8",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_fa55f9a2a73bc09a3c917b32",
+      "pack_e_call_id": "FCL_37d0fbd73cee0eba7c982de2",
+      "pair_key": [
+        "EP_EVENT_bfcff4089c331ae1d2c8",
+        "2024-05-01T07:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_bfcff4089c331ae1d2c8",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_028e0926a09e40052883ace4",
+      "pack_e_call_id": "FCL_6ee14cdd6370478f279648dc",
+      "pair_key": [
+        "EP_EVENT_bfcff4089c331ae1d2c8",
+        "2024-05-01T07:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_bfcff4089c331ae1d2c8",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_2922ee3be37b08bc9b8b03fd",
+      "pack_e_call_id": "FCL_6e3abbb8ab1bdddea0a7afbc",
+      "pair_key": [
+        "EP_EVENT_bfcff4089c331ae1d2c8",
+        "2024-05-01T07:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_c1e9ad44fb070df76be1",
+      "historical_cutoff": "2024-05-22T07:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_894ad2612ced302d8ef326b1",
+      "pack_e_call_id": "FCL_dea395f746c4a645db17c578",
+      "pair_key": [
+        "EP_EVENT_c1e9ad44fb070df76be1",
+        "2024-05-22T07:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_c1e9ad44fb070df76be1",
+      "historical_cutoff": "2024-05-22T07:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_4d5003d7b10050d0bf8c07f5",
+      "pack_e_call_id": "FCL_a24e61316c58c78ba900d8ea",
+      "pair_key": [
+        "EP_EVENT_c1e9ad44fb070df76be1",
+        "2024-05-22T07:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_c1e9ad44fb070df76be1",
+      "historical_cutoff": "2024-05-22T07:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_bfe37330cd550875a3aae771",
+      "pack_e_call_id": "FCL_49814343677e95924b7d0d55",
+      "pair_key": [
+        "EP_EVENT_c1e9ad44fb070df76be1",
+        "2024-05-22T07:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_c50212c6604f22853a44",
+      "historical_cutoff": "2024-06-24T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_83b2cb43686a0c2e1805d231",
+      "pack_e_call_id": "FCL_035c9067e0f1234664b47326",
+      "pair_key": [
+        "EP_EVENT_c50212c6604f22853a44",
+        "2024-06-24T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_c50212c6604f22853a44",
+      "historical_cutoff": "2024-06-24T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_8440568298b2b9b4eec983f3",
+      "pack_e_call_id": "FCL_0e9291b1b2d5fe4e37438d62",
+      "pair_key": [
+        "EP_EVENT_c50212c6604f22853a44",
+        "2024-06-24T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_c6c788eed159215d7220",
+      "historical_cutoff": "2024-07-15T12:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_7d0e44d7fa232ee1b67c1908",
+      "pack_e_call_id": "FCL_be0ab2d6322c584f34234244",
+      "pair_key": [
+        "EP_EVENT_c6c788eed159215d7220",
+        "2024-07-15T12:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_ccb253c98e5dace78f0e",
+      "historical_cutoff": "2024-06-30T12:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_a67807e4a9efbca339f2495d",
+      "pack_e_call_id": "FCL_016631d7bf02658af86ea873",
+      "pair_key": [
+        "EP_EVENT_ccb253c98e5dace78f0e",
+        "2024-06-30T12:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_ce560e1428b25b69fbb2",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_acc89be8bdcb9deed1a7c258",
+      "pack_e_call_id": "FCL_eb26ecb6da19ffa36a6562ff",
+      "pair_key": [
+        "EP_EVENT_ce560e1428b25b69fbb2",
+        "2024-07-24T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_ce560e1428b25b69fbb2",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_132d9de4539697ccab71d9c6",
+      "pack_e_call_id": "FCL_0632b54503fbb125b560419e",
+      "pair_key": [
+        "EP_EVENT_ce560e1428b25b69fbb2",
+        "2024-07-24T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_ce560e1428b25b69fbb2",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_ba0b399126aa1e7e32b2fd57",
+      "pack_e_call_id": "FCL_569f226cc0cedf0bbc3f1f12",
+      "pair_key": [
+        "EP_EVENT_ce560e1428b25b69fbb2",
+        "2024-07-24T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_d58c66e4ce2481c58c28",
+      "historical_cutoff": "2024-07-31T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_251f020ac9a2e5a3b386507c",
+      "pack_e_call_id": "FCL_5f6e9930585d0f67689ae389",
+      "pair_key": [
+        "EP_EVENT_d58c66e4ce2481c58c28",
+        "2024-07-31T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_d58c66e4ce2481c58c28",
+      "historical_cutoff": "2024-07-31T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_25685218ef4ade0ab1e88e71",
+      "pack_e_call_id": "FCL_90e54c935a369ee8a6ad2a7e",
+      "pair_key": [
+        "EP_EVENT_d58c66e4ce2481c58c28",
+        "2024-07-31T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_d5d7aa4435b9e6bab424",
+      "historical_cutoff": "2024-05-01T07:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_97de2ec456c917a0c39f165b",
+      "pack_e_call_id": "FCL_faf146640f77abc17c7f3334",
+      "pair_key": [
+        "EP_EVENT_d5d7aa4435b9e6bab424",
+        "2024-05-01T07:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_d6fce9c8901236c9cdd2",
+      "historical_cutoff": "2024-06-24T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_481212a2f78ef5924e477aa5",
+      "pack_e_call_id": "FCL_44189abf077433bb88eaf76a",
+      "pair_key": [
+        "EP_EVENT_d6fce9c8901236c9cdd2",
+        "2024-06-24T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_e8d9ca85a946bdcbc5d9",
+      "historical_cutoff": "2024-05-06T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_d591677837ba5b1b0fcd39ff",
+      "pack_e_call_id": "FCL_dd7392fe27724b290635a1c5",
+      "pair_key": [
+        "EP_EVENT_e8d9ca85a946bdcbc5d9",
+        "2024-05-06T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_e8d9ca85a946bdcbc5d9",
+      "historical_cutoff": "2024-05-06T06:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_f761a45623b0c5513ef58cae",
+      "pack_e_call_id": "FCL_404f42ffb3e7058075ed6d74",
+      "pair_key": [
+        "EP_EVENT_e8d9ca85a946bdcbc5d9",
+        "2024-05-06T06:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_eea864aba7e1ece26538",
+      "historical_cutoff": "2024-07-03T04:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_18483f48be80ce5f27a8bb5d",
+      "pack_e_call_id": "FCL_b72f5ce116a934effa717308",
+      "pair_key": [
+        "EP_EVENT_eea864aba7e1ece26538",
+        "2024-07-03T04:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_ef630a47cf9a4a6f79fd",
+      "historical_cutoff": "2024-05-13T12:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_49308d97ec550f9587f1a571",
+      "pack_e_call_id": "FCL_110e0fa02e8dbac9592acc75",
+      "pair_key": [
+        "EP_EVENT_ef630a47cf9a4a6f79fd",
+        "2024-05-13T12:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_f09204427881dfea157f",
+      "historical_cutoff": "2024-05-24T06:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_c3549379d05f4631dfb294f9",
+      "pack_e_call_id": "FCL_c8172e1cc9d8c6c66ec28e54",
+      "pair_key": [
+        "EP_EVENT_f09204427881dfea157f",
+        "2024-05-24T06:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_f1cc87e112927700eb4b",
+      "historical_cutoff": "2024-06-18T23:50:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_d75e1a4651d53a72a47390c4",
+      "pack_e_call_id": "FCL_84e48298fe3e10ef7f04ac84",
+      "pair_key": [
+        "EP_EVENT_f1cc87e112927700eb4b",
+        "2024-06-18T23:50:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_f1cc87e112927700eb4b",
+      "historical_cutoff": "2024-06-18T23:50:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_201eb7c64050c3ff084377c2",
+      "pack_e_call_id": "FCL_7b77ed59773b595e7a0dcb7e",
+      "pair_key": [
+        "EP_EVENT_f1cc87e112927700eb4b",
+        "2024-06-18T23:50:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_f1cc87e112927700eb4b",
+      "historical_cutoff": "2024-06-18T23:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_cb48f6422fab509defd6b71e",
+      "pack_e_call_id": "FCL_f8f75998a749d7c9de3c6179",
+      "pair_key": [
+        "EP_EVENT_f1cc87e112927700eb4b",
+        "2024-06-18T23:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_f4285f2379fdfb80c38e",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_91b4cc82a5182192cbaccb41",
+      "pack_e_call_id": "FCL_b23ccc1d346e21d4b5fcd5f1",
+      "pair_key": [
+        "EP_EVENT_f4285f2379fdfb80c38e",
+        "2024-07-24T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_f4285f2379fdfb80c38e",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_2ba3229cd8918ea7bef7f17b",
+      "pack_e_call_id": "FCL_306731fe687af1461d92ac55",
+      "pair_key": [
+        "EP_EVENT_f4285f2379fdfb80c38e",
+        "2024-07-24T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_f782f980ddd2c38256cf",
+      "historical_cutoff": "2024-05-29T10:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_36cd7c15ec5af38ef1ed05c6",
+      "pack_e_call_id": "FCL_17ad92020363282a9aa833dd",
+      "pair_key": [
+        "EP_EVENT_f782f980ddd2c38256cf",
+        "2024-05-29T10:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_f8871150cc589388ba49",
+      "historical_cutoff": "2024-07-17T07:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_61cb937c559d681c732d0bb2",
+      "pack_e_call_id": "FCL_ccd34634048a924fa5a24eb2",
+      "pair_key": [
+        "EP_EVENT_f8871150cc589388ba49",
+        "2024-07-17T07:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_f8a24258e2810dd24a73",
+      "historical_cutoff": "2024-06-12T05:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_9a9b5cd17c93014006327580",
+      "pack_e_call_id": "FCL_97829ac22b1f2482765584e1",
+      "pair_key": [
+        "EP_EVENT_f8a24258e2810dd24a73",
+        "2024-06-12T05:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_f8a24258e2810dd24a73",
+      "historical_cutoff": "2024-06-12T05:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_e1f0ea1db47891bb0fcae510",
+      "pack_e_call_id": "FCL_a5f4cbd8c38dfa6ac91d84e2",
+      "pair_key": [
+        "EP_EVENT_f8a24258e2810dd24a73",
+        "2024-06-12T05:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_fbeb51f7c51277a6ec74",
+      "historical_cutoff": "2024-05-30T05:20:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_248b3618b34f8b44b66eb08d",
+      "pack_e_call_id": "FCL_62af60777b94b71fea252e64",
+      "pair_key": [
+        "EP_EVENT_fbeb51f7c51277a6ec74",
+        "2024-05-30T05:20:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+      "historical_cutoff": "2024-07-15T12:20:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_58903de7d41edba2cc8a1d7d",
+      "pack_e_call_id": "FCL_00a3610a2b8cf2b3a2f47982",
+      "pair_key": [
+        "EP_EVENT_fd6599ee741e576ef605",
+        "2024-07-15T12:20:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+      "historical_cutoff": "2024-07-15T12:20:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_825993b4b46606566fa138fb",
+      "pack_e_call_id": "FCL_b9af302afdbf5ec2bfc21ebc",
+      "pair_key": [
+        "EP_EVENT_fd6599ee741e576ef605",
+        "2024-07-15T12:20:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_fe5b84532c93300f234b",
+      "historical_cutoff": "2024-07-02T11:00:00Z",
+      "model": "claude-haiku-4-5",
+      "pack_a_call_id": "FCL_040f4a083867cfdeb662e908",
+      "pack_e_call_id": "FCL_53a936a6412d524988fc0b9e",
+      "pair_key": [
+        "EP_EVENT_fe5b84532c93300f234b",
+        "2024-07-02T11:00:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_fe5b84532c93300f234b",
+      "historical_cutoff": "2024-07-02T11:00:00Z",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_call_id": "FCL_0dd2c57cb4796cbcfaf241f7",
+      "pack_e_call_id": "FCL_c96feb139e4b5126b135a8b7",
+      "pair_key": [
+        "EP_EVENT_fe5b84532c93300f234b",
+        "2024-07-02T11:00:00Z",
+        "Gemini",
+        "gemini-2.5-flash-lite"
+      ],
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_fe5b84532c93300f234b",
+      "historical_cutoff": "2024-07-02T11:00:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_call_id": "FCL_663098964f9f5cc8195aba69",
+      "pack_e_call_id": "FCL_973af1dbe7adc33e8d4c7411",
+      "pair_key": [
+        "EP_EVENT_fe5b84532c93300f234b",
+        "2024-07-02T11:00:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI"
+    }
+  ],
+  "frozen_calls": 564,
+  "pack_a": {
+    "frozen_calls": 282,
+    "terminal_invalid": 2,
+    "valid": 280
+  },
+  "pack_a_only": [
+    {
+      "episode_id": "EP_EVENT_d6fce9c8901236c9cdd2",
+      "forecast_call_id": "FCL_6c78a27590fc24fc99ebf59c",
+      "historical_cutoff": "2024-06-24T06:50:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pair_key": [
+        "EP_EVENT_d6fce9c8901236c9cdd2",
+        "2024-06-24T06:50:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI",
+      "reason": "Pack E counterpart is terminal-invalid"
+    }
+  ],
+  "pack_a_only_valid": 1,
+  "pack_e": {
+    "frozen_calls": 282,
+    "terminal_invalid": 1,
+    "valid": 281
+  },
+  "pack_e_only": [
+    {
+      "episode_id": "EP_BATCH_55166f262d069c0e7828",
+      "forecast_call_id": "FCL_49b823e16bac3b007d33400e",
+      "historical_cutoff": "2024-07-01T13:35:00Z",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pair_key": [
+        "EP_BATCH_55166f262d069c0e7828",
+        "2024-07-01T13:35:00Z",
+        "OpenAI",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "provider": "OpenAI",
+      "reason": "Pack A counterpart is terminal-invalid"
+    },
+    {
+      "episode_id": "EP_BATCH_8a51e1bb638289aeb7df",
+      "forecast_call_id": "FCL_b71f4c64037d86d3f67d36cd",
+      "historical_cutoff": "2024-05-07T12:45:00Z",
+      "model": "claude-haiku-4-5",
+      "pair_key": [
+        "EP_BATCH_8a51e1bb638289aeb7df",
+        "2024-05-07T12:45:00Z",
+        "Anthropic",
+        "claude-haiku-4-5"
+      ],
+      "provider": "Anthropic",
+      "reason": "Pack A counterpart is terminal-invalid"
+    }
+  ],
+  "pack_e_only_valid": 2,
+  "pack_row_identity_check": "Pack A and Pack E row identities intentionally remain distinct",
+  "pair_identity_fields_checked": [
+    "episode_id",
+    "historical_cutoff",
+    "provider",
+    "model"
+  ],
+  "pair_identity_mismatches": 0,
+  "pairing_key": "episode_id + historical_cutoff + provider + model + pack_type",
+  "recovered_call": {
+    "forecast_call_id": "FCL_3d10ae8285471f4e3a980b79",
+    "participates_in_complete_pair": true,
+    "recovery_run": "PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66"
+  },
+  "remote_state_unknown_calls": 0,
+  "terminal_invalid_calls": 3,
+  "terminal_invalid_ids": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_7f0463b134c67757968580e8",
+    "FCL_e07264654e9d3da6f63088a1"
+  ],
+  "unexecuted_calls": 0,
+  "unresolved_authority_or_identity_calls": 0
+}

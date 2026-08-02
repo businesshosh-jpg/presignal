@@ -1,0 +1,55 @@
+{
+  "evaluation_authorized_now": false,
+  "evaluation_run_not_authorized": true,
+  "primary_endpoint": "T+15 directional accuracy / EPISODE_REACTION_DIRECTION_15M",
+  "prohibited_labels": [
+    "correction rate"
+  ],
+  "rules": {
+    "aggregation": "Pack-specific and provider-specific descriptive views permitted; paired comparisons require same Episode/cutoff/provider/model and both Pack arms; no provider weighting or winner selection",
+    "directions": "UP/DOWN/FLAT are actionable; NO_SIGNAL is handled separately by contract",
+    "flat": "actionable only when realized direction FLAT",
+    "missing_outcomes": "integrity failure for attached pair; do not impute",
+    "no_signal": "no_signal_ok compares quiet Outcome condition; horizon direction fields remain null/not applicable",
+    "rounding": "contract-defined pips rounding to 2 decimals; no unapproved metric rounding defined",
+    "unpaired_valid_forecasts": "excluded from paired A/E comparison but retained in completeness accounting"
+  },
+  "secondary_measurement": "Immediate Impulse directional accuracy (only when outcome state SUPPORTED; current minute route otherwise NOT_APPLICABLE/APPROXIMATION_ONLY)",
+  "supported_metrics": [
+    {
+      "denominator": "eligible directional forecasts with valid T+15 Outcome; terminal-invalid and unavailable excluded; no-signal handled by contract",
+      "name": "T+15 directional accuracy",
+      "population": "valid forecasts with VALID Outcome and non-NO_SIGNAL forecast; report Pack-specific and paired comparisons"
+    },
+    {
+      "denominator": "supported impulse outcomes only; APPROXIMATION_ONLY not scored as strict impulse accuracy",
+      "name": "Immediate Impulse directional accuracy",
+      "population": "non-NO_SIGNAL forecasts with SUPPORTED Immediate Impulse Outcome"
+    },
+    {
+      "denominator": "same eligible forecast population; T+15 interval distance error and midpoint absolute error are distinct fields",
+      "name": "magnitude or pip error",
+      "population": "valid non-NO_SIGNAL forecasts with VALID Outcome"
+    },
+    {
+      "denominator": "eligible forecasts per horizon; supported horizons T+5,T+15,T+30,T+60",
+      "name": "horizon accuracy",
+      "population": "valid non-NO_SIGNAL forecasts with VALID Outcome"
+    },
+    {
+      "denominator": "eligible complete paths; overall_path_score is mean of horizon correctness",
+      "name": "path accuracy",
+      "population": "valid non-NO_SIGNAL forecasts with complete validated path and VALID Outcome"
+    },
+    {
+      "denominator": "eligible forecasts with reversal field available",
+      "name": "reversal accuracy",
+      "population": "valid non-NO_SIGNAL forecasts with VALID Outcome"
+    },
+    {
+      "denominator": "not defined for this preparation",
+      "name": "composite score",
+      "population": "not authorized unless an accepted governing artifact explicitly selects it"
+    }
+  ]
+}

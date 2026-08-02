@@ -4,7 +4,7 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Pack E Batches 003-004 execution start HEAD: `b10234967f815a3c0b85f8a3d64f37878be5afc4`
+- Accepted HEAD: `269e7f4d0b7e4e4e367bf860ce2c73b06b4db587`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
@@ -16,68 +16,16 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 ## Current counts
 
 - Frozen forecast-call identities: `564`
-- Batch 001 authoritative valid: `12`
-- Batch 002 authoritative valid: `12`
-- Batch 003 authoritative valid: `11`
-- Batch 003 terminal schema-invalid completed calls: `1`
-- Batch 004 authoritative valid: `12`
-- Batch 005 authoritative valid: `12`
-- Batch 006 authoritative valid: `12`
-- Batch 007 authoritative valid: `12`
-- Batch 008 authoritative valid: `12`
-- Batch 009 authoritative valid: `12`
-- Batch 010 authoritative valid: `12` (one deterministic raw-output recovery)
-- Batch 011 authoritative valid: `12`
-- Batch 012 authoritative valid: `12`
-- Batch 013 authoritative valid: `12`
-- Batch 014 authoritative valid: `12`
-- Batch 015 authoritative valid: `11`
-- Batch 015 terminal parse-invalid completed calls: `1`
-- Batch 016 authoritative valid: `12`
-- Batch 017 authoritative valid: `12`
-- Batch 018 authoritative valid: `12`
-- Batch 019 authoritative valid: `12`
-- Batch 020 authoritative valid: `12`
-- Batch 021 authoritative valid: `12`
-- Batch 022 authoritative valid: `12`
-- Batch 023 authoritative valid: `12`
-- Batch 024 authoritative valid: `6`
-- Cumulative authoritative valid forecasts: `279`
-- Unexecuted calls: `282`
+- Completed attempted calls: `564`
+- Authoritative valid forecasts: `561`
+- Terminal-invalid completed calls: `3`
+- Unexecuted forecast calls: `0`
 - Remote-state-unknown calls: `0`
-- Count reconciliation: `282` completed identities = `279` authoritative valid + `3` terminal-invalid; no duplicate or unresolved identities.
-- Pack A completion: `282` frozen Pack A calls completed; `282` Pack E calls remain unexecuted.
-- Batch E001 authoritative valid: `12`
-- Cumulative authoritative valid forecasts: `291`
-- Unexecuted calls: `270`
-- Pack E remaining unexecuted: `270`
-- Batch E002 authoritative valid: `12`
-- Batch E003 authoritative valid: `12`
-- Batch E004 authoritative valid: `12`
-- Batch E005 authoritative valid: `12`
-- Batch E006 authoritative valid: `12`
-- Batch E007 authoritative valid: `12`
-- Batch E008 authoritative valid: `12`
-- Batch E009 authoritative valid: `12`
-- Batch E010 authoritative valid: `12`
-- Batch E011 authoritative valid: `12`
-- Batch E012 authoritative valid: `11`
-- Batch E012 terminal validation-invalid completed calls: `1`
-- Batch E013 authoritative valid: `12`
-- Batch E014 authoritative valid: `12`
-- Batch E015 authoritative valid: `12`
-- Batch E016 authoritative valid: `12`
-- Batch E017 authoritative valid: `12`
-- Batch E018 authoritative valid: `12`
-- Batch E019 authoritative valid: `12`
-- Batch E020 authoritative valid: `12`
-- Batch E021 authoritative valid: `12`
-- Batch E022 authoritative valid: `12`
-- Batch E023 authoritative valid: `12`
-- Batch E024 authoritative valid: `6`
-- Cumulative authoritative valid forecasts: `561`
-- Unexecuted calls: `0`
-- Pack E remaining unexecuted: `0`
+- Unresolved authoritative identities: `0`
+- Duplicate authoritative results: `0`
+- Pack A: `282` frozen calls, `280` authoritative valid, `2` terminal-invalid
+- Pack E: `282` frozen calls, `281` authoritative valid, `1` terminal-invalid
+- Forecast population partition: every frozen call belongs to exactly one authoritative terminal category.
 - Pack E Batch 004 duplicate dispatches: `10` preserved as non-authoritative evidence; one authoritative primary result is selected per call by earliest invocation and journal lineage.
 
 ## Accepted authoritative runs
@@ -133,6 +81,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Pack E Batch 024: `PPHB-R1-FORECAST-EXECUTION-BATCH-E024-20260803T060000Z-ee93fecddb2e` plus `PPHB-R1-PACK-E-BATCH-024-COMPLETION-20260803T060000Z`
 - Full forecast execution completion: `PPHB-R1-FORECAST-FULL-EXECUTION-COMPLETION-20260803T060000Z`
 - Pack A deterministic raw recovery: `PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66`
+- Outcome authorization preparation: `PPHB-R1-OUTCOME-AUTHORIZATION-PREPARATION-20260803T090000Z-18cddcdc5477`
 
 ## Prompt boundary
 
@@ -157,7 +106,7 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 
 ## Exact next Move
 
-Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. The next bounded Move is to prepare an evaluation authorization and evaluation-boundary review; do not attach Outcomes or calculate accuracy without explicit authorization.
+Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. The next bounded Move is `OUTCOME_SOURCE_PREFLIGHT_AND_IMMUTABLE_COLLECTION` for the exact first 12-Episode manifest in the accepted Outcome authorization-preparation artifact. This remains separate from Outcome attachment and evaluation; no attachment or evaluation is authorized by this state file.
 
 ## Prohibited reopening
 

@@ -1,0 +1,15 @@
+{
+  "accepted_start_head": "269e7f4d0b7e4e4e367bf860ce2c73b06b4db587",
+  "append_only": true,
+  "branch": "codex/immediate-impulse-outcome-recovery-r1",
+  "evaluation_calculations": 0,
+  "external_access_performed": false,
+  "google_reads": 0,
+  "google_writes": 0,
+  "market_data_calls": 0,
+  "move_type": "OUTCOME_ATTACHMENT_AND_EVALUATION_AUTHORIZATION_PREPARATION",
+  "outcome_attachment": 0,
+  "provider_calls": 0,
+  "repository": "presignal-historical-baseline-r1",
+  "run_id": "PPHB-R1-OUTCOME-AUTHORIZATION-PREPARATION-20260803T090000Z"
+}

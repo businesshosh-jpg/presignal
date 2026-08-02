@@ -1,0 +1,33 @@
+{
+  "anchor_rule": "latest accepted observation at or before release_ts; anchor must be no more than 60 seconds stale",
+  "attachment_route": "local automation/build_presignal_v21_episode_outcomes_v1_1.py -> endpoint_request -> Apps Script apiFetchGovernedHistoricalUsdJpyObservation -> immutable local outcome_rows.jsonl; later evaluation attaches one validated Outcome by episode_id/outcome_id",
+  "canonical_contract": "presignal_event_path_contract_v1_1",
+  "current_move_access": false,
+  "decision": "OUTCOME_AUTHORITY_CONFIRMED",
+  "duplicate_prevention": "unique outcome_id and duplicate reconciliation in build_outcomes; append-only local evidence; no overwrite of frozen forecast evidence",
+  "google_reads_next_move": "3 maximum Apps Script read/invocation calls for first 12-Episode slice, one per required UTC day, before provider-attempt accounting",
+  "google_writes_next_move": 0,
+  "historical_cutoff_rule": "forecast cutoff precedes release and is preserved; Outcomes use release_ts as market anchor authority",
+  "horizon_measurement": "close price at accepted observation at or before target, within 60 seconds; pips=(price-anchor)/0.01 rounded to 2 decimals; direction via direction_for_pips",
+  "horizons_minutes": [
+    5,
+    15,
+    30,
+    60
+  ],
+  "immediate_impulse": "additive supplement only; current one-minute route yields APPROXIMATION_ONLY rather than strict sub-minute support; T through T+120 seconds",
+  "instrument": "USD/JPY",
+  "market_closure_rules": "no explicit closure substitution; missing observations remain unavailable",
+  "market_data_source_authority": "existing Apps Script apiFetchGovernedHistoricalUsdJpyObservation route; provider order tiingo, eodhd, massive, twelvedata; one-minute OHLC, accepted price field close",
+  "missing_tick_rules": "missing or stale anchor/horizon yields UNAVAILABLE/failed attachment; no imputation",
+  "outcome_schema_fields_source": "automation/presignal_v21_event_path_contract_v1_1.py",
+  "pip_conversion": "(horizon_close-anchor_close)/0.01 rounded to 2 decimals",
+  "price_side": "close OHLC field only; bid/ask/midpoint not established",
+  "primary_endpoint": "EPISODE_REACTION_DIRECTION_15M",
+  "release_timestamp_authority": "frozen episode release_ts; UTC",
+  "schema_version": "2.1.1",
+  "supplemental_contract": "presignal_immediate_impulse_outcome_recovery_r1",
+  "supplemental_schema_version": "1.0.0",
+  "supplemental_window_seconds": 120,
+  "timezone": "UTC"
+}

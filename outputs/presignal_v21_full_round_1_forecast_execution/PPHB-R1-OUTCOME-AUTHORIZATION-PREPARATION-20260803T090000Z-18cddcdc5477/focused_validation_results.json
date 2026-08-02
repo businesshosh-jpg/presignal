@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "all_pass": true,
+    "first_slice": true,
+    "frozen_partition": true,
+    "no_execution": true,
+    "pack_counts": true,
+    "pair_partition": true,
+    "recovered_paired": true,
+    "unpaired_ids": true
+  },
+  "external_access": {
+    "evaluation_calculations": 0,
+    "google_reads": 0,
+    "google_writes": 0,
+    "market_data_calls": 0,
+    "outcome_attachment": 0,
+    "provider_calls": 0
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "separation_required": true,
+  "sequence": [
+    {
+      "evaluation": false,
+      "google_reads": "bounded exact first batch only",
+      "google_writes": 0,
+      "market_data_calls": "authorized separately; first slice max 12 provider attempts (3 days x 4 fallback providers)",
+      "move": "OUTCOME_SOURCE_PREFLIGHT_AND_IMMUTABLE_COLLECTION",
+      "order": 1
+    },
+    {
+      "evaluation": false,
+      "google_reads": "exact count from accepted source manifest",
+      "google_writes": "explicit authorization required",
+      "move": "OUTCOME_ATTACHMENT_AND_RECONCILIATION",
+      "order": 2
+    },
+    {
+      "evaluation": true,
+      "external_calls": 0,
+      "google_writes": 0,
+      "move": "MINIMAL_EVALUATION_CALCULATION",
+      "order": 3
+    },
+    {
+      "evaluation": true,
+      "external_calls": 0,
+      "google_writes": 0,
+      "move": "INTERPRETATION_AND_REPORTING",
+      "order": 4
+    }
+  ]
+}
