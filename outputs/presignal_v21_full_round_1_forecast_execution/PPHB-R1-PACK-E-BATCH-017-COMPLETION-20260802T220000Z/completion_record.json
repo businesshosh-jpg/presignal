@@ -1,0 +1,33 @@
+{
+  "run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E017-20260802T220000Z-ff5bddb11f27",
+  "batch_id": "FCB_PACK_E_017",
+  "pack_type": "PACK_E",
+  "manifest_source": "PPHB-R1-FORECAST-FUTURE-NO-SIGNAL-PROMPT-MIGRATION-20260801T130644Z-2bcc88d1ba5e",
+  "authorized_calls": 12,
+  "attempted_provider_calls": 12,
+  "valid_results": 12,
+  "failed_calls": 0,
+  "skipped_calls": 0,
+  "duplicate_dispatches": 0,
+  "provider_model_results": {
+    "OpenAI|gpt-4o-mini-2024-07-18": 5,
+    "Anthropic|claude-haiku-4-5": 5,
+    "Gemini|gemini-2.5-flash-lite": 2
+  },
+  "prompt_version": "presignal_event_path_contract_v1_1_single_pair_validation_no_signal_confidence_explicit_v1",
+  "prompt_fingerprint": "sha256:2515e6c09742e58507efe8d9196ba58473c01f2d5bb9e8b5405405088d323a77",
+  "lease": "ACQUIRED_AND_RELEASED_BY_SINGLE_INVOCATION",
+  "per_call_reservations": "12_CREATED_12_TERMINAL_SUCCEEDED_VALID",
+  "transport_teardown": "PASSED",
+  "provider_authority": "ALL_BATCH_E017_PROVIDER_IDENTITIES_AUTHORITATIVELY_BOUND",
+  "contract": "ALL_BATCH_E017_FORECAST_RESULTS_CONTRACT_VALID",
+  "leakage": "NO_HISTORICAL_LEAKAGE_DETECTED",
+  "path_neutral_pip_range_repeated": false,
+  "cumulative_authoritative_valid_after_batch": 482,
+  "terminal_invalid_completed_calls": 4,
+  "remaining_unexecuted_calls": 78,
+  "google_writes": 0,
+  "outcome_attachment": 0,
+  "forecast_accuracy_calculations": 0,
+  "batch_e018_started": false
+}
