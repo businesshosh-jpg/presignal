@@ -4,14 +4,14 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted execution HEAD for count reconciliation through Batches 021–022: `ae35544b9a4f1a68cb552baab5f4daf12a44ea69`
+- Accepted execution HEAD for Pack A completion through Batch 024: `2fa504573953c2d102a2fcd142741fc3c673e50e`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
 
 ## Completed stages
 
-Attention population and consolidation, Pack lineage repair, Pack A/E construction, forecast planning, Forecast Batches 001–022, Batch 003 closure, and the future-only NO_SIGNAL prompt migration are accepted.
+Attention population and consolidation, Pack lineage repair, Pack A/E construction, forecast planning, Forecast Batches 001–024, Pack A completion, Batch 003 closure, and the future-only NO_SIGNAL prompt migration are accepted.
 
 ## Current counts
 
@@ -41,10 +41,13 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch 020 authoritative valid: `12`
 - Batch 021 authoritative valid: `12`
 - Batch 022 authoritative valid: `12`
-- Cumulative authoritative valid forecasts: `261`
-- Unexecuted calls: `300`
+- Batch 023 authoritative valid: `12`
+- Batch 024 authoritative valid: `6`
+- Cumulative authoritative valid forecasts: `279`
+- Unexecuted calls: `282`
 - Remote-state-unknown calls: `0`
-- Count reconciliation: `264` completed identities = `261` authoritative valid + `3` terminal-invalid; no duplicate or unresolved identities.
+- Count reconciliation: `282` completed identities = `279` authoritative valid + `3` terminal-invalid; no duplicate or unresolved identities.
+- Pack A completion: `282` frozen Pack A calls completed; `282` Pack E calls remain unexecuted.
 
 ## Accepted authoritative runs
 
@@ -71,6 +74,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch 021: `PPHB-R1-FORECAST-EXECUTION-BATCH-021-20260802T034933Z-f8880ff5a60b`
 - Batch 022: `PPHB-R1-FORECAST-EXECUTION-BATCH-022-20260802T035131Z-236d96079840`
 - Round 1 count reconciliation: `PPHB-R1-FORECAST-COUNT-RECONCILIATION-ROUND-1-20260802T040030Z`
+- Pack A completion: `PPHB-R1-PACK-A-COMPLETION-20260802T041525Z`
 
 ## Prompt boundary
 
@@ -91,7 +95,7 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 
 ## Exact next Move
 
-Execute migrated `FCB_PACK_A_023`, reconcile it, then execute migrated `FCB_PACK_A_024`; do not execute Batch 025, Pack E, or any other call outside that bounded pair.
+Prepare the bounded Pack E execution Move beginning with migrated `FCB_PACK_E_001`; do not execute Pack E until its active Move is explicitly authorized.
 
 ## Prohibited reopening
 

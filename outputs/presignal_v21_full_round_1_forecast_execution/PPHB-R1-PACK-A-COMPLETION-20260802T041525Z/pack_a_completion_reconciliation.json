@@ -1,0 +1,71 @@
+{
+  "decision": "PACK_A_EXECUTION_COMPLETE",
+  "governing_plan": "PPHB-R1-FORECAST-EXECUTION-PLAN-20260729T123101Z-14d356fb00c1",
+  "migration_run": "PPHB-R1-FORECAST-FUTURE-NO-SIGNAL-PROMPT-MIGRATION-20260801T130644Z-2bcc88d1ba5e",
+  "batch_runs": {
+    "FCB_PACK_A_023": {
+      "run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-023-20260802T041029Z-c89e6faf23f1",
+      "authorized": 12,
+      "attempted": 12,
+      "valid": 12,
+      "failed": 0,
+      "episodes": 6,
+      "provider_results": {
+        "Anthropic|claude-haiku-4-5": 5,
+        "Gemini|gemini-2.5-flash-lite": 3,
+        "OpenAI|gpt-4o-mini-2024-07-18": 4
+      }
+    },
+    "FCB_PACK_A_024": {
+      "run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-024-20260802T041255Z-b9f413ca2b1b",
+      "authorized": 6,
+      "attempted": 6,
+      "valid": 6,
+      "failed": 0,
+      "episodes": 3,
+      "provider_results": {
+        "Anthropic|claude-haiku-4-5": 2,
+        "Gemini|gemini-2.5-flash-lite": 2,
+        "OpenAI|gpt-4o-mini-2024-07-18": 2
+      }
+    }
+  },
+  "combined_move": {
+    "authorized": 18,
+    "attempted": 18,
+    "valid": 18,
+    "failed": 0,
+    "skipped": 0,
+    "duplicates": 0,
+    "pack_type": "PACK_A",
+    "pack_a_complete": true,
+    "pack_e_calls_executed": 0,
+    "batch_025_calls_executed": 0
+  },
+  "round_1_accounting": {
+    "frozen_calls": 564,
+    "completed_attempted_calls": 282,
+    "authoritative_valid_forecasts": 279,
+    "terminal_invalid_completed_calls": 3,
+    "unexecuted_calls": 282,
+    "remaining_pack_e_calls": 282,
+    "remote_state_unknown_calls": 0,
+    "duplicate_or_unresolved_calls": 0
+  },
+  "manifest_count_reconciliation": {
+    "batch_023_frozen_call_count": 12,
+    "batch_024_frozen_call_count": 6,
+    "actual_combined_frozen_call_count": 18,
+    "prompt_expected_combined_count": 24,
+    "count_difference_is_manifest_conflict": false,
+    "reason": "The authoritative frozen plan and migrated manifest define FCB_PACK_A_024 with 6 calls; no calls were added or substituted to reach 24."
+  },
+  "controls": {
+    "clarified_prompt_version_bound": true,
+    "provider_authority_passed": true,
+    "contract_validation_passed": true,
+    "leakage_control_passed": true,
+    "isolated_transport_teardown_passed": true,
+    "automatic_retries": 0
+  }
+}
