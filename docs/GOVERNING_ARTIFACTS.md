@@ -37,6 +37,7 @@ This index is a compact pointer to current control boundaries. It does not repla
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E013-20260802T180000Z-37fee9870723` plus `PPHB-R1-PACK-E-BATCH-013-COMPLETION-20260802T180000Z` | Pack E Batch 013 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E014-20260802T190000Z-3832b3c57c2e` plus `PPHB-R1-PACK-E-BATCH-014-COMPLETION-20260802T190000Z` | Pack E Batch 014 | 12 authoritative forecasts; no repeated `PATH_NEUTRAL_PIP_RANGE`; exclusive lease and per-call reservations passed | Prohibited |
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E015-20260802T200000Z-608a594e1b8a` plus `PPHB-R1-PACK-E-BATCH-015-COMPLETION-20260802T200000Z` | Pack E Batch 015 | 12 authoritative forecasts; no repeated `PATH_NEUTRAL_PIP_RANGE`; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E016-20260802T210000Z-6fed373a540e` plus `PPHB-R1-PACK-E-BATCH-016-COMPLETION-20260802T210000Z` | Pack E Batch 016 | 12 authoritative forecasts; no repeated `PATH_NEUTRAL_PIP_RANGE`; exclusive lease and per-call reservations passed | Prohibited |
 
 ## AUTHORITATIVE_CURRENT: PROMPT MANIFEST BOUNDARY
 
