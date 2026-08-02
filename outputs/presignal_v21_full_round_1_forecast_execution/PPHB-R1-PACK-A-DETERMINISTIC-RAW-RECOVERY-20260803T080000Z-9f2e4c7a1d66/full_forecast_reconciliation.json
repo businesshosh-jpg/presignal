@@ -1,0 +1,26 @@
+{
+  "authoritative_valid_forecasts": 561,
+  "completed_attempted_calls": 564,
+  "frozen_calls": 564,
+  "pack_a": {
+    "authoritative_valid": 280,
+    "calls": 282,
+    "terminal_invalid": 2
+  },
+  "pack_e": {
+    "calls": 282,
+    "terminal_invalid": 1,
+    "valid": 281
+  },
+  "partition_complete": true,
+  "remote_state_unknown_calls": 0,
+  "source_full_completion": "PPHB-R1-FORECAST-FULL-EXECUTION-COMPLETION-20260803T060000Z",
+  "terminal_invalid_completed_calls": 3,
+  "unexecuted_calls": 0,
+  "unrecovered_terminal_invalid_calls": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_7f0463b134c67757968580e8",
+    "FCL_e07264654e9d3da6f63088a1"
+  ],
+  "unresolved_authoritative_identities": 0
+}

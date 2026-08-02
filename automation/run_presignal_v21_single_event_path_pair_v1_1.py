@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from collections import Counter
@@ -344,6 +345,37 @@ def parse_provider_output(raw_output: Any) -> dict[str, Any]:
     return normalize_provider_output(raw_output)[0]
 
 
+def repair_missing_path_boundary(text: str) -> tuple[str, dict[str, Any]]:
+    """Restore one provable path-object delimiter without changing values."""
+    path_marker = re.search(r'"path"\s*:\s*\[', text)
+    if not path_marker:
+        return text, {"status": "NOT_APPLICABLE", "candidate_count": 0}
+
+    path_text = text[path_marker.end():]
+    boundary = re.compile(
+        r'("invalidation_condition"\s*:\s*"(?:\\.|[^"\\])*")\s*,\s*("horizon_min"\s*:)'
+    )
+    candidates = list(boundary.finditer(path_text))
+    if len(candidates) == 0:
+        return text, {"status": "NO_REPAIR_POSITION", "candidate_count": 0}
+    if len(candidates) != 1:
+        raise Step6Error("PROVIDER_OUTPUT_PATH_BOUNDARY_AMBIGUOUS")
+
+    match = candidates[0]
+    replacement = (
+        match.group(1)
+        + "\n    },\n    {\n      \"horizon_min\":"
+    )
+    repaired_path = path_text[:match.start()] + replacement + path_text[match.end():]
+    return text[:path_marker.end()] + repaired_path, {
+        "status": "REPAIRED_ONE_STRUCTURAL_BOUNDARY",
+        "candidate_count": 1,
+        "match_start": path_marker.end() + match.start(),
+        "match_end": path_marker.end() + match.end(),
+        "transformation": "INSERT_MISSING_PATH_OBJECT_BOUNDARY_BEFORE_SECOND_HORIZON_MIN",
+    }
+
+
 def normalize_provider_output(raw_output: Any) -> tuple[dict[str, Any], dict[str, Any]]:
     parsed_source: Mapping[str, Any] | None
     if isinstance(raw_output, Mapping):
@@ -353,6 +385,7 @@ def normalize_provider_output(raw_output: Any) -> tuple[dict[str, Any], dict[str
         text = raw_output.strip()
         if text.startswith("```") and text.endswith("```"):
             text = text.split("\n", 1)[1].rsplit("```", 1)[0].strip()
+        text, repair_audit = repair_missing_path_boundary(text)
         try:
             result = json.loads(text)
         except json.JSONDecodeError as exc:
@@ -401,6 +434,7 @@ def normalize_provider_output(raw_output: Any) -> tuple[dict[str, Any], dict[str
         "provider_immediate_window_status": provider_window_status,
         "provider_returned_immediate_window_seconds": provider_window_raw if provider_window_present else None,
         "canonical_immediate_window_seconds": contract.IMMEDIATE_IMPULSE_WINDOW_SECONDS_DEFAULT,
+        "path_boundary_repair": repair_audit if isinstance(raw_output, str) else {"status": "NOT_APPLICABLE"},
     }
     result[window_field] = contract.IMMEDIATE_IMPULSE_WINDOW_SECONDS_DEFAULT
     if not isinstance(result["no_signal_flag"], bool) or not isinstance(result["confidence"], (int, float)):

@@ -47,6 +47,7 @@ This index is a compact pointer to current control boundaries. It does not repla
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E023-20260803T050000Z-f4a1f6540e5a` plus `PPHB-R1-PACK-E-BATCH-023-COMPLETION-20260803T050000Z` | Pack E Batch 023 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E024-20260803T060000Z-ee93fecddb2e` plus `PPHB-R1-PACK-E-BATCH-024-COMPLETION-20260803T060000Z` | Pack E Batch 024 | 6 authoritative forecasts; final Pack E batch; exclusive lease and per-call reservations passed | Prohibited |
 | `PPHB-R1-FORECAST-FULL-EXECUTION-COMPLETION-20260803T060000Z` | Full Round 1 forecast execution | 560 authoritative valid forecasts, 4 terminal-invalid calls, 0 unexecuted, 0 unresolved | Prohibited |
+| `PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66` | Pack A `FCL_3d10ae8285471f4e3a980b79` | One existing preserved provider payload recovered by deterministic structural boundary repair; 561 authoritative valid forecasts, 3 unrecovered terminal-invalid calls, 0 unexecuted | Append-only; original terminal evidence remains prohibited | Supersedes the recovered call's terminal-invalid status for current authoritative counting only |
 
 ## AUTHORITATIVE_CURRENT: PROMPT MANIFEST BOUNDARY
 

@@ -1,0 +1,30 @@
+{
+  "cutoff": "2024-06-14T12:20:00Z",
+  "duplicate_result_created": false,
+  "forecast_call_id": "FCL_3d10ae8285471f4e3a980b79",
+  "leakage_control": "PASSED",
+  "original_execution_run": "PPHB-R1-FORECAST-EXECUTION-BATCH-010-20260801T190644Z-17f70b192668",
+  "original_terminal_state": "FAILED_PARSE",
+  "pack_binding": {
+    "batch_id": "FCB_PACK_A_010",
+    "pack_row_fingerprint": "sha256:f68e91e92e903523bd0479f7693bfdfba1d621f1bc3f0c32e843138f3a117ff5",
+    "pack_row_identity": "EP_BATCH_d91ac82d9b8b0b8dd0fd|OpenAI|PACK_A",
+    "pack_type": "PACK_A"
+  },
+  "prompt_binding": {
+    "prompt_instruction_fingerprint": "sha256:2515e6c09742e58507efe8d9196ba58473c01f2d5bb9e8b5405405088d323a77",
+    "prompt_text_fingerprint": "sha256:e7123378d09042b3afd46687b41a24b8471180cb595bc09198c880011a626d2d",
+    "prompt_version": "presignal_event_path_contract_v1_1_single_pair_validation_no_signal_confidence_explicit_v1"
+  },
+  "provider_authority": {
+    "actual_model": "gpt-4o-mini-2024-07-18",
+    "actual_provider": "OpenAI",
+    "authority_passed": true,
+    "forecast_call_id": "FCL_3d10ae8285471f4e3a980b79",
+    "manifest_model": "gpt-4o-mini-2024-07-18",
+    "manifest_provider": "OpenAI",
+    "reason": "MANIFEST_AND_TRANSPORT_MATCH"
+  },
+  "recovered_result_authoritative": true,
+  "selection_reason": "EXISTING_PRESERVED_PROVIDER_PAYLOAD_RECOVERED_BY_DETERMINISTIC_STRUCTURAL_BOUNDARY_REPAIR"
+}

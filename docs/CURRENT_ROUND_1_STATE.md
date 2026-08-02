@@ -26,8 +26,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch 007 authoritative valid: `12`
 - Batch 008 authoritative valid: `12`
 - Batch 009 authoritative valid: `12`
-- Batch 010 authoritative valid: `11`
-- Batch 010 terminal parse-invalid completed calls: `1`
+- Batch 010 authoritative valid: `12` (one deterministic raw-output recovery)
 - Batch 011 authoritative valid: `12`
 - Batch 012 authoritative valid: `12`
 - Batch 013 authoritative valid: `12`
@@ -76,7 +75,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch E022 authoritative valid: `12`
 - Batch E023 authoritative valid: `12`
 - Batch E024 authoritative valid: `6`
-- Cumulative authoritative valid forecasts: `560`
+- Cumulative authoritative valid forecasts: `561`
 - Unexecuted calls: `0`
 - Pack E remaining unexecuted: `0`
 - Pack E Batch 004 duplicate dispatches: `10` preserved as non-authoritative evidence; one authoritative primary result is selected per call by earliest invocation and journal lineage.
@@ -133,6 +132,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Pack E Batch 023: `PPHB-R1-FORECAST-EXECUTION-BATCH-E023-20260803T050000Z-f4a1f6540e5a` plus `PPHB-R1-PACK-E-BATCH-023-COMPLETION-20260803T050000Z`
 - Pack E Batch 024: `PPHB-R1-FORECAST-EXECUTION-BATCH-E024-20260803T060000Z-ee93fecddb2e` plus `PPHB-R1-PACK-E-BATCH-024-COMPLETION-20260803T060000Z`
 - Full forecast execution completion: `PPHB-R1-FORECAST-FULL-EXECUTION-COMPLETION-20260803T060000Z`
+- Pack A deterministic raw recovery: `PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66`
 
 ## Prompt boundary
 
@@ -149,7 +149,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 
 `FCL_e07264654e9d3da6f63088a1` (OpenAI / `gpt-4o-mini-2024-07-18`) is closed as a terminal validation failure in Pack E Batch 012 (`PATH_NEUTRAL_PIP_RANGE`). It is not authoritative and is not automatically retried.
 
-The append-only Pack A terminal-invalid recovery-feasibility review (`PPHB-R1-PACK-A-TERMINAL-INVALID-RECOVERY-FEASIBILITY-REVIEW-20260803T070000Z-385b501cd5dc`) leaves all counts and terminal classifications unchanged. It identifies only `FCL_3d10ae8285471f4e3a980b79` as a candidate for a separate, no-provider-call mechanical parser-recovery Move; `FCL_27720b8b23236b173b96fdee` and `FCL_7f0463b134c67757968580e8` remain non-recoverable from preserved raw output.
+The append-only Pack A terminal-invalid recovery-feasibility review (`PPHB-R1-PACK-A-TERMINAL-INVALID-RECOVERY-FEASIBILITY-REVIEW-20260803T070000Z-385b501cd5dc`) identified `FCL_3d10ae8285471f4e3a980b79` as mechanically recoverable. The accepted no-provider-call recovery (`PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66`) selected it as authoritative without modifying the original terminal evidence. Remaining terminal-invalid calls are `FCL_27720b8b23236b173b96fdee`, `FCL_7f0463b134c67757968580e8`, and `FCL_e07264654e9d3da6f63088a1`.
 
 ## Active scientific boundary
 
@@ -157,7 +157,7 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 
 ## Exact next Move
 
-Forecast execution is complete with four terminal-invalid calls and no unexecuted calls. The next bounded Move is a separately authorized, no-provider-call mechanical recovery assessment for `FCL_3d10ae8285471f4e3a980b79`; do not attach Outcomes or calculate accuracy without explicit authorization.
+Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. The next bounded Move is to prepare an evaluation authorization and evaluation-boundary review; do not attach Outcomes or calculate accuracy without explicit authorization.
 
 ## Prohibited reopening
 

@@ -1,0 +1,13 @@
+{
+  "evaluation": false,
+  "feasibility_run": "PPHB-R1-PACK-A-TERMINAL-INVALID-RECOVERY-FEASIBILITY-REVIEW-20260803T070000Z-385b501cd5dc",
+  "google_access": false,
+  "market_data_access": false,
+  "move_type": "NO_PROVIDER_CALL_DETERMINISTIC_STRUCTURAL_RECOVERY",
+  "outcome_access": false,
+  "provider_calls": 0,
+  "recovery_is_not_retry": true,
+  "run_id": "PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66",
+  "source_execution_run": "PPHB-R1-FORECAST-EXECUTION-BATCH-010-20260801T190644Z-17f70b192668",
+  "target_forecast_call_id": "FCL_3d10ae8285471f4e3a980b79"
+}

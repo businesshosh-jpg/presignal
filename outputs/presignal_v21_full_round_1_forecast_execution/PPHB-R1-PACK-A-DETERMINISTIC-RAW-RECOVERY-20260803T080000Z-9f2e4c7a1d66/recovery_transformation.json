@@ -1,0 +1,34 @@
+{
+  "forecast_call_id": "FCL_3d10ae8285471f4e3a980b79",
+  "original_raw_output_hash": "sha256:1f6c333ccb4489eb1f634d90a2b6ee8de7c42277066ef3568cced8e11e007860",
+  "original_terminal_decision": {
+    "episode_id": "EP_BATCH_d91ac82d9b8b0b8dd0fd",
+    "forecast_call_id": "FCL_3d10ae8285471f4e3a980b79",
+    "model": "gpt-4o-mini-2024-07-18",
+    "pack_type": "PACK_A",
+    "provider": "OpenAI",
+    "reason": "PROVIDER_OUTPUT_PATH_COUNT",
+    "terminal_state": "FAILED_PARSE"
+  },
+  "raw_output_modified": false,
+  "recovery_rule_version": "PACK_A_PATH_BOUNDARY_REPAIR_V1",
+  "repaired_raw_representation_hash": "sha256:142487ec9cad381f7e268c2afb20ad16045f15e7cb92e3e42f835b23821b946d",
+  "semantic_value_comparison": {
+    "original_and_repaired_normalized_values_equal": true,
+    "original_horizon_tokens": 4,
+    "repaired_horizon_tokens": 4,
+    "repaired_horizons": [
+      5,
+      15,
+      30,
+      60
+    ]
+  },
+  "transformation": {
+    "candidate_count": 1,
+    "match_end": 1943,
+    "match_start": 1855,
+    "status": "REPAIRED_ONE_STRUCTURAL_BOUNDARY",
+    "transformation": "INSERT_MISSING_PATH_OBJECT_BOUNDARY_BEFORE_SECOND_HORIZON_MIN"
+  }
+}
