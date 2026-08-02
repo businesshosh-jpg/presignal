@@ -1,0 +1,59 @@
+{
+  "reconciliation_scope": "Frozen forecast calls through FCB_PACK_A_022",
+  "governing_plan": "PPHB-R1-FORECAST-EXECUTION-PLAN-20260729T123101Z-14d356fb00c1",
+  "source_execution_runs": [
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-001-20260729T125433Z-aed8c6eb2bf8",
+    "PPHB-R1-FORECAST-GOVERNANCE-RECOVERY-BATCH-002-20260729T155711Z-d5eb5c6e23c3",
+    "PPHB-R1-FORECAST-PROVIDER-ERROR-REPLACEMENT-BATCH-002-2026-07-29T16:16:00Z-1e0d63b7c4c5",
+    "PPHB-R1-FORECAST-FINAL-RESULT-DIAGNOSIS-BATCH-003-20260729T234944Z-a65de810bf75",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-004-20260801T141015Z-fb41ad870499",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-005-20260801T144920Z-9e071fe86e0a",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-006-20260801T152316Z-7bf4abe983dc",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-007-20260801T154757Z-c8b6730975c1",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-008-20260801T174224Z-118a5dce57f7",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-009-20260801T183009Z-524657addc89",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-010-20260801T190644Z-17f70b192668",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-011-20260802T013600Z-631806fd5a13",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-012-20260802T015930Z-25a39df38d2a",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-013-20260802T021128Z-0f9208a65341",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-014-20260802T021408Z-07912d764a29",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-015-20260802T022853Z-c001192e3bc5",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-016-20260802T023211Z-2c80e4639857",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-017-20260802T023936Z-9df19389ba37",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-018-20260802T030159Z-af842700cdbb",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-019-20260802T032048Z-c96db4e0af35",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-020-20260802T032353Z-e3a0dc63fd8f",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-021-20260802T034933Z-f8880ff5a60b",
+    "PPHB-R1-FORECAST-EXECUTION-BATCH-022-20260802T035131Z-236d96079840"
+  ],
+  "counts": {
+    "total_frozen_calls": 564,
+    "completed_attempted_calls": 264,
+    "authoritative_valid_forecasts": 261,
+    "terminal_invalid_completed_calls": 3,
+    "unexecuted_calls": 300,
+    "remote_state_unknown_calls": 0,
+    "duplicate_or_unresolved_calls": 0
+  },
+  "terminal_invalid_call_ids": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_3d10ae8285471f4e3a980b79",
+    "FCL_7f0463b134c67757968580e8"
+  ],
+  "identity_partition_check": {
+    "completed_equals_valid_plus_terminal_invalid": true,
+    "frozen_equals_completed_plus_unexecuted": true,
+    "every_completed_frozen_identity_has_exactly_one_final_category": true,
+    "unresolved_identity_conflict": false
+  },
+  "discrepancy": {
+    "reported_valid_count": 249,
+    "correct_valid_count": 261,
+    "difference": 12,
+    "source": "Documentation-only carry-forward omission: the Batch 017 state update retained the pre-Batch-017 cumulative value 189 instead of 201; later state updates incremented from that stale value.",
+    "execution_artifacts_modified": false,
+    "call_classifications_modified": false
+  },
+  "decision": "ROUND_1_FORECAST_COUNTS_RECONCILED",
+  "next_move_decision": "READY_FOR_PACK_A_BATCHES_023_024"
+}
