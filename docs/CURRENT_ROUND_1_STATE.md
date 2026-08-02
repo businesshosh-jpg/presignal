@@ -149,13 +149,15 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 
 `FCL_e07264654e9d3da6f63088a1` (OpenAI / `gpt-4o-mini-2024-07-18`) is closed as a terminal validation failure in Pack E Batch 012 (`PATH_NEUTRAL_PIP_RANGE`). It is not authoritative and is not automatically retried.
 
+The append-only Pack A terminal-invalid recovery-feasibility review (`PPHB-R1-PACK-A-TERMINAL-INVALID-RECOVERY-FEASIBILITY-REVIEW-20260803T070000Z-385b501cd5dc`) leaves all counts and terminal classifications unchanged. It identifies only `FCL_3d10ae8285471f4e3a980b79` as a candidate for a separate, no-provider-call mechanical parser-recovery Move; `FCL_27720b8b23236b173b96fdee` and `FCL_7f0463b134c67757968580e8` remain non-recoverable from preserved raw output.
+
 ## Active scientific boundary
 
 Pack A and Pack E remain separate. Provider/model lineage remains frozen. No provider weighting, ranking, consensus, winner selection, Outcome attachment, accuracy calculation, market-data access, matrix update, or Google write is authorized by this state file.
 
 ## Exact next Move
 
-Forecast execution is complete with four terminal-invalid calls and no unexecuted calls. The next bounded Move is to prepare an evaluation authorization and evaluation-boundary review; do not attach Outcomes or calculate accuracy without explicit authorization.
+Forecast execution is complete with four terminal-invalid calls and no unexecuted calls. The next bounded Move is a separately authorized, no-provider-call mechanical recovery assessment for `FCL_3d10ae8285471f4e3a980b79`; do not attach Outcomes or calculate accuracy without explicit authorization.
 
 ## Prohibited reopening
 

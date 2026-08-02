@@ -1,0 +1,26 @@
+{
+  "run_id": "PPHB-R1-PACK-A-TERMINAL-INVALID-RECOVERY-FEASIBILITY-REVIEW-20260803T070000Z-385b501cd5dc",
+  "move_type": "PACK_A_TERMINAL_INVALID_DETERMINISTIC_RECOVERY_REVIEW",
+  "created_at": "2026-08-03T07:00:00Z",
+  "repository": "presignal-historical-baseline-r1",
+  "branch": "codex/immediate-impulse-outcome-recovery-r1",
+  "start_head": "e286d3cb993436b8a814aa49ca8d552c1594d8f2",
+  "scope": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_3d10ae8285471f4e3a980b79",
+    "FCL_7f0463b134c67757968580e8"
+  ],
+  "excluded_call_ids": [
+    "FCL_e07264654e9d3da6f63088a1"
+  ],
+  "authorizations": {
+    "provider_calls": false,
+    "google_access": false,
+    "market_data_access": false,
+    "outcome_attachment": false,
+    "evaluation": false,
+    "forecast_replacement": false,
+    "terminal_classification_change": false
+  },
+  "result": "REVIEW_COMPLETE_APPEND_ONLY"
+}

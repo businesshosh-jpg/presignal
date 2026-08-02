@@ -63,6 +63,8 @@ Transport repair, unknown-state resolution, final existence verification, provid
 
 Existing attention, population, lineage, and reconciliation audits that are not listed above remain diagnostic evidence. They may explain prior decisions but do not supersede the accepted current boundary.
 
+`PPHB-R1-PACK-A-TERMINAL-INVALID-RECOVERY-FEASIBILITY-REVIEW-20260803T070000Z-385b501cd5dc` is diagnostic-only append-only evidence for the three Pack A terminal-invalid calls. It does not alter terminal classifications, authoritative counts, or the full-execution completion boundary; it identifies one separately authorized mechanical-recovery candidate only.
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

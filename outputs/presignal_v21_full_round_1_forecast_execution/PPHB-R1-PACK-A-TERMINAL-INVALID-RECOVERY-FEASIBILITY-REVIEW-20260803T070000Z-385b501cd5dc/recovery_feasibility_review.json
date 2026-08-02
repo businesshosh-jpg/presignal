@@ -1,0 +1,132 @@
+{
+  "review_decision": "ONE_MECHANICAL_RECOVERY_CANDIDATE_REQUIRES_SEPARATE_AUTHORIZED_REPAIR_MOVE",
+  "scope_exactly_three_pack_a_terminal_invalid_calls": true,
+  "existing_terminal_records_preserved": true,
+  "authoritative_counts_unchanged": {
+    "frozen_forecast_call_identities": 564,
+    "authoritative_valid_forecasts": 560,
+    "terminal_invalid_completed_calls": 4,
+    "unexecuted_calls": 0,
+    "remote_state_unknown_calls": 0
+  },
+  "contract": {
+    "identity": "presignal_event_path_contract_v1_1",
+    "required_non_no_signal_path_horizons": [5, 15, 30, 60],
+    "required_path_stage_fields": [
+      "horizon_min",
+      "expected_direction",
+      "expected_pips_min",
+      "expected_pips_max",
+      "stage_confidence",
+      "continuation_probability",
+      "reversal_probability",
+      "stage_reason",
+      "invalidation_condition"
+    ],
+    "confidence_rule": "numeric int or float in [0,1], including NO_SIGNAL"
+  },
+  "calls": [
+    {
+      "forecast_call_id": "FCL_27720b8b23236b173b96fdee",
+      "classification": "NOT_RECOVERABLE_FROM_PRESERVED_RAW_OUTPUT",
+      "identity": {
+        "batch_id": "FCB_PACK_A_003",
+        "episode_id": "EP_BATCH_8a51e1bb638289aeb7df",
+        "pack_type": "PACK_A",
+        "provider": "Anthropic",
+        "model": "claude-haiku-4-5",
+        "prompt_version": "presignal_event_path_contract_v1_1_single_pair_validation",
+        "prompt_text_fingerprint": "sha256:2f09a384bdc8ea0d9dcd112faaf615c253b89e96ddf88fb92a442026f37f7a6c"
+      },
+      "evidence_references": [
+        "PPHB-R1-FORECAST-EXECUTION-BATCH-003-20260729T163858Z-0da0530d54c3/{operation_journal.jsonl,raw_provider_outputs.jsonl,forecast_parse_results.jsonl,failed_call_ledger.jsonl}",
+        "PPHB-R1-FORECAST-GOVERNANCE-RECOVERY-BATCH-003-20260729T175456Z-786b31e16d49/{operation_journal.jsonl,raw_provider_outputs.jsonl,forecast_parse_results.jsonl,failed_call_ledger.jsonl}",
+        "PPHB-R1-FORECAST-BATCH-003-CLOSURE-AND-FUTURE-NO-SIGNAL-CLARIFICATION-20260801T103016Z-d79d82f56823/{attempt_comparison.json,terminal_schema_failure_record.json,stop_retry_rationale.json}"
+      ],
+      "raw_output_sha256": [
+        "sha256:d57059624c09b0f2f1ce324e8dce2e0f24db1e4c0e204c6fcc3be65c34ec6648",
+        "sha256:1e56238de2ca9d8118799a419e76810d6e8c2f0ee19a7c71bd17cf19d7f539b5"
+      ],
+      "field_comparison": {
+        "no_signal_flag": {"required": "boolean", "observed": [true, true]},
+        "confidence": {"required": "numeric int or float in [0,1]", "observed": [null, null], "result": "required semantic value absent"},
+        "path": {"required_for_NO_SIGNAL": "empty", "observed": [[], []]}
+      },
+      "terminal_evidence": "Two provider-authority-passed executions both failed PROVIDER_OUTPUT_TYPES because confidence was null.",
+      "recovery_reason": "No numeric confidence exists anywhere in either preserved raw response. Supplying one would invent a scientific value.",
+      "proposed_rule": null,
+      "safe_repair": false
+    },
+    {
+      "forecast_call_id": "FCL_3d10ae8285471f4e3a980b79",
+      "classification": "DETERMINISTICALLY_RECOVERABLE_FROM_PRESERVED_RAW_OUTPUT",
+      "identity": {
+        "batch_id": "FCB_PACK_A_010",
+        "episode_id": "EP_BATCH_d91ac82d9b8b0b8dd0fd",
+        "pack_type": "PACK_A",
+        "provider": "OpenAI",
+        "model": "gpt-4o-mini-2024-07-18",
+        "prompt_version": "presignal_event_path_contract_v1_1_single_pair_validation_no_signal_confidence_explicit_v1",
+        "prompt_text_fingerprint": "sha256:e7123378d09042b3afd46687b41a24b8471180cb595bc09198c880011a626d2d"
+      },
+      "evidence_references": [
+        "PPHB-R1-FORECAST-EXECUTION-BATCH-010-20260801T190644Z-17f70b192668/{batch_call_manifest.jsonl,operation_journal.jsonl,raw_provider_outputs.jsonl,raw_transport_results.jsonl,provider_authority_results.jsonl,forecast_parse_results.jsonl,failed_call_ledger.jsonl}"
+      ],
+      "raw_output_sha256": "sha256:1f6c333ccb4489eb1f634d90a2b6ee8de7c42277066ef3568cced8e11e007860",
+      "field_comparison": {
+        "raw_structure": "The third path stage contains all 30-minute fields and is immediately followed by a second horizon_min=60 marker without the object boundary '}, {'.",
+        "required_horizons": {"required": [5, 15, 30, 60], "explicitly_present": [5, 15, 30, 60]},
+        "required_stage_fields": {"result": "All nine fields are explicitly present for each of the four intended stages."},
+        "original_parse_reason": "PROVIDER_OUTPUT_PATH_COUNT"
+      },
+      "proposed_general_rule": "Within a path array, when a complete stage is followed by a second horizon_min key before its closing boundary, restore the missing '}, {' boundary and reparse without adding, deleting, renaming, or altering field values.",
+      "unambiguity_proof": [
+        "The only duplicate stage-start key is horizon_min, the contract's required first stage field.",
+        "The preceding 30-minute stage contains its complete required field set.",
+        "The following 60-minute field set is complete and its horizon is the sole missing required horizon.",
+        "The recovered structure strictly validates with ordered horizons [5, 15, 30, 60]."
+      ],
+      "other_preserved_output_impact": "A bounded scan of all preserved raw_provider_outputs.jsonl files found this malformed-boundary pattern exactly once: this call.",
+      "safe_repair": true,
+      "required_follow_up_tests": [
+        "Malformed duplicate horizon_min boundary repairs to exactly four contract horizons.",
+        "No field values change between raw fragments and recovered structure.",
+        "Malformed structures without a complete preceding stage fail closed.",
+        "Recovered output still requires exact provider authority and full strict validation.",
+        "No other preserved raw output is changed or selected."
+      ]
+    },
+    {
+      "forecast_call_id": "FCL_7f0463b134c67757968580e8",
+      "classification": "NOT_RECOVERABLE_FROM_PRESERVED_RAW_OUTPUT",
+      "identity": {
+        "batch_id": "FCB_PACK_A_015",
+        "episode_id": "EP_BATCH_55166f262d069c0e7828",
+        "pack_type": "PACK_A",
+        "provider": "OpenAI",
+        "model": "gpt-4o-mini-2024-07-18",
+        "prompt_version": "presignal_event_path_contract_v1_1_single_pair_validation_no_signal_confidence_explicit_v1",
+        "prompt_text_fingerprint": "sha256:5933548e161c5db182e2324da05a4dc7d2abef5c0f2cf481f94ea08dc3a481a5"
+      },
+      "evidence_references": [
+        "PPHB-R1-FORECAST-EXECUTION-BATCH-015-20260802T022853Z-c001192e3bc5/{batch_call_manifest.jsonl,operation_journal.jsonl,raw_provider_outputs.jsonl,raw_transport_results.jsonl,provider_authority_results.jsonl,forecast_parse_results.jsonl,failed_call_ledger.jsonl}"
+      ],
+      "raw_output_sha256": "sha256:5f17c3fc5a2c1438f91b98e82be195245220d65d0f26b09f04a02f93b7888c92",
+      "field_comparison": {
+        "required_horizons": {"required": [5, 15, 30, 60], "observed": [5, 15, 30, 60]},
+        "missing_stage_fields": {"field": "invalidation_condition", "missing_from_horizons": [5, 15, 30, 60]},
+        "top_level_invalidation_condition": "present but not a stage-level value",
+        "original_parse_reason": "PROVIDER_OUTPUT_PATH_FIELDS"
+      },
+      "recovery_reason": "Assigning the one top-level invalidation condition to four distinct path stages would create four semantic stage values not explicitly supplied by the provider.",
+      "proposed_rule": null,
+      "safe_repair": false
+    }
+  ],
+  "general_parser_defect": {
+    "exists": true,
+    "scope": "One malformed path-object boundary in FCL_3d10ae8285471f4e3a980b79 only.",
+    "not_a_general_relaxation": "The proposed rule is schema-driven structural normalization and continues to reject missing semantic fields. It does not resolve FCL_27720b8b23236b173b96fdee or FCL_7f0463b134c67757968580e8."
+  },
+  "next_move_recommendation": "Authorize a separate, no-provider-call mechanical recovery Move for FCL_3d10ae8285471f4e3a980b79 only. Preserve all prior records, add the parser rule with focused tests, re-run authority and strict validation from the preserved raw output, and fail closed if any identity or content comparison differs. Keep FCL_27720b8b23236b173b96fdee and FCL_7f0463b134c67757968580e8 terminal-invalid absent separate exceptional authorization."
+}
