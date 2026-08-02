@@ -38,6 +38,15 @@ This index is a compact pointer to current control boundaries. It does not repla
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E014-20260802T190000Z-3832b3c57c2e` plus `PPHB-R1-PACK-E-BATCH-014-COMPLETION-20260802T190000Z` | Pack E Batch 014 | 12 authoritative forecasts; no repeated `PATH_NEUTRAL_PIP_RANGE`; exclusive lease and per-call reservations passed | Prohibited |
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E015-20260802T200000Z-608a594e1b8a` plus `PPHB-R1-PACK-E-BATCH-015-COMPLETION-20260802T200000Z` | Pack E Batch 015 | 12 authoritative forecasts; no repeated `PATH_NEUTRAL_PIP_RANGE`; exclusive lease and per-call reservations passed | Prohibited |
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E016-20260802T210000Z-6fed373a540e` plus `PPHB-R1-PACK-E-BATCH-016-COMPLETION-20260802T210000Z` | Pack E Batch 016 | 12 authoritative forecasts; no repeated `PATH_NEUTRAL_PIP_RANGE`; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E017-20260802T220000Z-ff5bddb11f27` plus `PPHB-R1-PACK-E-BATCH-017-COMPLETION-20260802T220000Z` | Pack E Batch 017 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E018-20260803T000000Z-2c26ea2c6c7a` plus `PPHB-R1-PACK-E-BATCH-018-COMPLETION-20260803T000000Z` | Pack E Batch 018 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E019-20260803T010000Z-be38f0bf21d5` plus `PPHB-R1-PACK-E-BATCH-019-COMPLETION-20260803T010000Z` | Pack E Batch 019 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E020-20260803T020000Z-33aed58c6dad` plus `PPHB-R1-PACK-E-BATCH-020-COMPLETION-20260803T020000Z` | Pack E Batch 020 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E021-20260803T030000Z-effa2248ccfd` plus `PPHB-R1-PACK-E-BATCH-021-COMPLETION-20260803T030000Z` | Pack E Batch 021 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E022-20260803T040000Z-e2f51b4a7768` plus `PPHB-R1-PACK-E-BATCH-022-COMPLETION-20260803T040000Z` | Pack E Batch 022 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E023-20260803T050000Z-f4a1f6540e5a` plus `PPHB-R1-PACK-E-BATCH-023-COMPLETION-20260803T050000Z` | Pack E Batch 023 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E024-20260803T060000Z-ee93fecddb2e` plus `PPHB-R1-PACK-E-BATCH-024-COMPLETION-20260803T060000Z` | Pack E Batch 024 | 6 authoritative forecasts; final Pack E batch; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-FULL-EXECUTION-COMPLETION-20260803T060000Z` | Full Round 1 forecast execution | 560 authoritative valid forecasts, 4 terminal-invalid calls, 0 unexecuted, 0 unresolved | Prohibited |
 
 ## AUTHORITATIVE_CURRENT: PROMPT MANIFEST BOUNDARY
 

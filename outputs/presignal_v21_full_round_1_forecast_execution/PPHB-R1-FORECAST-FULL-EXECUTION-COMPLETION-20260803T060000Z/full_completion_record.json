@@ -1,0 +1,45 @@
+{
+  "completion_id": "PPHB-R1-FORECAST-FULL-EXECUTION-COMPLETION-20260803T060000Z",
+  "final_batch_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E024-20260803T060000Z-ee93fecddb2e",
+  "forecast_plan": "PPHB-R1-FORECAST-EXECUTION-PLAN-20260729T123101Z-14d356fb00c1",
+  "frozen_forecast_calls": 564,
+  "completed_attempted_calls": 564,
+  "authoritative_valid_forecasts": 560,
+  "terminal_invalid_completed_calls": 4,
+  "unexecuted_calls": 0,
+  "remote_state_unknown_calls": 0,
+  "duplicate_authoritative_results": 0,
+  "unresolved_authority_or_identity_calls": 0,
+  "pack_a": {
+    "frozen_calls": 282,
+    "authoritative_valid": 279,
+    "terminal_invalid": 3,
+    "unexecuted": 0,
+    "execution_complete": true
+  },
+  "pack_e": {
+    "frozen_calls": 282,
+    "authoritative_valid": 281,
+    "terminal_invalid": 1,
+    "unexecuted": 0,
+    "execution_complete": true
+  },
+  "terminal_invalid_call_ids": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_3d10ae8285471f4e3a980b79",
+    "FCL_7f0463b134c67757968580e8",
+    "FCL_e07264654e9d3da6f63088a1"
+  ],
+  "terminal_invalid_reasons": {
+    "FCL_27720b8b23236b173b96fdee": "TERMINAL_PROVIDER_SCHEMA_NONCOMPLIANCE",
+    "FCL_3d10ae8285471f4e3a980b79": "FAILED_PARSE_PROVIDER_OUTPUT_PATH_COUNT",
+    "FCL_7f0463b134c67757968580e8": "FAILED_PARSE_PROVIDER_OUTPUT_PATH_FIELDS",
+    "FCL_e07264654e9d3da6f63088a1": "FAILED_VALIDATION_PATH_NEUTRAL_PIP_RANGE"
+  },
+  "evaluation_started": false,
+  "outcome_attachment": 0,
+  "google_writes": 0,
+  "market_data_calls": 0,
+  "forecast_accuracy_calculations": 0,
+  "full_forecast_execution_status": "COMPLETE_WITH_FOUR_TERMINAL_INVALID_CALLS"
+}

@@ -1,0 +1,18 @@
+{
+  "total_frozen_calls": 564,
+  "pack_a": {"calls": 282, "valid": 279, "terminal_invalid": 3},
+  "pack_e": {"calls": 282, "valid": 281, "terminal_invalid": 1},
+  "partition_sum": 564,
+  "valid_plus_terminal_invalid": 564,
+  "unexecuted": 0,
+  "remote_state_unknown": 0,
+  "duplicate_authoritative": 0,
+  "unresolved": 0,
+  "terminal_invalid_ids": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_3d10ae8285471f4e3a980b79",
+    "FCL_7f0463b134c67757968580e8",
+    "FCL_e07264654e9d3da6f63088a1"
+  ],
+  "partition_decision": "ALL_FROZEN_CALL_IDENTITIES_IN_EXACTLY_ONE_AUTHORITATIVE_TERMINAL_CATEGORY"
+}

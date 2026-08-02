@@ -1,0 +1,29 @@
+{
+  "run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E024-20260803T060000Z-ee93fecddb2e",
+  "batch_id": "FCB_PACK_E_024",
+  "pack_type": "PACK_E",
+  "manifest_source": "PPHB-R1-FORECAST-FUTURE-NO-SIGNAL-PROMPT-MIGRATION-20260801T130644Z-2bcc88d1ba5e",
+  "manifest_count": 6,
+  "authorized_calls": 6,
+  "attempted_provider_calls": 6,
+  "valid_results": 6,
+  "failed_calls": 0,
+  "skipped_calls": 0,
+  "duplicate_dispatches": 0,
+  "provider_model_results": {
+    "OpenAI|gpt-4o-mini-2024-07-18": 2,
+    "Anthropic|claude-haiku-4-5": 2,
+    "Gemini|gemini-2.5-flash-lite": 2
+  },
+  "prompt_version": "presignal_event_path_contract_v1_1_single_pair_validation_no_signal_confidence_explicit_v1",
+  "prompt_fingerprint": "sha256:2515e6c09742e58507efe8d9196ba58473c01f2d5bb9e8b5405405088d323a77",
+  "lease": "ACQUIRED_AND_RELEASED_BY_SINGLE_INVOCATION",
+  "per_call_reservations": "6_CREATED_6_TERMINAL_SUCCEEDED_VALID",
+  "transport_teardown": "PASSED",
+  "provider_authority": "ALL_BATCH_E024_PROVIDER_IDENTITIES_AUTHORITATIVELY_BOUND",
+  "contract": "ALL_BATCH_E024_FORECAST_RESULTS_CONTRACT_VALID",
+  "leakage": "NO_HISTORICAL_LEAKAGE_DETECTED",
+  "transport_manifest_agreements": 6,
+  "transport_manifest_conflicts": 0,
+  "batch_e025_started": false
+}

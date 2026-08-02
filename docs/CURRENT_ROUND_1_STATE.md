@@ -75,9 +75,10 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch E021 authoritative valid: `12`
 - Batch E022 authoritative valid: `12`
 - Batch E023 authoritative valid: `12`
-- Cumulative authoritative valid forecasts: `554`
-- Unexecuted calls: `6`
-- Pack E remaining unexecuted: `6`
+- Batch E024 authoritative valid: `6`
+- Cumulative authoritative valid forecasts: `560`
+- Unexecuted calls: `0`
+- Pack E remaining unexecuted: `0`
 - Pack E Batch 004 duplicate dispatches: `10` preserved as non-authoritative evidence; one authoritative primary result is selected per call by earliest invocation and journal lineage.
 
 ## Accepted authoritative runs
@@ -130,6 +131,8 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Pack E Batch 021: `PPHB-R1-FORECAST-EXECUTION-BATCH-E021-20260803T030000Z-effa2248ccfd` plus `PPHB-R1-PACK-E-BATCH-021-COMPLETION-20260803T030000Z`
 - Pack E Batch 022: `PPHB-R1-FORECAST-EXECUTION-BATCH-E022-20260803T040000Z-e2f51b4a7768` plus `PPHB-R1-PACK-E-BATCH-022-COMPLETION-20260803T040000Z`
 - Pack E Batch 023: `PPHB-R1-FORECAST-EXECUTION-BATCH-E023-20260803T050000Z-f4a1f6540e5a` plus `PPHB-R1-PACK-E-BATCH-023-COMPLETION-20260803T050000Z`
+- Pack E Batch 024: `PPHB-R1-FORECAST-EXECUTION-BATCH-E024-20260803T060000Z-ee93fecddb2e` plus `PPHB-R1-PACK-E-BATCH-024-COMPLETION-20260803T060000Z`
+- Full forecast execution completion: `PPHB-R1-FORECAST-FULL-EXECUTION-COMPLETION-20260803T060000Z`
 
 ## Prompt boundary
 
@@ -152,7 +155,7 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 
 ## Exact next Move
 
-Execute migrated `FCB_PACK_E_024` only, using the accepted migration run as its manifest source and the exclusive execution lease. Do not execute Pack A or any other call in that Move.
+Forecast execution is complete with four terminal-invalid calls and no unexecuted calls. The next bounded Move is to prepare an evaluation authorization and evaluation-boundary review; do not attach Outcomes or calculate accuracy without explicit authorization.
 
 ## Prohibited reopening
 
