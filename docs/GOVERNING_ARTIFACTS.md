@@ -33,6 +33,8 @@ This index is a compact pointer to current control boundaries. It does not repla
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E009-20260802T140000Z-1e4a7d294347` plus `PPHB-R1-PACK-E-BATCH-009-COMPLETION-20260802T140000Z` | Pack E Batch 009 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E010-20260802T150000Z-bc603415a4a9` plus `PPHB-R1-PACK-E-BATCH-010-COMPLETION-20260802T150000Z` | Pack E Batch 010 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E011-20260802T160000Z-d6d2d156b163` plus `PPHB-R1-PACK-E-BATCH-011-COMPLETION-20260802T160000Z` | Pack E Batch 011 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E012-20260802T170000Z-8b4849fc4dd0` plus `PPHB-R1-PACK-E-BATCH-012-COMPLETION-20260802T170000Z` | Pack E Batch 012 | 11 authoritative forecasts; one terminal validation failure (`FCL_e07264654e9d3da6f63088a1`); exclusive lease and reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E013-20260802T180000Z-37fee9870723` plus `PPHB-R1-PACK-E-BATCH-013-COMPLETION-20260802T180000Z` | Pack E Batch 013 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
 
 ## AUTHORITATIVE_CURRENT: PROMPT MANIFEST BOUNDARY
 

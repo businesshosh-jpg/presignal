@@ -62,9 +62,12 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch E009 authoritative valid: `12`
 - Batch E010 authoritative valid: `12`
 - Batch E011 authoritative valid: `12`
-- Cumulative authoritative valid forecasts: `411`
-- Unexecuted calls: `150`
-- Pack E remaining unexecuted: `150`
+- Batch E012 authoritative valid: `11`
+- Batch E012 terminal validation-invalid completed calls: `1`
+- Batch E013 authoritative valid: `12`
+- Cumulative authoritative valid forecasts: `434`
+- Unexecuted calls: `126`
+- Pack E remaining unexecuted: `126`
 - Pack E Batch 004 duplicate dispatches: `10` preserved as non-authoritative evidence; one authoritative primary result is selected per call by earliest invocation and journal lineage.
 
 ## Accepted authoritative runs
@@ -105,6 +108,8 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Pack E Batch 009: `PPHB-R1-FORECAST-EXECUTION-BATCH-E009-20260802T140000Z-1e4a7d294347`
 - Pack E Batch 010: `PPHB-R1-FORECAST-EXECUTION-BATCH-E010-20260802T150000Z-bc603415a4a9`
 - Pack E Batch 011: `PPHB-R1-FORECAST-EXECUTION-BATCH-E011-20260802T160000Z-d6d2d156b163`
+- Pack E Batch 012: `PPHB-R1-FORECAST-EXECUTION-BATCH-E012-20260802T170000Z-8b4849fc4dd0`
+- Pack E Batch 013: `PPHB-R1-FORECAST-EXECUTION-BATCH-E013-20260802T180000Z-37fee9870723`
 
 ## Prompt boundary
 
@@ -119,13 +124,15 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 
 `FCL_3d10ae8285471f4e3a980b79` (OpenAI / `gpt-4o-mini-2024-07-18`) is closed as a terminal parse failure in Batch 010 (`PROVIDER_OUTPUT_PATH_COUNT`). It is not authoritative and is not automatically retried.
 
+`FCL_e07264654e9d3da6f63088a1` (OpenAI / `gpt-4o-mini-2024-07-18`) is closed as a terminal validation failure in Pack E Batch 012 (`PATH_NEUTRAL_PIP_RANGE`). It is not authoritative and is not automatically retried.
+
 ## Active scientific boundary
 
 Pack A and Pack E remain separate. Provider/model lineage remains frozen. No provider weighting, ranking, consensus, winner selection, Outcome attachment, accuracy calculation, market-data access, matrix update, or Google write is authorized by this state file.
 
 ## Exact next Move
 
-Execute migrated `FCB_PACK_E_012` only, using the accepted migration run as its manifest source and the exclusive execution lease. Do not execute Pack E Batch 013, Pack A, or any other call in that Move.
+Execute migrated `FCB_PACK_E_014` only, using the accepted migration run as its manifest source and the exclusive execution lease. Do not execute Pack E Batch 015, Pack A, or any other call in that Move.
 
 ## Prohibited reopening
 
