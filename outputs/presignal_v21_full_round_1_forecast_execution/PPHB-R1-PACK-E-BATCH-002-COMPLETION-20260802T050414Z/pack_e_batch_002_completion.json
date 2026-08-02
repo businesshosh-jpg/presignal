@@ -1,0 +1,43 @@
+{
+  "decision": "PACK_E_BATCH_002_COMPLETE",
+  "run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E002-20260802T050414Z-77268ca7fa33",
+  "frozen_batch_id": "FCB_PACK_E_002",
+  "pack_type": "PACK_E",
+  "migration_run": "PPHB-R1-FORECAST-FUTURE-NO-SIGNAL-PROMPT-MIGRATION-20260801T130644Z-2bcc88d1ba5e",
+  "prompt_version": "presignal_event_path_contract_v1_1_single_pair_validation_no_signal_confidence_explicit_v1",
+  "prompt_fingerprint": "sha256:2515e6c09742e58507efe8d9196ba58473c01f2d5bb9e8b5405405088d323a77",
+  "counts": {
+    "manifest_calls": 12,
+    "authorized": 12,
+    "attempted": 12,
+    "valid": 12,
+    "failed": 0,
+    "skipped": 0,
+    "duplicates": 0,
+    "episodes_represented": 7
+  },
+  "provider_results": {
+    "Anthropic|claude-haiku-4-5": 4,
+    "Gemini|gemini-2.5-flash-lite": 5,
+    "OpenAI|gpt-4o-mini-2024-07-18": 3
+  },
+  "controls": {
+    "pack_e_lineage_passed": true,
+    "pack_a_substitution": false,
+    "manifest_transport_agreements": 12,
+    "manifest_transport_conflicts": 0,
+    "provider_authority_passed": true,
+    "contract_validation_passed": true,
+    "historical_leakage_detected": false,
+    "raw_output_preserved_before_parse": true,
+    "transport_teardown_passed": true,
+    "automatic_retries": 0,
+    "batch_e_003_calls_executed": 0
+  },
+  "round_1_accounting": {
+    "cumulative_authoritative_valid_forecasts": 303,
+    "terminal_invalid_completed_calls": 3,
+    "remaining_unexecuted_calls": 258,
+    "remaining_pack_e_calls": 258
+  }
+}
