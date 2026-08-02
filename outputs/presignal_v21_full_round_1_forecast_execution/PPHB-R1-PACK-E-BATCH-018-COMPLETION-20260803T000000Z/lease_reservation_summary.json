@@ -1,0 +1,12 @@
+{
+  "batch_id": "FCB_PACK_E_018",
+  "invocation_id": "INV_e1633b8e7dc04ba0a54d33ec8d8a2455",
+  "lease_state": "ACQUIRED_AND_RELEASED",
+  "lease_history_events": ["LEASE_ACQUIRED", "LEASE_RELEASED"],
+  "call_reservations_created": 12,
+  "call_reservations_terminal_succeeded_valid": 12,
+  "call_reservations_remote_state_unknown": 0,
+  "duplicate_reservations": 0,
+  "provider_transport_created_before_reservation": false,
+  "batch_e019_started": false
+}
