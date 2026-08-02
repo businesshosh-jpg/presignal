@@ -167,6 +167,15 @@ def append_jsonl(path: Path, row: Mapping[str, Any]) -> None:
 
 def build_batch_config(*, user_batch_label: str, frozen_batch_id: str) -> dict[str, str]:
     number = batch_number_from_user_label(user_batch_label)
+    if number.startswith("E") and number[1:].isdigit():
+        next_number = int(number[1:]) + 1
+        return {
+            "user_batch_label": user_batch_label,
+            "frozen_batch_id": frozen_batch_id,
+            "run_id_prefix": f"PPHB-R1-FORECAST-EXECUTION-BATCH-{number}-",
+            "run_manifest_key": f"batch_e{next_number:03d}_calls_executed",
+            "forbidden_next_batch_id": f"FCB_PACK_E_{next_number:03d}",
+        }
     return {
         "user_batch_label": user_batch_label,
         "frozen_batch_id": frozen_batch_id,

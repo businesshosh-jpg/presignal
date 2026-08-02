@@ -4,14 +4,14 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted execution HEAD for Pack A completion through Batch 024: `2fa504573953c2d102a2fcd142741fc3c673e50e`
+- Accepted execution HEAD for Pack E Batch 001: `b6c0d3ba45352d6389b4e7fafc31bdcdf501baab`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
 
 ## Completed stages
 
-Attention population and consolidation, Pack lineage repair, Pack A/E construction, forecast planning, Forecast Batches 001–024, Pack A completion, Batch 003 closure, and the future-only NO_SIGNAL prompt migration are accepted.
+Attention population and consolidation, Pack lineage repair, Pack A/E construction, forecast planning, Forecast Batches 001–024, Pack A completion, Pack E Batch 001, Batch 003 closure, and the future-only NO_SIGNAL prompt migration are accepted.
 
 ## Current counts
 
@@ -48,6 +48,10 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Remote-state-unknown calls: `0`
 - Count reconciliation: `282` completed identities = `279` authoritative valid + `3` terminal-invalid; no duplicate or unresolved identities.
 - Pack A completion: `282` frozen Pack A calls completed; `282` Pack E calls remain unexecuted.
+- Batch E001 authoritative valid: `12`
+- Cumulative authoritative valid forecasts: `291`
+- Unexecuted calls: `270`
+- Pack E remaining unexecuted: `270`
 
 ## Accepted authoritative runs
 
@@ -75,6 +79,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch 022: `PPHB-R1-FORECAST-EXECUTION-BATCH-022-20260802T035131Z-236d96079840`
 - Round 1 count reconciliation: `PPHB-R1-FORECAST-COUNT-RECONCILIATION-ROUND-1-20260802T040030Z`
 - Pack A completion: `PPHB-R1-PACK-A-COMPLETION-20260802T041525Z`
+- Pack E Batch 001: `PPHB-R1-PACK-E-BATCH-001-COMPLETION-20260802T043229Z`
 
 ## Prompt boundary
 
@@ -95,7 +100,7 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 
 ## Exact next Move
 
-Prepare the bounded Pack E execution Move beginning with migrated `FCB_PACK_E_001`; do not execute Pack E until its active Move is explicitly authorized.
+Execute migrated `FCB_PACK_E_002` only, using the accepted migration run as its manifest source. Do not execute Pack E Batch 003, Pack A, or any other call in that Move.
 
 ## Prohibited reopening
 

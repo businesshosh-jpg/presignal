@@ -78,6 +78,15 @@ def valid_raw_output() -> dict[str, object]:
 
 
 class ForecastBatch001Test(unittest.TestCase):
+    def test_pack_e_batch_config_preserves_pack_e_next_batch_guard(self) -> None:
+        config = batch001.build_batch_config(
+            user_batch_label="FORECAST_BATCH_E001",
+            frozen_batch_id="FCB_PACK_E_001",
+        )
+        self.assertEqual(config["run_id_prefix"], "PPHB-R1-FORECAST-EXECUTION-BATCH-E001-")
+        self.assertEqual(config["run_manifest_key"], "batch_e002_calls_executed")
+        self.assertEqual(config["forbidden_next_batch_id"], "FCB_PACK_E_002")
+
     def test_only_first_frozen_batch_is_authorized(self) -> None:
         bundle = batch001.verified_batch_bundle()
         self.assertEqual(bundle["user_batch_label"], "FORECAST_BATCH_001")
