@@ -27,6 +27,8 @@ This index is a compact pointer to current control boundaries. It does not repla
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E003-20260802T063000Z-835fb6815b1b` | Pack E Batch 003 | 12 authoritative forecasts | Prohibited |
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E004-20260802T064500Z-52aeb71b27a4` plus `PPHB-R1-PACK-E-BATCH-004-DUPLICATE-DISPATCH-RECONCILIATION-20260802T090000Z` | Pack E Batch 004 | 12 authoritative forecasts selected by earliest invocation/journal lineage; 10 duplicate dispatches remain non-authoritative | Prohibited |
 | `PPHB-R1-FORECAST-EXECUTION-BATCH-E005-20260802T100000Z-dc63e52db568` plus `PPHB-R1-PACK-E-BATCH-005-COMPLETION-20260802T100000Z` | Pack E Batch 005 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E006-20260802T110000Z-400d053f8fb9` plus `PPHB-R1-PACK-E-BATCH-006-COMPLETION-20260802T110000Z` | Pack E Batch 006 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
+| `PPHB-R1-FORECAST-EXECUTION-BATCH-E007-20260802T120000Z-d209ab2c1065` plus `PPHB-R1-PACK-E-BATCH-007-COMPLETION-20260802T120000Z` | Pack E Batch 007 | 12 authoritative forecasts; exclusive lease and per-call reservations passed | Prohibited |
 
 ## AUTHORITATIVE_CURRENT: PROMPT MANIFEST BOUNDARY
 

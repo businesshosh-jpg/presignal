@@ -56,9 +56,11 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch E003 authoritative valid: `12`
 - Batch E004 authoritative valid: `12`
 - Batch E005 authoritative valid: `12`
-- Cumulative authoritative valid forecasts: `339`
-- Unexecuted calls: `222`
-- Pack E remaining unexecuted: `222`
+- Batch E006 authoritative valid: `12`
+- Batch E007 authoritative valid: `12`
+- Cumulative authoritative valid forecasts: `363`
+- Unexecuted calls: `198`
+- Pack E remaining unexecuted: `198`
 - Pack E Batch 004 duplicate dispatches: `10` preserved as non-authoritative evidence; one authoritative primary result is selected per call by earliest invocation and journal lineage.
 
 ## Accepted authoritative runs
@@ -93,6 +95,8 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Pack E Batch 004 primary execution: `PPHB-R1-FORECAST-EXECUTION-BATCH-E004-20260802T064500Z-52aeb71b27a4`
 - Pack E Batch 004 duplicate-dispatch reconciliation: `PPHB-R1-PACK-E-BATCH-004-DUPLICATE-DISPATCH-RECONCILIATION-20260802T090000Z`
 - Pack E Batch 005: `PPHB-R1-FORECAST-EXECUTION-BATCH-E005-20260802T100000Z-dc63e52db568`
+- Pack E Batch 006: `PPHB-R1-FORECAST-EXECUTION-BATCH-E006-20260802T110000Z-400d053f8fb9`
+- Pack E Batch 007: `PPHB-R1-FORECAST-EXECUTION-BATCH-E007-20260802T120000Z-d209ab2c1065`
 
 ## Prompt boundary
 
@@ -113,7 +117,7 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 
 ## Exact next Move
 
-Execute migrated `FCB_PACK_E_006` only, using the accepted migration run as its manifest source and the exclusive execution lease. Do not execute Pack E Batch 007, Pack A, or any other call in that Move.
+Execute migrated `FCB_PACK_E_008` only, using the accepted migration run as its manifest source and the exclusive execution lease. Do not execute Pack E Batch 009, Pack A, or any other call in that Move.
 
 ## Prohibited reopening
 
