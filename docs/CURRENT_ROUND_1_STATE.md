@@ -4,14 +4,14 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted execution HEAD for Batches 019–020: `95ac95247a46afec870e7b6e3b2189dfd3b17233`
+- Accepted execution HEAD for Batches 021–022: `764d47a2e0396980d4f94661e70de2291a175fa6`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
 
 ## Completed stages
 
-Attention population and consolidation, Pack lineage repair, Pack A/E construction, forecast planning, Forecast Batches 001–020, Batch 003 closure, and the future-only NO_SIGNAL prompt migration are accepted.
+Attention population and consolidation, Pack lineage repair, Pack A/E construction, forecast planning, Forecast Batches 001–022, Batch 003 closure, and the future-only NO_SIGNAL prompt migration are accepted.
 
 ## Current counts
 
@@ -39,8 +39,10 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch 018 authoritative valid: `12`
 - Batch 019 authoritative valid: `12`
 - Batch 020 authoritative valid: `12`
-- Cumulative authoritative valid forecasts: `225`
-- Unexecuted calls: `324`
+- Batch 021 authoritative valid: `12`
+- Batch 022 authoritative valid: `12`
+- Cumulative authoritative valid forecasts: `249`
+- Unexecuted calls: `300`
 - Remote-state-unknown calls: `0`
 
 ## Accepted authoritative runs
@@ -65,6 +67,8 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch 018: `PPHB-R1-FORECAST-EXECUTION-BATCH-018-20260802T030159Z-af842700cdbb`
 - Batch 019: `PPHB-R1-FORECAST-EXECUTION-BATCH-019-20260802T032048Z-c96db4e0af35`
 - Batch 020: `PPHB-R1-FORECAST-EXECUTION-BATCH-020-20260802T032353Z-e3a0dc63fd8f`
+- Batch 021: `PPHB-R1-FORECAST-EXECUTION-BATCH-021-20260802T034933Z-f8880ff5a60b`
+- Batch 022: `PPHB-R1-FORECAST-EXECUTION-BATCH-022-20260802T035131Z-236d96079840`
 
 ## Prompt boundary
 
@@ -85,7 +89,7 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 
 ## Exact next Move
 
-Execute migrated `FCB_PACK_A_021` only, using the accepted migration run as its manifest source. Do not execute Batch 022, Pack E, or any other call in that Move.
+Execute migrated `FCB_PACK_A_023` only, using the accepted migration run as its manifest source. Do not execute Batch 024, Pack E, or any other call in that Move.
 
 ## Prohibited reopening
 
