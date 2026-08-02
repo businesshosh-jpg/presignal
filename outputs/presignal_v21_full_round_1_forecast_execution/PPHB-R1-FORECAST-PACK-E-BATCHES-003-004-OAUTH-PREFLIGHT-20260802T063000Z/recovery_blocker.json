@@ -1,0 +1,31 @@
+{
+  "status": "PACK_E_BATCHES_003_004_BLOCKED_AFTER_PARTIAL_E003",
+  "e003_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E003-20260802T063000Z-835fb6815b1b",
+  "e004_run_id": null,
+  "authorized_batches": ["FCB_PACK_E_003", "FCB_PACK_E_004"],
+  "e003": {
+    "authorized_calls": 12,
+    "attempted_provider_calls_observed": 2,
+    "terminal_valid_results_persisted": 1,
+    "started_without_terminal_state": ["FCL_dd7392fe27724b290635a1c5"],
+    "completed_batch_reconciliation": false
+  },
+  "e004": {
+    "provider_dispatch_started": false,
+    "run_created": false
+  },
+  "oauth_preflight": "PASSED",
+  "provider_dispatches_in_prior_blocked_e003_attempt": 0,
+  "automatic_retries": 0,
+  "remote_state_unknown_call_must_not_be_resent": true,
+  "google_writes": 0,
+  "pack_a_calls": 0,
+  "outcome_attachment": 0,
+  "forecast_accuracy_calculations": 0,
+  "next_action": "GOVERNANCE_REVIEW_REQUIRED_FOR_INCOMPLETE_E003_CALL_BEFORE_ANY_RESUME",
+  "scientific_state_accepted_counts_unchanged": {
+    "authoritative_valid": 303,
+    "terminal_invalid": 3,
+    "unexecuted": 258
+  }
+}

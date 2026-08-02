@@ -1,0 +1,24 @@
+{
+  "batch_id": "FCB_PACK_E_003",
+  "run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E003-20260802T063000Z-835fb6815b1b",
+  "status": "ACCEPTED_BATCH_RECONCILIATION",
+  "pack_type": "PACK_E",
+  "authorized_calls": 12,
+  "attempted_provider_calls": 12,
+  "valid_results": 12,
+  "failed_calls": 0,
+  "skipped_calls": 0,
+  "duplicate_successful_calls": 0,
+  "provider_model_results": {
+    "Anthropic|claude-haiku-4-5": 5,
+    "Gemini|gemini-2.5-flash-lite": 4,
+    "OpenAI|gpt-4o-mini-2024-07-18": 3
+  },
+  "prompt_migration": "PPHB-R1-FORECAST-FUTURE-NO-SIGNAL-PROMPT-MIGRATION-20260801T130644Z-2bcc88d1ba5e",
+  "transport_teardown": "PASSED",
+  "provider_authority": "ALL_BATCH_E003_PROVIDER_IDENTITIES_AUTHORITATIVELY_BOUND",
+  "contract": "ALL_BATCH_E003_FORECAST_RESULTS_CONTRACT_VALID",
+  "leakage": "NO_HISTORICAL_LEAKAGE_DETECTED",
+  "google_writes": 0,
+  "provider_dispatches_in_prior_blocked_attempt": 0
+}

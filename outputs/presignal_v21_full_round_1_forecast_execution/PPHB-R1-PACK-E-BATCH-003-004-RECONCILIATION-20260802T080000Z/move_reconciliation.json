@@ -1,0 +1,27 @@
+{
+  "status": "PACK_E_BATCHES_003_004_GOVERNANCE_BLOCKED",
+  "oauth_route": "EXISTING_ROUTE_PREFLIGHT_PASSED",
+  "e003": {
+    "run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E003-20260802T063000Z-835fb6815b1b",
+    "valid_results": 12
+  },
+  "e004": {
+    "primary_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E004-20260802T064500Z-52aeb71b27a4",
+    "overlapping_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E004-20260802T072000Z-61237dc88e7d",
+    "duplicate_provider_dispatches": 10,
+    "authoritative_result_selection": "DEFERRED"
+  },
+  "accepted_scientific_counts_before_move": {
+    "authoritative_valid": 303,
+    "terminal_invalid": 3,
+    "unexecuted": 258
+  },
+  "counts_not_advanced": true,
+  "automatic_retries": 0,
+  "batch_e005_started": false,
+  "pack_a_started": false,
+  "outcome_attachment": 0,
+  "forecast_accuracy_calculations": 0,
+  "google_writes": 0,
+  "recommended_next_move": "Governance reconciliation of duplicate E004 execution lineage before accepting any E004 result."
+}

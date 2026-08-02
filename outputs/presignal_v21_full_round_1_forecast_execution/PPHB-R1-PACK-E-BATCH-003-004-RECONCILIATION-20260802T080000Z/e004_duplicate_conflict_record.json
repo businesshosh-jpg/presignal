@@ -1,0 +1,41 @@
+{
+  "batch_id": "FCB_PACK_E_004",
+  "primary_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E004-20260802T064500Z-52aeb71b27a4",
+  "overlapping_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E004-20260802T072000Z-61237dc88e7d",
+  "status": "DUPLICATE_EXECUTION_RECONCILIATION_REQUIRED",
+  "primary_run": {
+    "authorized_calls": 12,
+    "attempted_provider_calls": 12,
+    "valid_results": 12,
+    "failed_calls": 0,
+    "skipped_calls": 0
+  },
+  "overlapping_run": {
+    "authorized_manifest_calls": 12,
+    "provider_calls_started": 10,
+    "skipped_already_succeeded": 2,
+    "valid_results": 8,
+    "failed_validation": 2,
+    "failed_call_ids": [
+      "FCL_616df9af2ae454cd46fac22a",
+      "FCL_02c997b37b7e3f54e8187d93"
+    ]
+  },
+  "duplicate_provider_dispatch_call_ids": [
+    "FCL_616df9af2ae454cd46fac22a",
+    "FCL_19a5c9da1758f073e21a27c0",
+    "FCL_652c40276b6e2ba6bf77f441",
+    "FCL_ec6bd97258fef5a0c240d69e",
+    "FCL_02c997b37b7e3f54e8187d93",
+    "FCL_55cd8246f7f0d724cd12cefc",
+    "FCL_5b9421ae66bb25ce24786957",
+    "FCL_4b3e1f5223e3dca7698db626",
+    "FCL_c9f1a0fd9e86e8f7a8231c51",
+    "FCL_bc2f6612c7f66c0f70b90223"
+  ],
+  "authoritative_selection": "NOT_SELECTED_PENDING_GOVERNANCE_RECONCILIATION",
+  "selection_rule": "Preserve both execution records; do not select by forecast quality or validation outcome.",
+  "provider_calls_after_conflict": 0,
+  "google_writes": 0,
+  "batch_e005_started": false
+}

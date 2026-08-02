@@ -1,0 +1,23 @@
+{
+  "evidence_type": "NON_SECRET_GOOGLE_OAUTH_PREFLIGHT",
+  "status": "PASSED",
+  "refresh_route": {
+    "token_path_external": true,
+    "authentication_method": "existing_external_token",
+    "refresh_lock_used": true,
+    "ipv4_google_api_transport": true,
+    "credential_values_recorded": false
+  },
+  "scope_verification_result": "PASSED",
+  "read_only_preflight_result": "PASSED",
+  "resource_identity_result": {
+    "spreadsheet_id": "1_gZGnd6h3VzdiBvGBHRSxn78KW8tsOi2UEc6Y_Sc23Q",
+    "spreadsheet_title": "auto_eeresults_predictions",
+    "script_id": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9",
+    "script_file_count": 44
+  },
+  "google_writes": 0,
+  "prior_failure_assessment": "TRANSIENT_REFRESH_TRANSPORT_INTERRUPTION",
+  "code_or_configuration_changed": false,
+  "provider_dispatch_authorized_after_preflight": true
+}
