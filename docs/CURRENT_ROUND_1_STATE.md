@@ -4,7 +4,7 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted execution HEAD for Pack E Batch 002: `e21a3bd6cfff8eab0e036f5747c5b2f2d926317d`
+- Pack E Batches 003-004 execution start HEAD: `b10234967f815a3c0b85f8a3d64f37878be5afc4`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
@@ -53,9 +53,12 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Unexecuted calls: `270`
 - Pack E remaining unexecuted: `270`
 - Batch E002 authoritative valid: `12`
-- Cumulative authoritative valid forecasts: `303`
-- Unexecuted calls: `258`
-- Pack E remaining unexecuted: `258`
+- Batch E003 authoritative valid: `12`
+- Batch E004 authoritative valid: `12`
+- Cumulative authoritative valid forecasts: `327`
+- Unexecuted calls: `234`
+- Pack E remaining unexecuted: `234`
+- Pack E Batch 004 duplicate dispatches: `10` preserved as non-authoritative evidence; one authoritative primary result is selected per call by earliest invocation and journal lineage.
 
 ## Accepted authoritative runs
 
@@ -85,6 +88,9 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Pack A completion: `PPHB-R1-PACK-A-COMPLETION-20260802T041525Z`
 - Pack E Batch 001: `PPHB-R1-PACK-E-BATCH-001-COMPLETION-20260802T043229Z`
 - Pack E Batch 002: `PPHB-R1-PACK-E-BATCH-002-COMPLETION-20260802T050414Z`
+- Pack E Batch 003: `PPHB-R1-FORECAST-EXECUTION-BATCH-E003-20260802T063000Z-835fb6815b1b`
+- Pack E Batch 004 primary execution: `PPHB-R1-FORECAST-EXECUTION-BATCH-E004-20260802T064500Z-52aeb71b27a4`
+- Pack E Batch 004 duplicate-dispatch reconciliation: `PPHB-R1-PACK-E-BATCH-004-DUPLICATE-DISPATCH-RECONCILIATION-20260802T090000Z`
 
 ## Prompt boundary
 
@@ -105,7 +111,7 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 
 ## Exact next Move
 
-Execute migrated `FCB_PACK_E_003` only, using the accepted migration run as its manifest source. Do not execute Pack E Batch 004, Pack A, or any other call in that Move.
+Execute migrated `FCB_PACK_E_005` only, using the accepted migration run as its manifest source and the exclusive execution lease. Do not execute Pack E Batch 006, Pack A, or any other call in that Move.
 
 ## Prohibited reopening
 

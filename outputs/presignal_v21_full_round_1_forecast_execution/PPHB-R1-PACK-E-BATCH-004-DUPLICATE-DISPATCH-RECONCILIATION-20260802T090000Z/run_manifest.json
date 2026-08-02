@@ -1,0 +1,9 @@
+{
+  "run_id": "PPHB-R1-PACK-E-BATCH-004-DUPLICATE-DISPATCH-RECONCILIATION-20260802T090000Z",
+  "scope": "FCB_PACK_E_003 and FCB_PACK_E_004 append-only authority reconciliation and execution guard repair",
+  "provider_calls_executed": 0,
+  "google_writes_executed": 0,
+  "outcome_attachment_executed": 0,
+  "forecast_accuracy_calculations_executed": 0,
+  "batch_e005_calls_executed": 0
+}

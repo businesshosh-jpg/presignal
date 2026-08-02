@@ -1,0 +1,11 @@
+{
+  "root_cause": "The executor checked only normalized results already persisted on disk. It had no exclusive batch lease and no durable call reservation before constructing a provider transport.",
+  "failure_sequence": [
+    "Primary E004 invocation began and persisted normalized results incrementally.",
+    "Overlapping E004 invocation scanned the output root only once per call.",
+    "The overlapping invocation skipped two results that were already normalized but dispatched ten calls whose primary results had not yet persisted.",
+    "No atomic reservation or active-owner lock prevented either transport creation or provider dispatch."
+  ],
+  "scope_of_repair": "existing forecast executor only",
+  "unrelated_systems_changed": false
+}

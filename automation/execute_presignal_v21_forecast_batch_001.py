@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
+import socket
 import subprocess
 import sys
+import uuid
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -66,6 +69,139 @@ SCRIPT_HTTP_TIMEOUT_SECONDS = 300
 
 class ForecastBatchError(RuntimeError):
     """Batch 001 cannot proceed under the frozen execution contract."""
+
+
+class BatchExecutionLease:
+    """Serialize one batch and preserve per-call dispatch intent across restarts."""
+
+    def __init__(self, output_root: Path, frozen_batch_id: str) -> None:
+        self.output_root = output_root
+        self.frozen_batch_id = frozen_batch_id
+        self.control_root = output_root / ".forecast_execution_control" / frozen_batch_id
+        self.lease_path = self.control_root / "active_lease.json"
+        self.history_path = self.control_root / "lease_history.jsonl"
+        self.reservation_history_path = self.control_root / "call_reservation_history.jsonl"
+        self.invocation_id = "INV_" + uuid.uuid4().hex
+        self.handle: Any | None = None
+
+    def _append_history(self, path: Path, event: str, **values: Any) -> None:
+        append_jsonl(
+            path,
+            {
+                "event": event,
+                "frozen_batch_id": self.frozen_batch_id,
+                "invocation_id": self.invocation_id,
+                "timestamp": now(),
+                **values,
+            },
+        )
+
+    def acquire(self) -> None:
+        self.control_root.mkdir(parents=True, exist_ok=True)
+        self.handle = self.lease_path.open("a+")
+        try:
+            fcntl.flock(self.handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            self.handle.close()
+            self.handle = None
+            raise ForecastBatchError("BATCH_EXECUTION_LEASE_ACTIVE:" + self.frozen_batch_id) from exc
+        metadata = {
+            "frozen_batch_id": self.frozen_batch_id,
+            "invocation_id": self.invocation_id,
+            "owner_pid": os.getpid(),
+            "owner_hostname": socket.gethostname(),
+            "acquired_at": now(),
+        }
+        self.handle.seek(0)
+        self.handle.truncate()
+        self.handle.write(json.dumps(metadata, sort_keys=True) + "\n")
+        self.handle.flush()
+        os.fsync(self.handle.fileno())
+        self._append_history(self.history_path, "LEASE_ACQUIRED", **metadata)
+
+    def release(self) -> None:
+        if self.handle is None:
+            return
+        self._append_history(self.history_path, "LEASE_RELEASED")
+        fcntl.flock(self.handle.fileno(), fcntl.LOCK_UN)
+        self.handle.close()
+        self.handle = None
+
+    def __enter__(self) -> "BatchExecutionLease":
+        self.acquire()
+        return self
+
+    def __exit__(self, _exc_type: Any, _exc: Any, _traceback: Any) -> None:
+        self.release()
+
+    def _reservation_path(self, call_id: str) -> Path:
+        return self.control_root / "call_reservations" / (call_id + ".json")
+
+    def reserve_call(self, call_id: str, run_id: str) -> dict[str, Any]:
+        """Atomically reserve a call before client creation or provider dispatch."""
+        path = self._reservation_path(call_id)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        record = {
+            "forecast_call_id": call_id,
+            "frozen_batch_id": self.frozen_batch_id,
+            "invocation_id": self.invocation_id,
+            "run_id": run_id,
+            "state": "INTENT_RECORDED",
+            "reserved_at": now(),
+        }
+        try:
+            descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        except FileExistsError:
+            existing = read_json(path)
+            state = str(existing.get("state") or "")
+            if state == "INTENT_RECORDED":
+                # The batch lease is held by this process. The prior owner exited
+                # before dispatch began, so reclaiming cannot duplicate a request.
+                record["reclaimed_from_invocation_id"] = existing.get("invocation_id")
+                record["reclaim_reason"] = "STALE_PRE_DISPATCH_INTENT"
+                write_json(path, record)
+                self._append_history(
+                    self.reservation_history_path,
+                    "CALL_RESERVATION_RECLAIMED",
+                    forecast_call_id=call_id,
+                    prior_state=state,
+                    prior_invocation_id=existing.get("invocation_id"),
+                )
+                return record
+            if state == "SUCCEEDED_VALID":
+                raise ForecastBatchError("CALL_RESERVATION_ALREADY_VALID:" + call_id)
+            raise ForecastBatchError("CALL_RESERVATION_REMOTE_STATE_UNKNOWN:" + call_id + ":" + state)
+        with os.fdopen(descriptor, "w") as handle:
+            handle.write(json.dumps(record, sort_keys=True) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        self._append_history(self.reservation_history_path, "CALL_RESERVED", forecast_call_id=call_id)
+        return record
+
+    def mark_dispatch_started(self, call_id: str) -> None:
+        path = self._reservation_path(call_id)
+        record = read_json(path)
+        if record.get("invocation_id") != self.invocation_id or record.get("state") != "INTENT_RECORDED":
+            raise ForecastBatchError("CALL_RESERVATION_OWNERSHIP_CONFLICT:" + call_id)
+        record["state"] = "DISPATCH_STARTED"
+        record["dispatch_started_at"] = now()
+        write_json(path, record)
+        self._append_history(self.reservation_history_path, "DISPATCH_STARTED", forecast_call_id=call_id)
+
+    def mark_terminal(self, call_id: str, terminal_state: str) -> None:
+        path = self._reservation_path(call_id)
+        record = read_json(path)
+        if record.get("invocation_id") != self.invocation_id:
+            raise ForecastBatchError("CALL_RESERVATION_OWNERSHIP_CONFLICT:" + call_id)
+        record["state"] = terminal_state
+        record["terminal_at"] = now()
+        write_json(path, record)
+        self._append_history(
+            self.reservation_history_path,
+            "CALL_TERMINAL_PERSISTED",
+            forecast_call_id=call_id,
+            terminal_state=terminal_state,
+        )
 
 
 def batch_number_from_user_label(user_batch_label: str) -> str:
@@ -565,7 +701,7 @@ def initialize_run(
             path.write_text("")
 
 
-def execute_batch(
+def _execute_batch_owned(
     *,
     output_root: Path = OUTPUT_ROOT,
     fixed_timestamp: str | None = None,
@@ -577,6 +713,7 @@ def execute_batch(
     expected_start_head: str = EXPECTED_START_HEAD,
     script_service_factory_override: tuple[Callable[[], Any], str] | None = None,
     migration_run_dir: Path | None = None,
+    lease: BatchExecutionLease,
 ) -> dict[str, Any]:
     branch = git_branch()
     head = git_head()
@@ -602,7 +739,6 @@ def execute_batch(
     run_dir = materialize_run(output_root, bundle["batch_config"], fixed_timestamp=fixed_timestamp)
     initialize_run(run_dir, bundle, repo_state, auth_result)
 
-    validated_call_ids = load_validated_call_ids(output_root)
     script_service_factory: Callable[[], Any]
     script_id = None
     if script_service_factory_override is not None:
@@ -624,7 +760,7 @@ def execute_batch(
         if not leakage["passed"]:
             raise ForecastBatchError("HISTORICAL_LEAKAGE_DETECTED:" + call_id)
 
-        if call_id in validated_call_ids:
+        if call_id in load_validated_call_ids(output_root):
             skipped = {
                 "forecast_call_id": call_id,
                 "episode_id": call["episode_id"],
@@ -638,6 +774,17 @@ def execute_batch(
             append_jsonl(run_dir / "operation_journal.jsonl", {"event": "SKIPPED_ALREADY_SUCCEEDED", **skipped})
             call_results.append(skipped)
             continue
+
+        reservation = lease.reserve_call(call_id, run_dir.name)
+        append_jsonl(
+            run_dir / "operation_journal.jsonl",
+            {
+                "event": "CALL_RESERVATION_ACQUIRED",
+                "forecast_call_id": call_id,
+                "invocation_id": lease.invocation_id,
+                "reservation_state": reservation["state"],
+            },
+        )
 
         append_jsonl(
             run_dir / "operation_journal.jsonl",
@@ -662,6 +809,7 @@ def execute_batch(
 
         arm = "BASELINE" if call["pack_type"] == "PACK_A" else "FULL_CONTEXT"
         payload = step6.bridge_payload(pack_payload, prompt_row["prompt_text"], run_id=run_dir.name, arm=arm)
+        lease.mark_dispatch_started(call_id)
         script_service = script_service_factory()
         transport_before = google_clients.describe_google_service_transport(script_service)
         try:
@@ -744,6 +892,7 @@ def execute_batch(
             }
             append_jsonl(run_dir / "failed_call_ledger.jsonl", failed_row)
             append_jsonl(run_dir / "operation_journal.jsonl", {"event": terminal_state, **failed_row})
+            lease.mark_terminal(call_id, terminal_state)
             call_results.append(failed_row)
             continue
 
@@ -761,6 +910,7 @@ def execute_batch(
             append_jsonl(run_dir / "provider_authority_results.jsonl", provider_authority_result(call, transport_result))
             append_jsonl(run_dir / "failed_call_ledger.jsonl", failed_row)
             append_jsonl(run_dir / "operation_journal.jsonl", {"event": "FAILED_PROVIDER", **failed_row})
+            lease.mark_terminal(call_id, "FAILED_PROVIDER")
             call_results.append(failed_row)
             continue
 
@@ -776,6 +926,7 @@ def execute_batch(
             }
             append_jsonl(run_dir / "failed_call_ledger.jsonl", failed_row)
             append_jsonl(run_dir / "operation_journal.jsonl", {"event": "FAILED_PROVIDER", **failed_row})
+            lease.mark_terminal(call_id, "FAILED_PROVIDER")
             call_results.append(failed_row)
             continue
 
@@ -793,6 +944,7 @@ def execute_batch(
             }
             append_jsonl(run_dir / "failed_call_ledger.jsonl", failed_row)
             append_jsonl(run_dir / "operation_journal.jsonl", {"event": "FAILED_PROVIDER_AUTHORITY", **failed_row})
+            lease.mark_terminal(call_id, "FAILED_PROVIDER_AUTHORITY")
             call_results.append(failed_row)
             continue
 
@@ -830,6 +982,7 @@ def execute_batch(
             )
             append_jsonl(run_dir / "failed_call_ledger.jsonl", failed_row)
             append_jsonl(run_dir / "operation_journal.jsonl", {"event": "FAILED_PARSE", **failed_row})
+            lease.mark_terminal(call_id, "FAILED_PARSE")
             call_results.append(failed_row)
             continue
 
@@ -876,6 +1029,7 @@ def execute_batch(
                     "pack_type": call["pack_type"],
                 },
             )
+            lease.mark_terminal(call_id, "SUCCEEDED_VALID")
             call_results.append(
                 {
                     "forecast_call_id": call_id,
@@ -908,6 +1062,7 @@ def execute_batch(
             )
             append_jsonl(run_dir / "failed_call_ledger.jsonl", failed_row)
             append_jsonl(run_dir / "operation_journal.jsonl", {"event": "FAILED_VALIDATION", **failed_row})
+            lease.mark_terminal(call_id, "FAILED_VALIDATION")
             call_results.append(failed_row)
 
     terminal_counts = summarize_terminal_counts(call_results)
@@ -1001,6 +1156,36 @@ def execute_batch(
         "reconciliation": reconciliation,
         "decision": decision,
     }
+
+
+def execute_batch(
+    *,
+    output_root: Path = OUTPUT_ROOT,
+    fixed_timestamp: str | None = None,
+    enforce_head: bool = True,
+    user_batch_label: str = USER_BATCH_LABEL,
+    frozen_batch_id: str = FROZEN_BATCH_ID,
+    auth_preflight: Callable[[], Mapping[str, Any]] = verify_google_preflight,
+    dispatch: Callable[[Any, str, Mapping[str, Any]], Mapping[str, Any]] = default_dispatch,
+    expected_start_head: str = EXPECTED_START_HEAD,
+    script_service_factory_override: tuple[Callable[[], Any], str] | None = None,
+    migration_run_dir: Path | None = None,
+) -> dict[str, Any]:
+    """Execute one batch while holding its exclusive lease for the full invocation."""
+    with BatchExecutionLease(output_root, frozen_batch_id) as lease:
+        return _execute_batch_owned(
+            output_root=output_root,
+            fixed_timestamp=fixed_timestamp,
+            enforce_head=enforce_head,
+            user_batch_label=user_batch_label,
+            frozen_batch_id=frozen_batch_id,
+            auth_preflight=auth_preflight,
+            dispatch=dispatch,
+            expected_start_head=expected_start_head,
+            script_service_factory_override=script_service_factory_override,
+            migration_run_dir=migration_run_dir,
+            lease=lease,
+        )
 
 
 def main(argv: list[str] | None = None) -> int:

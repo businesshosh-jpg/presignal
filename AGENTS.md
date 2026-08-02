@@ -41,6 +41,7 @@ If a requested change would violate any of the above, ask for clarification befo
 - Do not conduct broad repository cleanup or reopen settled architecture without a concrete contradiction.
 - Inspect only named files, artifacts, and direct dependencies. Expand inspection only for a concrete conflict, missing dependency, or focused-test failure, and report the expansion.
 - Maintain strict JSON and provider-authority validation. Preserve raw output before parsing and fail closed on invalid response status or missing provider payload.
+- Every forecast batch invocation must acquire the existing exclusive execution lease and durable per-call reservation before preflight, client construction, or provider dispatch. A post-dispatch interruption is remote-state-unknown and requires explicit governance before any resend.
 - Use focused tests for each bounded change. Run `git diff --check` before commit.
 - Commit only bounded implementation, tests, and minimal documentation. Do not commit credentials or generated evidence unless explicitly required by repository policy.
 - Push the accepted commit to the requested branch and report repository, branch, start/final HEAD, artifacts, tests, commit, and push status.

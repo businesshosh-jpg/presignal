@@ -1,0 +1,19 @@
+{
+  "implementation": "OS-backed exclusive batch lease plus durable per-call INTENT_RECORDED, DISPATCH_STARTED, and terminal reservation states",
+  "pre_dispatch_guarantees": [
+    "A second batch invocation fails before preflight, client construction, or provider transport.",
+    "A stale pre-dispatch intent can be reclaimed after the OS lock is released.",
+    "A process interrupted after DISPATCH_STARTED is fail-closed as remote state unknown.",
+    "A completed call is skipped by a later invocation without a second dispatch."
+  ],
+  "focused_test_results": {
+    "overlapping_batch_invocation": "PASSED",
+    "reserved_but_not_dispatched_reclaim": "PASSED",
+    "interrupted_dispatch_safe_resume": "PASSED",
+    "stale_lease_metadata": "PASSED",
+    "completed_call_no_redispatch": "PASSED",
+    "normal_single_owner_execution": "PASSED"
+  },
+  "provider_calls_executed_during_validation": 0,
+  "google_writes_during_validation": 0
+}

@@ -360,6 +360,102 @@ class ForecastBatch001Test(unittest.TestCase):
         self.assertEqual(classified["category"], "GOOGLE_API_CONNECTION_ERROR")
         self.assertEqual(classified["dispatch_certainty"], "CONFIRMED_NOT_SENT")
 
+    def test_overlapping_batch_invocation_is_blocked_before_preflight_or_transport(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            owner = batch001.BatchExecutionLease(Path(tmp), "FCB_PACK_A_001")
+            owner.acquire()
+            try:
+                with self.assertRaisesRegex(batch001.ForecastBatchError, "BATCH_EXECUTION_LEASE_ACTIVE"):
+                    batch001.execute_batch(
+                        output_root=Path(tmp),
+                        fixed_timestamp="2026-07-29T12:34:56Z",
+                        enforce_head=False,
+                        auth_preflight=lambda: self.fail("preflight must not run without the batch lease"),
+                        dispatch=lambda *_args: self.fail("transport must not be created without the batch lease"),
+                    )
+            finally:
+                owner.release()
+
+    def test_reserved_but_not_dispatched_call_is_reclaimed_after_stale_lease_release(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            first = batch001.BatchExecutionLease(root, "FCB_PACK_A_001")
+            first.acquire()
+            first.reserve_call("FCL_TEST", "RUN_FIRST")
+            first.release()  # Models an interrupted process before DISPATCH_STARTED.
+
+            second = batch001.BatchExecutionLease(root, "FCB_PACK_A_001")
+            second.acquire()
+            try:
+                reclaimed = second.reserve_call("FCL_TEST", "RUN_SECOND")
+                self.assertEqual(reclaimed["state"], "INTENT_RECORDED")
+                self.assertEqual(reclaimed["reclaim_reason"], "STALE_PRE_DISPATCH_INTENT")
+            finally:
+                second.release()
+
+    def test_interrupted_dispatch_state_blocks_resume_before_transport_creation(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            first = batch001.BatchExecutionLease(root, "FCB_PACK_A_001")
+            first.acquire()
+            first.reserve_call("FCL_TEST", "RUN_FIRST")
+            first.mark_dispatch_started("FCL_TEST")
+            first.release()  # A process died after dispatch intent became durable.
+
+            second = batch001.BatchExecutionLease(root, "FCB_PACK_A_001")
+            second.acquire()
+            try:
+                with self.assertRaisesRegex(batch001.ForecastBatchError, "CALL_RESERVATION_REMOTE_STATE_UNKNOWN"):
+                    second.reserve_call("FCL_TEST", "RUN_SECOND")
+            finally:
+                second.release()
+
+    def test_stale_lease_metadata_without_an_os_lock_does_not_block_restart(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            stale = root / ".forecast_execution_control" / "FCB_PACK_A_001" / "active_lease.json"
+            batch001.write_json(stale, {"invocation_id": "INTERRUPTED", "owner_pid": 999999})
+            with batch001.BatchExecutionLease(root, "FCB_PACK_A_001") as lease:
+                self.assertTrue(lease.invocation_id.startswith("INV_"))
+
+    def test_completed_calls_are_skipped_by_a_later_invocation_without_dispatch(self) -> None:
+        calls: list[str] = []
+
+        def dispatch(_service: object, _script_id: str, payload: dict[str, object]) -> dict[str, object]:
+            calls.append(str(payload["forecast_identity"]))
+            return {
+                "ok": True,
+                "result": {
+                    "status": "ok",
+                    "response_status": "ok",
+                    "provider_response_body": "",
+                    "actual_provider": payload["provider"],
+                    "actual_model": payload["model"],
+                    "raw_output": valid_raw_output(),
+                },
+            }
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            first = batch001.execute_batch(
+                output_root=root,
+                fixed_timestamp="2026-07-29T12:34:56Z",
+                enforce_head=False,
+                auth_preflight=lambda: {"google_writes": 0},
+                dispatch=dispatch,
+            )
+            second = batch001.execute_batch(
+                output_root=root,
+                fixed_timestamp="2026-07-29T12:35:56Z",
+                enforce_head=False,
+                auth_preflight=lambda: {"google_writes": 0},
+                dispatch=dispatch,
+            )
+        self.assertEqual(len(calls), 12)
+        self.assertEqual(first["reconciliation"]["successful_valid_calls"], 12)
+        self.assertEqual(second["reconciliation"]["skipped_already_successful_calls"], 12)
+        self.assertEqual(second["reconciliation"]["attempted_provider_calls"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

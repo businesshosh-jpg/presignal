@@ -1,0 +1,20 @@
+{
+  "primary_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E004-20260802T064500Z-52aeb71b27a4",
+  "overlapping_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E004-20260802T072000Z-61237dc88e7d",
+  "primary_authoritative_dispatches": 12,
+  "overlapping_provider_dispatches": 10,
+  "overlapping_skips": 2,
+  "duplicate_dispatches": 10,
+  "duplicate_valid_payloads": 8,
+  "duplicate_failed_validation_payloads": 2,
+  "provider_request_ids_available": false,
+  "duplicate_evidence_status": "PRESERVED_NON_AUTHORITATIVE",
+  "selection_prohibited_basis": [
+    "forecast content",
+    "direction",
+    "confidence",
+    "validation outcome",
+    "forecast quality"
+  ],
+  "selection_basis": "earliest authorized invocation identity and primary operation-journal lineage"
+}

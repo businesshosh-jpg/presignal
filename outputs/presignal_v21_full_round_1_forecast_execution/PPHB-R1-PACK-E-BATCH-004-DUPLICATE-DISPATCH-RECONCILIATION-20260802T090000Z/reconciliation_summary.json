@@ -1,0 +1,17 @@
+{
+  "e003_decision": "PACK_E_BATCH_003_ACCEPTED",
+  "e003_authoritative_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E003-20260802T063000Z-835fb6815b1b",
+  "e003_authoritative_valid": 12,
+  "e004_decision": "PACK_E_BATCH_004_RECONCILED_WITH_ONE_AUTHORITATIVE_RESULT_PER_CALL",
+  "e004_authoritative_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E004-20260802T064500Z-52aeb71b27a4",
+  "e004_authoritative_valid": 12,
+  "duplicate_decision": "DUPLICATE_DISPATCHES_CLASSIFIED_NON_AUTHORITATIVE",
+  "unresolved_call_ids": [],
+  "reconciled_counts": {
+    "authoritative_valid_forecasts": 327,
+    "terminal_invalid_completed_calls": 3,
+    "unexecuted_calls": 234,
+    "remote_state_unknown_calls": 0
+  },
+  "e005_execution_readiness": "AUTHORIZED_ONLY_AFTER_GUARD_COMMIT_AND_ACCEPTANCE"
+}
