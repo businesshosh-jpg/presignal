@@ -1,0 +1,24 @@
+{
+  "status": "PACK_E_BATCH_003_004_BLOCKED_BEFORE_PROVIDER_DISPATCH",
+  "batch_003_run_id": "PPHB-R1-FORECAST-EXECUTION-BATCH-E003-20260802T052719Z-5839c69e587f",
+  "batch_004_run_id": null,
+  "authorized_batches": ["FCB_PACK_E_003", "FCB_PACK_E_004"],
+  "provider_calls_executed": 0,
+  "batch_e_003_provider_calls_executed": 0,
+  "batch_e_004_provider_calls_executed": 0,
+  "failure_stage": "Google credential refresh before script-service construction",
+  "failure_category": "GOOGLE_CREDENTIAL_REFRESH_TRANSPORT_FAILURE",
+  "exception_chain": [
+    "ConnectionResetError",
+    "urllib3.exceptions.ProtocolError",
+    "requests.exceptions.ConnectionError",
+    "google.auth.exceptions.TransportError",
+    "GoogleCredentialError"
+  ],
+  "automatic_retries": 0,
+  "provider_dispatch_started": false,
+  "google_writes": 0,
+  "pack_a_calls_executed": 0,
+  "historical_state_modified": false,
+  "next_action": "Restore the authorized Google credential refresh route, then start a new explicitly bounded Move; do not reuse this blocked attempt as a provider retry."
+}
