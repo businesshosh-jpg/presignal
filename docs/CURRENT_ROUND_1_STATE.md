@@ -71,9 +71,11 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Batch E017 authoritative valid: `12`
 - Batch E018 authoritative valid: `12`
 - Batch E019 authoritative valid: `12`
-- Cumulative authoritative valid forecasts: `506`
-- Unexecuted calls: `54`
-- Pack E remaining unexecuted: `54`
+- Batch E020 authoritative valid: `12`
+- Batch E021 authoritative valid: `12`
+- Cumulative authoritative valid forecasts: `530`
+- Unexecuted calls: `30`
+- Pack E remaining unexecuted: `30`
 - Pack E Batch 004 duplicate dispatches: `10` preserved as non-authoritative evidence; one authoritative primary result is selected per call by earliest invocation and journal lineage.
 
 ## Accepted authoritative runs
@@ -122,6 +124,8 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Pack E Batch 017: `PPHB-R1-FORECAST-EXECUTION-BATCH-E017-20260802T220000Z-ff5bddb11f27` plus `PPHB-R1-PACK-E-BATCH-017-COMPLETION-20260802T220000Z`
 - Pack E Batch 018: `PPHB-R1-FORECAST-EXECUTION-BATCH-E018-20260803T000000Z-2c26ea2c6c7a` plus `PPHB-R1-PACK-E-BATCH-018-COMPLETION-20260803T000000Z`
 - Pack E Batch 019: `PPHB-R1-FORECAST-EXECUTION-BATCH-E019-20260803T010000Z-be38f0bf21d5` plus `PPHB-R1-PACK-E-BATCH-019-COMPLETION-20260803T010000Z`
+- Pack E Batch 020: `PPHB-R1-FORECAST-EXECUTION-BATCH-E020-20260803T020000Z-33aed58c6dad` plus `PPHB-R1-PACK-E-BATCH-020-COMPLETION-20260803T020000Z`
+- Pack E Batch 021: `PPHB-R1-FORECAST-EXECUTION-BATCH-E021-20260803T030000Z-effa2248ccfd` plus `PPHB-R1-PACK-E-BATCH-021-COMPLETION-20260803T030000Z`
 
 ## Prompt boundary
 
@@ -144,7 +148,7 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 
 ## Exact next Move
 
-Execute migrated `FCB_PACK_E_020` only, using the accepted migration run as its manifest source and the exclusive execution lease. Do not execute Pack E Batch 021, Pack A, or any other call in that Move.
+Execute migrated `FCB_PACK_E_022` only, using the accepted migration run as its manifest source and the exclusive execution lease. Do not execute Pack E Batch 023, Pack A, or any other call in that Move.
 
 ## Prohibited reopening
 
