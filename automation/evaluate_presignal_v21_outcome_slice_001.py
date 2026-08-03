@@ -25,6 +25,8 @@ SLICE_LABEL = SLICE_ID.replace("-", "_")
 ATTACHMENT_DIR = BASE / ATTACHMENT_RUN
 EXPECTED_MANIFEST_SHA = os.environ.get("PRESIGNAL_OUTCOME_EXPECTED_MANIFEST_SHA", "sha256:90765146ec192c58fe841b61b49d239fae321a99b2a73d3f8529ceeaad9f41c8")
 EVALUATION_AUTH_PATH = os.environ.get("PRESIGNAL_EVALUATION_AUTH_PATH", "")
+AUTHORIZATION_ID = os.environ.get("PRESIGNAL_OUTCOME_AUTHORIZATION_ID", "")
+AUTHORIZATION_FINGERPRINT = os.environ.get("PRESIGNAL_OUTCOME_AUTHORIZATION_FINGERPRINT", "")
 INVALID_CALLS = {
     "FCL_27720b8b23236b173b96fdee",
     "FCL_7f0463b134c67757968580e8",
@@ -39,7 +41,11 @@ def manifest_population() -> dict[str, int]:
         if authorization.get("evaluation_authorized") is not True or authorization.get("manifest_fingerprint") != EXPECTED_MANIFEST_SHA:
             raise ValueError("EVALUATION_AUTHORIZATION_BINDING_CONFLICT")
         population = authorization.get("evaluation_population", {})
-        return {"episodes": population["episodes"], "valid_forecasts": population["valid_forecasts"], "pairs": population["complete_pairs"]}
+        return {
+            "episodes": population.get("episodes", len(authorization.get("authorized_identity_ids", []))),
+            "valid_forecasts": population["valid_forecasts"],
+            "pairs": population.get("complete_pairs", population.get("complete_pack_a_e_pairs")),
+        }
     manifest_path = Path(os.environ.get("PRESIGNAL_OUTCOME_MANIFEST_PATH", ""))
     if not manifest_path.exists():
         return {"episodes": 12, "valid_forecasts": 44, "pairs": 12}
@@ -391,6 +397,7 @@ def main() -> int:
         "episode_count": manifest_population()["episodes"], "forecast_count": len(forecasts), "episode_pair_groups": len({row["episode_id"] for row in forecasts}), "provider_model_pair_rows": len(pair_rows),
         "external_requests": 0, "google_reads": 0, "google_writes": 0, "market_data_calls": 0, "provider_calls": 0,
         "outcome_recollection": 0, "additional_attachment": 0, "generated_ts": generated,
+        "authorization_id": AUTHORIZATION_ID or None, "authorization_fingerprint": AUTHORIZATION_FINGERPRINT or None,
     })
     write_json(run_dir / "population_and_denominator_proof.json", {
         "forecast_population_hash": digest(rows), "outcome_population_hash": digest(list(outcomes.values())),

@@ -1,0 +1,66 @@
+{
+  "decision": "AUTHORIZED_SLICE_004_END_TO_END_COMPLETE",
+  "slice_id": "SLICE-004",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-004-END-TO-END-AUTHORIZATION-20260803T100000Z",
+  "authorization_fingerprint": "sha256:666c36a414d4a803d64ad10bd188eaacef8bf2814efe2150fcc74369e0c6583d",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-004-20260803T090000Z",
+  "manifest_fingerprint": "sha256:527470dac479af672166e861dc39b33873264fc4fc734208cb370ccd2ce593a5",
+  "population": {
+    "episodes": 12,
+    "valid_forecasts": 48,
+    "pack_a": 24,
+    "pack_e": 24,
+    "complete_pairs": 24,
+    "unpaired": 0
+  },
+  "collection": {
+    "run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-004-20260803T083056Z-0ccd2ce593a5",
+    "apps_script_reads": 8,
+    "market_data_attempts": 8,
+    "total_external_requests": 16,
+    "candidates": 12,
+    "missing_or_terminal_source_episodes": [],
+    "duplicates": 0,
+    "google_writes": 0,
+    "retries": 0
+  },
+  "attachment": {
+    "run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-004-20260803T083206Z-0ccd2ce593a5",
+    "attached": 12,
+    "duplicates": 0,
+    "unattached": 0,
+    "google_writes": 0
+  },
+  "evaluation": {
+    "run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-004-20260803T083241Z-0ccd2ce593a5",
+    "forecast_count": 48,
+    "pack_a_count": 24,
+    "pack_e_count": 24,
+    "pair_count": 24,
+    "metrics": [
+      "T+15 directional accuracy",
+      "Immediate Impulse directional accuracy",
+      "magnitude or pip error",
+      "horizon accuracy",
+      "path accuracy",
+      "reversal accuracy"
+    ],
+    "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED"
+  },
+  "exclusions": {
+    "terminal_invalid_forecasts": [
+      "FCL_27720b8b23236b173b96fdee",
+      "FCL_7f0463b134c67757968580e8",
+      "FCL_e07264654e9d3da6f63088a1"
+    ],
+    "outside_slice": 0,
+    "missing_outcomes": 0,
+    "no_signal_t15_excluded_by_pack": {
+      "PACK_A": 6,
+      "PACK_E": 1
+    }
+  },
+  "remote_state": "CERTAIN",
+  "no_other_slice_executed": true,
+  "append_only": true
+}

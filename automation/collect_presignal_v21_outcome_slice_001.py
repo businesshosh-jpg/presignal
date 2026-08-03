@@ -39,6 +39,8 @@ DEPLOYMENT = builder.ENDPOINT_DEPLOYMENT
 MAX_GOOGLE_READS = int(os.environ.get("PRESIGNAL_OUTCOME_MAX_GOOGLE_READS", "3"))
 MAX_PROVIDER_ATTEMPTS = int(os.environ.get("PRESIGNAL_OUTCOME_MAX_PROVIDER_ATTEMPTS", "12"))
 MAX_TOTAL_EXTERNAL = int(os.environ.get("PRESIGNAL_OUTCOME_MAX_TOTAL_EXTERNAL", "15"))
+AUTHORIZATION_ID = os.environ.get("PRESIGNAL_OUTCOME_AUTHORIZATION_ID", "")
+AUTHORIZATION_FINGERPRINT = os.environ.get("PRESIGNAL_OUTCOME_AUTHORIZATION_FINGERPRINT", "")
 
 
 def canonical(value: Any) -> str:
@@ -99,7 +101,7 @@ def preflight() -> tuple[dict[str, Any], list[dict[str, Any]], Path]:
             raise RuntimeError("OUTCOME_COLLECTION_ALREADY_EXISTS")
     run_id = f"PPHB-R1-OUTCOME-COLLECTION-{SLICE_ID}-{RUN_STAMP}-{manifest_hash[-12:]}"
     run_dir = OUTPUT_ROOT / run_id
-    write(run_dir / "run_manifest.json", {"run_id": run_id, "move_type": "OUTCOME_SOURCE_PREFLIGHT_AND_IMMUTABLE_COLLECTION", "manifest_path": str(MANIFEST_PATH.relative_to(ROOT)), "manifest_sha256": manifest_hash, "provider_calls": 0, "google_reads": 0, "google_writes": 0, "market_data_calls": 0, "outcome_attachment": 0, "evaluation_calculations": 0, "append_only": True, "external_access_before_preflight": False})
+    write(run_dir / "run_manifest.json", {"run_id": run_id, "move_type": "OUTCOME_SOURCE_PREFLIGHT_AND_IMMUTABLE_COLLECTION", "manifest_path": str(MANIFEST_PATH.relative_to(ROOT)), "manifest_sha256": manifest_hash, "provider_calls": 0, "google_reads": 0, "google_writes": 0, "market_data_calls": 0, "outcome_attachment": 0, "evaluation_calculations": 0, "append_only": True, "external_access_before_preflight": False, "authorization_id": AUTHORIZATION_ID or None, "authorization_fingerprint": AUTHORIZATION_FINGERPRINT or None})
     write(run_dir / "preflight_decision.json", {"decision": "OUTCOME_SOURCE_PREFLIGHT_PASSED", "repository": "presignal-historical-baseline-r1", "branch": "codex/immediate-impulse-outcome-recovery-r1", "head": head(), "manifest_sha256": manifest_hash, "episode_count": len(episodes), "episode_ids": [row["episode_id"] for row in episodes], "release_timestamp_authority": "episode_rows.jsonl exact UTC release_ts", "instrument": "USD/JPY", "timezone": "UTC", "contract": contract.CONTRACT_VERSION, "schema_version": contract.SCHEMA_VERSION, "route_function": FUNCTION, "deployment": DEPLOYMENT, "source_resolution": "ONE_MINUTE", "source_observation_type": "OHLC", "accepted_price_field": "close", "prior_collection_conflict": False, "duplicate_conflict": False, "forecast_or_leakage_conflict": False})
     return manifest, selected, run_dir
 

@@ -26,6 +26,8 @@ MANIFEST = Path(os.environ.get("PRESIGNAL_OUTCOME_MANIFEST_PATH", str(ROOT / "ou
 ) / "next_authorization_draft.json")))
 EXPECTED_MANIFEST_SHA = os.environ.get("PRESIGNAL_OUTCOME_EXPECTED_MANIFEST_SHA", "sha256:90765146ec192c58fe841b61b49d239fae321a99b2a73d3f8529ceeaad9f41c8")
 PARTIAL_AUTH_PATH = os.environ.get("PRESIGNAL_PAIRED_EXCLUSION_AUTH_PATH", "")
+AUTHORIZATION_ID = os.environ.get("PRESIGNAL_OUTCOME_AUTHORIZATION_ID", "")
+AUTHORIZATION_FINGERPRINT = os.environ.get("PRESIGNAL_OUTCOME_AUTHORIZATION_FINGERPRINT", "")
 INVALID_CALLS = {
     "FCL_27720b8b23236b173b96fdee",
     "FCL_7f0463b134c67757968580e8",
@@ -239,7 +241,8 @@ def main() -> int:
         request_ledger_path = COLLECTION_DIR / "external_request_ledger.jsonl"
     request_rows = read_jsonl(request_ledger_path)
     request_by_id = {row["request_id"]: row for row in request_rows}
-    if partial_auth is None and (len(request_by_id) != len(request_rows) or len(request_rows) != 3):
+    expected_request_count = len({row["release_ts"][:10] for row in manifest_rows})
+    if partial_auth is None and (len(request_by_id) != len(request_rows) or len(request_rows) != expected_request_count):
         raise SystemExit("REQUEST_LINEAGE_NOT_UNIQUE")
 
     attached: list[dict[str, Any]] = []
@@ -307,6 +310,8 @@ def main() -> int:
         "collection_bridge": collection_inputs,
         "paired_exclusion_authorization": str(PARTIAL_AUTH_PATH) if partial_auth else None,
         "generated_ts": now,
+        "authorization_id": AUTHORIZATION_ID or None,
+        "authorization_fingerprint": AUTHORIZATION_FINGERPRINT or None,
     })
     write_json(run_dir / "attachment_preflight.json", {
         "decision": "OUTCOME_ATTACHMENT_PREFLIGHT_PASSED",

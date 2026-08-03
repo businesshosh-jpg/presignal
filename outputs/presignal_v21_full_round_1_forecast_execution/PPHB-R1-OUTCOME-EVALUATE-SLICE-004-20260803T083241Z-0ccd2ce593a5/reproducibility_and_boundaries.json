@@ -1,0 +1,16 @@
+{
+  "attachment_hashes": {
+    "attached_outcomes.jsonl": "sha256:539ec73f479ec9d5c8ff54db34be6369f93db06d97c441793f835c8ddb586f9f",
+    "attachment_reconciliation.json": "sha256:99c1c3c5c70f0a409e6f343ecd929db46ac643dab490d5bbe390165627938258",
+    "candidate_to_attachment.jsonl": "sha256:99d83f89a87e9ed7d1e307c5a6717eeb8290991cec0759a467e9615f25f51f58"
+  },
+  "contract": "presignal_event_path_contract_v1_1",
+  "forecast_population_hash": "sha256:68184c3cd127b37021af99ee3f437ea3289f6caaf8c8d29873773d8e9a83d540",
+  "no_evaluation_outside_slice": true,
+  "no_external_access": true,
+  "no_outcome_modification": true,
+  "outcome_population_hash": "sha256:77cbe2693e51fcca1adfd671a294019c8fcc45f1176312633896581f7edf9f27",
+  "primary_endpoint": "T+15",
+  "schema_version": "2.1.1",
+  "secondary_measurement": "Immediate Impulse"
+}

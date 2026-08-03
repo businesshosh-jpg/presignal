@@ -250,6 +250,34 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
         run = json.loads(run_path.read_text())
         if run.get("run_id") != path.name or run.get("manifest_sha256") != manifest_sha:
             continue
+        if auth and auth.get("authorization_mode") == "END_TO_END":
+            if (
+                run.get("authorization_id") != auth.get("authorization_id")
+                or run.get("authorization_fingerprint") != auth.get("authorization_fingerprint")
+            ):
+                continue
+        if stage == "collect":
+            reconciliation_path = path / "collection_reconciliation.json"
+            decision_path = path / "collection_decision.json"
+            candidates_path = path / "candidate_outcomes.jsonl"
+            if not reconciliation_path.exists() or not decision_path.exists() or not candidates_path.exists():
+                continue
+            reconciliation = json.loads(reconciliation_path.read_text())
+            decision = json.loads(decision_path.read_text())
+            expected_count = len(auth.get("authorized_identity_ids", [])) if auth else reconciliation.get("manifest_episode_count")
+            if (
+                reconciliation.get("manifest_episode_count") != expected_count
+                or reconciliation.get("candidate_outcomes") != expected_count
+                or reconciliation.get("schema_validated_candidates") != expected_count
+                or reconciliation.get("missing_or_terminal_source_episodes")
+                or reconciliation.get("unresolved_identities")
+                or reconciliation.get("duplicate_requests") != 0
+                or reconciliation.get("google_writes") != 0
+                or reconciliation.get("outcome_attachment") != 0
+                or reconciliation.get("evaluation_calculations") != 0
+                or decision.get("collection_decision") != "OUTCOME_COLLECTION_" + slice_id.replace("-", "_") + "_COMPLETE"
+            ):
+                continue
         if stage == "attach":
             reconciliation_path = path / "attachment_reconciliation.json"
             decision_path = path / "attachment_decision.json"
@@ -269,29 +297,21 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
             ):
                 continue
             if auth and auth.get("authorization_mode") == "END_TO_END":
-                proof_paths = list(BASE.glob("PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-*/attachment_execution_stop.json"))
-                proofs = []
-                for proof_path in proof_paths:
-                    proof = json.loads(proof_path.read_text())
-                    if (
-                        proof.get("authorization_id") == auth.get("authorization_id")
-                        and proof.get("authorization_fingerprint") == auth.get("authorization_fingerprint")
-                        and proof.get("attachment_run_id") == path.name
-                        and proof.get("attachment_result", {}).get("attached_records") == 12
-                        and proof.get("attachment_result", {}).get("duplicates") == 0
-                        and proof.get("attachment_result", {}).get("unattached_records") == 0
-                    ):
-                        proofs.append(proof_path)
-                if len(proofs) != 1:
+                if (
+                    run.get("authorization_id") != auth.get("authorization_id")
+                    or run.get("authorization_fingerprint") != auth.get("authorization_fingerprint")
+                ):
                     continue
         if stage == "evaluate":
             decision_path = path / "evaluation_decision.json"
             if not decision_path.exists():
                 continue
             decision = json.loads(decision_path.read_text())
+            expected_episodes = len(auth.get("authorized_identity_ids", [])) if auth else 12
+            expected_forecasts = (auth.get("evaluation_population", {}).get("valid_forecasts", 44) if auth else 44)
             if (
-                run.get("episode_count") != 12
-                or run.get("forecast_count") != 44
+                run.get("episode_count") != expected_episodes
+                or run.get("forecast_count") != expected_forecasts
                 or run.get("google_writes") != 0
                 or run.get("external_requests") != 0
                 or decision.get("decision") != "OUTCOME_" + slice_id.replace("-", "_") + "_MINIMAL_EVALUATION_COMPLETE"
@@ -303,7 +323,7 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
     return eligible[0] if eligible else None
 
 
-def execute_end_to_end(auth: dict[str, Any], manifest_path: Path, manifest_sha: str, prior: dict[str, Path | None]) -> dict[str, Any]:
+def execute_end_to_end(auth: dict[str, Any], auth_path: Path, manifest_path: Path, manifest_sha: str, prior: dict[str, Path | None]) -> dict[str, Any]:
     """Delegate each live stage only after the prior stage is accepted."""
     env = __import__("os").environ.copy()
     env.update({
@@ -313,6 +333,9 @@ def execute_end_to_end(auth: dict[str, Any], manifest_path: Path, manifest_sha: 
         "PRESIGNAL_OUTCOME_MAX_GOOGLE_READS": str(auth["ceilings"]["max_apps_script_reads"]),
         "PRESIGNAL_OUTCOME_MAX_PROVIDER_ATTEMPTS": str(auth["ceilings"]["max_market_data_attempts"]),
         "PRESIGNAL_OUTCOME_MAX_TOTAL_EXTERNAL": str(auth["ceilings"]["max_total_external_requests"]),
+        "PRESIGNAL_OUTCOME_AUTHORIZATION_ID": auth["authorization_id"],
+        "PRESIGNAL_OUTCOME_AUTHORIZATION_FINGERPRINT": auth["authorization_fingerprint"],
+        "PRESIGNAL_EVALUATION_AUTH_PATH": str(auth_path),
     })
     scripts = {
         "collect": "collect_presignal_v21_outcome_slice_001.py",
@@ -341,7 +364,8 @@ def execute_end_to_end(auth: dict[str, Any], manifest_path: Path, manifest_sha: 
             fail("END_TO_END_STAGE_BLOCKED:" + stage)
         if accepted_stage_artifact(stage, auth["slice_id"], manifest_sha, auth) is None:
             fail("END_TO_END_STAGE_COMPLETION_UNPROVEN:" + stage)
-    return {"decision": END_TO_END_COMPLETE, "progression": ["COLLECTION_COMPLETE", "ATTACHMENT_RECONCILED", "MINIMAL_EVALUATION_COMPLETE", END_TO_END_COMPLETE]}
+    completed_decision = "AUTHORIZED_" + auth["slice_id"].replace("-", "_") + "_END_TO_END_COMPLETE"
+    return {"decision": completed_decision, "progression": ["COLLECTION_COMPLETE", "ATTACHMENT_RECONCILED", "MINIMAL_EVALUATION_COMPLETE", completed_decision]}
 
 
 def main() -> int:
@@ -355,6 +379,10 @@ def main() -> int:
     parser.add_argument("--offline-validation", action="store_true")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
+    # Stage entrypoints persist repository-relative evidence paths; resolve
+    # caller-supplied paths before delegation so resume is location-stable.
+    args.authorization = args.authorization.resolve()
+    args.manifest = args.manifest.resolve()
     checked = validate(args.authorization, args.manifest, args.expected_manifest_sha, args.stage, end_to_end=args.end_to_end)
     auth = checked["auth"]
     manifest = checked["manifest"]
@@ -368,7 +396,7 @@ def main() -> int:
         else:
             if route_proof is not None and route_proof["decision"] != END_TO_END_COMPLETE:
                 fail("END_TO_END_ROUTE_BLOCKED")
-            route_proof = execute_end_to_end(auth, args.manifest, args.expected_manifest_sha, prior)
+            route_proof = execute_end_to_end(auth, args.authorization, args.manifest, args.expected_manifest_sha, prior)
             decision = route_proof["decision"]
     elif args.stage == "manifest":
         decision = STOP_STATES["manifest"]
