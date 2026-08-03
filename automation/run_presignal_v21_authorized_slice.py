@@ -22,7 +22,8 @@ STOP_STATES = {
     "evaluate": "MINIMAL_EVALUATION_COMPLETE",
 }
 END_TO_END_STOP = "MANIFEST_ACCEPTED_END_TO_END_AUTHORIZATION_REQUIRED"
-END_TO_END_AUTHORIZED_NOT_STARTED = "SLICE_002_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED"
+def end_to_end_authorized_not_started(slice_id: str) -> str:
+    return f"{slice_id.replace('-', '_')}_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED"
 END_TO_END_COMPLETE = "AUTHORIZED_SLICE_COMPLETE"
 REQUIRED_AUTH_FIELDS = {
     "authorization_status", "slice_id", "manifest_id", "manifest_sha256",
@@ -61,8 +62,17 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
     if auth.get("authorization_fingerprint") != fingerprint(auth):
         fail("AUTHORIZATION_FINGERPRINT_MISMATCH")
     manifest = json.loads(manifest_path.read_text())
+    rows = manifest.get("episode_manifest", [])
+    derived_population = {
+        "pack_a": sum(len(row["outcome_collection_identity"]["forecast_references"]["pack_a"]) for row in rows),
+        "pack_e": sum(len(row["outcome_collection_identity"]["forecast_references"]["pack_e"]) for row in rows),
+        "complete_pack_a_e_pairs": sum(len(row["outcome_collection_identity"]["pack_pairs"]) for row in rows),
+    }
+    derived_population["valid_forecasts"] = derived_population["pack_a"] + derived_population["pack_e"]
+    population = {**derived_population, **manifest.get("authorized_forecast_population", {})}
     actual_sha = file_sha(manifest_path)
-    if actual_sha != expected_sha or auth["manifest_sha256"] != expected_sha:
+    declared_sha = manifest.get("manifest_fingerprint")
+    if expected_sha not in {actual_sha, declared_sha} or auth["manifest_sha256"] != expected_sha:
         fail("MANIFEST_FINGERPRINT_CONFLICT")
     if auth["manifest_id"] != manifest.get("manifest_id") or auth["slice_id"] != manifest.get("slice_id"):
         fail("MANIFEST_IDENTITY_CONFLICT")
@@ -81,9 +91,11 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
             fail("ATTACHMENT_DESTINATION_CONFLICT")
         if set(auth["authorized_attachment_identity_ids"]) != set(auth["outcome_collection_identity_ids"]):
             fail("ATTACHMENT_IDENTITY_SCOPE_CONFLICT")
-        if auth["attachment_write_ceiling"] != {"google_writes": 0, "local_append_only_records": 12}:
+        if auth["attachment_write_ceiling"] != {"google_writes": 0, "local_append_only_records": len(rows)}:
             fail("ATTACHMENT_WRITE_CEILING_CONFLICT")
-        if not auth["evaluation_population_rule"].startswith("44 authoritative valid forecasts mapped one-to-one to 12 attached Slice 002 Outcomes") or "terminal-invalid excluded" not in auth["evaluation_population_rule"]:
+        display_slice = auth["slice_id"].replace("-", " ").title()
+        expected_population_prefix = f"{population.get('valid_forecasts')} authoritative valid forecasts mapped one-to-one to {len(rows)} attached {display_slice} Outcomes"
+        if not auth["evaluation_population_rule"].startswith(expected_population_prefix) or "terminal-invalid excluded" not in auth["evaluation_population_rule"]:
             fail("EVALUATION_POPULATION_RULE_CONFLICT")
         permitted_metrics = {
             "T+15 directional accuracy",
@@ -105,17 +117,16 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
         fail("CONTRACT_SCHEMA_CONFLICT")
     if auth["destination"] != manifest.get("collection_destination"):
         fail("DESTINATION_CONFLICT")
-    rows = manifest.get("episode_manifest", [])
     ids = [row.get("episode_id") for row in rows]
     if len(rows) != 12 or len(set(ids)) != 12 or set(ids) != set(auth["authorized_identity_ids"]):
         fail("AUTHORIZED_IDENTITY_SCOPE_CONFLICT")
     if manifest.get("primary_endpoint") != "T+15" or manifest.get("secondary_measurement") != "Immediate Impulse":
         fail("SCIENTIFIC_BOUNDARY_CONFLICT")
-    if sum(len(row["outcome_collection_identity"]["forecast_references"]["pack_a"]) for row in rows) != 22:
+    if sum(len(row["outcome_collection_identity"]["forecast_references"]["pack_a"]) for row in rows) != population.get("pack_a"):
         fail("PACK_A_POPULATION_CONFLICT")
-    if sum(len(row["outcome_collection_identity"]["forecast_references"]["pack_e"]) for row in rows) != 22:
+    if sum(len(row["outcome_collection_identity"]["forecast_references"]["pack_e"]) for row in rows) != population.get("pack_e"):
         fail("PACK_E_POPULATION_CONFLICT")
-    if sum(len(row["outcome_collection_identity"]["pack_pairs"]) for row in rows) != 22:
+    if sum(len(row["outcome_collection_identity"]["pack_pairs"]) for row in rows) != population.get("complete_pack_a_e_pairs"):
         fail("PAIR_POPULATION_CONFLICT")
     ceilings = auth["ceilings"]
     expected = {"max_apps_script_reads": 3, "max_market_data_attempts": 12, "max_total_external_requests": 15, "google_write_ceiling": 0}
@@ -123,11 +134,11 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
         fail("AUTHORIZATION_CEILING_CONFLICT")
     if not end_to_end and set(ceilings) != set(expected):
         fail("AUTHORIZATION_CEILING_CONFLICT")
-    if end_to_end and (ceilings.get("max_attachment_records") != 12 or ceilings.get("max_evaluation_artifacts") != 1):
+    if end_to_end and (ceilings.get("max_attachment_records") != len(rows) or ceilings.get("max_evaluation_artifacts") != 1):
         fail("END_TO_END_CEILING_CONFLICT")
     if auth["retry_boundary"] != "NO_AUTOMATIC_RETRIES":
         fail("RETRY_BOUNDARY_CONFLICT")
-    return {"auth": auth, "manifest": manifest, "actual_sha": actual_sha, "episode_ids": ids}
+    return {"auth": auth, "manifest": manifest, "actual_sha": expected_sha, "manifest_file_sha": actual_sha, "episode_ids": ids}
 
 
 def simulate_end_to_end_route(stage_statuses: dict[str, str] | None = None) -> dict[str, Any]:
@@ -272,7 +283,7 @@ def main() -> int:
         if auth["authorization_status"] != "ACTIVE":
             decision = END_TO_END_STOP
         elif args.offline_validation:
-            decision = END_TO_END_AUTHORIZED_NOT_STARTED
+            decision = end_to_end_authorized_not_started(auth["slice_id"])
         else:
             if route_proof is not None and route_proof["decision"] != END_TO_END_COMPLETE:
                 fail("END_TO_END_ROUTE_BLOCKED")
@@ -299,12 +310,13 @@ def main() -> int:
         "slice_id": auth["slice_id"],
         "manifest_id": manifest["manifest_id"],
         "manifest_sha256": checked["actual_sha"],
+        "manifest_file_sha256": checked["manifest_file_sha"],
         "authorized_stage": auth["authorized_stage"],
         "recognized_episode_count": len(checked["episode_ids"]),
-        "recognized_valid_forecast_count": 44,
-        "recognized_pack_a_count": 22,
-        "recognized_pack_e_count": 22,
-        "recognized_complete_pairs": 22,
+        "recognized_valid_forecast_count": manifest.get("authorized_forecast_population", {}).get("valid_forecasts"),
+        "recognized_pack_a_count": manifest.get("authorized_forecast_population", {}).get("pack_a"),
+        "recognized_pack_e_count": manifest.get("authorized_forecast_population", {}).get("pack_e"),
+        "recognized_complete_pairs": manifest.get("authorized_forecast_population", {}).get("complete_pack_a_e_pairs"),
         "recognized_ceilings": auth["ceilings"],
         "external_access": {"google_reads": 0, "market_data_attempts": 0, "total_external_requests": 0, "google_writes": 0},
         "prior_stage_artifacts": {key: str(value) if value else None for key, value in prior.items()},
