@@ -86,6 +86,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - OAuth restoration and collection attempt: `PPHB-R1-OUTCOME-OAUTH-RESTORATION-SLICE-001-20260803T000800Z` (`GOOGLE_OAUTH_ROUTE_NOT_RESTORED`; preflight blocked before external access)
 - OAuth route restored and Slice 001 collected: `PPHB-R1-OUTCOME-COLLECTION-SLICE-001-20260803T001512Z-ceeaad9f41c8` (`OUTCOME_SOURCE_PREFLIGHT_PASSED`; 12/12 candidate Outcomes valid, unattached and unevaluated)
 - Slice 001 attachment and reconciliation: `PPHB-R1-OUTCOME-ATTACHMENT-SLICE-001-20260803T101500Z-5bbe84a70320` (`OUTCOME_SLICE_001_ATTACHED_AND_RECONCILED`; 12/12 candidates attached locally append-only; 44 valid forecasts covered across 12 complete Pack A/E pairs; evaluation remains unauthorized)
+- Slice 001 minimal evaluation: `PPHB-R1-OUTCOME-EVALUATION-SLICE-001-20260803T103000Z-4f8c2b9a6d10` (`OUTCOME_SLICE_001_MINIMAL_EVALUATION_COMPLETE`; 44 valid forecasts evaluated locally; T+15 primary, Immediate Impulse strict score not applicable for APPROXIMATION_ONLY outcomes; no composite or broader matrix calculated)
 
 ## Prompt boundary
 
@@ -111,10 +112,11 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 ## Outcome collection boundary
 
 Slice 001 contains 12 immutable candidate Outcomes under `presignal_event_path_contract_v1_1` schema `2.1.1`. Source collection used 3 Apps Script reads and 3 Tiingo provider attempts. The accepted attachment run links all 12 candidates append-only with unchanged hashes and no external access. Coverage is 44 valid forecasts across 12 complete Pack A/E pairs; no evaluation was calculated.
+The accepted minimal evaluation is limited to those 44 forecasts and attached Outcomes. It reports Pack-specific T+15, horizon, path, magnitude/pip, and reversal metrics plus descriptive Pack A/E differences. Immediate Impulse remains secondary and strict-scoring is not applicable because the slice is `APPROXIMATION_ONLY`; no composite score or statistical inference is authorized.
 
 ## Exact next Move
 
-Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. Slice 001 is attached and reconciled for coverage only. The next bounded Move is to prepare and explicitly authorize minimal evaluation for attached Slice 001; evaluation remains unauthorized until that Move.
+Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. Slice 001 is attached and minimally evaluated under its accepted boundary. The next bounded Move is to prepare and explicitly authorize the next bounded Outcome collection slice; no additional evaluation or broader Round 1 interpretation is authorized.
 
 ## Prohibited reopening
 

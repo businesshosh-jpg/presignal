@@ -1,0 +1,21 @@
+{
+  "complete_episode_pair_groups": 12,
+  "duplicate_evaluation_rows": 0,
+  "forecast_count": 44,
+  "forecast_population_hash": "sha256:91993353a8e6754d82d7ace980bd5ef03c2104dc7a148da55edbf791c370568c",
+  "missing_outcomes": [],
+  "outcome_count": 12,
+  "outcome_population_hash": "sha256:f3de35a45a84a6030e70ca6f45b95db6a8e62bbd48c8ae255b53253de0f4c3a1",
+  "outside_slice_included": 0,
+  "pack_counts": {
+    "PACK_A": 22,
+    "PACK_E": 22
+  },
+  "provider_model_pair_rows": 22,
+  "terminal_invalid_excluded": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_7f0463b134c67757968580e8",
+    "FCL_e07264654e9d3da6f63088a1"
+  ],
+  "unexecuted_included": 0
+}
