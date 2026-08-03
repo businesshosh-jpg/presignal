@@ -1,0 +1,15 @@
+{
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-006-END-TO-END-AUTHORIZATION-20260803T130000Z",
+  "authorization_fingerprint": "sha256:74a14057a5b711b76f47c17bf230129c0de2d2eb90cb7f1db8d9ee198146166b",
+  "status": "COMPLETED",
+  "single_use": true,
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-006-20260803T090459Z-4b6396c50c92",
+  "attachment_run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-006-20260803T090525Z-4b6396c50c92",
+  "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-006-20260803T090526Z-4b6396c50c92",
+  "external_requests": 10,
+  "google_reads": 5,
+  "market_data_attempts": 5,
+  "google_writes": 0,
+  "retries": 0,
+  "decision": "AUTHORIZED_SLICE_006_END_TO_END_COMPLETE"
+}

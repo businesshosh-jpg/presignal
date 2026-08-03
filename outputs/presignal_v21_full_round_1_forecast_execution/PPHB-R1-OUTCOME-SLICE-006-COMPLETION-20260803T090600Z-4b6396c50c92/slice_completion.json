@@ -1,0 +1,16 @@
+{
+  "decision": "AUTHORIZED_SLICE_006_END_TO_END_COMPLETE",
+  "slice_id": "SLICE-006",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-006-20260803T120000Z",
+  "manifest_fingerprint": "sha256:8c8334430d618fb28951aa7a5fcf54e7260f2cd361c6f924b9b84b6396c50c92",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-006-END-TO-END-AUTHORIZATION-20260803T130000Z",
+  "authorization_fingerprint": "sha256:74a14057a5b711b76f47c17bf230129c0de2d2eb90cb7f1db8d9ee198146166b",
+  "population": {"episodes": 12, "valid_forecasts": 54, "pack_a": 27, "pack_e": 27, "complete_pairs": 27, "unpaired": 0},
+  "collection": {"run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-006-20260803T090459Z-4b6396c50c92", "apps_script_reads": 5, "market_data_attempts": 5, "total_external_requests": 10, "candidates": 12, "missing_or_terminal_source_episodes": [], "duplicates": 0, "google_writes": 0, "retries": 0},
+  "attachment": {"run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-006-20260803T090525Z-4b6396c50c92", "attached": 12, "duplicates": 0, "unattached": 0, "google_writes": 0},
+  "evaluation": {"run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-006-20260803T090526Z-4b6396c50c92", "forecast_count": 54, "provider_model_pair_rows": 27, "metrics": ["T+15 directional accuracy", "Immediate Impulse directional accuracy", "magnitude or pip error", "horizon accuracy", "path accuracy", "reversal accuracy"], "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED"},
+  "scoreability": {"pack_a_no_signal_excluded": 9, "pack_e_no_signal_excluded": 1, "common_t15_scoreable_pairs": 18},
+  "terminal_invalid_excluded": ["FCL_27720b8b23236b173b96fdee", "FCL_7f0463b134c67757968580e8", "FCL_e07264654e9d3da6f63088a1"],
+  "remote_state": "CERTAIN",
+  "append_only": true
+}
