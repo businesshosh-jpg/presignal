@@ -1,0 +1,101 @@
+{
+  "pairability": [
+    {
+      "episode_id": "EP_EVENT_d6fce9c8901236c9cdd2",
+      "pack_a_provider_models": [
+        [
+          "Anthropic",
+          "claude-haiku-4-5"
+        ],
+        [
+          "OpenAI",
+          "gpt-4o-mini-2024-07-18"
+        ]
+      ],
+      "pack_e_provider_models": [
+        [
+          "Anthropic",
+          "claude-haiku-4-5"
+        ]
+      ],
+      "reason": "PACK_A_E_PROVIDER_MODEL_PAIRABILITY_CONFLICT",
+      "valid_forecast_call_ids": [
+        "FCL_44189abf077433bb88eaf76a",
+        "FCL_481212a2f78ef5924e477aa5",
+        "FCL_6c78a27590fc24fc99ebf59c"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_55166f262d069c0e7828",
+      "pack_a_provider_models": [
+        [
+          "Anthropic",
+          "claude-haiku-4-5"
+        ],
+        [
+          "Gemini",
+          "gemini-2.5-flash-lite"
+        ]
+      ],
+      "pack_e_provider_models": [
+        [
+          "Anthropic",
+          "claude-haiku-4-5"
+        ],
+        [
+          "Gemini",
+          "gemini-2.5-flash-lite"
+        ],
+        [
+          "OpenAI",
+          "gpt-4o-mini-2024-07-18"
+        ]
+      ],
+      "reason": "PACK_A_E_PROVIDER_MODEL_PAIRABILITY_CONFLICT",
+      "valid_forecast_call_ids": [
+        "FCL_49b823e16bac3b007d33400e",
+        "FCL_50adca8260899db14fe8ee81",
+        "FCL_8fccf697b949ef97a6eac3b6",
+        "FCL_a342084e2ca8e2173d105dde",
+        "FCL_e0b9d2de43f426e4c7cf85d3"
+      ]
+    },
+    {
+      "episode_id": "EP_BATCH_8a51e1bb638289aeb7df",
+      "pack_a_provider_models": [],
+      "pack_e_provider_models": [
+        [
+          "Anthropic",
+          "claude-haiku-4-5"
+        ]
+      ],
+      "reason": "PACK_A_E_PROVIDER_MODEL_PAIRABILITY_CONFLICT",
+      "valid_forecast_call_ids": [
+        "FCL_b71f4c64037d86d3f67d36cd"
+      ]
+    }
+  ],
+  "prior_slices": {
+    "episode_ids": [
+      "EP_BATCH_0ba598718d3db4688437",
+      "EP_BATCH_1c2cb957d0760e40f81e",
+      "EP_BATCH_58e0d92ad8520bb926bb",
+      "EP_BATCH_851b7d8bd3661e168de1",
+      "EP_BATCH_af76f644b423101d91f2",
+      "EP_BATCH_bf1ad05b4d84df1b733a",
+      "EP_BATCH_eeae6fee09edc60d1e7d",
+      "EP_BATCH_f7f52f894ce4f1929d5a",
+      "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+      "EP_EVENT_b908a729dc4fa10f46a6",
+      "EP_EVENT_bfcff4089c331ae1d2c8",
+      "EP_EVENT_d5d7aa4435b9e6bab424"
+    ],
+    "slice_001_and_slice_002_unique_episode_count": 12
+  },
+  "terminal_invalid": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_7f0463b134c67757968580e8",
+    "FCL_e07264654e9d3da6f63088a1"
+  ],
+  "unresolved_conflicts": []
+}
