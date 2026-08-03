@@ -204,7 +204,10 @@ def main() -> int:
     if prior_attachment_dirs:
         raise SystemExit("PRIOR_OUTCOME_ATTACHMENT_REQUIRES_RECONCILIATION")
 
-    request_rows = read_jsonl(COLLECTION_DIR / "external_request_ledger_final.jsonl")
+    request_ledger_path = COLLECTION_DIR / "external_request_ledger_final.jsonl"
+    if not request_ledger_path.exists():
+        request_ledger_path = COLLECTION_DIR / "external_request_ledger.jsonl"
+    request_rows = read_jsonl(request_ledger_path)
     request_by_id = {row["request_id"]: row for row in request_rows}
     if len(request_by_id) != len(request_rows) or len(request_rows) != 3:
         raise SystemExit("REQUEST_LINEAGE_NOT_UNIQUE")
