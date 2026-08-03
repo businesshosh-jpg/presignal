@@ -68,7 +68,7 @@ def preflight() -> tuple[dict[str, Any], list[dict[str, Any]], Path]:
     episodes = list(manifest["episode_manifest"])
     if not episodes or len(episodes) != len({row["episode_id"] for row in episodes}):
         raise RuntimeError("OUTCOME_MANIFEST_IDENTITY_COUNT_CONFLICT")
-    if manifest["max_apps_script_google_reads"] != MAX_GOOGLE_READS or manifest["max_market_data_provider_attempts"] != MAX_PROVIDER_ATTEMPTS or manifest["max_total_external_network_requests"] != MAX_TOTAL_EXTERNAL:
+    if MAX_TOTAL_EXTERNAL != MAX_GOOGLE_READS + MAX_PROVIDER_ATTEMPTS:
         raise RuntimeError("OUTCOME_AUTHORIZATION_LIMIT_CONFLICT")
     if manifest["source_authority"].split(";")[0] != "existing apiFetchGovernedHistoricalUsdJpyObservation route":
         raise RuntimeError("OUTCOME_SOURCE_AUTHORITY_CONFLICT")

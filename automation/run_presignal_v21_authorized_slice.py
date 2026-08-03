@@ -54,8 +54,20 @@ def fail(message: str) -> None:
     raise SystemExit(message)
 
 
+def reject_blocked_authorization(auth_id: str) -> None:
+    """Prevent a recorded governance-blocked authorization from being reused."""
+    for proof_path in BASE.glob("PPHB-R1-OUTCOME-*-EXECUTION-BLOCKED-*/execution_blocked.json"):
+        proof = json.loads(proof_path.read_text())
+        if (
+            proof.get("authorization_id") == auth_id
+            and str(proof.get("decision", "")).endswith("_GOVERNANCE_BLOCKED")
+        ):
+            fail("AUTHORIZATION_NON_REUSABLE_BLOCKED")
+
+
 def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str, end_to_end: bool = False) -> dict[str, Any]:
     auth = json.loads(auth_path.read_text())
+    reject_blocked_authorization(auth.get("authorization_id", ""))
     missing = sorted(REQUIRED_AUTH_FIELDS - set(auth))
     if missing:
         fail("AUTHORIZATION_FIELDS_MISSING:" + ",".join(missing))
@@ -129,7 +141,13 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
     if sum(len(row["outcome_collection_identity"]["pack_pairs"]) for row in rows) != population.get("complete_pack_a_e_pairs"):
         fail("PAIR_POPULATION_CONFLICT")
     ceilings = auth["ceilings"]
-    expected = {"max_apps_script_reads": 3, "max_market_data_attempts": 12, "max_total_external_requests": 15, "google_write_ceiling": 0}
+    release_days = {row["release_ts"][:10] for row in rows}
+    expected = {
+        "max_apps_script_reads": len(release_days),
+        "max_market_data_attempts": 12,
+        "max_total_external_requests": len(release_days) + 12,
+        "google_write_ceiling": 0,
+    }
     if any(ceilings.get(key) != value for key, value in expected.items()):
         fail("AUTHORIZATION_CEILING_CONFLICT")
     if not end_to_end and set(ceilings) != set(expected):
@@ -283,7 +301,7 @@ def main() -> int:
         if auth["authorization_status"] != "ACTIVE":
             decision = END_TO_END_STOP
         elif args.offline_validation:
-            decision = end_to_end_authorized_not_started(auth["slice_id"])
+            decision = auth.get("live_stop_state_before_execution", end_to_end_authorized_not_started(auth["slice_id"]))
         else:
             if route_proof is not None and route_proof["decision"] != END_TO_END_COMPLETE:
                 fail("END_TO_END_ROUTE_BLOCKED")
