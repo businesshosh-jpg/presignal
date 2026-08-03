@@ -1,0 +1,16 @@
+{
+  "decision": "SCHEDULE_REFRESH_COMPLETED_CONFIRMED",
+  "supersedes": "refresh_remote_state_blocker.json",
+  "reason": "The same invocation completed after the initial local evidence read. schedule_refresh_execution.json contains the attributable completed response.",
+  "authorization_id": "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T151000Z",
+  "operation_id": "R2SCHEDOP_b1aa318ac0a9fb92002b789b",
+  "invocation_id": "eab72393-d5e7-4088-8d4a-3cc5b06152d6",
+  "terminal_status": "COMPLETED",
+  "remote_state": "CERTAIN",
+  "pre_refresh_event_sheet_fingerprint": "sha256:aaea9d5ab06a73f04f72d689163b6b4bc8efbfbd418c8cb899f68beb194eac78",
+  "post_refresh_event_sheet_fingerprint": "sha256:aaea9d5ab06a73f04f72d689163b6b4bc8efbfbd418c8cb899f68beb194eac78",
+  "counts": {"fetched": 97, "appended": 0, "upserts": 97, "unchanged": 0, "rejected": 0, "cancelled": 0, "superseded": 0},
+  "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z",
+  "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+  "downstream_blocker": "ROUND_2_PROSPECTIVE_PROMPT_AND_CUTOFF_BINDINGS_NOT_FROZEN"
+}

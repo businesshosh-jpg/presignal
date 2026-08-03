@@ -321,3 +321,10 @@ Freeze a new deployment authorization that binds exactly one accepted `EXECUTION
 ## Exact Next Round 2 Move
 
 Freeze a separate read-only reconciliation authorization for `R2SCHEDOP_b1aa318ac0a9fb92002b789b`. It must establish the invocation's remote state from attributable operation-journal or Apps Script evidence without a new FMP request or Event write; do not export, admit, or dispatch unless that state is certain.
+
+## Round 2 Refresh Completion Correction
+
+- Correction: `SCHEDULE_REFRESH_COMPLETED_CONFIRMED`. The same invocation completed after the initial local evidence read. Its attributable execution record binds operation `R2SCHEDOP_b1aa318ac0a9fb92002b789b`, invocation `eab72393-d5e7-4088-8d4a-3cc5b06152d6`, authorization `151000Z`, terminal status `COMPLETED`, and remote state `CERTAIN`.
+- Counts: fetched `97`; appended `0`; upserts `97`; unchanged `0`; rejected/cancelled/superseded `0`; pre/post Event fingerprints both `sha256:aaea9d5ab06a73f04f72d689163b6b4bc8efbfbd418c8cb899f68beb194eac78`.
+- Snapshot: `PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z` (`sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9`) is authoritative. The earlier blocker is retained but superseded by append-only completion correction.
+- Stop: `ROUND_2_PROSPECTIVE_PROMPT_AND_CUTOFF_BINDINGS_NOT_FROZEN`. No accepted Round 2 artifact binds exact Pack A and Pack E prompt fingerprints and per-Episode prospective forecast cutoffs. No Episode admission, Slice manifest, forecast-call inventory, or dispatch authorization was created.
