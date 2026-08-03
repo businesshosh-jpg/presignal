@@ -190,6 +190,12 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 |---|---|---|---|---|
 | `PPHB-R2-CONTINUOUS-EXECUTION-CONTROLLER-20260803T100000Z` | Canonical Round 2 schedule-admission and continuous controller contract | `ROUND_2_AUTHORITATIVE_EPISODE_SOURCE_ESTABLISHED`; `CONTINUOUS_ROUND_2_CONTROLLER_READY`; and `ROUND_2_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY`. Establishes FMP Economic Calendar through canonical Apps Script Event-sheet normalization/upsert plus append-only export as the only admissible prospective source. It requires a separate exact schedule-refresh authorization before any current snapshot, roster, or provider-call identity can be frozen. | Append-only controller and source-authority evidence; no live access or dispatch authority | Bounded schedule-refresh/export authorization, then a frozen Slice manifest and exact dispatch authorization |
 
+## ROUND_2_SCHEDULE_REFRESH
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R2-SCHEDULE-REFRESH-20260803T141000Z` | Bounded current prospective Event-sheet refresh and export attempt | `ROUND_2_SCHEDULE_REFRESH_BLOCKED`; authorization was frozen for `2026-08-03T00:00:00Z` through `2026-08-10T23:59:59Z`, but Google client setup did not reach Apps Script dispatch. Actual FMP requests, Apps Script invocations, Event-sheet writes, and export reads were all `0`; remote state is `CONFIRMED_NOT_DISPATCHED`. | Append-only blocked evidence; authorization is non-reusable | New explicit schedule-refresh authorization after credential/client setup resolution |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

@@ -248,3 +248,15 @@ Freeze a bounded schedule-refresh and Event-sheet-export authorization for the c
 ## Prohibited reopening
 
 Do not reopen accepted Attention, Pack, planning, Batches 001–003, Batch 003 closure, or prompt-migration evidence without a concrete contradiction in named authoritative artifacts or a focused-test failure.
+
+## Round 2 Schedule Refresh Attempt
+
+- Refresh authorization: `PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T141000Z`, fingerprint `sha256:59f21d0e18ca85fc3bc69e9871093ad9f03c1e422ec757d0307e8338c6b3c275`.
+- Frozen window: `2026-08-03T00:00:00Z` through `2026-08-10T23:59:59Z`; ceilings were one FMP request, one Apps Script invocation, one Event-sheet upsert operation, one export read, and zero retries.
+- Decision: `ROUND_2_CURRENT_EVENT_SNAPSHOT_BLOCKED`; `ROUND_2_FIRST_ROLLING_SLICE_MANIFEST_BLOCKED`; `ROUND_2_FIRST_SLICE_EXACT_DISPATCH_AUTHORIZATION_NOT_READY`.
+- Execution stopped during Google client setup before Apps Script dispatch. Actuals: FMP requests `0`; Apps Script invocations `0`; Event-sheet writes `0`; export reads `0`; provider calls `0`; Outcome/evaluation activity `0`; remote state `CONFIRMED_NOT_DISPATCHED`.
+- No current Event snapshot, Episode admission, Slice manifest, or provider-call identity was fabricated. The single-use refresh authorization is blocked and non-reusable pending a new explicit refresh authorization after the credential/client setup issue is resolved.
+
+## Exact Next Round 2 Move
+
+Resolve the Google client setup/credential transport blocker, then freeze a new bounded schedule-refresh authorization before attempting the canonical FMP/Apps Script refresh. Do not reuse the blocked authorization or prepare provider dispatch without a validated append-only Event snapshot.

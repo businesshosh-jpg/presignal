@@ -1,0 +1,12 @@
+{
+  "apps_script_invocations": 0,
+  "authorization_fingerprint": "sha256:59f21d0e18ca85fc3bc69e9871093ad9f03c1e422ec757d0307e8338c6b3c275",
+  "blocking_reason": "Google client setup was interrupted before Apps Script dispatch; no FMP request, Apps Script invocation, Event-sheet write, or export read was confirmed.",
+  "decision": "ROUND_2_SCHEDULE_REFRESH_BLOCKED",
+  "event_sheet_writes": 0,
+  "export_reads": 0,
+  "external_access": 0,
+  "fmp_requests": 0,
+  "remote_state": "CONFIRMED_NOT_DISPATCHED",
+  "stop": "SCHEDULE_REFRESH_FAILED_CLOSED"
+}
