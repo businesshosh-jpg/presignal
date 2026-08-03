@@ -1,0 +1,45 @@
+{
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z",
+  "authorization_fingerprint": "sha256:acea3df8666d7d5dc6474bd7d0269a79e02e41d91ef4e449299833fe8fcf9da3",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
+  "manifest_sha256": "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c",
+  "timestamp_preflight": {
+    "decision": "VALID",
+    "interpretation": "artifact_naming_metadata",
+    "effective_time_field_present": false,
+    "authorization_status": "ACTIVE",
+    "committed_artifact_binding": "PASSED"
+  },
+  "route_attempts": [
+    {
+      "stage": "collection_preflight",
+      "result": "BLOCKED_BEFORE_EXTERNAL_ACCESS",
+      "reason": "RELATIVE_MANIFEST_PATH_NOT_SUPPORTED_BY_COLLECTION_EVIDENCE_WRITER",
+      "external_requests": 0
+    },
+    {
+      "stage": "collection",
+      "result": "COMPLETE",
+      "run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-002-20260803T035402Z-5b2104c5270c",
+      "episodes": 12,
+      "candidate_outcomes": 12,
+      "apps_script_reads": 3,
+      "market_data_attempts": 3,
+      "total_external_requests": 6,
+      "google_writes": 0
+    },
+    {
+      "stage": "attachment",
+      "result": "BLOCKED_BEFORE_ATTACHMENT_WRITE",
+      "reason": "CANONICAL_ATTACHMENT_EXPECTS_COLLECTION_FINALIZATION_AND_CANDIDATE_OUTCOMES_FINAL_FILENAMES",
+      "external_requests": 0,
+      "attachment_records": 0
+    }
+  ],
+  "completed_stage": "COLLECTION_COMPLETE",
+  "blocked_stage": "ATTACHMENT",
+  "evaluation_started": false,
+  "decision": "AUTHORIZED_SLICE_002_COLLECTION_COMPLETE_ATTACHMENT_BLOCKED",
+  "resume": "REQUIRES_ACCEPTED_STAGE-BRIDGE_REPAIR_AND_EXPLICIT_RESUME_AUTHORITY",
+  "append_only": true
+}

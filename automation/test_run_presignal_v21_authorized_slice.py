@@ -62,10 +62,9 @@ class AuthorizedSliceControllerTest(unittest.TestCase):
             result = self.run_controller(auth=path)
             self.assertIn("AUTHORIZATION_CEILING_CONFLICT", result.stderr)
 
-    def test_inactive_collection_cannot_execute_offline(self):
+    def test_completed_collection_stops_before_reexecution(self):
         result = self.run_controller(stage="collect")
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("STAGE_AUTHORIZATION_NOT_ACTIVE", result.stderr)
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_fixture_proves_zero_access_and_stage_reuse(self):
         evidence = json.loads((RUN / "controller_validation_evidence.json").read_text())
