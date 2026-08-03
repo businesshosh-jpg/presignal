@@ -94,6 +94,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Active Slice 002 end-to-end authorization: `PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z-e8e69ad49e46`, authorization `PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z`, fingerprint `sha256:acea3df8666d7d5dc6474bd7d0269a79e02e41d91ef4e449299833fe8fcf9da3`, bound to controller commit `856b562f6cead831ab838f48bca90284e3dd3cb7`
 - Slice 002 collection: `PPHB-R1-OUTCOME-COLLECTION-SLICE-002-20260803T035402Z-5b2104c5270c` (`OUTCOME_COLLECTION_SLICE_002_COMPLETE`; 12/12 candidates valid; 3 Apps Script reads, 3 market-data attempts, 6 total external requests, 0 writes). The collection-to-attachment bridge is repaired and validated append-only.
 - Slice 002 attachment: `PPHB-R1-OUTCOME-ATTACH-SLICE-002-20260803T044538Z-5b2104c5270c` (`OUTCOME_SLICE_002_ATTACHED_AND_RECONCILED`; 12/12 attached, 44 valid forecasts, 22 complete Pack A/E pairs, 0 writes). Controller completion proof stopped before evaluation because its attachment-run prefix does not match the canonical run identity; evaluation has not started.
+- Slice 002 evaluation and completion: `PPHB-R1-OUTCOME-EVALUATE-SLICE-002-20260803T045628Z-5b2104c5270c` plus `slice_completion.json` (`AUTHORIZED_SLICE_002_END_TO_END_COMPLETE`; collection and attachment reused, 44 forecasts evaluated locally, six authorized metrics only, no external access).
 
 ## Prompt boundary
 
@@ -121,11 +122,11 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 Slice 001 contains 12 immutable candidate Outcomes under `presignal_event_path_contract_v1_1` schema `2.1.1`. Source collection used 3 Apps Script reads and 3 Tiingo provider attempts. The accepted attachment run links all 12 candidates append-only with unchanged hashes and no external access. Coverage is 44 valid forecasts across 12 complete Pack A/E pairs; no evaluation was calculated.
 The accepted minimal evaluation is limited to those 44 forecasts and attached Outcomes. It reports Pack-specific T+15, horizon, path, magnitude/pip, and reversal metrics plus descriptive Pack A/E differences. Immediate Impulse remains secondary and strict-scoring is not applicable because the slice is `APPROXIMATION_ONLY`; no composite score or statistical inference is authorized.
 
-The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; stage-by-stage mode remains available and end-to-end mode advances only after accepted prior-stage completion. Slice 002 collection and attachment are complete and append-only. The controller stopped before evaluation because its attachment completion glob expects `OUTCOME-ATTACHMENT-*`, while the canonical run is `OUTCOME-ATTACH-*`. Current controller stop state: `AUTHORIZED_SLICE_002_ATTACHMENT_COMPLETE_EVALUATION_BLOCKED`.
+The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; stage-by-stage mode remains available and end-to-end mode advances only after accepted prior-stage completion. Slice 002 collection, attachment, and minimal evaluation are complete and append-only under the frozen boundary. T+15 remains primary and Immediate Impulse remains secondary; no broader evaluation or composite score was calculated. Current controller state: `AUTHORIZED_SLICE_002_END_TO_END_COMPLETE`.
 
 ## Exact next Move
 
-Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. Slice 001 is attached and minimally evaluated under its accepted boundary. The next bounded Move is to repair and test the controller's attachment completion proof, then resume Slice 002 evaluation only; no collection or attachment request is authorized.
+Forecast and Slice 002 evaluation are complete under their accepted boundaries. No further Outcome collection, attachment, or evaluation is authorized without a new explicit bounded Move.
 
 ## Prohibited reopening
 

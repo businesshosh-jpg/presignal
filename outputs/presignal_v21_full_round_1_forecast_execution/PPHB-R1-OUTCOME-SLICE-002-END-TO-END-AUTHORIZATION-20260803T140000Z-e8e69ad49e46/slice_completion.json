@@ -1,0 +1,47 @@
+{
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z",
+  "authorization_fingerprint": "sha256:acea3df8666d7d5dc6474bd7d0269a79e02e41d91ef4e449299833fe8fcf9da3",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
+  "manifest_sha256": "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c",
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-002-20260803T035402Z-5b2104c5270c",
+  "attachment_run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-002-20260803T044538Z-5b2104c5270c",
+  "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-002-20260803T045628Z-5b2104c5270c",
+  "stage_reuse": {
+    "collection_skipped": true,
+    "attachment_skipped": true,
+    "new_external_requests": 0,
+    "new_attachment_records": 0
+  },
+  "population": {
+    "episodes": 12,
+    "valid_forecasts": 44,
+    "pack_a": 22,
+    "pack_e": 22,
+    "complete_pack_a_e_pairs": 22,
+    "unpaired": 0,
+    "terminal_invalid_excluded": 3
+  },
+  "metrics": {
+    "PACK_A": {
+      "T+15 directional accuracy": {"primary": true, "numerator": 9, "denominator": 22, "result": 0.4090909090909091},
+      "Immediate Impulse directional accuracy": {"secondary": true, "status": "NOT_APPLICABLE_STRICT", "numerator": 0, "denominator": 0, "result": null},
+      "magnitude or pip error": {"denominator": 22, "result": 7.2272727272727275, "unit": "pips"},
+      "horizon accuracy": {"T+5": 0.36363636363636365, "T+15": 0.4090909090909091, "T+30": 0.09090909090909091, "T+60": 0.4090909090909091},
+      "path accuracy": 0.3181818181818182,
+      "reversal accuracy": {"numerator": 10, "denominator": 22, "result": 0.45454545454545453}
+    },
+    "PACK_E": {
+      "T+15 directional accuracy": {"primary": true, "numerator": 9, "denominator": 22, "result": 0.4090909090909091},
+      "Immediate Impulse directional accuracy": {"secondary": true, "status": "NOT_APPLICABLE_STRICT", "numerator": 0, "denominator": 0, "result": null},
+      "magnitude or pip error": {"denominator": 22, "result": 6.838636363636364, "unit": "pips"},
+      "horizon accuracy": {"T+5": 0.5, "T+15": 0.4090909090909091, "T+30": 0.09090909090909091, "T+60": 0.3181818181818182},
+      "path accuracy": 0.32954545454545453,
+      "reversal accuracy": {"numerator": 13, "denominator": 22, "result": 0.5909090909090909}
+    }
+  },
+  "exclusions": ["three terminal-invalid forecasts", "no external or outside-slice records", "Immediate Impulse strict scoring unsupported for APPROXIMATION_ONLY Outcomes"],
+  "unresolved_identities": [],
+  "single_use_authorization": "COMPLETED",
+  "decision": "AUTHORIZED_SLICE_002_END_TO_END_COMPLETE",
+  "append_only": true
+}
