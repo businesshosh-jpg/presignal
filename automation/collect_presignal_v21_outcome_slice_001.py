@@ -89,6 +89,12 @@ def preflight() -> tuple[dict[str, Any], list[dict[str, Any]], Path]:
     for prior in existing:
         decision_path = prior / "collection_decision.json"
         prior_decision = read_json(decision_path) if decision_path.exists() else {}
+        if not decision_path.exists():
+            run_path = prior / "run_manifest.json"
+            run = read_json(run_path) if run_path.exists() else {}
+            if run.get("external_access_before_preflight") is False and all(run.get(key, 0) == 0 for key in ("google_reads", "market_data_calls", "provider_calls", "google_writes")):
+                continue
+            raise RuntimeError("OUTCOME_COLLECTION_RESUME_STATE_AMBIGUOUS")
         if prior_decision.get("collection_decision") != f"OUTCOME_COLLECTION_{SLICE_LABEL}_BLOCKED":
             raise RuntimeError("OUTCOME_COLLECTION_ALREADY_EXISTS")
     run_id = f"PPHB-R1-OUTCOME-COLLECTION-{SLICE_ID}-{RUN_STAMP}-{manifest_hash[-12:]}"
