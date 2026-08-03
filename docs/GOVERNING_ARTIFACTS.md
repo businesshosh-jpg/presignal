@@ -163,6 +163,13 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 |---|---|---|---|---|
 | `PPHB-R1-ROUND-1-FINAL-REPORT-20260804T060000Z` | Scientific interpretation and final Round 1 report | `ROUND_1_SCIENTIFIC_INTERPRETATION_COMPLETE` and `ROUND_1_FINAL_REPORT_COMPLETE`; moderate descriptive evidence only, with T+15 primary, Immediate Impulse strictly unavailable, Pack separation, no replacement/provider-selection conclusion, and a bounded next inferential-authorization recommendation | Append-only final reporting evidence | Separately authorized inferential paired T+15 comparison or later reporting revision |
 
+## ACCEPTED_ROUND_1_PAIRED_T15_INFERENCE
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R1-PAIRED-T15-INFERENCE-AUTHORIZATION-20260804T070000Z` | Paired primary-endpoint inference authorization | Single-use local-only authorization (`sha256:5b9f977a9915d9ce9273e3fc89afc5b1e01894ea564134f1badd99c2703916e1`) for the frozen 206 common paired-scoreable T+15 observations and pre-specified exact two-sided McNemar test | Append-only; completed and non-reusable | Separately authorized confirmatory prospective Round 2 protocol |
+| `PPHB-R1-PAIRED-T15-INFERENCE-RESULT-20260804T070000Z` | Paired T+15 inference result | `ROUND_1_PAIRED_T15_INFERENCE_COMPLETE`; 46/40/54/66 four-cell table, paired risk difference A-E `-0.067961`, exact two-sided McNemar p-value `0.179665`, and no null rejection at alpha `0.05`. Its append-only population-proof correction fixes only a 112-to-106 excluded-record metadata literal; all inferential inputs and results are unchanged | Append-only final inference evidence; no confidence interval or other analysis | Separately authorized confirmatory prospective Round 2 protocol |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

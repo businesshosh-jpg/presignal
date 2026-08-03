@@ -1,0 +1,64 @@
+{
+  "authorization_fingerprint": "sha256:5b9f977a9915d9ce9273e3fc89afc5b1e01894ea564134f1badd99c2703916e1",
+  "authorization_id": "PPHB-R1-PAIRED-T15-INFERENCE-AUTHORIZATION-20260804T070000Z",
+  "authorization_schema_version": "1.0.0",
+  "authorization_status": "ACTIVE_SINGLE_USE",
+  "exact_pair_population": {
+    "descriptive_difference_a_minus_e": -0.06796116504854371,
+    "pack_a_correct": 86,
+    "pack_e_correct": 100,
+    "pair_inventory_sha256": "sha256:5559ba61dd8dbb5989fa37625e7ba626650a1c9dea4c0b908e4da794f81767b6",
+    "pairs": 206
+  },
+  "external_limits": {
+    "apps_script_reads": 0,
+    "google_reads": 0,
+    "google_writes": 0,
+    "market_data_calls": 0,
+    "outcome_attachment": 0,
+    "provider_calls": 0,
+    "retries": 0
+  },
+  "not_authorized": [
+    "confidence_interval",
+    "provider_inference",
+    "subgroup_tests",
+    "multiple_comparison_adjustment",
+    "odds_ratio",
+    "bayesian_analysis",
+    "power_analysis",
+    "composite_score",
+    "forecast_or_outcome_change"
+  ],
+  "permitted_outputs": [
+    "four_cell_correctness_table",
+    "discordant_pair_counts",
+    "paired_risk_difference",
+    "exact_two_sided_mcnemar_p_value",
+    "restrained_interpretation"
+  ],
+  "single_use_resume_rule": "Execution may use only this exact authorization and the unchanged accepted aggregate row artifact; completed evidence may not be recomputed or replaced.",
+  "source_aggregate_artifact": {
+    "aggregate_metrics_sha256": "sha256:c293ecf70825b180ee8ee7fc1735fe799a6214d2a5583ba2daa24eb25d40f593",
+    "aggregate_rows_sha256": "sha256:6bd717b7694adab3210a23fb0180e73d121a1d5485f293a166999a26eb906f92",
+    "id": "PPHB-R1-ROUND-1-AGGREGATE-EVALUATION-RESULT-20260804T050000Z"
+  },
+  "source_final_report_artifact": {
+    "id": "PPHB-R1-ROUND-1-FINAL-REPORT-20260804T060000Z",
+    "scientific_interpretation_sha256": "sha256:2e8344e70b9cea0b8c2640f003674038ef90d85f7f0b3fdcf86de7f303e7878c"
+  },
+  "test_specification": {
+    "alpha": 0.05,
+    "alternative_hypothesis": "The discordant outcome probabilities differ between Pack A and Pack E.",
+    "calculation": "Two times the lower binomial tail under p=0.5, capped at 1.0; no continuity correction.",
+    "confidence_interval": "Not authorized because no canonical paired risk-difference interval method and confidence level are governed.",
+    "direction": "two-sided",
+    "endpoint": "T+15 directional accuracy",
+    "interpretation_boundary": "The test concerns this frozen Round 1 paired population only; it does not authorize causal, provider-selection, replacement, or future-performance claims.",
+    "null_hypothesis": "Among discordant pairs, Pack A-correct/Pack E-incorrect and Pack A-incorrect/Pack E-correct outcomes are equally likely.",
+    "population": "Frozen common paired-scoreable observations only",
+    "reporting_precision": "Exact stored float; six decimals for display.",
+    "test": "Exact two-sided McNemar binomial test",
+    "ties": "Both-correct and both-incorrect pairs do not enter the McNemar test statistic; they remain in the reported four-cell table."
+  }
+}

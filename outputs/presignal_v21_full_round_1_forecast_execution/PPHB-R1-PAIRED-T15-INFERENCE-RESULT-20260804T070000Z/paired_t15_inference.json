@@ -1,0 +1,19 @@
+{
+  "discordant_pairs": {
+    "pack_a_only_correct": 40,
+    "pack_e_only_correct": 54,
+    "total": 94
+  },
+  "exact_two_sided_mcnemar_p_value": 0.17966501480803043,
+  "four_cell_table": {
+    "both_correct": 46,
+    "both_incorrect": 66,
+    "pack_a_correct_pack_e_incorrect": 40,
+    "pack_a_incorrect_pack_e_correct": 54
+  },
+  "null_rejected_at_pre_specified_alpha": false,
+  "pack_a_correct": 86,
+  "pack_e_correct": 100,
+  "paired_risk_difference_a_minus_e": -0.06796116504854369,
+  "pre_specified_alpha": 0.05
+}

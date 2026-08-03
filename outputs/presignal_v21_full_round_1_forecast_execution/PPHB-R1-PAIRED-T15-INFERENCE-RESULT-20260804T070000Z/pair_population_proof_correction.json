@@ -1,0 +1,11 @@
+{
+  "append_only_correction": true,
+  "corrected_field": "excluded_no_signal_or_non_scoreable_records",
+  "correction_reason": "The original proof used an incorrect literal. The accepted aggregate contains 518 records and the 206 common paired-scoreable observations contain 412 records, so 106 aggregate records are outside the paired inferential population.",
+  "corrected_value": 106,
+  "original_value_preserved": 112,
+  "source_aggregate_record_count": 518,
+  "common_paired_scoreable_record_count": 412,
+  "source_artifact": "PPHB-R1-ROUND-1-AGGREGATE-EVALUATION-RESULT-20260804T050000Z",
+  "semantic_effect": "None. The 206-pair inventory, four-cell table, discordant counts, paired risk difference, and exact McNemar p-value are unchanged."
+}

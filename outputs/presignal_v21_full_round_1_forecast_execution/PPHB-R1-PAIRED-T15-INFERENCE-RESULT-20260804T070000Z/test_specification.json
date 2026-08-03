@@ -1,0 +1,14 @@
+{
+  "alpha": 0.05,
+  "alternative_hypothesis": "The discordant outcome probabilities differ between Pack A and Pack E.",
+  "calculation": "Two times the lower binomial tail under p=0.5, capped at 1.0; no continuity correction.",
+  "confidence_interval": "Not authorized because no canonical paired risk-difference interval method and confidence level are governed.",
+  "direction": "two-sided",
+  "endpoint": "T+15 directional accuracy",
+  "interpretation_boundary": "The test concerns this frozen Round 1 paired population only; it does not authorize causal, provider-selection, replacement, or future-performance claims.",
+  "null_hypothesis": "Among discordant pairs, Pack A-correct/Pack E-incorrect and Pack A-incorrect/Pack E-correct outcomes are equally likely.",
+  "population": "Frozen common paired-scoreable observations only",
+  "reporting_precision": "Exact stored float; six decimals for display.",
+  "test": "Exact two-sided McNemar binomial test",
+  "ties": "Both-correct and both-incorrect pairs do not enter the McNemar test statistic; they remain in the reported four-cell table."
+}

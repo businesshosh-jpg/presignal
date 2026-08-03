@@ -1,0 +1,8 @@
+{
+  "duplicate_pairs": 0,
+  "excluded_no_signal_or_non_scoreable_records": 112,
+  "pair_count": 206,
+  "pair_inventory_sha256": "sha256:5559ba61dd8dbb5989fa37625e7ba626650a1c9dea4c0b908e4da794f81767b6",
+  "same_outcome_required": true,
+  "unresolved_pairs": 0
+}

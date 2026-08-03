@@ -169,7 +169,7 @@ The bounded single-slice runner and authorized-slice controller are validated fo
 
 ## Exact next Move
 
-Prepare a separately authorized inferential paired T+15 comparison on the frozen 206 common paired-scoreable observations. The authorization must name the test and assumptions before execution; do not add provider selection, subgroup analysis, a composite score, Pack redesign, or Round 2 activity.
+Prepare a separately authorized confirmatory prospective Round 2 protocol. It must preserve Pack A as the baseline, Pack E as the hypothesis-supported arm, T+15 as primary, and pre-register coverage/no-signal handling; do not replace a Pack, add provider selection, or execute Round 2 in the preparation Move.
 
 ## Prospective Outcome/Evaluation Stage Completion
 
@@ -196,6 +196,16 @@ Prepare a separately authorized inferential paired T+15 comparison on the frozen
 - Coverage boundary: Pack A's 51 no-signal exclusions versus Pack E's 7 prevent the Pack-specific denominators from establishing a like-for-like direct comparison. The common paired-scoreable result is descriptive only and does not provide statistical significance or a superiority claim.
 - Scientific conclusion: continue Pack E as a hypothesis-supported arm and retain Pack A as the baseline comparator. Do not replace Pack A, select providers, create a meta-forecast, revise Pack definitions, or begin Round 2 from Round 1 descriptive evidence alone.
 - Final report: `PPHB-R1-ROUND-1-FINAL-REPORT-20260804T060000Z`; no external access, metric recalculation, new inference test, forecast/Outcome change, or Google operation occurred.
+
+## Round 1 Paired T+15 Inference
+
+- Decision: `ROUND_1_PAIRED_T15_INFERENCE_COMPLETE`.
+- Authorization: `PPHB-R1-PAIRED-T15-INFERENCE-AUTHORIZATION-20260804T070000Z` (`sha256:5b9f977a9915d9ce9273e3fc89afc5b1e01894ea564134f1badd99c2703916e1`), local-only and completed once against the frozen 206 common paired-scoreable observations.
+- Test: pre-specified exact two-sided McNemar test, null of equal discordant probabilities, alpha `0.05`, no continuity correction, and no confidence interval because a canonical paired-risk-difference interval method was not governed.
+- Four-cell table: 46 both correct; 40 Pack A correct / Pack E incorrect; 54 Pack A incorrect / Pack E correct; 66 both incorrect. Paired risk difference A-E: `-0.067961`; exact p-value: `0.179665`.
+- Evidence correction: `pair_population_proof_correction.json` append-only corrects a non-core excluded-record metadata literal from 112 to 106 (`518 - 412`); the frozen 206-pair inventory, four-cell table, effect estimate, and p-value are unchanged.
+- Inference: the null is not rejected at the pre-specified threshold. The evidence is therefore `MODERATE_DESCRIPTIVE_EVIDENCE_WITHOUT_INFERENTIAL_SUPPORT`, not a superiority, replacement, provider-selection, or future-performance claim. Keep Pack E hypothesis-supported and Pack A as the baseline.
+- No external access, metric-population change, Outcome/forecast mutation, confidence interval, provider inference, subgroup test, multiple-comparison adjustment, odds ratio, Bayesian analysis, power analysis, or composite score occurred.
 
 ## Prohibited reopening
 

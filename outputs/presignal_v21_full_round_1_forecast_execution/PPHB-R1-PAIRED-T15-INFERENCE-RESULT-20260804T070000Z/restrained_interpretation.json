@@ -1,0 +1,20 @@
+{
+  "analyses_not_performed": [
+    "confidence_interval",
+    "provider_inference",
+    "subgroup_tests",
+    "multiple_comparison_adjustment",
+    "odds_ratio",
+    "bayesian_analysis",
+    "power_analysis",
+    "composite_score",
+    "forecast_or_outcome_change"
+  ],
+  "boundary": "This result does not establish causality, universal superiority, provider selection validity, Pack A replacement, future performance, or Immediate Impulse improvement.",
+  "conclusion": "The pre-specified null is not rejected for this frozen paired T+15 population.",
+  "decision": "ROUND_1_PAIRED_T15_INFERENCE_COMPLETE",
+  "descriptive_difference": "Pack A-E paired risk difference is -0.067961.",
+  "evidence_strength": "MODERATE_DESCRIPTIVE_EVIDENCE_WITHOUT_INFERENTIAL_SUPPORT",
+  "inferential_result": "Exact two-sided McNemar p-value is 0.179665 under the pre-specified alpha=0.05 threshold.",
+  "recommendation": "Keep Pack E as a hypothesis-supported arm and Pack A as the baseline; the smallest next Move is a separately authorized confirmatory prospective Round 2 protocol, not replacement."
+}
