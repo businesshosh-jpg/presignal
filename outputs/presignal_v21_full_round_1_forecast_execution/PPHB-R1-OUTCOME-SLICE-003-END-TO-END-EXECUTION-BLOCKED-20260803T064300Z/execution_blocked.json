@@ -1,0 +1,26 @@
+{
+  "decision": "AUTHORIZED_SLICE_003_GOVERNANCE_BLOCKED",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-003-END-TO-END-AUTHORIZATION-20260803T160000Z",
+  "authorization_fingerprint": "sha256:42faad88745d71b047fb1136b5f799b45501bed621874b85a894f6c2def36eb8",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "blocked_stage": "collection_preflight",
+  "root_cause": "SLICE_003_RELEASE_DAY_COUNT_EXCEEDS_APPS_SCRIPT_READ_CEILING",
+  "distinct_release_utc_days": 10,
+  "maximum_apps_script_reads": 3,
+  "canonical_collector_rule": "one Apps Script source read per required UTC release day",
+  "external_requests": {
+    "apps_script_reads": 0,
+    "market_data_attempts": 0,
+    "total_external_requests": 0,
+    "google_writes": 0,
+    "provider_calls": 0
+  },
+  "completed_stages": [],
+  "incomplete_stages": ["call_free_preflight", "collection", "collection_reconciliation", "attachment", "attachment_reconciliation", "minimal_evaluation", "final_slice_reconciliation"],
+  "remote_state": "CERTAIN_NO_EXTERNAL_REQUEST_OCCURRED",
+  "manifest_or_authorization_modified": false,
+  "retry_performed": false,
+  "resume": "NEW_EXPLICIT_AUTHORIZATION_REQUIRED_AFTER_CEILING_REPAIR",
+  "unresolved_governance_issue": "The frozen population spans 10 source days but the frozen authorization permits only 3 Apps Script reads; no authorized deterministic route can collect all identities under the current ceiling."
+}
