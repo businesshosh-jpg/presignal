@@ -359,3 +359,14 @@ Freeze one explicit prospective cutoff policy with its numeric release-relative 
 ## Exact Next Round 2 Move
 
 Activate the exact first-Slice provider-dispatch authorization and dispatch only the enumerated calls after an immediate T−15 cutoff recheck.
+
+## Round 2 First-Slice Dispatch Governance Stop
+
+- Decision: `ROUND_2_FIRST_SLICE_FORECAST_EXECUTION_GOVERNANCE_BLOCKED`.
+- The exact authorization and manifest bindings passed, but all `186` frozen calls contain only Pack-input fingerprints. None contains a canonical Pack-input payload or immutable input artifact/path from which the accepted provider-visible Pack A `BASELINE` and Pack E `FULL_CONTEXT` contexts can be reconstructed. Creating those inputs locally would change scientific meaning.
+- The authorization was not activated; the exclusive Slice lease was not acquired; durable reservations: `0`; provider calls: `0`; Google writes: `0`; market-data, Outcome, evaluation, and retry activity: `0`. All `186` calls are partitioned as `GOVERNANCE_BLOCKED_PACK_INPUT_AUTHORITY`; no call is remote-state-unknown or duplicated.
+- Blocker evidence: `PPHB-R2-FIRST-ROLLING-SLICE-001-DISPATCH-EXECUTION-20260804T020000Z/dispatch_governance_blocker.json`.
+
+## Exact Next Round 2 Move
+
+Materialize and fingerprint the canonical Pack A and Pack E provider-visible inputs, then freeze a replacement single-use dispatch authorization. Do not reuse the blocked authorization; only after that authority is accepted may T−15 dispatch resume.
