@@ -4,7 +4,7 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted HEAD: `65a249558c45dbcfa146f751299dec22ad9b2e37`
+- Accepted HEAD: `76ef90f68f416c7ad52e4f4e993507c473ff7116`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
@@ -98,6 +98,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Next Slice 003 manifest preparation: `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z` (fingerprint recorded in the package; `NEXT_PROSPECTIVE_SLICE_MANIFEST_FROZEN`; 12 Episodes, 40 valid forecasts, 20 Pack A, 20 Pack E, 20 complete pairs; authorization inputs are proposed and inactive).
 - Active Slice 003 end-to-end authorization: `PPHB-R1-OUTCOME-SLICE-003-END-TO-END-AUTHORIZATION-20260803T160000Z-42faad88745d71b047fb` (`SLICE_003_END_TO_END_AUTHORIZATION_FROZEN`; fingerprint `sha256:42faad88745d71b047fb1136b5f799b45501bed621874b85a894f6c2def36eb8`; authorized but not started).
 - Slice 003 execution preflight: `PPHB-R1-OUTCOME-SLICE-003-END-TO-END-EXECUTION-BLOCKED-20260803T064300Z` (`AUTHORIZED_SLICE_003_GOVERNANCE_BLOCKED`; population spans 10 UTC release days while authorization permits 3 Apps Script reads; external requests 0).
+- Slice 003 replacement authorization: `PPHB-R1-OUTCOME-SLICE-003-REPLACEMENT-END-TO-END-AUTHORIZATION-20260803T171000Z-27ebd3d15f91637f217a` (`SLICE_003_REPLACEMENT_END_TO_END_AUTHORIZATION_FROZEN`; fingerprint `sha256:27ebd3d15f91637f217a2621edecf48c32d61698587d3bf785b2ffdef743e49b`; corrected 10/12/22 ceilings; authorized but not started).
 
 ## Prompt boundary
 
@@ -125,11 +126,11 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 Slice 001 contains 12 immutable candidate Outcomes under `presignal_event_path_contract_v1_1` schema `2.1.1`. Source collection used 3 Apps Script reads and 3 Tiingo provider attempts. The accepted attachment run links all 12 candidates append-only with unchanged hashes and no external access. Coverage is 44 valid forecasts across 12 complete Pack A/E pairs; no evaluation was calculated.
 The accepted minimal evaluation is limited to those 44 forecasts and attached Outcomes. It reports Pack-specific T+15, horizon, path, magnitude/pip, and reversal metrics plus descriptive Pack A/E differences. Immediate Impulse remains secondary and strict-scoring is not applicable because the slice is `APPROXIMATION_ONLY`; no composite score or statistical inference is authorized.
 
-The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; stage-by-stage mode remains available and end-to-end mode advances only after accepted prior-stage completion. Slice 002 collection, attachment, and minimal evaluation are complete and append-only under the frozen boundary. T+15 remains primary and Immediate Impulse remains secondary; no broader evaluation or composite score was calculated. Current controller state: `AUTHORIZED_SLICE_003_GOVERNANCE_BLOCKED`. The prospective-slice contract remains active, but Slice 003 requires a new explicit authorization after resolving its source-day ceiling conflict.
+The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; stage-by-stage mode remains available and end-to-end mode advances only after accepted prior-stage completion. Slice 002 collection, attachment, and minimal evaluation are complete and append-only under the frozen boundary. T+15 remains primary and Immediate Impulse remains secondary; no broader evaluation or composite score was calculated. Current controller state: `SLICE_003_REPLACEMENT_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED`. The original Slice 003 authorization remains blocked and non-reusable; the replacement authorization corrects the ceiling to one Apps Script read per each of the 10 distinct UTC release days, with no external activity performed in this Move.
 
 ## Exact next Move
 
-Resolve the Slice 003 source-day/request-ceiling conflict and prepare a new explicit bounded authorization; do not retry the blocked authorization.
+Execute the replacement Slice 003 authorization in one coherent Codex session; do not reuse the blocked authorization.
 
 ## Prohibited reopening
 

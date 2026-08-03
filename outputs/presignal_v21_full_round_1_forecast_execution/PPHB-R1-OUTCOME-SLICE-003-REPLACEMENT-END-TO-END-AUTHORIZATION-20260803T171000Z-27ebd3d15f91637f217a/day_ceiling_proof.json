@@ -1,0 +1,37 @@
+{
+  "canonical_rule": "one Apps Script source read per distinct UTC release day",
+  "distinct_release_day_count": 10,
+  "duplicate_day_reads": 0,
+  "episode_to_release_day": {
+    "EP_BATCH_1ff2d721e3e93c9a9ac4": "2024-05-16",
+    "EP_BATCH_5fe2f38977eb016fa947": "2024-05-15",
+    "EP_BATCH_e14769aca1aaacc9c230": "2024-05-13",
+    "EP_BATCH_f537c8eb93513ab66253": "2024-05-16",
+    "EP_EVENT_08246fe90d4f62b05721": "2024-05-09",
+    "EP_EVENT_13e6e3247eaea46e42de": "2024-05-07",
+    "EP_EVENT_4b80366594480b554889": "2024-05-04",
+    "EP_EVENT_556c59fe6ef36f4ac156": "2024-05-06",
+    "EP_EVENT_a8905547406656cf53ae": "2024-05-10",
+    "EP_EVENT_aa41226bcb8107901555": "2024-05-17",
+    "EP_EVENT_e8d9ca85a946bdcbc5d9": "2024-05-06",
+    "EP_EVENT_ef630a47cf9a4a6f79fd": "2024-05-14"
+  },
+  "external_access": 0,
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "release_days_utc": [
+    "2024-05-04",
+    "2024-05-06",
+    "2024-05-07",
+    "2024-05-09",
+    "2024-05-10",
+    "2024-05-13",
+    "2024-05-14",
+    "2024-05-15",
+    "2024-05-16",
+    "2024-05-17"
+  ],
+  "required_apps_script_reads": 10,
+  "required_market_data_attempts": 12,
+  "required_total_external_requests": 22
+}

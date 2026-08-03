@@ -1,0 +1,16 @@
+{
+  "append_only": true,
+  "attachment": 0,
+  "authorization_fingerprint": "sha256:27ebd3d15f91637f217a2621edecf48c32d61698587d3bf785b2ffdef743e49b",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-003-REPLACEMENT-END-TO-END-AUTHORIZATION-20260803T171000Z",
+  "controller_commit": "770c8fe6605dd33beccc06b89fe0535848055a8d",
+  "evaluation": 0,
+  "google_reads": 0,
+  "google_writes": 0,
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "market_data_calls": 0,
+  "move": "REPLACE_BLOCKED_SLICE_003_AUTHORIZATION_WITH_DAY_BOUND_CEILINGS",
+  "provider_calls": 0,
+  "run_id": "PPHB-R1-OUTCOME-SLICE-003-REPLACEMENT-END-TO-END-AUTHORIZATION-20260803T171000Z-27ebd3d15f91637f217a"
+}

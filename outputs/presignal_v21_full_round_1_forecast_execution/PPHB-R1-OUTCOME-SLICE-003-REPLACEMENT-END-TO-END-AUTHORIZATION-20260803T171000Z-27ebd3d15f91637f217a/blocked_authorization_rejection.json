@@ -1,0 +1,7 @@
+{
+  "blocked_authorization_fingerprint": "sha256:42faad88745d71b047fb1136b5f799b45501bed621874b85a894f6c2def36eb8",
+  "blocked_authorization_id": "PPHB-R1-OUTCOME-SLICE-003-END-TO-END-AUTHORIZATION-20260803T160000Z",
+  "decision": "AUTHORIZATION_NON_REUSABLE_BLOCKED",
+  "external_access": 0,
+  "reason": "recorded governance-blocked evidence is non-reusable"
+}

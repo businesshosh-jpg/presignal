@@ -1,0 +1,254 @@
+{
+  "apps_script_route": "apiFetchGovernedHistoricalUsdJpyObservation",
+  "attachment_destination": "append-only local Outcome attachment evidence",
+  "attachment_write_ceiling": {
+    "google_writes": 0,
+    "local_append_only_records": 12
+  },
+  "authorization_fingerprint": "sha256:27ebd3d15f91637f217a2621edecf48c32d61698587d3bf785b2ffdef743e49b",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-003-REPLACEMENT-END-TO-END-AUTHORIZATION-20260803T171000Z",
+  "authorization_mode": "END_TO_END",
+  "authorization_schema_version": "AUTHORIZED_SLICE_END_TO_END_AUTH_V1",
+  "authorization_status": "ACTIVE",
+  "authorized_attachment_identity_ids": [
+    "SLICE-003|EP_EVENT_4b80366594480b554889|USD/JPY|2024-05-04T18:20:00Z",
+    "SLICE-003|EP_EVENT_e8d9ca85a946bdcbc5d9|USD/JPY|2024-05-06T16:50:00Z",
+    "SLICE-003|EP_EVENT_556c59fe6ef36f4ac156|USD/JPY|2024-05-06T17:00:00Z",
+    "SLICE-003|EP_EVENT_13e6e3247eaea46e42de|USD/JPY|2024-05-07T14:10:00Z",
+    "SLICE-003|EP_EVENT_08246fe90d4f62b05721|USD/JPY|2024-05-09T00:00:00Z",
+    "SLICE-003|EP_EVENT_a8905547406656cf53ae|USD/JPY|2024-05-10T13:00:00Z",
+    "SLICE-003|EP_BATCH_e14769aca1aaacc9c230|USD/JPY|2024-05-13T13:00:00Z",
+    "SLICE-003|EP_EVENT_ef630a47cf9a4a6f79fd|USD/JPY|2024-05-14T00:00:00Z",
+    "SLICE-003|EP_BATCH_5fe2f38977eb016fa947|USD/JPY|2024-05-15T05:30:00Z",
+    "SLICE-003|EP_BATCH_f537c8eb93513ab66253|USD/JPY|2024-05-16T13:15:00Z",
+    "SLICE-003|EP_BATCH_1ff2d721e3e93c9a9ac4|USD/JPY|2024-05-16T15:30:00Z",
+    "SLICE-003|EP_EVENT_aa41226bcb8107901555|USD/JPY|2024-05-17T07:00:00Z"
+  ],
+  "authorized_identity_ids": [
+    "EP_EVENT_4b80366594480b554889",
+    "EP_EVENT_e8d9ca85a946bdcbc5d9",
+    "EP_EVENT_556c59fe6ef36f4ac156",
+    "EP_EVENT_13e6e3247eaea46e42de",
+    "EP_EVENT_08246fe90d4f62b05721",
+    "EP_EVENT_a8905547406656cf53ae",
+    "EP_BATCH_e14769aca1aaacc9c230",
+    "EP_EVENT_ef630a47cf9a4a6f79fd",
+    "EP_BATCH_5fe2f38977eb016fa947",
+    "EP_BATCH_f537c8eb93513ab66253",
+    "EP_BATCH_1ff2d721e3e93c9a9ac4",
+    "EP_EVENT_aa41226bcb8107901555"
+  ],
+  "authorized_stage": "end_to_end",
+  "ceilings": {
+    "google_write_ceiling": 0,
+    "max_apps_script_reads": 10,
+    "max_attachment_records": 12,
+    "max_evaluation_artifacts": 1,
+    "max_market_data_attempts": 12,
+    "max_total_external_requests": 22
+  },
+  "contract": "presignal_event_path_contract_v1_1",
+  "contract_binding": "PPHB-R1-PROSPECTIVE-SLICE-EXECUTION-CONTRACT-20260803T060000Z",
+  "controller_commit": "770c8fe6605dd33beccc06b89fe0535848055a8d",
+  "controller_version": "AUTHORIZED_SLICE_CONTROLLER_V1_END_TO_END",
+  "destination": "append-only local Outcome collection evidence; no Google write",
+  "evaluation_output_destination": "append-only local minimal evaluation evidence",
+  "evaluation_population": {
+    "complete_pack_a_e_pairs": 20,
+    "pack_a": 20,
+    "pack_a_only": 0,
+    "pack_e": 20,
+    "pack_e_only": 0,
+    "valid_forecasts": 40
+  },
+  "evaluation_population_rule": "40 authoritative valid forecasts mapped one-to-one to 12 attached Slice 003 Outcomes; terminal-invalid excluded; Pack A/E remain distinct",
+  "exclusion_proof": {
+    "pairability_conflicts": [
+      {
+        "episode_id": "EP_EVENT_d6fce9c8901236c9cdd2",
+        "pack_a_provider_models": [
+          [
+            "Anthropic",
+            "claude-haiku-4-5"
+          ],
+          [
+            "OpenAI",
+            "gpt-4o-mini-2024-07-18"
+          ]
+        ],
+        "pack_e_provider_models": [
+          [
+            "Anthropic",
+            "claude-haiku-4-5"
+          ]
+        ],
+        "reason": "PACK_A_E_PROVIDER_MODEL_PAIRABILITY_CONFLICT",
+        "valid_forecast_call_ids": [
+          "FCL_44189abf077433bb88eaf76a",
+          "FCL_481212a2f78ef5924e477aa5",
+          "FCL_6c78a27590fc24fc99ebf59c"
+        ]
+      },
+      {
+        "episode_id": "EP_BATCH_55166f262d069c0e7828",
+        "pack_a_provider_models": [
+          [
+            "Anthropic",
+            "claude-haiku-4-5"
+          ],
+          [
+            "Gemini",
+            "gemini-2.5-flash-lite"
+          ]
+        ],
+        "pack_e_provider_models": [
+          [
+            "Anthropic",
+            "claude-haiku-4-5"
+          ],
+          [
+            "Gemini",
+            "gemini-2.5-flash-lite"
+          ],
+          [
+            "OpenAI",
+            "gpt-4o-mini-2024-07-18"
+          ]
+        ],
+        "reason": "PACK_A_E_PROVIDER_MODEL_PAIRABILITY_CONFLICT",
+        "valid_forecast_call_ids": [
+          "FCL_49b823e16bac3b007d33400e",
+          "FCL_50adca8260899db14fe8ee81",
+          "FCL_8fccf697b949ef97a6eac3b6",
+          "FCL_a342084e2ca8e2173d105dde",
+          "FCL_e0b9d2de43f426e4c7cf85d3"
+        ]
+      },
+      {
+        "episode_id": "EP_BATCH_8a51e1bb638289aeb7df",
+        "pack_a_provider_models": [],
+        "pack_e_provider_models": [
+          [
+            "Anthropic",
+            "claude-haiku-4-5"
+          ]
+        ],
+        "reason": "PACK_A_E_PROVIDER_MODEL_PAIRABILITY_CONFLICT",
+        "valid_forecast_call_ids": [
+          "FCL_b71f4c64037d86d3f67d36cd"
+        ]
+      }
+    ],
+    "prior_slice_episodes": {
+      "episode_ids": [
+        "EP_BATCH_0ba598718d3db4688437",
+        "EP_BATCH_1c2cb957d0760e40f81e",
+        "EP_BATCH_58e0d92ad8520bb926bb",
+        "EP_BATCH_851b7d8bd3661e168de1",
+        "EP_BATCH_af76f644b423101d91f2",
+        "EP_BATCH_bf1ad05b4d84df1b733a",
+        "EP_BATCH_eeae6fee09edc60d1e7d",
+        "EP_BATCH_f7f52f894ce4f1929d5a",
+        "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+        "EP_EVENT_b908a729dc4fa10f46a6",
+        "EP_EVENT_bfcff4089c331ae1d2c8",
+        "EP_EVENT_d5d7aa4435b9e6bab424"
+      ],
+      "slice_001_and_slice_002_unique_episode_count": 12
+    },
+    "terminal_invalid_calls": [
+      "FCL_27720b8b23236b173b96fdee",
+      "FCL_7f0463b134c67757968580e8",
+      "FCL_e07264654e9d3da6f63088a1"
+    ]
+  },
+  "expiration": "single Slice 003 execution route; deterministic timestamp is artifact naming metadata, not a future-effective validity boundary",
+  "instrument": "USD/JPY",
+  "live_stop_state_before_execution": "SLICE_003_REPLACEMENT_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED",
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "manifest_sha256": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "market_closure_behavior": "preserve contract-defined unavailable status; stop if authority is unresolved",
+  "measurement_windows_min": [
+    5,
+    15,
+    30,
+    60
+  ],
+  "missing_data_behavior": "preserve unavailable observations explicitly; do not infer, interpolate, repair, or substitute",
+  "outcome_collection_identity_ids": [
+    "SLICE-003|EP_EVENT_4b80366594480b554889|USD/JPY|2024-05-04T18:20:00Z",
+    "SLICE-003|EP_EVENT_e8d9ca85a946bdcbc5d9|USD/JPY|2024-05-06T16:50:00Z",
+    "SLICE-003|EP_EVENT_556c59fe6ef36f4ac156|USD/JPY|2024-05-06T17:00:00Z",
+    "SLICE-003|EP_EVENT_13e6e3247eaea46e42de|USD/JPY|2024-05-07T14:10:00Z",
+    "SLICE-003|EP_EVENT_08246fe90d4f62b05721|USD/JPY|2024-05-09T00:00:00Z",
+    "SLICE-003|EP_EVENT_a8905547406656cf53ae|USD/JPY|2024-05-10T13:00:00Z",
+    "SLICE-003|EP_BATCH_e14769aca1aaacc9c230|USD/JPY|2024-05-13T13:00:00Z",
+    "SLICE-003|EP_EVENT_ef630a47cf9a4a6f79fd|USD/JPY|2024-05-14T00:00:00Z",
+    "SLICE-003|EP_BATCH_5fe2f38977eb016fa947|USD/JPY|2024-05-15T05:30:00Z",
+    "SLICE-003|EP_BATCH_f537c8eb93513ab66253|USD/JPY|2024-05-16T13:15:00Z",
+    "SLICE-003|EP_BATCH_1ff2d721e3e93c9a9ac4|USD/JPY|2024-05-16T15:30:00Z",
+    "SLICE-003|EP_EVENT_aa41226bcb8107901555|USD/JPY|2024-05-17T07:00:00Z"
+  ],
+  "permitted_mechanical_repairs": "general deterministic stage-interface repairs only; preserve semantic values, hashes, ceilings, and canonical stages",
+  "permitted_metrics": [
+    "T+15 directional accuracy",
+    "Immediate Impulse directional accuracy",
+    "magnitude or pip error",
+    "horizon accuracy",
+    "path accuracy",
+    "reversal accuracy"
+  ],
+  "primary_endpoint": "T+15",
+  "release_days_utc": [
+    "2024-05-04",
+    "2024-05-06",
+    "2024-05-07",
+    "2024-05-09",
+    "2024-05-10",
+    "2024-05-13",
+    "2024-05-14",
+    "2024-05-15",
+    "2024-05-16",
+    "2024-05-17"
+  ],
+  "required_collection_artifact": {
+    "manifest_sha256": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+    "required_files": [
+      "collection_reconciliation.json",
+      "candidate_outcomes.jsonl"
+    ],
+    "stage": "collection"
+  },
+  "resume_authority": "resume only from accepted append-only completion artifact with exact Slice 003 manifest and authorization fingerprints; otherwise new explicit authorization required",
+  "retry_boundary": "NO_AUTOMATIC_RETRIES",
+  "schema_version": "2.1.1",
+  "secondary_measurement": "Immediate Impulse",
+  "single_use": true,
+  "slice_id": "SLICE-003",
+  "source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; one-minute OHLC close; UTC",
+  "stage_sequence": [
+    "call_free_preflight",
+    "collection",
+    "collection_reconciliation",
+    "attachment",
+    "attachment_reconciliation",
+    "minimal_evaluation",
+    "final_slice_reconciliation"
+  ],
+  "stage_stop_conditions": [
+    "partial or ambiguous stage artifact",
+    "identity, count, fingerprint, or schema conflict",
+    "duplicate Outcome or attachment",
+    "remote-state ambiguity",
+    "ceiling exceeded",
+    "historical leakage",
+    "unsupported metric",
+    "provider/source authority conflict"
+  ],
+  "supersedes_authorization_fingerprint": "sha256:42faad88745d71b047fb1136b5f799b45501bed621874b85a894f6c2def36eb8",
+  "supersedes_authorization_id": "PPHB-R1-OUTCOME-SLICE-003-END-TO-END-AUTHORIZATION-20260803T160000Z",
+  "supersession_reason": "Blocked authorization allowed 3 Apps Script reads for a population spanning 10 UTC release days; canonical collection requires one read per distinct day.",
+  "timestamp_classification": "DETERMINISTIC_ARTIFACT_NAMING_METADATA",
+  "timestamp_rules": "frozen release_ts and one-minute observations normalized to UTC"
+}
