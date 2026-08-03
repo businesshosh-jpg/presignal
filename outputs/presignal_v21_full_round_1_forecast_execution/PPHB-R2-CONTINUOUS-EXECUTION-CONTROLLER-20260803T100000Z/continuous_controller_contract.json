@@ -1,0 +1,62 @@
+{
+  "canonical_stage_entry_points": [
+    "automation/build_presignal_v21_episodes.py",
+    "automation/run_presignal_v21_single_event_path_pair_v1_1.py",
+    "automation/run_presignal_v21_authorized_slice.py"
+  ],
+  "controller_id": "PPHB-R2-CONTINUOUS-EXECUTION-CONTROLLER-20260803T100000Z",
+  "controller_schema_version": "1.0.0",
+  "envelope_binding": {
+    "envelope_fingerprint": "sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0",
+    "envelope_id": "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z"
+  },
+  "execution_sequence": [
+    "authorized_schedule_refresh",
+    "snapshot_validation",
+    "episode_admission",
+    "manifest_freeze",
+    "exact_dispatch_authorization",
+    "canonical_forecast_dispatch",
+    "outcome_eligibility_wait",
+    "canonical_outcome_collection_attachment_evaluation",
+    "cumulative_progress_reconciliation",
+    "next_slice_or_protocol_stop"
+  ],
+  "global_limits": {
+    "maximum_admitted_episodes": 144,
+    "maximum_episodes_per_slice": 48,
+    "zero_google_write_default": 0,
+    "zero_retry_default": 0
+  },
+  "governance_stops": [
+    "identity, count, manifest, fingerprint, provider/model, cutoff, or Pack-lineage conflict",
+    "historical leakage or Outcome availability before forecast freeze",
+    "ambiguous artifact authority or remote state",
+    "missing or contradictory Outcome semantics",
+    "unsupported metric, denominator, confidence-interval method, or test substitution",
+    "need for an unauthorized external request, retry, Google write, provider/model replacement, or alternate source",
+    "any repair that changes forecast, Outcome, Pack, or metric meaning"
+  ],
+  "mechanical_repairs": [
+    "paths",
+    "filenames",
+    "serialization",
+    "schedule parsing",
+    "argument mapping",
+    "manifest discovery",
+    "authorization binding",
+    "completion proofs",
+    "resume",
+    "idempotency",
+    "duplicate prevention",
+    "checkpointing",
+    "dynamic population",
+    "ceiling derivation"
+  ],
+  "no_implicit_dispatch": "Provider calls require an active immutable authorization enumerating every exact call identity; policy ceilings alone never authorize dispatch.",
+  "protocol_binding": {
+    "protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+    "protocol_id": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
+  },
+  "resume_and_idempotency": "Durable exact call reservations, schedule snapshot lineage, accepted stage proofs, and per-request checkpoints are required. Resume dispatches only missing exact identities and stops on any ambiguous remote state."
+}

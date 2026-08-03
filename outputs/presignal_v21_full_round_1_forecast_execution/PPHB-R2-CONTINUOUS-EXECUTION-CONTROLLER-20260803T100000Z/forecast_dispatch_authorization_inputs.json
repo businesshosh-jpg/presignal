@@ -1,0 +1,19 @@
+{
+  "blocking_reference": "No append-only authoritative current Event-sheet export is present. The previous 2030 records are synthetic fixtures and cannot be admitted.",
+  "decision": "ROUND_2_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY",
+  "exact_forecast_call_identities": [],
+  "maximum_calls_per_provider": {
+    "Anthropic": 0,
+    "Gemini": 0,
+    "OpenAI": 0
+  },
+  "maximum_provider_calls": 0,
+  "prohibitions": [
+    "provider dispatch",
+    "Google writes",
+    "Outcome collection",
+    "evaluation",
+    "retry"
+  ],
+  "retry_boundary": 0
+}

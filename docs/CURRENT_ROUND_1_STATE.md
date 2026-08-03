@@ -233,6 +233,18 @@ Prepare one separately authorized Round 2 execution envelope and first prospecti
 
 Establish or provide an authoritative current prospective Episode source and release schedule, then freeze the first Slice manifest and one explicit forecast-dispatch authorization. Execute that authorization only after local identity, Pack A/E pairing, prompt, cutoff, lease, reservation, and leakage validation passes.
 
+## Continuous Round 2 Execution Controller
+
+- Decisions: `ROUND_2_AUTHORITATIVE_EPISODE_SOURCE_ESTABLISHED`; `CONTINUOUS_ROUND_2_CONTROLLER_READY`; `ROUND_2_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY`.
+- Authoritative source contract: FMP Economic Calendar through the existing Apps Script `apiUpsertEventWindow_` route, canonical `normalizeFmpRow_` normalization, Event-sheet upsert/batching, and a captured append-only Event-sheet export. Generic web calendars, synthetic fixtures, dry-run records, released events, and historical Round 1 events are rejected.
+- Controller: `automation/run_presignal_v21_continuous_round_2.py`. It validates only captured authoritative snapshots, freezes deterministic Episode admission and exact Pack A/E/provider call identities, and defines resumable stage handoffs to the canonical forecast and Outcome controllers. It never dispatches from a policy ceiling alone.
+- Current roster status: no append-only current Event-sheet export exists locally. A full roster cannot be frozen, no first rolling Slice is selected, and no provider-call identity is fabricated. The prior 2030 prospective fixture remains non-authoritative.
+- Activity in this Move: provider calls `0`; external access `0`; Google writes `0`; Outcome activity `0`; evaluation activity `0`; retries `0`.
+
+## Exact Next Round 2 Move
+
+Freeze a bounded schedule-refresh and Event-sheet-export authorization for the canonical FMP/Apps Script route, including exact external and Google-write ceilings. Capture and preserve the authoritative current schedule snapshot, then use the continuous controller to freeze a first rolling Slice and an exact provider-dispatch authorization before any provider call.
+
 ## Prohibited reopening
 
 Do not reopen accepted Attention, Pack, planning, Batches 001–003, Batch 003 closure, or prompt-migration evidence without a concrete contradiction in named authoritative artifacts or a focused-test failure.

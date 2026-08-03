@@ -1,0 +1,5 @@
+{
+  "full_roster_rule": "A live dynamic release schedule cannot be frozen beyond the captured authoritative snapshot; revisions invalidate affected pending admissions.",
+  "selection": "select_rolling_slice",
+  "snapshot_validation": "validate_snapshot"
+}

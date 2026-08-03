@@ -184,6 +184,12 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 | `PPHB-R2-EXECUTION-ENVELOPE-PREPARATION-20260803T090000Z/first_slice_population_proof.json` | First prospective Slice selection proof | `ROUND_2_FIRST_PROSPECTIVE_SLICE_MANIFEST_BLOCKED`; zero eligible Episodes because no authoritative current prospective Episode source exists. Synthetic 2030 dry-run fixtures and all Round 1 historical Episodes are excluded. | Append-only blocker evidence | Authoritative prospective Episode source and first Slice manifest |
 | `PPHB-R2-EXECUTION-ENVELOPE-PREPARATION-20260803T090000Z/forecast_dispatch_authorization_inputs.json` | First-Slice dispatch inputs | `ROUND_2_FIRST_SLICE_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY`; zero call identities and zero maximum calls because the first manifest is not frozen; no provider, Google, market-data, Outcome, or evaluation activity occurred | Append-only inactive inputs | Explicit first-Slice forecast-dispatch authorization |
 
+## ROUND_2_CONTINUOUS_EXECUTION_CONTROLLER
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R2-CONTINUOUS-EXECUTION-CONTROLLER-20260803T100000Z` | Canonical Round 2 schedule-admission and continuous controller contract | `ROUND_2_AUTHORITATIVE_EPISODE_SOURCE_ESTABLISHED`; `CONTINUOUS_ROUND_2_CONTROLLER_READY`; and `ROUND_2_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY`. Establishes FMP Economic Calendar through canonical Apps Script Event-sheet normalization/upsert plus append-only export as the only admissible prospective source. It requires a separate exact schedule-refresh authorization before any current snapshot, roster, or provider-call identity can be frozen. | Append-only controller and source-authority evidence; no live access or dispatch authority | Bounded schedule-refresh/export authorization, then a frozen Slice manifest and exact dispatch authorization |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

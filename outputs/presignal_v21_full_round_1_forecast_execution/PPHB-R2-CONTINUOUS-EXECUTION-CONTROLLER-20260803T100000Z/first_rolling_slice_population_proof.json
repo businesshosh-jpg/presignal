@@ -1,0 +1,8 @@
+{
+  "decision": "ROUND_2_FULL_ROSTER_NOT_FEASIBLE_WITHOUT_AUTHORIZED_CURRENT_SNAPSHOT",
+  "eligible_current_episode_count": 0,
+  "first_rolling_slice_authorization_inputs_ready": false,
+  "full_roster_authorization_inputs_ready": false,
+  "reason": "No append-only authoritative current Event-sheet export is present. The previous 2030 records are synthetic fixtures and cannot be admitted.",
+  "required_next_authority": "Freeze a bounded schedule-refresh and Event-sheet-export authorization, then validate the captured snapshot before freezing exact provider-call identities."
+}

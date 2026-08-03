@@ -1,0 +1,10 @@
+{
+  "controller_decision": "CONTINUOUS_ROUND_2_CONTROLLER_READY",
+  "evaluation_activity": 0,
+  "external_access": 0,
+  "google_writes": 0,
+  "outcome_activity": 0,
+  "provider_calls": 0,
+  "roster_decision": "ROUND_2_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY",
+  "source_decision": "ROUND_2_AUTHORITATIVE_EPISODE_SOURCE_ESTABLISHED"
+}

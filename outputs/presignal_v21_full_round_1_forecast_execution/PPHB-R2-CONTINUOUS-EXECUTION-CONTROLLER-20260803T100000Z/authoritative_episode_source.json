@@ -1,0 +1,34 @@
+{
+  "authoritative_owner": "Apps Script Event sheet populated only through the canonical FMP calendar integration",
+  "fixture_rejection": [
+    "synthetic",
+    "fixture",
+    "dry_run",
+    "EP_EVENT_PROSPECTIVE"
+  ],
+  "fmp_collection_entry_point": "apps_script/fmp_calendar.js::fmpFetchRangeUtc_",
+  "identity_rule": "Event-row locator and deterministic Episode construction from automation/build_presignal_v21_episodes.py; FMP upsert fallback key is country|indicator_name|release_ts.",
+  "live_access_boundary": "Refreshing calls FMP and upserts the Event sheet; it requires a separate exact schedule-refresh authorization with external and Google-write ceilings.",
+  "local_read_adapter": "automation/google_clients.py::get_sheet_values, captured as an append-only Event-sheet export",
+  "normalization_entry_point": "apps_script/fmp_calendar.js::normalizeFmpRow_",
+  "persistence_and_batching": [
+    "apps_script/fmp_calendar.js::_upsertEventsToEvent_",
+    "apps_script/automation_api.js::applyBatchingForKeys_"
+  ],
+  "refresh_cadence": "A separately authorized refresh before each new Slice admission and on any authoritative revision/cancellation notice.",
+  "refresh_entry_point": "apps_script/automation_api.js::apiUpsertEventWindow_",
+  "required_event_schema": [
+    "batch_id",
+    "country",
+    "event_id",
+    "indicator_name",
+    "release_ts",
+    "source_cal",
+    "source_provider",
+    "source_series_id",
+    "type"
+  ],
+  "revision_and_cancellation": "A changed event, release timestamp, type, batch, or cancellation after a manifest is frozen invalidates that pending admission and is a governance stop; no silent replacement is permitted.",
+  "snapshot_requirement": "Only an append-only authoritative Event-sheet export with canonical Apps Script/FMP lineage may admit Episodes.",
+  "source_authority": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET"
+}
