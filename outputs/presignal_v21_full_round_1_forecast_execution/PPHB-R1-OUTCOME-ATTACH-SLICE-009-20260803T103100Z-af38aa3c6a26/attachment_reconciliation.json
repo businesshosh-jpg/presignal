@@ -1,0 +1,66 @@
+{
+  "attached_outcome_count": 8,
+  "authorized_candidate_count": 8,
+  "candidate_to_attached_hash_linkage": "PASSED",
+  "duplicate_or_conflicting_attachments": 0,
+  "episode_coverage": "8_OF_8",
+  "evaluation_calculations": 0,
+  "external_requests": 0,
+  "failures_by_episode": {},
+  "google_writes": 0,
+  "pack_a_e_forecast_coverage": {
+    "complete_pack_a_e_pairs_outcome_covered": 8,
+    "forecast_call_ids": [
+      "FCL_10602b582b6a16a25f20c807",
+      "FCL_2460f933b7d507334b823fab",
+      "FCL_286209db6a620b5913254082",
+      "FCL_3718229e47d5e1d43c228e1f",
+      "FCL_3d10ae8285471f4e3a980b79",
+      "FCL_42b232a5c17ef6711fc4a127",
+      "FCL_44e49d49eae9b3bdbb6e0325",
+      "FCL_4aca3d03f4d00c04901afad4",
+      "FCL_4b0aeb7da91c70c19ae9ea86",
+      "FCL_4b40d95b94f6fab71f3348ab",
+      "FCL_4d0f8920919558a9913fe0ae",
+      "FCL_4e52ecdec034b45174eaecf8",
+      "FCL_54e5728b91498f8e5fb73125",
+      "FCL_60800d850c48fc593190665e",
+      "FCL_670afc0424540a92986aaf87",
+      "FCL_7cfbb836328e78457b4ecfdf",
+      "FCL_7d17bec805a8632e2a707b85",
+      "FCL_96c94d5ada36ca5aea06119f",
+      "FCL_9bd85ff010f6082cb863371f",
+      "FCL_a5827ecf6fa1a7991bcee466",
+      "FCL_b5eb05b66f69a2620333e951",
+      "FCL_b776484bf335dd3c0076edaa",
+      "FCL_be6bdfc19f6754096e2cbdea",
+      "FCL_c06e5239f6144df313429a73",
+      "FCL_d44916786887c7bae5147589",
+      "FCL_d95559a0d1e0ae408a7c779c",
+      "FCL_de36347ee3c661ff28673e74",
+      "FCL_f228d7e4fe51ca3ab4281100"
+    ],
+    "invalid_calls_excluded": [
+      "FCL_27720b8b23236b173b96fdee",
+      "FCL_7f0463b134c67757968580e8",
+      "FCL_e07264654e9d3da6f63088a1"
+    ],
+    "pack_a_only_valid_forecasts_outcome_covered": 0,
+    "pack_e_only_valid_forecasts_outcome_covered": 0,
+    "unresolved_pair_keys": [],
+    "valid_forecasts_outcome_covered": 28
+  },
+  "paired_exclusion": [
+    "EP_EVENT_2efc8caf43d7a31210c9",
+    "EP_EVENT_3cf33832dc4ce9030be9",
+    "EP_EVENT_ccb253c98e5dace78f0e",
+    "EP_EVENT_f1cc87e112927700eb4b"
+  ],
+  "schema_validation": {
+    "contract": "presignal_event_path_contract_v1_1",
+    "schema_version": "2.1.1",
+    "valid": 8
+  },
+  "unattached_candidate_count": 0,
+  "unresolved_identities": []
+}

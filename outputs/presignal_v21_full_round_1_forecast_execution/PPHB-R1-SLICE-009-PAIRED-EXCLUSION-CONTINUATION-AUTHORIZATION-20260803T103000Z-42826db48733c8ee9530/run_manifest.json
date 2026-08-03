@@ -1,0 +1,10 @@
+{
+  "append_only": true,
+  "authorization_fingerprint": "sha256:42826db48733c8ee95309cd6c8a1ea1ebfc4a721f149fd366a886a864aa6573a",
+  "authorization_id": "PPHB-R1-SLICE-009-PAIRED-EXCLUSION-CONTINUATION-AUTHORIZATION-20260803T103000Z",
+  "external_requests": 0,
+  "manifest_fingerprint": "sha256:1f8ae1ba9312ee2dd121b7d3fa68c4b20360720b71fce9364222af38aa3c6a26",
+  "retries": 0,
+  "run_id": "PPHB-R1-SLICE-009-PAIRED-EXCLUSION-CONTINUATION-AUTHORIZATION-20260803T103000Z-42826db48733c8ee9530",
+  "writes": 0
+}

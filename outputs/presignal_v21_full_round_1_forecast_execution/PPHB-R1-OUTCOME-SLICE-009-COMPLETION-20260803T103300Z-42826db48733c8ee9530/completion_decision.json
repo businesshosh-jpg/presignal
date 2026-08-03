@@ -1,0 +1,41 @@
+{
+  "attachment_run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-009-20260803T103100Z-af38aa3c6a26",
+  "authorization_status": "COMPLETED",
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-009-20260803T102627Z-af38aa3c6a26",
+  "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED",
+  "continuation_authorization_fingerprint": "sha256:42826db48733c8ee95309cd6c8a1ea1ebfc4a721f149fd366a886a864aa6573a",
+  "continuation_authorization_id": "PPHB-R1-SLICE-009-PAIRED-EXCLUSION-CONTINUATION-AUTHORIZATION-20260803T103000Z",
+  "decision": "AUTHORIZED_SLICE_009_END_TO_END_COMPLETE",
+  "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-009-20260803T103200Z-af38aa3c6a26",
+  "excluded_episode_ids": [
+    "EP_EVENT_2efc8caf43d7a31210c9",
+    "EP_EVENT_3cf33832dc4ce9030be9",
+    "EP_EVENT_ccb253c98e5dace78f0e",
+    "EP_EVENT_f1cc87e112927700eb4b"
+  ],
+  "excluded_treatment": "AUTHORIZE_PAIRED_EXCLUSION_OF_FOUR_UNAVAILABLE_EPISODES",
+  "manifest_fingerprint": "sha256:1f8ae1ba9312ee2dd121b7d3fa68c4b20360720b71fce9364222af38aa3c6a26",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-009-20260803T180000Z",
+  "operations": {
+    "apps_script_reads": 9,
+    "attachments": 8,
+    "google_writes": 0,
+    "market_data_attempts": 9,
+    "new_external_requests_after_collection": 0,
+    "retries": 0,
+    "total_external_requests": 18
+  },
+  "original_authorization_status": "SUPERSEDED_BY_PAIRED_EXCLUSION_CONTINUATION",
+  "population": {
+    "attached_episodes": 8,
+    "complete_pairs": 14,
+    "evaluated_forecasts": 28,
+    "excluded_unavailable_episodes": 4,
+    "original_episodes": 12,
+    "pack_a": 14,
+    "pack_e": 14,
+    "unpaired": 0
+  },
+  "slice_id": "SLICE-009",
+  "unresolved_identities": []
+}

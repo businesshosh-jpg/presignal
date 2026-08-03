@@ -1,0 +1,71 @@
+{
+  "decision": "SLICE_SEQUENCE_RECONCILED",
+  "next_selection": {
+    "distinct_utc_release_days": 9,
+    "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-009-20260803T180000Z",
+    "population": {
+      "episodes": 12,
+      "pack_a": 21,
+      "pack_e": 21,
+      "pairs": 21,
+      "valid_forecasts": 42
+    },
+    "slice_id": "SLICE-009"
+  },
+  "non_overlap_checks": {
+    "duplicate_attachments": 0,
+    "duplicate_evaluations": 0,
+    "duplicate_outcome_requests": 0,
+    "slice_006_007_008": true,
+    "unresolved_identities": 0
+  },
+  "verified_slices": {
+    "006": {
+      "authorization": "PPHB-R1-OUTCOME-SLICE-006-END-TO-END-AUTHORIZATION-20260803T130000Z",
+      "completion": "PPHB-R1-OUTCOME-SLICE-006-COMPLETION-20260803T090600Z-4b6396c50c92",
+      "disposition": "COMPLETED",
+      "external_requests": 10,
+      "manifest": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-006-20260803T120000Z-8c8334430d618fb28951",
+      "population": {
+        "episodes": 12,
+        "pack_a": 27,
+        "pack_e": 27,
+        "pairs": 27,
+        "valid_forecasts": 54
+      },
+      "writes": 0
+    },
+    "007": {
+      "authorization": "PPHB-R1-OUTCOME-SLICE-007-END-TO-END-AUTHORIZATION-20260803T150000Z",
+      "completion": "PPHB-R1-OUTCOME-SLICE-007-COMPLETION-20260803T094017Z-0bf9c7477606",
+      "disposition": "COMPLETED",
+      "external_requests": 16,
+      "manifest": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-007-20260803T140000Z-ccda175cf0e787462e1c",
+      "population": {
+        "episodes": 12,
+        "pack_a": 21,
+        "pack_e": 21,
+        "pairs": 21,
+        "valid_forecasts": 42
+      },
+      "writes": 0
+    },
+    "008": {
+      "authorization_fingerprint": "sha256:0518c867118e707cacf5bf608faeebc3ca46241a8015d88d90f19cff4333523f",
+      "completion": "PPHB-R1-OUTCOME-SLICE-008-COMPLETION-20260803T101556Z-6c6c24320615",
+      "disposition": "COMPLETED",
+      "external_requests": 12,
+      "manifest": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-008-20260803T160000Z-6c6c24320615ef694741",
+      "manifest_fingerprint": "sha256:6c6c24320615ef6947412fa58c8a1628fa36a4634a8561e122dcb162981a8f90",
+      "paired_scoreable_t15_denominator": 17,
+      "population": {
+        "episodes": 12,
+        "pack_a": 21,
+        "pack_e": 21,
+        "pairs": 21,
+        "valid_forecasts": 42
+      },
+      "writes": 0
+    }
+  }
+}

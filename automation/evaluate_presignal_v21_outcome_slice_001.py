@@ -229,6 +229,32 @@ def forecast_rows(episode_ids: set[str]) -> list[dict[str, Any]]:
                 "recovery_audit": audit,
             }
             source_by_call[call_id] = "PRESERVED_RAW_PROVIDER_OUTPUT"
+        # Accepted deterministic raw-recovery artifacts are authoritative inputs
+        # even when no normalized batch ledger row exists for the recovered call.
+        metadata: dict[str, dict[str, Any]] = {}
+        for manifest_path in BASE.glob("PPHB-R1-FORECAST-EXECUTION-BATCH-*/batch_call_manifest.jsonl"):
+            for manifest_row in read_jsonl(manifest_path):
+                metadata.setdefault(manifest_row.get("forecast_call_id"), manifest_row)
+        for recovery_file in BASE.glob("PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-*/normalized_forecast_result.json"):
+            recovered = read_json(recovery_file)
+            call_id = recovered.get("forecast_call_id")
+            prediction = recovered.get("contract_prediction")
+            paths = recovered.get("contract_paths")
+            manifest_row = metadata.get(call_id, {})
+            if not call_id or not prediction or not paths or prediction.get("episode_id") not in episode_ids:
+                continue
+            if recovered.get("strict_contract_validation") != "PASSED" or call_id in by_call:
+                continue
+            by_call[call_id] = {
+                "episode_id": prediction["episode_id"], "forecast_call_id": call_id,
+                "model": manifest_row.get("model", prediction.get("model")),
+                "pack_type": manifest_row.get("pack_type", "PACK_A"),
+                "provider": manifest_row.get("provider", prediction.get("provider")),
+                "prediction": prediction, "paths": paths, "terminal_state": "SUCCEEDED_VALID",
+                "recovery_source": "PRESERVED_RAW_PROVIDER_OUTPUT",
+                "recovery_audit": {"artifact": str(recovery_file.relative_to(ROOT)), "strict_contract_validation": "PASSED"},
+            }
+            source_by_call[call_id] = "PRESERVED_RAW_PROVIDER_OUTPUT"
     rows = sorted(by_call.values(), key=lambda row: row["forecast_call_id"])
     expected = manifest_population()
     if len(rows) != expected["valid_forecasts"] or len({row["forecast_call_id"] for row in rows}) != expected["valid_forecasts"]:

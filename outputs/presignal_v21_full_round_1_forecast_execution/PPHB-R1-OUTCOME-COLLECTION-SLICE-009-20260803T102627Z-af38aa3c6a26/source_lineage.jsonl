@@ -1,0 +1,736 @@
+[
+  {
+    "episode_id": "EP_BATCH_021dc91a3b7c1cf1fed7",
+    "market_data_provider": "tiingo",
+    "outcome_id": "OUT_4fc5f8c38a395b64f18e",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-06-27T12:30:00.000Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-06-27T12:45:00.000Z",
+        "30": "2024-06-27T13:00:00.000Z",
+        "5": "2024-06-27T12:35:00.000Z",
+        "60": "2024-06-27T13:30:00.000Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-27",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:106a52497d63e22f10212490b4095fd2ac8a2370a3ef4026e651edc0c118dc94",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240627",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-27T23:59:00Z",
+          "window_start": "2024-06-27T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 160.374,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-27T12:45:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240627",
+          "timestamp": "2024-06-27T12:45:00.000Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 160.4,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-27T13:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240627",
+          "timestamp": "2024-06-27T13:00:00.000Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 160.4555,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-27T12:35:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240627",
+          "timestamp": "2024-06-27T12:35:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 160.421,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-27T13:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240627",
+          "timestamp": "2024-06-27T13:30:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 160.4355,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-27T12:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240627",
+          "timestamp": "2024-06-27T12:30:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "episode_id": "EP_BATCH_3fbfe50e63dd93f25efd",
+    "market_data_provider": "tiingo",
+    "outcome_id": "OUT_82640a97c9998fbb697e",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-07-02T14:00:00.000Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-07-02T14:15:00.000Z",
+        "30": "2024-07-02T14:30:00.000Z",
+        "5": "2024-07-02T14:05:00.000Z",
+        "60": "2024-07-02T15:00:00.000Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-07-02",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:e46e2b69297d9a3b07f5546a19fe6e7ccc47e84a75a52050ad36daa1123cdc7b",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240702",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-07-02T23:59:00Z",
+          "window_start": "2024-07-02T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 161.546,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-07-02T14:15:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240702",
+          "timestamp": "2024-07-02T14:15:00.000Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 161.4185,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-07-02T14:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240702",
+          "timestamp": "2024-07-02T14:30:00.000Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 161.5225,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-07-02T14:05:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240702",
+          "timestamp": "2024-07-02T14:05:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 161.467,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-07-02T15:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240702",
+          "timestamp": "2024-07-02T15:00:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 161.5385,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-07-02T14:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240702",
+          "timestamp": "2024-07-02T14:00:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "episode_id": "EP_BATCH_45488a279c6b958f7e5b",
+    "market_data_provider": "tiingo",
+    "outcome_id": "OUT_ef495384f7ad3f058e64",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-06-28T12:30:00.000Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-06-28T12:45:00.000Z",
+        "30": "2024-06-28T13:00:00.000Z",
+        "5": "2024-06-28T12:35:00.000Z",
+        "60": "2024-06-28T13:30:00.000Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-28",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:778a991ead036ba71fda0d460103d0b4364b7db08d8eccd86b603b62b4917f77",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240628",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-28T23:59:00Z",
+          "window_start": "2024-06-28T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 160.5615,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-28T12:45:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240628",
+          "timestamp": "2024-06-28T12:45:00.000Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 160.4745,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-28T13:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240628",
+          "timestamp": "2024-06-28T13:00:00.000Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 160.49,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-28T12:35:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240628",
+          "timestamp": "2024-06-28T12:35:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 160.373,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-28T13:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240628",
+          "timestamp": "2024-06-28T13:30:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 160.5475,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-28T12:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240628",
+          "timestamp": "2024-06-28T12:30:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "episode_id": "EP_BATCH_4ce53a0a5d661cb30d8a",
+    "market_data_provider": "tiingo",
+    "outcome_id": "OUT_e8fb4657cafc6a1ce1e9",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-06-20T12:30:00.000Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-06-20T12:45:00.000Z",
+        "30": "2024-06-20T13:00:00.000Z",
+        "5": "2024-06-20T12:34:00.000Z",
+        "60": "2024-06-20T13:30:00.000Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-20",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:ba146327a2ec1f4e55798fb7f79c65b0e3bad99c4c37193cd5c05b57ddcecebe",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240620",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-20T23:59:00Z",
+          "window_start": "2024-06-20T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 158.445,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-20T12:45:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240620",
+          "timestamp": "2024-06-20T12:45:00.000Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 158.5515,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-20T13:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240620",
+          "timestamp": "2024-06-20T13:00:00.000Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 158.4225,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-20T12:34:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240620",
+          "timestamp": "2024-06-20T12:34:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 158.604,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-20T13:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240620",
+          "timestamp": "2024-06-20T13:30:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 158.3145,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-20T12:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240620",
+          "timestamp": "2024-06-20T12:30:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "episode_id": "EP_BATCH_808a1ebc9070cef5664d",
+    "market_data_provider": "tiingo",
+    "outcome_id": "OUT_21bd33721aef33138ce5",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-06-18T13:15:00.000Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-06-18T13:30:00.000Z",
+        "30": "2024-06-18T13:45:00.000Z",
+        "5": "2024-06-18T13:20:00.000Z",
+        "60": "2024-06-18T14:15:00.000Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-18",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:088efd271a1881209039cfa60aacdde4a5cc55f0218b8020ac3066c8fbb49bb2",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-18T23:59:00Z",
+          "window_start": "2024-06-18T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 157.816,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-18T13:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "timestamp": "2024-06-18T13:30:00.000Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 157.831,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-18T13:45:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "timestamp": "2024-06-18T13:45:00.000Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 157.803,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-18T13:20:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "timestamp": "2024-06-18T13:20:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 157.8735,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-18T14:15:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "timestamp": "2024-06-18T14:15:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 157.8255,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-18T13:15:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "timestamp": "2024-06-18T13:15:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "episode_id": "EP_BATCH_8137d0e6d3459f2b4ff7",
+    "market_data_provider": "tiingo",
+    "outcome_id": "OUT_71b571f04a9794f7b0cf",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-06-24T12:30:00.000Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-06-24T12:45:00.000Z",
+        "30": "2024-06-24T13:00:00.000Z",
+        "5": "2024-06-24T12:35:00.000Z",
+        "60": "2024-06-24T13:30:00.000Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-24",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:d8b850f1b46d36eeb606c9b832fd6fde2be3fc5c61c46c3bf0359454ff007055",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-24T23:59:00Z",
+          "window_start": "2024-06-24T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 159.4665,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-24T12:45:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "timestamp": "2024-06-24T12:45:00.000Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 159.392,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-24T13:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "timestamp": "2024-06-24T13:00:00.000Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 159.553,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-24T12:35:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "timestamp": "2024-06-24T12:35:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 159.368,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-24T13:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "timestamp": "2024-06-24T13:30:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 159.5315,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-24T12:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "timestamp": "2024-06-24T12:30:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "episode_id": "EP_BATCH_d91ac82d9b8b0b8dd0fd",
+    "market_data_provider": "tiingo",
+    "outcome_id": "OUT_6a335ae4bdac7823f1bc",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-06-14T12:30:00.000Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-06-14T12:45:00.000Z",
+        "30": "2024-06-14T13:00:00.000Z",
+        "5": "2024-06-14T12:35:00.000Z",
+        "60": "2024-06-14T13:30:00.000Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-14",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:dfbbffe6b7c9e3c84e901b6036c232c69f8c2a7aab4999f42bbb2006d3f9bb8c",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240614",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-14T23:59:00Z",
+          "window_start": "2024-06-14T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 157.292,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-14T12:45:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240614",
+          "timestamp": "2024-06-14T12:45:00.000Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 157.2815,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-14T13:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240614",
+          "timestamp": "2024-06-14T13:00:00.000Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 157.4125,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-14T12:35:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240614",
+          "timestamp": "2024-06-14T12:35:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 157.2275,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-14T13:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240614",
+          "timestamp": "2024-06-14T13:30:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 157.1755,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-14T12:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240614",
+          "timestamp": "2024-06-14T12:30:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "episode_id": "EP_EVENT_2efc8caf43d7a31210c9",
+    "market_data_provider": "tiingo",
+    "outcome_id": "OUT_3887a55d0acce1c75862",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-06-18T18:00:00.000Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-06-18T18:15:00.000Z",
+        "5": "2024-06-18T18:05:00.000Z",
+        "60": "2024-06-18T19:00:00.000Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-18",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:088efd271a1881209039cfa60aacdde4a5cc55f0218b8020ac3066c8fbb49bb2",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-18T23:59:00Z",
+          "window_start": "2024-06-18T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 157.853,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-18T18:15:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "timestamp": "2024-06-18T18:15:00.000Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 157.8295,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-18T18:05:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "timestamp": "2024-06-18T18:05:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 157.779,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-18T19:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "timestamp": "2024-06-18T19:00:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 157.863,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-18T18:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240618",
+          "timestamp": "2024-06-18T18:00:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "episode_id": "EP_EVENT_3cf33832dc4ce9030be9",
+    "market_data_provider": "",
+    "outcome_id": "OUT_5db2589ba3d7f3516ef9",
+    "source_lineage": {
+      "anchor_observation_ts": null,
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {},
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-14",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:dfbbffe6b7c9e3c84e901b6036c232c69f8c2a7aab4999f42bbb2006d3f9bb8c",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240614",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-14T23:59:00Z",
+          "window_start": "2024-06-14T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "anchor": null
+      }
+    }
+  },
+  {
+    "episode_id": "EP_EVENT_b218a803c0f58f752e26",
+    "market_data_provider": "tiingo",
+    "outcome_id": "OUT_7dbcb6fdf334f842d169",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-06-24T18:00:00.000Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-06-24T18:15:00.000Z",
+        "30": "2024-06-24T18:30:00.000Z",
+        "5": "2024-06-24T18:05:00.000Z",
+        "60": "2024-06-24T19:00:00.000Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-24",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:d8b850f1b46d36eeb606c9b832fd6fde2be3fc5c61c46c3bf0359454ff007055",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-24T23:59:00Z",
+          "window_start": "2024-06-24T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 159.681,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-24T18:15:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "timestamp": "2024-06-24T18:15:00.000Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 159.6585,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-24T18:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "timestamp": "2024-06-24T18:30:00.000Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 159.6975,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-24T18:05:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "timestamp": "2024-06-24T18:05:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 159.6975,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-24T19:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "timestamp": "2024-06-24T19:00:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 159.707,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-24T18:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240624",
+          "timestamp": "2024-06-24T18:00:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "episode_id": "EP_EVENT_ccb253c98e5dace78f0e",
+    "market_data_provider": "",
+    "outcome_id": "OUT_a5b1872cb7c91dfb1ab5",
+    "source_lineage": {
+      "anchor_observation_ts": null,
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {},
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-30",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:ebf79b48628347f5579c50a7c14daed513c13277add5820ec88957af9bed8bcf",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240630",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-30T23:59:00Z",
+          "window_start": "2024-06-30T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "anchor": null
+      }
+    }
+  },
+  {
+    "episode_id": "EP_EVENT_f1cc87e112927700eb4b",
+    "market_data_provider": "tiingo",
+    "outcome_id": "OUT_d3e0508962b5cfb89147",
+    "source_lineage": {
+      "anchor_observation_ts": "2024-06-19T14:00:00.000Z",
+      "endpoint_deployment": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "horizon_observation_ts": {
+        "15": "2024-06-19T14:15:00.000Z",
+        "30": "2024-06-19T14:30:00.000Z",
+        "60": "2024-06-19T15:00:00.000Z"
+      },
+      "instrument": "USD/JPY",
+      "request_windows": [
+        {
+          "day": "2024-06-19",
+          "provider_attempt_count": 1,
+          "raw_response_hash": "sha256:6bb3b3470d5cbb6ec5a70de6dd22991ac8613d8aa40bc9b33ef15cd1171f7d16",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240619",
+          "selected_provider": "tiingo",
+          "status": "SUCCESS",
+          "window_end": "2024-06-19T23:59:00Z",
+          "window_start": "2024-06-19T00:00:00Z"
+        }
+      ],
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 157.8775,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-19T14:15:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240619",
+          "timestamp": "2024-06-19T14:15:00.000Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 157.8965,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-19T14:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240619",
+          "timestamp": "2024-06-19T14:30:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 157.899,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-19T15:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240619",
+          "timestamp": "2024-06-19T15:00:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 157.8755,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-06-19T14:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_009_DAY_20240619",
+          "timestamp": "2024-06-19T14:00:00.000Z"
+        }
+      }
+    }
+  }
+]

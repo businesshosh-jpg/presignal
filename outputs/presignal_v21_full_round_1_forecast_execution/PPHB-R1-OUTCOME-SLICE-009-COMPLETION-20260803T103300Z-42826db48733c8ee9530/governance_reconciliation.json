@@ -1,0 +1,20 @@
+{
+  "attachment_run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-009-20260803T103100Z-af38aa3c6a26",
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-009-20260803T102627Z-af38aa3c6a26",
+  "continuation_authorization_fingerprint": "sha256:42826db48733c8ee95309cd6c8a1ea1ebfc4a721f149fd366a886a864aa6573a",
+  "continuation_authorization_id": "PPHB-R1-SLICE-009-PAIRED-EXCLUSION-CONTINUATION-AUTHORIZATION-20260803T103000Z",
+  "decision": "PAIRED_EXCLUSION_APPLIED_DETERMINISTICALLY",
+  "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-009-20260803T103200Z-af38aa3c6a26",
+  "manifest_fingerprint": "sha256:1f8ae1ba9312ee2dd121b7d3fa68c4b20360720b71fce9364222af38aa3c6a26",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-009-20260803T180000Z",
+  "preserved_evidence": true,
+  "recovery_requires_new_external_authority": true,
+  "slice_id": "SLICE-009",
+  "symmetry_proof": "Both Pack A and Pack E forecast references were excluded for each unavailable Episode; remaining population is fully paired.",
+  "unavailable_episode_classification": {
+    "EP_EVENT_2efc8caf43d7a31210c9": "OUTCOME_TERMINALLY_UNAVAILABLE_UNDER_CURRENT_SOURCE",
+    "EP_EVENT_3cf33832dc4ce9030be9": "OUTCOME_TERMINALLY_UNAVAILABLE_UNDER_CURRENT_SOURCE",
+    "EP_EVENT_ccb253c98e5dace78f0e": "OUTCOME_TERMINALLY_UNAVAILABLE_UNDER_CURRENT_SOURCE",
+    "EP_EVENT_f1cc87e112927700eb4b": "OUTCOME_TERMINALLY_UNAVAILABLE_UNDER_CURRENT_SOURCE"
+  }
+}

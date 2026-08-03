@@ -228,12 +228,12 @@ def main() -> int:
     if partial_auth is not None:
         excluded = set(partial_auth["excluded_episode_ids"])
         expected_eligible = set(partial_auth["authorized_identity_ids"])
-        if excluded & expected_eligible or len(expected_eligible) != 10 or len(excluded) != 2:
+        if excluded & expected_eligible or not excluded or not expected_eligible or len(excluded) + len(expected_eligible) != len(manifest_rows):
             raise SystemExit("PAIRED_EXCLUSION_POPULATION_CONFLICT")
         if {row["episode_id"] for row in candidates if row.get("status") == "UNAVAILABLE"} != excluded:
             raise SystemExit("PAIRED_EXCLUSION_UNAVAILABLE_SCOPE_CONFLICT")
         candidates = [row for row in candidates if row["episode_id"] in expected_eligible and row.get("status") == "VALID"]
-        if len(candidates) != 10 or {row["episode_id"] for row in candidates} != expected_eligible:
+        if len(candidates) != len(expected_eligible) or {row["episode_id"] for row in candidates} != expected_eligible:
             raise SystemExit("PAIRED_EXCLUSION_CANDIDATE_POPULATION_CONFLICT")
 
     prior_attachment_dirs = list(BASE.glob(f"PPHB-R1-OUTCOME-ATTACHMENT-{SLICE_ID}-*"))
