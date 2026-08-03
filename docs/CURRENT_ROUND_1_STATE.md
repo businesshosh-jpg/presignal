@@ -4,7 +4,7 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted HEAD: `540b690784c43d4fadb82fba9cbf9a8141b0bac0`
+- Accepted HEAD: `6558e3b803160046aad6be0787bce657a7437e01`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
@@ -84,6 +84,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Outcome authorization preparation: `PPHB-R1-OUTCOME-AUTHORIZATION-PREPARATION-20260803T090000Z-18cddcdc5477`
 - Outcome source preflight: `PPHB-R1-OUTCOME-COLLECTION-SLICE-001-20260803T000113Z-ceeaad9f41c8` (`OUTCOME_SOURCE_PREFLIGHT_PASSED`; collection blocked before external access by `GOOGLE_OAUTH_TOKEN_MISSING`)
 - OAuth restoration and collection attempt: `PPHB-R1-OUTCOME-OAUTH-RESTORATION-SLICE-001-20260803T000800Z` (`GOOGLE_OAUTH_ROUTE_NOT_RESTORED`; preflight blocked before external access)
+- OAuth route restored and Slice 001 collected: `PPHB-R1-OUTCOME-COLLECTION-SLICE-001-20260803T001512Z-ceeaad9f41c8` (`OUTCOME_SOURCE_PREFLIGHT_PASSED`; 12/12 candidate Outcomes valid, unattached and unevaluated)
 
 ## Prompt boundary
 
@@ -106,9 +107,13 @@ The append-only Pack A terminal-invalid recovery-feasibility review (`PPHB-R1-PA
 
 Pack A and Pack E remain separate. Provider/model lineage remains frozen. No provider weighting, ranking, consensus, winner selection, Outcome attachment, accuracy calculation, market-data access, matrix update, or Google write is authorized by this state file.
 
+## Outcome collection boundary
+
+Slice 001 contains 12 immutable candidate Outcomes under `presignal_event_path_contract_v1_1` schema `2.1.1`. Source collection used 3 Apps Script reads and 3 Tiingo provider attempts. Candidates remain unattached and unevaluated; no Google writes occurred.
+
 ## Exact next Move
 
-Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. The exact first 12-Episode Outcome manifest remains unchanged. The next bounded Move is to provision the accepted `local/credentials.json` and `local/token.json` route, rerun call-free preflight, and then collect this same slice only; no new Episodes, attachment, or evaluation is authorized by this state file.
+Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. The next bounded Move is to review and explicitly authorize attachment/reconciliation of the 12 Slice 001 candidate Outcomes; evaluation remains unauthorized.
 
 ## Prohibited reopening
 

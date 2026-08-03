@@ -1,0 +1,11 @@
+{
+  "code_or_configuration_changed": false,
+  "environment_variable": "PRESIGNAL_GOOGLE_TOKEN_PATH",
+  "exists": true,
+  "readable": true,
+  "refresh_category": "READY",
+  "refresh_result": "SUCCESS",
+  "resolved_path": "/Users/junhoshino/projects/presignal/local/token.json",
+  "route_type": "accepted_external_token_path",
+  "secret_contents_recorded": false
+}
