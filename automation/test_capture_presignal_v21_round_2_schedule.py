@@ -16,6 +16,12 @@ class ScheduleRefreshTests(unittest.TestCase):
         self.assertEqual(auth["ceilings"], {"fmp_api_requests": 1, "apps_script_invocations": 1, "event_sheet_upsert_operations": 1, "event_sheet_export_reads": 1, "retries": 0})
         self.assertEqual(auth["routes"]["apps_script_function"], "apiUpsertEventWindow")
         self.assertIn("provider dispatch", auth["not_authorized"])
+        self.assertEqual(auth["attribution_control_version"], "presignal_r2_schedule_refresh_attribution_v1")
+
+    def test_canonical_route_requires_attribution_fields(self):
+        source = (capture.ROOT / "apps_script" / "automation_api.js").read_text()
+        for field in ("operation_id", "authorization_id", "source_window_fingerprint", "pre_refresh_event_sheet_fingerprint", "post_refresh_event_sheet_fingerprint", "invocation_id"):
+            self.assertIn(field, source)
 
     def test_freeze_and_resume_preserve_fingerprint(self):
         with tempfile.TemporaryDirectory() as directory:

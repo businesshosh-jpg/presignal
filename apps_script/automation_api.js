@@ -820,6 +820,16 @@ function apiBuildInflationNoSignalReview() {
 function apiUpsertEventWindow_(params) {
   params = params || {};
 
+  var operationId = String(params.operation_id || '').trim();
+  var authorizationId = String(params.authorization_id || '').trim();
+  var sourceWindowFingerprint = String(params.source_window_fingerprint || '').trim();
+  if (!operationId || !authorizationId || !sourceWindowFingerprint) {
+    throw new Error('apiUpsertEventWindow requires operation_id, authorization_id, and source_window_fingerprint.');
+  }
+  var invocationId = Utilities.getUuid();
+  var dispatchTimestamp = new Date().toISOString();
+  var preSheetFingerprint = apiEventSheetFingerprint_();
+
   var fromUtcIso = String(
     params.from_utc_iso ||
     params.window_from_utc ||
@@ -844,13 +854,47 @@ function apiUpsertEventWindow_(params) {
     ? applyBatchingForKeys_()
     : null;
 
+  var postSheetFingerprint = apiEventSheetFingerprint_();
+  var completionTimestamp = new Date().toISOString();
+  var statusCounts = apiEventStatusCounts_();
   return {
     status: 'ok',
+    terminal_status: 'COMPLETED',
+    remote_state: 'CERTAIN',
+    operation_id: operationId,
+    invocation_id: invocationId,
+    authorization_id: authorizationId,
+    source_window_fingerprint: sourceWindowFingerprint,
+    pre_refresh_event_sheet_fingerprint: preSheetFingerprint,
+    post_refresh_event_sheet_fingerprint: postSheetFingerprint,
+    dispatch_timestamp: dispatchTimestamp,
+    completion_timestamp: completionTimestamp,
     window_from_utc: fromUtcIso,
     window_to_utc: toUtcIso,
     upsert: upsert,
-    batching: batching
+    batching: batching,
+    status_counts: statusCounts
   };
+}
+
+function apiEventSheetFingerprint_() {
+  var sheet = getEventSheet();
+  var values = sheet.getDataRange().getValues();
+  var payload = JSON.stringify(values);
+  var bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, payload, Utilities.Charset.UTF_8);
+  return 'sha256:' + bytes.map(function(byte) { var value = (byte < 0 ? byte + 256 : byte).toString(16); return value.length === 1 ? '0' + value : value; }).join('');
+}
+
+function apiEventStatusCounts_() {
+  var sheet = getEventSheet();
+  var values = sheet.getDataRange().getValues();
+  if (!values.length) return {scheduled: 0, released: 0, cancelled: 0, superseded: 0, rejected: 0};
+  var headers = values[0].map(function(value) { return String(value || '').trim().toLowerCase(); });
+  var index = headers.indexOf('release_status');
+  var counts = {scheduled: 0, released: 0, cancelled: 0, superseded: 0, rejected: 0};
+  if (index < 0) return counts;
+  values.slice(1).forEach(function(row) { var status = String(row[index] || '').trim().toLowerCase(); if (Object.prototype.hasOwnProperty.call(counts, status)) counts[status]++; });
+  return counts;
 }
 
 function apiUpsertEventWindow(params) {

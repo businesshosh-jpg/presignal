@@ -1,0 +1,31 @@
+{
+  "attribution_hardening_status": "LOCAL_ROUTE_HARDENED_REMOTE_DEPLOYMENT_NOT_ACTIVE",
+  "authorization_fingerprint": "sha256:83d702d6dfe1cc28ea4bc7bbf912056a47d4b084a4d5fa524fde23595c928735",
+  "authorization_id": "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T144000Z",
+  "decision": "SCHEDULE_REFRESH_REMOTE_STATE_UNRESOLVED",
+  "evaluation_activity": 0,
+  "event_snapshot_status": "DIAGNOSTIC_ONLY_NOT_AUTHORITATIVE",
+  "first_slice_status": "NOT_STARTED",
+  "missing_attribution_fields": [
+    "operation_id",
+    "invocation_id",
+    "authorization_id",
+    "source_window_fingerprint",
+    "pre_refresh_event_sheet_fingerprint",
+    "post_refresh_event_sheet_fingerprint",
+    "dispatch_timestamp",
+    "completion_timestamp",
+    "remote_state",
+    "terminal_status"
+  ],
+  "operation_id": "R2SCHEDOP_2ab0d43986412c67c2e98b16",
+  "outcome_activity": 0,
+  "provider_calls": 0,
+  "remote_response_status": "ok",
+  "upsert": {
+    "appended": 0,
+    "fetched": 97,
+    "skipped": 0,
+    "upserts": 97
+  }
+}

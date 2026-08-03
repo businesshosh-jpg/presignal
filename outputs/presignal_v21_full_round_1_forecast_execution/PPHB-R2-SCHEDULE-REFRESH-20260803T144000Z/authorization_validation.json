@@ -1,0 +1,10 @@
+{
+  "apps_script_invocations": 0,
+  "authorization_fingerprint": "sha256:83d702d6dfe1cc28ea4bc7bbf912056a47d4b084a4d5fa524fde23595c928735",
+  "decision": "ROUND_2_SCHEDULE_REFRESH_AUTHORIZATION_FROZEN",
+  "event_sheet_writes": 0,
+  "export_reads": 0,
+  "external_access": 0,
+  "fmp_requests": 0,
+  "remote_state": "NOT_STARTED"
+}

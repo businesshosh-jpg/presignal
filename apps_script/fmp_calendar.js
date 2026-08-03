@@ -307,7 +307,7 @@ function _upsertEventsToEvent_(normRows) {
     }
   }
 
-  var appended = 0, upserts = 0, skipped = 0;
+  var appended = 0, upserts = 0, unchanged = 0, skipped = 0;
   var skipped_reasons = { missing_indicator_name: 0, missing_release_ts: 0 };
 
   var rowsToAppend = [];           // rows to append (as arrays in header order)
@@ -373,8 +373,12 @@ function _upsertEventsToEvent_(normRows) {
       var rindex = existingByKey[key];
       // Merge vs overwrite: we overwrite normalized columns, leave id fields untouched for now;
       // BUT our spec says event_id/batch_id/type are filled later by post-pass anyway.
-      updates.push({ r: rindex, values: arr });
-      upserts++;
+      if (JSON.stringify(body[rindex]) === JSON.stringify(arr)) {
+        unchanged++;
+      } else {
+        updates.push({ r: rindex, values: arr });
+        upserts++;
+      }
     } else {
       rowsToAppend.push(arr);
       appended++;
@@ -421,6 +425,7 @@ function _upsertEventsToEvent_(normRows) {
     fetched: normRows.length,
     appended: appended,
     upserts: upserts,
+    unchanged: unchanged,
     skipped: skipped,
     skipped_reasons: skipped_reasons
   };

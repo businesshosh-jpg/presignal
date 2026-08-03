@@ -284,3 +284,15 @@ Freeze a narrowly scoped remote-state reconciliation authorization for `PPHB-R2-
 ## Exact Next Round 2 Move
 
 Do not retry or export under the blocked refresh. A new explicit governance decision is required to resolve the ambiguous remote state, for example through an authoritative operation-log or source-lineage capability that can attribute the original invocation without a new FMP request.
+
+## Round 2 Attribution-Hardened Refresh Attempt
+
+- Hardening decision: `ROUND_2_SCHEDULE_REFRESH_ATTRIBUTION_HARDENED` locally. The canonical source code now requires operation ID, authorization ID, source-window fingerprint, server invocation ID, pre/post Event-sheet fingerprints, timestamps, counts, and terminal remote state. Event semantics are unchanged.
+- New authorization: `PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T144000Z` (`sha256:83d702d6dfe1cc28ea4bc7bbf912056a47d4b084a4d5fa524fde23595c928735`), exact ceilings `1/1/1/1/0` for FMP, Apps Script, upsert, export, retries.
+- Refresh decision: `SCHEDULE_REFRESH_REMOTE_STATE_UNRESOLVED`. The remote response was `ok` and reported `fetched=97`, `appended=0`, `upserts=97`, `skipped=0`, but omitted all attribution fields. This proves the deployed Apps Script route was pre-hardening; the local attribution controls were not active remotely.
+- Actuals: FMP `1`; Apps Script `1`; Event-sheet upsert operation `1`; export read `1`; retries `0`; provider calls `0`; Outcome/evaluation `0`. The Event export is preserved as `DIAGNOSTIC_ONLY_NOT_AUTHORITATIVE`; no Episode admission, Slice manifest, or provider-dispatch authorization was created.
+- The earlier ambiguous refresh remains permanently `SCHEDULE_REFRESH_REMOTE_STATE_UNRESOLVED_NON_REUSABLE` and was not reopened. The new authorization is also non-reusable. No further refresh or retry is authorized.
+
+## Exact Next Round 2 Move
+
+Publish/activate the attribution-hardened Apps Script route under a separately authorized deployment change, then run a new one-call refresh authorization. The existing 144000Z Event export cannot be promoted without server-side attribution.
