@@ -338,3 +338,13 @@ Freeze a separate read-only reconciliation authorization for `R2SCHEDOP_b1aa318a
 ## Exact Next Round 2 Move
 
 Freeze explicit Round 2 Pack A and Pack E prompt artifacts with fingerprints/output contracts and one numeric prospective cutoff rule, then apply that new authority to the authoritative Event snapshot.
+
+## Round 2 Prompt Authority Reconciliation
+
+- `ROUND_2_PACK_PROMPT_AUTHORITY_FROZEN`: the accepted future-only migration provides one exact static instruction for both prospective Packs: `presignal_event_path_contract_v1_1_single_pair_validation_no_signal_confidence_explicit_v1` (`sha256:2515e6c09742e58507efe8d9196ba58473c01f2d5bb9e8b5405405088d323a77`). Pack A remains `BASELINE` and Pack E `FULL_CONTEXT` through the canonical, fingerprinted Pack-input construction; sharing the static instruction does not merge Pack lineage.
+- `ROUND_2_PROSPECTIVE_CUTOFF_AUTHORITY_BLOCKED`: the protocol and envelope specify only `information_cutoff_ts <= prompt_freeze_ts < forecast_freeze_deadline_ts < release_ts`. They do not pre-specify a numeric offset, minimum lead time, clock source, dispatch-window start, or revised-release recalculation rule. Historical and fixture timestamps remain non-authoritative.
+- No snapshot rows were classified or admitted; no Slice manifest, forecast-call inventory, or dispatch authorization exists. Provider, Google, market-data, Outcome, evaluation, and retry activity: `0`.
+
+## Exact Next Round 2 Move
+
+Freeze one explicit prospective cutoff policy with its numeric release-relative offset, clock authority, revised-release handling, and dispatch window; then apply it to the accepted Event snapshot together with the already frozen prompt authority.
