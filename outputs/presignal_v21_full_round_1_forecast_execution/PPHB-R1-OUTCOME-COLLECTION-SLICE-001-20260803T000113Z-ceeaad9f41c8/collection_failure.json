@@ -1,0 +1,10 @@
+{
+  "automatic_retries": 0,
+  "classification": "GOOGLE_OAUTH_TOKEN_MISSING",
+  "google_reads": 0,
+  "google_writes": 0,
+  "market_data_calls": 0,
+  "message": "Existing noninteractive credential route found no local token.json; no interactive bootstrap or credential substitution was attempted.",
+  "provider_calls": 0,
+  "stage": "CREDENTIAL_PREFLIGHT_BEFORE_APPS_SCRIPT"
+}

@@ -1,0 +1,7 @@
+{
+  "block_reason": "GOOGLE_OAUTH_TOKEN_MISSING",
+  "candidate_outcomes_unattached": true,
+  "collection_decision": "OUTCOME_COLLECTION_SLICE_001_BLOCKED",
+  "evaluated": false,
+  "preflight_decision": "OUTCOME_SOURCE_PREFLIGHT_PASSED"
+}

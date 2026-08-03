@@ -4,7 +4,7 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted HEAD: `269e7f4d0b7e4e4e367bf860ce2c73b06b4db587`
+- Accepted HEAD: `e4bdb1812ad206f2342b303eda44618d34121f80`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
@@ -82,6 +82,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Full forecast execution completion: `PPHB-R1-FORECAST-FULL-EXECUTION-COMPLETION-20260803T060000Z`
 - Pack A deterministic raw recovery: `PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66`
 - Outcome authorization preparation: `PPHB-R1-OUTCOME-AUTHORIZATION-PREPARATION-20260803T090000Z-18cddcdc5477`
+- Outcome source preflight: `PPHB-R1-OUTCOME-COLLECTION-SLICE-001-20260803T000113Z-ceeaad9f41c8` (`OUTCOME_SOURCE_PREFLIGHT_PASSED`; collection blocked before external access by `GOOGLE_OAUTH_TOKEN_MISSING`)
 
 ## Prompt boundary
 
@@ -106,7 +107,7 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 
 ## Exact next Move
 
-Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. The next bounded Move is `OUTCOME_SOURCE_PREFLIGHT_AND_IMMUTABLE_COLLECTION` for the exact first 12-Episode manifest in the accepted Outcome authorization-preparation artifact. This remains separate from Outcome attachment and evaluation; no attachment or evaluation is authorized by this state file.
+Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. The exact first 12-Episode Outcome manifest remains unchanged. The next bounded Move is to restore the existing Google OAuth token route, rerun call-free preflight, and then collect this same slice only; no new Episodes, attachment, or evaluation is authorized by this state file.
 
 ## Prohibited reopening
 
