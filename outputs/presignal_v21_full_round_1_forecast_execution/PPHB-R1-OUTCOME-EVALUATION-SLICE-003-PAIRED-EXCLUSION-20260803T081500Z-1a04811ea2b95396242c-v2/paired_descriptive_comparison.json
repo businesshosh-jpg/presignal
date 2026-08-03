@@ -1,0 +1,167 @@
+{
+  "episode_pair_groups": 10,
+  "interpretation": "Descriptive A-minus-E differences only; no significance, weighting, winner selection, or generalization.",
+  "provider_model_pair_rows": 16,
+  "rows": [
+    {
+      "episode_id": "EP_BATCH_1ff2d721e3e93c9a9ac4",
+      "forecast_cutoff_ts": "2024-05-16T12:20:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 0.7000000000000002,
+      "model": "claude-haiku-4-5",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "Anthropic",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": 0
+    },
+    {
+      "episode_id": "EP_BATCH_1ff2d721e3e93c9a9ac4",
+      "forecast_cutoff_ts": "2024-05-16T12:20:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 0.0,
+      "model": "gemini-2.5-flash-lite",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "Gemini",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": -1
+    },
+    {
+      "episode_id": "EP_BATCH_5fe2f38977eb016fa947",
+      "forecast_cutoff_ts": "2024-05-15T05:20:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 2.0,
+      "model": "claude-haiku-4-5",
+      "path_score_difference_a_minus_e": 0.5,
+      "provider": "Anthropic",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": 1
+    },
+    {
+      "episode_id": "EP_BATCH_5fe2f38977eb016fa947",
+      "forecast_cutoff_ts": "2024-05-15T05:20:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 2.0,
+      "model": "gemini-2.5-flash-lite",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "Gemini",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": 0
+    },
+    {
+      "episode_id": "EP_BATCH_5fe2f38977eb016fa947",
+      "forecast_cutoff_ts": "2024-05-15T05:20:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 0.0,
+      "model": "gpt-4o-mini-2024-07-18",
+      "path_score_difference_a_minus_e": 0.25,
+      "provider": "OpenAI",
+      "reversal_accuracy_difference_a_minus_e": -1,
+      "t15_accuracy_difference_a_minus_e": 1
+    },
+    {
+      "episode_id": "EP_BATCH_e14769aca1aaacc9c230",
+      "forecast_cutoff_ts": "2024-05-13T12:50:00Z",
+      "magnitude_interval_error_difference_a_minus_e": null,
+      "model": "claude-haiku-4-5",
+      "path_score_difference_a_minus_e": null,
+      "provider": "Anthropic",
+      "reversal_accuracy_difference_a_minus_e": null,
+      "t15_accuracy_difference_a_minus_e": null
+    },
+    {
+      "episode_id": "EP_BATCH_f537c8eb93513ab66253",
+      "forecast_cutoff_ts": "2024-05-16T12:20:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 3.0,
+      "model": "gemini-2.5-flash-lite",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "Gemini",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": 0
+    },
+    {
+      "episode_id": "EP_EVENT_08246fe90d4f62b05721",
+      "forecast_cutoff_ts": "2024-05-08T06:50:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 3.0000000000000004,
+      "model": "gemini-2.5-flash-lite",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "Gemini",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": 0
+    },
+    {
+      "episode_id": "EP_EVENT_13e6e3247eaea46e42de",
+      "forecast_cutoff_ts": "2024-05-07T12:45:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 0.0,
+      "model": "gpt-4o-mini-2024-07-18",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "OpenAI",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": 0
+    },
+    {
+      "episode_id": "EP_EVENT_556c59fe6ef36f4ac156",
+      "forecast_cutoff_ts": "2024-05-06T06:50:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 0.0,
+      "model": "claude-haiku-4-5",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "Anthropic",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": 0
+    },
+    {
+      "episode_id": "EP_EVENT_556c59fe6ef36f4ac156",
+      "forecast_cutoff_ts": "2024-05-06T06:50:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 4.0,
+      "model": "gemini-2.5-flash-lite",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "Gemini",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": 0
+    },
+    {
+      "episode_id": "EP_EVENT_a8905547406656cf53ae",
+      "forecast_cutoff_ts": "2024-05-10T08:50:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 8.65,
+      "model": "claude-haiku-4-5",
+      "path_score_difference_a_minus_e": -0.25,
+      "provider": "Anthropic",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": -1
+    },
+    {
+      "episode_id": "EP_EVENT_a8905547406656cf53ae",
+      "forecast_cutoff_ts": "2024-05-10T08:50:00Z",
+      "magnitude_interval_error_difference_a_minus_e": -3.6500000000000004,
+      "model": "gemini-2.5-flash-lite",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "Gemini",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": -1
+    },
+    {
+      "episode_id": "EP_EVENT_e8d9ca85a946bdcbc5d9",
+      "forecast_cutoff_ts": "2024-05-06T06:50:00Z",
+      "magnitude_interval_error_difference_a_minus_e": -2.0,
+      "model": "claude-haiku-4-5",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "Anthropic",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": 0
+    },
+    {
+      "episode_id": "EP_EVENT_e8d9ca85a946bdcbc5d9",
+      "forecast_cutoff_ts": "2024-05-06T06:50:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 2.6999999999999993,
+      "model": "gemini-2.5-flash-lite",
+      "path_score_difference_a_minus_e": -0.75,
+      "provider": "Gemini",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": -1
+    },
+    {
+      "episode_id": "EP_EVENT_ef630a47cf9a4a6f79fd",
+      "forecast_cutoff_ts": "2024-05-13T12:50:00Z",
+      "magnitude_interval_error_difference_a_minus_e": 0.9999999999999996,
+      "model": "gpt-4o-mini-2024-07-18",
+      "path_score_difference_a_minus_e": 0.0,
+      "provider": "OpenAI",
+      "reversal_accuracy_difference_a_minus_e": 0,
+      "t15_accuracy_difference_a_minus_e": 0
+    }
+  ]
+}

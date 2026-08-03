@@ -25,6 +25,7 @@ MANIFEST = Path(os.environ.get("PRESIGNAL_OUTCOME_MANIFEST_PATH", str(ROOT / "ou
     "PPHB-R1-OUTCOME-AUTHORIZATION-PREPARATION-20260803T090000Z-18cddcdc5477"
 ) / "next_authorization_draft.json")))
 EXPECTED_MANIFEST_SHA = os.environ.get("PRESIGNAL_OUTCOME_EXPECTED_MANIFEST_SHA", "sha256:90765146ec192c58fe841b61b49d239fae321a99b2a73d3f8529ceeaad9f41c8")
+PARTIAL_AUTH_PATH = os.environ.get("PRESIGNAL_PAIRED_EXCLUSION_AUTH_PATH", "")
 INVALID_CALLS = {
     "FCL_27720b8b23236b173b96fdee",
     "FCL_7f0463b134c67757968580e8",
@@ -63,6 +64,15 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in text.splitlines() if line.strip()]
 
 
+def partial_authorization() -> dict[str, Any] | None:
+    if not PARTIAL_AUTH_PATH:
+        return None
+    auth = json.loads(Path(PARTIAL_AUTH_PATH).read_text())
+    if auth.get("authorization_mode") != "PAIRED_EXCLUSION_ATTACHMENT" or auth.get("evaluation_authorized") is not False:
+        raise SystemExit("PAIRED_EXCLUSION_AUTHORIZATION_CONFLICT")
+    return auth
+
+
 def resolve_collection_inputs(collection_dir: Path, expected_manifest_sha: str) -> dict[str, Any]:
     """Accept the collector's native artifacts or the legacy finalized names."""
     legacy_finalization = collection_dir / "collection_finalization.json"
@@ -85,7 +95,7 @@ def resolve_collection_inputs(collection_dir: Path, expected_manifest_sha: str) 
             raise SystemExit("COLLECTION_RECONCILIATION_COUNT_MISMATCH")
         if reconciliation.get("candidate_outcomes") != expected_count or reconciliation.get("schema_validated_candidates") != expected_count:
             raise SystemExit("COLLECTION_RECONCILIATION_INCOMPLETE")
-        if reconciliation.get("unresolved_identities") or reconciliation.get("missing_or_terminal_source_episodes"):
+        if (reconciliation.get("unresolved_identities") or reconciliation.get("missing_or_terminal_source_episodes")) and partial_authorization() is None:
             raise SystemExit("COLLECTION_RECONCILIATION_UNRESOLVED")
         if reconciliation.get("duplicate_requests") != 0 or reconciliation.get("google_writes") != 0:
             raise SystemExit("COLLECTION_RECONCILIATION_CONFLICT")
@@ -196,6 +206,7 @@ def main() -> int:
     manifest_declared_hash = json.loads(MANIFEST.read_text()).get("manifest_fingerprint")
     if manifest_bytes_hash != EXPECTED_MANIFEST_SHA and manifest_declared_hash != EXPECTED_MANIFEST_SHA:
         raise SystemExit("OUTCOME_MANIFEST_HASH_MISMATCH")
+    partial_auth = partial_authorization()
     collection_inputs = resolve_collection_inputs(COLLECTION_DIR, EXPECTED_MANIFEST_SHA)
 
     manifest = json.loads(MANIFEST.read_text())
@@ -208,6 +219,17 @@ def main() -> int:
         raise SystemExit("OUTCOME_SLICE_DUPLICATE_EPISODE")
     validate_bridge_candidates(candidates, set(manifest_by_episode))
 
+    if partial_auth is not None:
+        excluded = set(partial_auth["excluded_episode_ids"])
+        expected_eligible = set(partial_auth["authorized_identity_ids"])
+        if excluded & expected_eligible or len(expected_eligible) != 10 or len(excluded) != 2:
+            raise SystemExit("PAIRED_EXCLUSION_POPULATION_CONFLICT")
+        if {row["episode_id"] for row in candidates if row.get("status") == "UNAVAILABLE"} != excluded:
+            raise SystemExit("PAIRED_EXCLUSION_UNAVAILABLE_SCOPE_CONFLICT")
+        candidates = [row for row in candidates if row["episode_id"] in expected_eligible and row.get("status") == "VALID"]
+        if len(candidates) != 10 or {row["episode_id"] for row in candidates} != expected_eligible:
+            raise SystemExit("PAIRED_EXCLUSION_CANDIDATE_POPULATION_CONFLICT")
+
     prior_attachment_dirs = list(BASE.glob(f"PPHB-R1-OUTCOME-ATTACHMENT-{SLICE_ID}-*"))
     if prior_attachment_dirs:
         raise SystemExit("PRIOR_OUTCOME_ATTACHMENT_REQUIRES_RECONCILIATION")
@@ -217,7 +239,7 @@ def main() -> int:
         request_ledger_path = COLLECTION_DIR / "external_request_ledger.jsonl"
     request_rows = read_jsonl(request_ledger_path)
     request_by_id = {row["request_id"]: row for row in request_rows}
-    if len(request_by_id) != len(request_rows) or len(request_rows) != 3:
+    if partial_auth is None and (len(request_by_id) != len(request_rows) or len(request_rows) != 3):
         raise SystemExit("REQUEST_LINEAGE_NOT_UNIQUE")
 
     attached: list[dict[str, Any]] = []
@@ -241,9 +263,9 @@ def main() -> int:
         if lineage.get("instrument") != "USD/JPY" or not lineage.get("endpoint_deployment"):
             raise SystemExit("OUTCOME_SOURCE_LINEAGE_MISMATCH:" + episode_id)
         for request in lineage.get("request_windows", []):
-            if request["request_id"] not in request_by_id:
+            if not partial_auth and request["request_id"] not in request_by_id:
                 raise SystemExit("OUTCOME_REQUEST_LINEAGE_MISSING:" + episode_id)
-            if request_by_id[request["request_id"]]["raw_response_hash"] != request["raw_response_hash"]:
+            if not partial_auth and request_by_id[request["request_id"]]["raw_response_hash"] != request["raw_response_hash"]:
                 raise SystemExit("OUTCOME_RAW_HASH_MISMATCH:" + episode_id)
         attached_row = {
             "attachment_status": "ATTACHED_LOCAL_APPEND_ONLY",
@@ -273,8 +295,8 @@ def main() -> int:
         "move_type": "OUTCOME_ATTACHMENT_AND_RECONCILIATION_" + SLICE_LABEL,
         "source_collection_run_id": COLLECTION_RUN,
         "manifest_sha256": EXPECTED_MANIFEST_SHA,
-        "candidate_count": manifest_episode_count(),
-        "attachment_count": 12,
+        "candidate_count": len(candidates),
+        "attachment_count": len(candidates),
         "external_requests": 0,
         "google_reads": 0,
         "google_writes": 0,
@@ -283,11 +305,12 @@ def main() -> int:
         "evaluation_calculations": 0,
         "append_only": True,
         "collection_bridge": collection_inputs,
+        "paired_exclusion_authorization": str(PARTIAL_AUTH_PATH) if partial_auth else None,
         "generated_ts": now,
     })
     write_json(run_dir / "attachment_preflight.json", {
         "decision": "OUTCOME_ATTACHMENT_PREFLIGHT_PASSED",
-        "candidate_count": manifest_episode_count(),
+        "candidate_count": len(candidates),
         "manifest_episode_count": manifest_episode_count(),
         "manifest_sha256": EXPECTED_MANIFEST_SHA,
         "schema_version": "2.1.1",
@@ -303,26 +326,27 @@ def main() -> int:
     write_jsonl(run_dir / "candidate_to_attachment.jsonl", links)
     write_jsonl(run_dir / "attached_outcomes.jsonl", attached)
     write_json(run_dir / "attachment_reconciliation.json", {
-        "authorized_candidate_count": manifest_episode_count(),
-        "attached_outcome_count": manifest_episode_count(),
+        "authorized_candidate_count": len(candidates),
+        "attached_outcome_count": len(candidates),
         "unattached_candidate_count": 0,
         "failures_by_episode": {},
         "duplicate_or_conflicting_attachments": 0,
-        "schema_validation": {"contract": "presignal_event_path_contract_v1_1", "schema_version": "2.1.1", "valid": manifest_episode_count()},
+        "schema_validation": {"contract": "presignal_event_path_contract_v1_1", "schema_version": "2.1.1", "valid": len(candidates)},
         "candidate_to_attached_hash_linkage": "PASSED",
-        "episode_coverage": "12_OF_12",
+        "episode_coverage": f"{len(candidates)}_OF_{len(candidates)}",
         "pack_a_e_forecast_coverage": coverage,
         "unresolved_identities": [],
         "external_requests": 0,
         "google_writes": 0,
         "evaluation_calculations": 0,
+        "paired_exclusion": partial_auth["excluded_episode_ids"] if partial_auth else [],
     })
     write_json(run_dir / "attachment_decision.json", {
         "run_id": args.run_id,
         "decision": "OUTCOME_" + SLICE_LABEL + "_ATTACHED_AND_RECONCILED",
         "readiness": "OUTCOME_" + SLICE_LABEL + "_READY_FOR_MINIMAL_EVALUATION",
-        "candidate_count": manifest_episode_count(),
-        "attached_count": manifest_episode_count(),
+        "candidate_count": len(candidates),
+        "attached_count": len(candidates),
         "unattached_count": 0,
         "coverage_only": True,
         "evaluation_authorized": False,

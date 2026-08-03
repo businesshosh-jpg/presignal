@@ -1,0 +1,63 @@
+{
+  "attachment_run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-003-PAIRED-EXCLUSION-20260803T080000Z-81ea4814a18d",
+  "authorization_fingerprint": "sha256:1a04811ea2b95396242c37bda8b5430ad9e2b9bc5a9c4c33aa945fa238bd9b0d",
+  "authorization_id": "PPHB-R1-SLICE-003-SUPPLEMENTARY-EVALUATION-AUTHORIZATION-20260803T081500Z",
+  "authorization_mode": "MINIMAL_EVALUATION",
+  "authorization_schema_version": "SUPPLEMENTARY_SLICE_EVALUATION_AUTH_V1",
+  "authorization_status": "ACTIVE",
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-003-20260803T071136Z-fc2fd1815bd5",
+  "contract_binding": "PPHB-R1-PROSPECTIVE-SLICE-EXECUTION-CONTRACT-20260803T060000Z",
+  "controller_commit": "12a0c5f6e30b513e8d52f084b360dee97eb739fc",
+  "denominator_rules": "Use the existing evaluator: exclude no-signal forecasts from directional, magnitude, path, and reversal denominators; strictly score Immediate Impulse only for SUPPORTED Outcomes.",
+  "evaluation_authorized": true,
+  "evaluation_entrypoint": "automation/evaluate_presignal_v21_outcome_slice_001.py",
+  "evaluation_output_destination": "append-only local minimal evaluation evidence",
+  "evaluation_population": {
+    "complete_pairs": 16,
+    "episodes": 10,
+    "pack_a": 16,
+    "pack_e": 16,
+    "unpaired": 0,
+    "valid_forecasts": 32
+  },
+  "external_request_ceiling": 0,
+  "google_write_ceiling": 0,
+  "governance_review_id": "PPHB-R1-SLICE-003-UNAVAILABLE-OUTCOME-GOVERNANCE-REVIEW-20260803T073000Z",
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "pack_separation": true,
+  "paired_exclusion_attachment_authorization_id": "PPHB-R1-SLICE-003-PAIRED-EXCLUSION-ATTACHMENT-AUTHORIZATION-20260803T080000Z",
+  "permitted_metrics": [
+    "T+15 directional accuracy",
+    "Immediate Impulse directional accuracy",
+    "magnitude or pip error",
+    "horizon accuracy",
+    "path accuracy",
+    "reversal accuracy"
+  ],
+  "primary_endpoint": "T+15",
+  "required_attachment_reconciliation": {
+    "attached": 10,
+    "duplicates": 0,
+    "population": 32,
+    "run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-003-PAIRED-EXCLUSION-20260803T080000Z-81ea4814a18d",
+    "unattached": 0
+  },
+  "retry_boundary": "NO_RETRIES",
+  "secondary_measurement": "Immediate Impulse",
+  "single_use": true,
+  "slice_id": "SLICE-003",
+  "stop_conditions": [
+    "forecast payload identity or authority gap",
+    "population or denominator conflict",
+    "missing Outcome",
+    "duplicate evaluation row",
+    "unsupported metric",
+    "manifest, authorization, attachment, or lineage mismatch"
+  ],
+  "terminal_invalid_excluded": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_7f0463b134c67757968580e8",
+    "FCL_e07264654e9d3da6f63088a1"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "artifact_type": "PROSPECTIVE_SLICE_COMPLETION",
+  "decision": "AUTHORIZED_SLICE_003_END_TO_END_COMPLETE",
+  "slice_id": "SLICE-003",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "attachment_authorization_id": "PPHB-R1-SLICE-003-PAIRED-EXCLUSION-ATTACHMENT-AUTHORIZATION-20260803T080000Z",
+  "attachment_authorization_fingerprint": "sha256:81ea4814a18d31897e6d31c984f03e68d63227772b4079f11c910c815d90f543",
+  "evaluation_authorization_id": "PPHB-R1-SLICE-003-SUPPLEMENTARY-EVALUATION-AUTHORIZATION-20260803T081500Z",
+  "evaluation_authorization_fingerprint": "sha256:1a04811ea2b95396242c37bda8b5430ad9e2b9bc5a9c4c33aa945fa238bd9b0d",
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-003-20260803T071136Z-fc2fd1815bd5",
+  "attachment_run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-003-PAIRED-EXCLUSION-20260803T080000Z-81ea4814a18d",
+  "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATION-SLICE-003-PAIRED-EXCLUSION-20260803T081500Z-1a04811ea2b95396242c-v2",
+  "population": {
+    "episodes": 10,
+    "outcomes_attached": 10,
+    "valid_forecasts": 32,
+    "pack_a": 16,
+    "pack_e": 16,
+    "complete_pairs": 16,
+    "unpaired": 0
+  },
+  "excluded_episodes": [
+    "EP_EVENT_4b80366594480b554889",
+    "EP_EVENT_aa41226bcb8107901555"
+  ],
+  "excluded_forecast_call_ids": [
+    "FCL_15c6f4e6f1fc413c5c3845b7",
+    "FCL_ff54346ab7650976cfdf2a77",
+    "FCL_a5c7157c4cf958b3e63af1c9",
+    "FCL_5230a7bccd1ea38969bafbe9",
+    "FCL_2e848bf237c19f8df0f0a1e0",
+    "FCL_6fde6348e4a26fd62d85c6df",
+    "FCL_5ffa9e10262ccdccaea1a64c",
+    "FCL_02c997b37b7e3f54e8187d93"
+  ],
+  "external_access": {
+    "new_apps_script_reads": 0,
+    "new_market_data_attempts": 0,
+    "new_external_requests": 0,
+    "google_writes": 0,
+    "retries": 0,
+    "new_attachment_records": 10
+  },
+  "stage_status": {
+    "collection": "REUSED_ACCEPTED",
+    "attachment": "ACCEPTED_RECONCILED",
+    "evaluation": "ACCEPTED_RECONCILED",
+    "authorization_single_use": "COMPLETED",
+    "prior_blocked_authorizations": "PRESERVED_NON_REUSABLE"
+  },
+  "mechanical_repairs": [
+    "canonical raw-provider normalization and contract reconstruction for three preserved valid payloads",
+    "undefined-safe paired descriptive differences",
+    "dynamic Slice population in completion comparison"
+  ],
+  "evidence_hashes": {
+    "attachment_reconciliation": "sha256:835f715efe06d743805c27d5bea0867e3c5c1407fe3ce5e4067b3a265311984f",
+    "evaluation_decision": "sha256:26f881639996553b49be59f9497c5b5fc41a9eef200deb2a4cb9fc586732e9a6",
+    "evaluation_metrics": "sha256:74b0604458e8a1ac6d519a6e3aa3db690b6e84feacb6b519522e5f5af96657f5"
+  }
+}

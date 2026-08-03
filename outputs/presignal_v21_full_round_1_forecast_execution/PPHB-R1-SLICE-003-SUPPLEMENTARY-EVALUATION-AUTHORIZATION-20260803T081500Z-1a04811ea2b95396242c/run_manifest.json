@@ -1,0 +1,12 @@
+{
+  "additional_attachment": 0,
+  "append_only": true,
+  "authorization_fingerprint": "sha256:1a04811ea2b95396242c37bda8b5430ad9e2b9bc5a9c4c33aa945fa238bd9b0d",
+  "authorization_id": "PPHB-R1-SLICE-003-SUPPLEMENTARY-EVALUATION-AUTHORIZATION-20260803T081500Z",
+  "evaluation_started": false,
+  "external_requests": 0,
+  "google_writes": 0,
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "run_id": "PPHB-R1-SLICE-003-SUPPLEMENTARY-EVALUATION-AUTHORIZATION-20260803T081500Z-1a04811ea2b95396242c"
+}

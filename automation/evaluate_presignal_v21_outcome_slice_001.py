@@ -16,6 +16,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from automation import presignal_v21_event_path_contract_v1_1 as contract
+from automation import run_presignal_v21_single_event_path_pair_v1_1 as step6
 
 BASE = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution"
 ATTACHMENT_RUN = os.environ.get("PRESIGNAL_OUTCOME_ATTACHMENT_RUN", "PPHB-R1-OUTCOME-ATTACHMENT-SLICE-001-20260803T101500Z-5bbe84a70320")
@@ -23,6 +24,7 @@ SLICE_ID = os.environ.get("PRESIGNAL_OUTCOME_SLICE_ID", "SLICE-001")
 SLICE_LABEL = SLICE_ID.replace("-", "_")
 ATTACHMENT_DIR = BASE / ATTACHMENT_RUN
 EXPECTED_MANIFEST_SHA = os.environ.get("PRESIGNAL_OUTCOME_EXPECTED_MANIFEST_SHA", "sha256:90765146ec192c58fe841b61b49d239fae321a99b2a73d3f8529ceeaad9f41c8")
+EVALUATION_AUTH_PATH = os.environ.get("PRESIGNAL_EVALUATION_AUTH_PATH", "")
 INVALID_CALLS = {
     "FCL_27720b8b23236b173b96fdee",
     "FCL_7f0463b134c67757968580e8",
@@ -32,6 +34,12 @@ HORIZONS = (5, 15, 30, 60)
 
 
 def manifest_population() -> dict[str, int]:
+    if EVALUATION_AUTH_PATH:
+        authorization = read_json(Path(EVALUATION_AUTH_PATH))
+        if authorization.get("evaluation_authorized") is not True or authorization.get("manifest_fingerprint") != EXPECTED_MANIFEST_SHA:
+            raise ValueError("EVALUATION_AUTHORIZATION_BINDING_CONFLICT")
+        population = authorization.get("evaluation_population", {})
+        return {"episodes": population["episodes"], "valid_forecasts": population["valid_forecasts"], "pairs": population["complete_pairs"]}
     manifest_path = Path(os.environ.get("PRESIGNAL_OUTCOME_MANIFEST_PATH", ""))
     if not manifest_path.exists():
         return {"episodes": 12, "valid_forecasts": 44, "pairs": 12}
@@ -68,8 +76,16 @@ def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
     path.write_text("".join(canonical(row) + "\n" for row in rows))
 
 
+def paired_difference(left: Any, right: Any) -> Any:
+    """Keep a paired metric undefined when either forecast is ineligible."""
+    if left is None or right is None:
+        return None
+    return left - right
+
+
 def forecast_rows(episode_ids: set[str]) -> list[dict[str, Any]]:
     by_call: dict[str, dict[str, Any]] = {}
+    source_by_call: dict[str, str] = {}
     for path in sorted(BASE.glob("PPHB-R1-FORECAST-*/normalized_forecast_results.jsonl")):
         for row in read_jsonl(path):
             call_id = row.get("forecast_call_id")
@@ -77,8 +93,136 @@ def forecast_rows(episode_ids: set[str]) -> list[dict[str, Any]]:
                 continue
             prior = by_call.get(call_id)
             if prior is not None and canonical(prior) != canonical(row):
+                if EVALUATION_AUTH_PATH:
+                    # Accepted E004 reconciliation selects the earliest invocation.
+                    if path.parent.name < source_by_call[call_id]:
+                        by_call[call_id] = row
+                        source_by_call[call_id] = path.parent.name
+                    continue
                 raise ValueError("FORECAST_IDENTITY_DUPLICATE_CONFLICT:" + call_id)
             by_call[call_id] = row
+            source_by_call.setdefault(call_id, path.parent.name)
+    if EVALUATION_AUTH_PATH:
+        recovery_path = BASE / "PPHB-R1-FORECAST-FINAL-RESULT-DIAGNOSIS-BATCH-003-20260729T234944Z-a65de810bf75" / "recovered_result_ledger.jsonl"
+        if recovery_path.exists():
+            metadata: dict[str, dict[str, Any]] = {}
+            for manifest_path in BASE.glob("PPHB-R1-FORECAST-EXECUTION-BATCH-*/batch_call_manifest.jsonl"):
+                for manifest_row in read_jsonl(manifest_path):
+                    metadata.setdefault(manifest_row.get("forecast_call_id"), manifest_row)
+            for recovered in read_jsonl(recovery_path):
+                call_id = recovered.get("forecast_call_id")
+                prediction = recovered.get("prediction", {})
+                if not call_id or prediction.get("episode_id") not in episode_ids or recovered.get("validation_status") != "VALID":
+                    continue
+                if call_id in by_call:
+                    continue
+                manifest_row = metadata.get(call_id, {})
+                by_call[call_id] = {
+                    "episode_id": prediction["episode_id"],
+                    "forecast_call_id": call_id,
+                    "model": recovered.get("model", manifest_row.get("model")),
+                    "pack_type": manifest_row.get("pack_type"),
+                    "provider": recovered.get("provider", manifest_row.get("provider")),
+                    "prediction": prediction,
+                    "paths": recovered.get("paths", []),
+                    "terminal_state": "SUCCEEDED_VALID",
+                }
+                source_by_call[call_id] = recovery_path.parent.name
+        # A preserved provider response may be normalized mechanically when
+        # the original terminal result was caused only by a parser boundary.
+        # This path never dispatches a provider and requires identity metadata
+        # from an already accepted forecast for the same Episode.
+        metadata: dict[str, dict[str, Any]] = {}
+        transport: dict[str, dict[str, Any]] = {}
+        raw_candidates: dict[str, dict[str, Any]] = {}
+        for manifest_path in BASE.glob("PPHB-R1-FORECAST-EXECUTION-BATCH-*/batch_call_manifest.jsonl"):
+            for manifest_row in read_jsonl(manifest_path):
+                call_id = manifest_row.get("forecast_call_id")
+                if call_id:
+                    metadata.setdefault(call_id, manifest_row)
+        for transport_path in BASE.glob("PPHB-R1-FORECAST-EXECUTION-BATCH-*/raw_transport_results.jsonl"):
+            for transport_row in read_jsonl(transport_path):
+                call_id = transport_row.get("forecast_call_id")
+                if call_id:
+                    transport.setdefault(call_id, transport_row)
+        for raw_path in BASE.glob("PPHB-R1-FORECAST-EXECUTION-BATCH-*/raw_provider_outputs.jsonl"):
+            for raw_row in read_jsonl(raw_path):
+                call_id = raw_row.get("forecast_call_id")
+                if call_id:
+                    raw_candidates.setdefault(call_id, raw_row)
+
+        episode_identity: dict[str, tuple[str, list[str]]] = {}
+        for accepted in by_call.values():
+            prediction = accepted.get("prediction", {})
+            episode_id = accepted.get("episode_id") or prediction.get("episode_id")
+            if episode_id not in episode_ids:
+                continue
+            identity = (prediction.get("primary_event_id"), prediction.get("secondary_event_ids", []))
+            prior_identity = episode_identity.get(episode_id)
+            if prior_identity is not None and prior_identity != identity:
+                raise ValueError("EPISODE_EVENT_IDENTITY_CONFLICT:" + episode_id)
+            episode_identity[episode_id] = identity
+
+        for call_id, raw_row in sorted(raw_candidates.items()):
+            if call_id in by_call or call_id in INVALID_CALLS:
+                continue
+            manifest_row = metadata.get(call_id)
+            transport_row = transport.get(call_id)
+            episode_id = raw_row.get("episode_id")
+            if not manifest_row or not transport_row or episode_id not in episode_ids:
+                continue
+            if manifest_row.get("authorization_state") != "AUTHORIZED":
+                continue
+            if transport_row.get("transport_ok") is not True or transport_row.get("provider_error"):
+                continue
+            identity = episode_identity.get(episode_id)
+            if identity is None or not identity[0]:
+                raise ValueError("RECOVERY_EPISODE_IDENTITY_UNRESOLVED:" + episode_id)
+            try:
+                normalized, audit = step6.normalize_provider_output(raw_row["raw_provider_output"])
+                input_row = {
+                    "information_arm": manifest_row["pack_type"],
+                    "pack_id": "BASELINE_NO_PACK",
+                    "pack_fingerprint": None,
+                    "episode_id": episode_id,
+                    "episode_members": [
+                        {"event_id": identity[0], "structural_component_role": "STRUCTURAL_PRIMARY"},
+                        *[
+                            {"event_id": event_id, "structural_component_role": "STRUCTURAL_SECONDARY"}
+                            for event_id in identity[1]
+                        ],
+                    ],
+                    "provider": manifest_row["provider"],
+                    "model": manifest_row["model"],
+                    "source_session_id": manifest_row["source_session_id"],
+                    "forecast_cutoff_ts": manifest_row["historical_cutoff"],
+                }
+                prediction, paths = step6.response_to_contract(
+                    normalized,
+                    input_row,
+                    run_id="PPHB-R1-MECHANICAL-RAW-RECOVERY-SLICE-003",
+                    created_ts=transport_row["completion_timestamp"],
+                    raw_output=raw_row["raw_provider_output"],
+                    bridge_result={
+                        "prompt_tokens": transport_row.get("prompt_tokens"),
+                        "completion_tokens": transport_row.get("completion_tokens"),
+                    },
+                )
+            except (KeyError, TypeError, ValueError, step6.Step6Error) as exc:
+                raise ValueError("PRESERVED_RAW_RECOVERY_FAILED:" + call_id) from exc
+            by_call[call_id] = {
+                "episode_id": episode_id,
+                "forecast_call_id": call_id,
+                "model": manifest_row["model"],
+                "pack_type": manifest_row["pack_type"],
+                "provider": manifest_row["provider"],
+                "prediction": prediction,
+                "paths": paths,
+                "terminal_state": "SUCCEEDED_VALID",
+                "recovery_source": "PRESERVED_RAW_PROVIDER_OUTPUT",
+                "recovery_audit": audit,
+            }
+            source_by_call[call_id] = "PRESERVED_RAW_PROVIDER_OUTPUT"
     rows = sorted(by_call.values(), key=lambda row: row["forecast_call_id"])
     expected = manifest_population()
     if len(rows) != expected["valid_forecasts"] or len({row["forecast_call_id"] for row in rows}) != expected["valid_forecasts"]:
@@ -234,10 +378,10 @@ def main() -> int:
         a, e = arms["PACK_A"], arms["PACK_E"]
         pair_rows.append({
             "episode_id": key[0], "forecast_cutoff_ts": key[1], "provider": key[2], "model": key[3],
-            "t15_accuracy_difference_a_minus_e": int(a["t15_correct"]) - int(e["t15_correct"]),
-            "path_score_difference_a_minus_e": a["path_score"] - e["path_score"],
-            "magnitude_interval_error_difference_a_minus_e": a["magnitude_interval_error_pips"] - e["magnitude_interval_error_pips"],
-            "reversal_accuracy_difference_a_minus_e": int(a["reversal_correct"]) - int(e["reversal_correct"]),
+            "t15_accuracy_difference_a_minus_e": paired_difference(a["t15_correct"], e["t15_correct"]),
+            "path_score_difference_a_minus_e": paired_difference(a["path_score"], e["path_score"]),
+            "magnitude_interval_error_difference_a_minus_e": paired_difference(a["magnitude_interval_error_pips"], e["magnitude_interval_error_pips"]),
+            "reversal_accuracy_difference_a_minus_e": paired_difference(a["reversal_correct"], e["reversal_correct"]),
         })
     generated = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     run_dir.mkdir(parents=True)
@@ -257,7 +401,7 @@ def main() -> int:
     write_jsonl(run_dir / "per_forecast_evaluation_rows.jsonl", rows)
     write_json(run_dir / "pack_metrics.json", {"PACK_A": summarize(by_pack["PACK_A"], "PACK_A"), "PACK_E": summarize(by_pack["PACK_E"], "PACK_E")})
     write_json(run_dir / "paired_descriptive_comparison.json", {
-        "episode_pair_groups": 12, "provider_model_pair_rows": len(pair_rows), "rows": pair_rows,
+        "episode_pair_groups": len({row["episode_id"] for row in forecasts}), "provider_model_pair_rows": len(pair_rows), "rows": pair_rows,
         "interpretation": "Descriptive A-minus-E differences only; no significance, weighting, winner selection, or generalization.",
     })
     write_json(run_dir / "evaluation_decision.json", {

@@ -1,0 +1,20 @@
+{
+  "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED",
+  "decision": "OUTCOME_SLICE_003_MINIMAL_EVALUATION_COMPLETE",
+  "external_requests": 0,
+  "google_operations": 0,
+  "limitations": [
+    "10 Episodes and 32 forecasts only",
+    "Immediate Impulse is APPROXIMATION_ONLY and not strict-scored",
+    "descriptive slice; no statistical inference"
+  ],
+  "metrics": [
+    "T+15 directional accuracy",
+    "Immediate Impulse directional accuracy",
+    "magnitude or pip error",
+    "horizon accuracy",
+    "path accuracy",
+    "reversal accuracy"
+  ],
+  "reproducibility": "SLICE_003_EVALUATION_REPRODUCIBLE"
+}
