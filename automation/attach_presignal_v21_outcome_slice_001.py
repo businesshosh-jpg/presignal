@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -16,12 +17,14 @@ from automation import presignal_v21_event_path_contract_v1_1 as contract
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution"
-COLLECTION_RUN = "PPHB-R1-OUTCOME-COLLECTION-SLICE-001-20260803T001512Z-ceeaad9f41c8"
+COLLECTION_RUN = os.environ.get("PRESIGNAL_OUTCOME_COLLECTION_RUN", "PPHB-R1-OUTCOME-COLLECTION-SLICE-001-20260803T001512Z-ceeaad9f41c8")
+SLICE_ID = os.environ.get("PRESIGNAL_OUTCOME_SLICE_ID", "SLICE-001")
+SLICE_LABEL = SLICE_ID.replace("-", "_")
 COLLECTION_DIR = BASE / COLLECTION_RUN
-MANIFEST = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution" / (
+MANIFEST = Path(os.environ.get("PRESIGNAL_OUTCOME_MANIFEST_PATH", str(ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution" / (
     "PPHB-R1-OUTCOME-AUTHORIZATION-PREPARATION-20260803T090000Z-18cddcdc5477"
-) / "next_authorization_draft.json"
-EXPECTED_MANIFEST_SHA = "sha256:90765146ec192c58fe841b61b49d239fae321a99b2a73d3f8529ceeaad9f41c8"
+) / "next_authorization_draft.json")))
+EXPECTED_MANIFEST_SHA = os.environ.get("PRESIGNAL_OUTCOME_EXPECTED_MANIFEST_SHA", "sha256:90765146ec192c58fe841b61b49d239fae321a99b2a73d3f8529ceeaad9f41c8")
 INVALID_CALLS = {
     "FCL_27720b8b23236b173b96fdee",
     "FCL_7f0463b134c67757968580e8",
@@ -116,7 +119,7 @@ def main() -> int:
     if len(manifest_by_episode) != 12:
         raise SystemExit("OUTCOME_SLICE_DUPLICATE_EPISODE")
 
-    prior_attachment_dirs = list(BASE.glob("PPHB-R1-OUTCOME-ATTACHMENT-SLICE-001-*"))
+    prior_attachment_dirs = list(BASE.glob(f"PPHB-R1-OUTCOME-ATTACHMENT-{SLICE_ID}-*"))
     if prior_attachment_dirs:
         raise SystemExit("PRIOR_OUTCOME_ATTACHMENT_REQUIRES_RECONCILIATION")
 
@@ -175,7 +178,7 @@ def main() -> int:
     run_dir.mkdir(parents=True)
     write_json(run_dir / "run_manifest.json", {
         "run_id": args.run_id,
-        "move_type": "OUTCOME_ATTACHMENT_AND_RECONCILIATION_SLICE_001",
+        "move_type": "OUTCOME_ATTACHMENT_AND_RECONCILIATION_" + SLICE_LABEL,
         "source_collection_run_id": COLLECTION_RUN,
         "manifest_sha256": EXPECTED_MANIFEST_SHA,
         "candidate_count": 12,
@@ -223,8 +226,8 @@ def main() -> int:
     })
     write_json(run_dir / "attachment_decision.json", {
         "run_id": args.run_id,
-        "decision": "OUTCOME_SLICE_001_ATTACHED_AND_RECONCILED",
-        "readiness": "OUTCOME_SLICE_001_READY_FOR_MINIMAL_EVALUATION",
+        "decision": "OUTCOME_" + SLICE_LABEL + "_ATTACHED_AND_RECONCILED",
+        "readiness": "OUTCOME_" + SLICE_LABEL + "_READY_FOR_MINIMAL_EVALUATION",
         "candidate_count": 12,
         "attached_count": 12,
         "unattached_count": 0,

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -17,9 +18,11 @@ sys.path.insert(0, str(ROOT))
 from automation import presignal_v21_event_path_contract_v1_1 as contract
 
 BASE = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution"
-ATTACHMENT_RUN = "PPHB-R1-OUTCOME-ATTACHMENT-SLICE-001-20260803T101500Z-5bbe84a70320"
+ATTACHMENT_RUN = os.environ.get("PRESIGNAL_OUTCOME_ATTACHMENT_RUN", "PPHB-R1-OUTCOME-ATTACHMENT-SLICE-001-20260803T101500Z-5bbe84a70320")
+SLICE_ID = os.environ.get("PRESIGNAL_OUTCOME_SLICE_ID", "SLICE-001")
+SLICE_LABEL = SLICE_ID.replace("-", "_")
 ATTACHMENT_DIR = BASE / ATTACHMENT_RUN
-EXPECTED_MANIFEST_SHA = "sha256:90765146ec192c58fe841b61b49d239fae321a99b2a73d3f8529ceeaad9f41c8"
+EXPECTED_MANIFEST_SHA = os.environ.get("PRESIGNAL_OUTCOME_EXPECTED_MANIFEST_SHA", "sha256:90765146ec192c58fe841b61b49d239fae321a99b2a73d3f8529ceeaad9f41c8")
 INVALID_CALLS = {
     "FCL_27720b8b23236b173b96fdee",
     "FCL_7f0463b134c67757968580e8",
@@ -79,7 +82,7 @@ def forecast_rows(episode_ids: set[str]) -> list[dict[str, Any]]:
 
 def validate_population() -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]], dict[str, Any]]:
     decision = read_json(ATTACHMENT_DIR / "attachment_decision.json")
-    if decision.get("decision") != "OUTCOME_SLICE_001_ATTACHED_AND_RECONCILED":
+    if decision.get("decision") != "OUTCOME_" + SLICE_LABEL + "_ATTACHED_AND_RECONCILED":
         raise ValueError("ATTACHMENT_DECISION_NOT_ACCEPTED")
     reconciliation = read_json(ATTACHMENT_DIR / "attachment_reconciliation.json")
     if reconciliation.get("attached_outcome_count") != 12 or reconciliation.get("unattached_candidate_count") != 0:
@@ -158,7 +161,7 @@ def summarize(rows: list[dict[str, Any]], name: str) -> dict[str, Any]:
                 "Immediate Impulse directional accuracy", impulse_correct, len(impulse_supported),
                 len(rows) - len(impulse_supported), "APPROXIMATION_ONLY_OUTCOME_NOT_STRICTLY_SCORED",
                 None if not impulse_supported else impulse_correct / len(impulse_supported),
-                status="NOT_APPLICABLE_STRICT", treatment="Only SUPPORTED outcomes are eligible; Slice 001 uses APPROXIMATION_ONLY.",
+                status="NOT_APPLICABLE_STRICT", treatment="Only SUPPORTED outcomes are eligible; this slice uses APPROXIMATION_ONLY.",
             ),
             "magnitude or pip error": metric(
                 "magnitude or pip error", None, len(magnitudes), len(rows) - len(magnitudes), "NO_SIGNAL_FORECAST",
@@ -228,7 +231,7 @@ def main() -> int:
     generated = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     run_dir.mkdir(parents=True)
     write_json(run_dir / "run_manifest.json", {
-        "run_id": args.run_id, "move_type": "MINIMAL_EVALUATION_ATTACHED_OUTCOME_SLICE_001",
+        "run_id": args.run_id, "move_type": "MINIMAL_EVALUATION_ATTACHED_OUTCOME_" + SLICE_LABEL,
         "attachment_run_id": ATTACHMENT_RUN, "manifest_sha256": EXPECTED_MANIFEST_SHA,
         "episode_count": 12, "forecast_count": 44, "episode_pair_groups": 12, "provider_model_pair_rows": len(pair_rows),
         "external_requests": 0, "google_reads": 0, "google_writes": 0, "market_data_calls": 0, "provider_calls": 0,
@@ -247,7 +250,7 @@ def main() -> int:
         "interpretation": "Descriptive A-minus-E differences only; no significance, weighting, winner selection, or generalization.",
     })
     write_json(run_dir / "evaluation_decision.json", {
-        "decision": "OUTCOME_SLICE_001_MINIMAL_EVALUATION_COMPLETE", "reproducibility": "SLICE_001_EVALUATION_REPRODUCIBLE",
+        "decision": "OUTCOME_" + SLICE_LABEL + "_MINIMAL_EVALUATION_COMPLETE", "reproducibility": "" + SLICE_LABEL + "_EVALUATION_REPRODUCIBLE",
         "metrics": ["T+15 directional accuracy", "Immediate Impulse directional accuracy", "magnitude or pip error", "horizon accuracy", "path accuracy", "reversal accuracy"],
         "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED", "external_requests": 0, "google_operations": 0,
         "limitations": ["12 Episodes and 44 forecasts only", "Immediate Impulse is APPROXIMATION_ONLY and not strict-scored", "descriptive slice; no statistical inference"],
