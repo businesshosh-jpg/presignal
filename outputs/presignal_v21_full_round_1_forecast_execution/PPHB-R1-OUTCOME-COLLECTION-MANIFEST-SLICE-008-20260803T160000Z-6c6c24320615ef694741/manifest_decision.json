@@ -1,0 +1,25 @@
+{
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-008-20260803T160000Z",
+  "manifest_fingerprint": "sha256:6c6c24320615ef6947412fa58c8a1628fa36a4634a8561e122dcb162981a8f90",
+  "slice_id": "SLICE-008",
+  "decision": "NEXT_PROSPECTIVE_SLICE_MANIFEST_FROZEN",
+  "episode_count": 12,
+  "population": {
+    "valid_forecasts": 42,
+    "pack_a": 21,
+    "pack_e": 21,
+    "complete_pack_a_e_pairs": 21,
+    "pack_a_only": 0,
+    "pack_e_only": 0,
+    "unpaired": 0
+  },
+  "release_days_utc": [
+    "2024-06-26",
+    "2024-06-27",
+    "2024-06-28",
+    "2024-07-01",
+    "2024-07-02",
+    "2024-07-03"
+  ],
+  "external_access": 0
+}

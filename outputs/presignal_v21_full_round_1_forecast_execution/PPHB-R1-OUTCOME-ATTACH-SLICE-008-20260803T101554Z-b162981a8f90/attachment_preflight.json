@@ -1,0 +1,15 @@
+{
+  "candidate_count": 12,
+  "contract": "presignal_event_path_contract_v1_1",
+  "decision": "OUTCOME_ATTACHMENT_PREFLIGHT_PASSED",
+  "duplicate_checks": "PASSED",
+  "external_access": 0,
+  "hash_checks": "PASSED",
+  "identity_checks": "PASSED",
+  "manifest_episode_count": 12,
+  "manifest_sha256": "sha256:6c6c24320615ef6947412fa58c8a1628fa36a4634a8561e122dcb162981a8f90",
+  "prior_authoritative_attachment": false,
+  "schema_version": "2.1.1",
+  "source_lineage_checks": "PASSED",
+  "timestamp_checks": "PASSED_UTC"
+}

@@ -1,0 +1,7 @@
+{
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-008-END-TO-END-AUTHORIZATION-20260803T170000Z",
+  "authorization_fingerprint": "sha256:0518c867118e707cacf5bf608faeebc3ca46241a8015d88d90f19cff4333523f",
+  "decision": "SLICE_008_END_TO_END_AUTHORIZATION_FROZEN",
+  "execution_decision": "SLICE_008_END_TO_END_EXECUTION_READY",
+  "external_access": 0
+}
