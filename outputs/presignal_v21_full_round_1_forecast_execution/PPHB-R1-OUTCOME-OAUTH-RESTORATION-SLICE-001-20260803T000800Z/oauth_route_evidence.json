@@ -1,0 +1,14 @@
+{
+  "accepted_route": "automation.google_clients.load_credentials -> local/token.json; interactive bootstrap auth_sheets.py -> local/credentials.json",
+  "client_secret_file_present": false,
+  "code_or_configuration_changed": false,
+  "credential_error_class": "GoogleCredentialError",
+  "credential_error_code": "GOOGLE_OAUTH_TOKEN_MISSING",
+  "decision": "GOOGLE_OAUTH_ROUTE_NOT_RESTORED",
+  "environment_token_override": false,
+  "parallel_route_created": false,
+  "resolved_client_secret_path": "/Users/junhoshino/projects/presignal-historical-baseline-r1/local/credentials.json",
+  "resolved_token_path": "/Users/junhoshino/projects/presignal-historical-baseline-r1/local/token.json",
+  "secrets_recorded": false,
+  "token_file_present": false
+}

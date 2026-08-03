@@ -1,0 +1,14 @@
+{
+  "apps_script_reads": 0,
+  "candidate_outcomes": 0,
+  "collection_decision": "OUTCOME_COLLECTION_SLICE_001_BLOCKED",
+  "duplicate_requests": 0,
+  "evaluation_calculations": 0,
+  "google_writes": 0,
+  "market_data_provider_attempts": 0,
+  "outcome_attachment": 0,
+  "schema_validation": "NOT_REACHED",
+  "total_external_requests": 0,
+  "unavailable_or_terminal_source_episodes": 12,
+  "unresolved_identities": 12
+}

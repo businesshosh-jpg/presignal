@@ -1,0 +1,12 @@
+{
+  "block_reason": "GOOGLE_OAUTH_TOKEN_MISSING",
+  "contract": "presignal_event_path_contract_v1_1",
+  "decision": "OUTCOME_SOURCE_PREFLIGHT_BLOCKED",
+  "episode_count": 12,
+  "instrument": "USD/JPY",
+  "manifest_sha256": "sha256:90765146ec192c58fe841b61b49d239fae321a99b2a73d3f8529ceeaad9f41c8",
+  "oauth_route_available": false,
+  "route_function": "apiFetchGovernedHistoricalUsdJpyObservation",
+  "schema_version": "2.1.1",
+  "timezone": "UTC"
+}

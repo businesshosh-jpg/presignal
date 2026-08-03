@@ -1,0 +1,8 @@
+{
+  "candidate_outcomes_unattached": true,
+  "collection_decision": "OUTCOME_COLLECTION_SLICE_001_BLOCKED",
+  "evaluated": false,
+  "next_action": "Provision the accepted local credentials.json/token.json route, then rerun the unchanged manifest slice.",
+  "oauth_decision": "GOOGLE_OAUTH_ROUTE_NOT_RESTORED",
+  "preflight_decision": "OUTCOME_SOURCE_PREFLIGHT_BLOCKED"
+}
