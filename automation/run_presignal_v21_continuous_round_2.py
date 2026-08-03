@@ -34,6 +34,7 @@ ROUTES = (
     ("Gemini", "gemini-2.5-flash-lite"),
     ("OpenAI", "gpt-4o-mini-2024-07-18"),
 )
+PREREQUISITE_PROVIDER_STAGE_TIMEOUT_SECONDS = 180
 
 
 class AdmissionError(ValueError):
@@ -125,6 +126,9 @@ def select_rolling_slice(episodes: list[dict[str, Any]], prepared: dict[str, dic
             raise AdmissionError("PROSPECTIVE_CUTOFF_CONFLICT")
         if set(item.get("prompt_fingerprints", {})) != {"A", "E"}:
             raise AdmissionError("PROMPT_FINGERPRINT_AUTHORITY_CONFLICT")
+        inputs = item.get("pack_inputs", {})
+        if set(inputs) != {"A", "E"} or any(not inputs[pack].get("artifact_id") or not inputs[pack].get("fingerprint") for pack in ("A", "E")):
+            raise AdmissionError("PACK_INPUTS_COMPLETE_REQUIRED_BEFORE_CALL_FREEZE")
         selected.append({"episode": episode, "prepared": item})
         if len(selected) == maximum:
             break
@@ -135,12 +139,15 @@ def forecast_inventory(slice_id: str, selected: list[dict[str, Any]]) -> list[di
     inventory = []
     for item in selected:
         episode, prepared = item["episode"], item["prepared"]
+        pack_inputs = prepared["pack_inputs"]
         for pack in ("A", "E"):
             for provider, model in ROUTES:
                 key = {"slice_id": slice_id, "episode_id": episode["episode_id"], "pack": pack, "provider": provider, "model": model, "cutoff": prepared["forecast_cutoff_ts"], "prompt_fingerprint": prepared["prompt_fingerprints"][pack], "release_ts": episode["release_ts"]}
                 record = dict(key)
                 record["call_id"] = "R2FCL_" + hashlib.sha256(canonical(key).encode()).hexdigest()[:24]
                 record["target_instrument"] = "USD/JPY"
+                record["pack_input_artifact_id"] = pack_inputs[pack]["artifact_id"]
+                record["pack_input_fingerprint"] = pack_inputs[pack]["fingerprint"]
                 record["forecast_horizons_minutes"] = [5, 15, 30, 60]
                 record["duplicate_prevention_identity"] = record["call_id"]
                 inventory.append(record)
@@ -155,8 +162,11 @@ def continuous_contract(protocol: dict[str, Any], envelope: dict[str, Any]) -> d
         "controller_schema_version": "1.0.0",
         "protocol_binding": {"protocol_id": protocol["protocol_id"], "protocol_fingerprint": protocol["protocol_fingerprint"]},
         "envelope_binding": {"envelope_id": envelope["envelope_id"], "envelope_fingerprint": envelope["envelope_fingerprint"]},
-        "execution_sequence": ["authorized_schedule_refresh", "snapshot_validation", "episode_admission", "manifest_freeze", "exact_dispatch_authorization", "canonical_forecast_dispatch", "outcome_eligibility_wait", "canonical_outcome_collection_attachment_evaluation", "cumulative_progress_reconciliation", "next_slice_or_protocol_stop"],
-        "canonical_stage_entry_points": ["automation/build_presignal_v21_episodes.py", "automation/run_presignal_v21_single_event_path_pair_v1_1.py", "automation/run_presignal_v21_authorized_slice.py"],
+        "execution_sequence": ["authorized_schedule_refresh", "snapshot_validation", "episode_admission", "authorized_attention", "authorized_information_requests", "authorized_shared_market_state_acquisition", "canonical_pack_materialization", "pack_input_validation", "manifest_freeze", "exact_dispatch_authorization", "canonical_forecast_dispatch", "outcome_eligibility_wait", "canonical_outcome_collection_attachment_evaluation", "cumulative_progress_reconciliation", "next_slice_or_protocol_stop"],
+        "canonical_stage_entry_points": ["automation/build_presignal_v21_episodes.py", "automation/presignal_v21_minimal_prospective_lineage_v1.py::build_prospective_attention", "automation/presignal_v21_minimal_prospective_lineage_v1.py::build_prospective_requests", "automation/presignal_v21_minimal_prospective_lineage_v1.py::build_prospective_packs", "automation/build_presignal_v21_event_path_inputs.py::build_episode_inputs", "automation/run_presignal_v21_single_event_path_pair_v1_1.py", "automation/run_presignal_v21_authorized_slice.py"],
+        "pre_cutoff_states": ["PRE_CUTOFF_ACQUISITION_PENDING", "PACK_INPUTS_COMPLETE_DISPATCH_AUTHORIZATION_REQUIRED", "ADMISSION_WINDOW_PASSED", "PREREQUISITE_GOVERNANCE_BLOCKED"],
+        "call_freeze_guard": "Forecast-call identities may be constructed only after both immutable Pack-input artifact IDs and fingerprints are present for every Episode. The controller never materializes or substitutes missing semantic inputs.",
+        "known_stage_limit_seconds": {"attention_provider_call": PREREQUISITE_PROVIDER_STAGE_TIMEOUT_SECONDS, "information_request_provider_call": PREREQUISITE_PROVIDER_STAGE_TIMEOUT_SECONDS},
         "resume_and_idempotency": "Durable exact call reservations, schedule snapshot lineage, accepted stage proofs, and per-request checkpoints are required. Resume dispatches only missing exact identities and stops on any ambiguous remote state.",
         "global_limits": {"maximum_admitted_episodes": 144, "maximum_episodes_per_slice": 48, "zero_retry_default": 0, "zero_google_write_default": 0},
         "mechanical_repairs": ["paths", "filenames", "serialization", "schedule parsing", "argument mapping", "manifest discovery", "authorization binding", "completion proofs", "resume", "idempotency", "duplicate prevention", "checkpointing", "dynamic population", "ceiling derivation"],

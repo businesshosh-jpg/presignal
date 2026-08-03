@@ -1,0 +1,61 @@
+{
+  "controller": {
+    "correction": "Controller now refuses forecast-call freezing until both immutable Pack-input artifact IDs and fingerprints exist.",
+    "decision": "CONTINUOUS_ROUND_2_PRE_CUTOFF_ORCHESTRATION_BLOCKED",
+    "envelope": "NOT_FROZEN: source authority and lead-time ceiling are unresolved.",
+    "forecast_dispatch_authorization": "NOT_PREPARED",
+    "new_slice_decision": "ROUND_2_NEW_SLICE_GOVERNANCE_BLOCKED",
+    "state": "PREREQUISITE_GOVERNANCE_BLOCKED"
+  },
+  "fingerprint": "sha256:5b777dbb262c0ff460d5c2bb08efbf85e7282678c9510ed81e1cea05d3b34a56",
+  "preparation_id": "PPHB-R2-PRE-CUTOFF-PACK-ACQUISITION-PREPARATION-20260804T024000Z",
+  "recorded_utc": "2026-08-03T15:52:53Z",
+  "route": {
+    "canonical_stages": [
+      "automation/build_presignal_v21_episodes.py::build_population",
+      "automation/presignal_v21_minimal_prospective_lineage_v1.py::build_prospective_attention",
+      "automation/presignal_v21_minimal_prospective_lineage_v1.py::build_prospective_requests",
+      "automation/presignal_v21_minimal_prospective_lineage_v1.py::build_prospective_packs",
+      "automation/build_presignal_v21_event_path_inputs.py::build_episode_inputs"
+    ],
+    "confirmed_requirements": {
+      "pack_a": [
+        "parsed_pre_cutoff_attention",
+        "parsed_pre_cutoff_information_requests"
+      ],
+      "pack_e": [
+        "pack_a_requirements",
+        "timestamped_pre_cutoff_shared_market_state_items"
+      ]
+    },
+    "decision": "ROUND_2_PRE_CUTOFF_PACK_ACQUISITION_ROUTE_CONFLICT",
+    "external_activity": {
+      "evaluation_activity": 0,
+      "google_writes": 0,
+      "market_data_calls": 0,
+      "outcome_activity": 0,
+      "provider_calls": 0,
+      "retries": 0
+    },
+    "lead_time": {
+      "decision": "ADMISSION_DEADLINE_NOT_DERIVABLE_WITHOUT_UNGOVERNED_SOURCE_LIMIT",
+      "known_provider_stage_limits_seconds": {
+        "attention": 180,
+        "information_requests": 180
+      },
+      "unknown_required_component": "shared-market-state acquisition source and its bounded execution limit"
+    },
+    "ordering": [
+      "authoritative_future_event",
+      "episode_admission",
+      "attention",
+      "information_requests",
+      "shared_market_state",
+      "pack_a_and_pack_e_materialization",
+      "forecast_call_freeze",
+      "t_minus_15_dispatch"
+    ],
+    "slice_001_disposition": "ROUND_2_SLICE_001_PRE_CUTOFF_PACK_INPUTS_MISSING_NON_REUSABLE",
+    "unresolved_authority": "The canonical Pack builder validates supplied shared_market_state_items but the accepted prospective implementation has no authoritative acquisition source or ceiling for those items. Its only orchestrated source is a historical replay package, which cannot be promoted into prospective evidence."
+  }
+}

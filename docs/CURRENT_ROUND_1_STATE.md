@@ -381,3 +381,15 @@ Materialize and fingerprint the canonical Pack A and Pack E provider-visible inp
 ## Exact Next Round 2 Move
 
 Before forecasting any new prospective Slice, separately authorize and freeze the canonical pre-cutoff Attention, information-request, and Pack E shared-market-state acquisition/materialization stages. The already frozen Slice 001 cannot be reconstructed after the fact or dispatched without that preserved pre-cutoff evidence.
+
+## Round 2 Pre-Cutoff Pack-Acquisition Integration Stop
+
+- Slice 001 is permanently `ROUND_2_SLICE_001_PRE_CUTOFF_PACK_INPUTS_MISSING_NON_REUSABLE`. Its 31 Episodes, 186 frozen call IDs, original manifest, and original blocked dispatch authorization remain unchanged; it has zero provider attempts, leases, reservations, remote-state-unknown calls, and duplicate calls.
+- `ROUND_2_PRE_CUTOFF_PACK_ACQUISITION_ROUTE_CONFLICT`; `CONTINUOUS_ROUND_2_PRE_CUTOFF_ORCHESTRATION_BLOCKED`; and `ROUND_2_NEW_SLICE_GOVERNANCE_BLOCKED`. The canonical ordering is confirmed as Event admission -> Attention -> information requests -> shared market state -> Pack A/E materialization -> call freeze -> T-15 dispatch. Pack A needs parsed pre-cutoff Attention and request evidence; Pack E additionally needs timestamped pre-cutoff shared-market-state items.
+- The exact existing builders are `build_prospective_attention`, `build_prospective_requests`, `build_prospective_packs`, and `build_episode_inputs`. The Pack builder validates caller-supplied shared-market-state items, but accepted prospective authority defines neither their source nor a bounded execution limit; the only existing orchestrated source is a historical replay package and cannot be reused prospectively. A deterministic admission deadline therefore cannot be derived from the known 180-second Attention/request limits alone.
+- Controller correction: forecast-call freezing now requires immutable Pack A and Pack E artifact IDs and fingerprints for every Episode. It exposes `PRE_CUTOFF_ACQUISITION_PENDING`, `PACK_INPUTS_COMPLETE_DISPATCH_AUTHORIZATION_REQUIRED`, `ADMISSION_WINDOW_PASSED`, and `PREREQUISITE_GOVERNANCE_BLOCKED` states and refuses incomplete input populations.
+- Artifact: `PPHB-R2-PRE-CUTOFF-PACK-ACQUISITION-PREPARATION-20260804T024000Z/pre_cutoff_acquisition_route_reconciliation.json` (`sha256:5b777dbb262c0ff460d5c2bb08efbf85e7282678c9510ed81e1cea05d3b34a56`). No acquisition envelope, Episode admission, Pack input, Slice manifest, or forecast-dispatch authorization was frozen. External activity: provider `0`; Google writes `0`; market data `0`; Outcome/evaluation `0`; retries `0`.
+
+## Exact Next Round 2 Move
+
+Freeze a narrow prospective shared-market-state source and acquisition contract, including its exact source authority, source-item schema, pre-cutoff timestamp rule, per-identity external ceiling, timeout/lead-time bound, and immutable evidence requirements. Only then can the controller derive an admission deadline and prepare exact Attention, request, Pack-materialization, and forecast-dispatch authorizations for a newly admissible Slice.
