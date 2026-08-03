@@ -370,3 +370,14 @@ Activate the exact first-Slice provider-dispatch authorization and dispatch only
 ## Exact Next Round 2 Move
 
 Materialize and fingerprint the canonical Pack A and Pack E provider-visible inputs, then freeze a replacement single-use dispatch authorization. Do not reuse the blocked authorization; only after that authority is accepted may T−15 dispatch resume.
+
+## Round 2 First-Slice Pack-Input Authority Reconciliation
+
+- `ROUND_2_CANONICAL_PACK_CONSTRUCTION_CONFIRMED`: the single canonical v2.1 route is `build_prospective_attention -> build_prospective_requests -> build_episode_inputs` for Pack A and `build_prospective_attention -> build_prospective_requests -> build_prospective_packs -> build_episode_inputs` for Pack E (`presignal_v21_minimal_prospective_lineage_v1`). Both require pre-cutoff `provider_attention_map` and `information_requests`; Pack E additionally requires a timestamped `shared_market_state_pack` and its fingerprint.
+- `ROUND_2_FIRST_SLICE_PACK_INPUTS_BLOCKED`; `ROUND_2_FIRST_SLICE_REPLACEMENT_DISPATCH_AUTHORIZATION_BLOCKED`; and `ROUND_2_FIRST_SLICE_FORECAST_EXECUTION_GOVERNANCE_BLOCKED`. The frozen 31-Episode / 186-call inventory contains placeholder Pack-input fingerprints only, with zero provider-visible immutable Pack A or Pack E input artifacts. The authoritative Event snapshot cannot supply the required Attention, request, or shared-market-state lineage without a separate pre-cutoff acquisition authority; no inputs were synthesized.
+- Reconciliation artifact: `PPHB-R2-FIRST-ROLLING-SLICE-001-PACK-INPUT-RECONCILIATION-20260804T023000Z/pack_input_authority_reconciliation.json` (`sha256:fa98d1f306ca97dbe6b64f2c821b43e0ec36ebb106b4507527a823a076264548`). The original `013000Z` dispatch authorization remains blocked and non-reusable. No replacement authorization was frozen, no cutoff recheck was performed, and all 186 calls are `GOVERNANCE_BLOCKED_PACK_INPUT_AUTHORITY`.
+- Actual activity: provider calls `0`; Google writes `0`; market-data, Outcome, and evaluation activity `0`; retries `0`; lease acquired `false`; reservations `0`; remote-state-unknown and duplicate calls `0`.
+
+## Exact Next Round 2 Move
+
+Before forecasting any new prospective Slice, separately authorize and freeze the canonical pre-cutoff Attention, information-request, and Pack E shared-market-state acquisition/materialization stages. The already frozen Slice 001 cannot be reconstructed after the fact or dispatched without that preserved pre-cutoff evidence.
