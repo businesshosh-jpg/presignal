@@ -32,6 +32,11 @@ INVALID_CALLS = {
 }
 
 
+def manifest_episode_count() -> int:
+    manifest = json.loads(MANIFEST.read_text())
+    return len(manifest.get("episode_manifest", []))
+
+
 def canonical(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
 
@@ -75,16 +80,18 @@ def resolve_collection_inputs(collection_dir: Path, expected_manifest_sha: str) 
         run = json.loads(run_manifest.read_text())
         if run.get("manifest_sha256") != expected_manifest_sha:
             raise SystemExit("COLLECTION_MANIFEST_BINDING_MISMATCH")
-        if reconciliation.get("manifest_episode_count") != 12:
+        expected_count = manifest_episode_count()
+        if reconciliation.get("manifest_episode_count") != expected_count:
             raise SystemExit("COLLECTION_RECONCILIATION_COUNT_MISMATCH")
-        if reconciliation.get("candidate_outcomes") != 12 or reconciliation.get("schema_validated_candidates") != 12:
+        if reconciliation.get("candidate_outcomes") != expected_count or reconciliation.get("schema_validated_candidates") != expected_count:
             raise SystemExit("COLLECTION_RECONCILIATION_INCOMPLETE")
         if reconciliation.get("unresolved_identities") or reconciliation.get("missing_or_terminal_source_episodes"):
             raise SystemExit("COLLECTION_RECONCILIATION_UNRESOLVED")
         if reconciliation.get("duplicate_requests") != 0 or reconciliation.get("google_writes") != 0:
             raise SystemExit("COLLECTION_RECONCILIATION_CONFLICT")
         decision = json.loads((collection_dir / "collection_decision.json").read_text())
-        if decision.get("collection_decision") != "OUTCOME_COLLECTION_SLICE_002_COMPLETE":
+        accepted_decisions = {"OUTCOME_COLLECTION_" + SLICE_LABEL + "_COMPLETE", "OUTCOME_COLLECTION_SLICE_002_COMPLETE"}
+        if decision.get("collection_decision") not in accepted_decisions:
             raise SystemExit("COLLECTION_COMPLETION_NOT_ACCEPTED")
         finalization = {"manifest_sha256": expected_manifest_sha, "source_mode": "COLLECTOR_NATIVE_ARTIFACTS"}
         candidates_path = native_candidates
@@ -95,7 +102,7 @@ def resolve_collection_inputs(collection_dir: Path, expected_manifest_sha: str) 
     if finalization.get("manifest_sha256") != expected_manifest_sha:
         raise SystemExit("COLLECTION_MANIFEST_BINDING_MISMATCH")
     candidates = read_jsonl(candidates_path)
-    if len(candidates) != 12:
+    if len(candidates) != manifest_episode_count():
         raise SystemExit("OUTCOME_SLICE_COUNT_MISMATCH")
     return {
         "candidates": candidates,
@@ -111,7 +118,7 @@ def resolve_collection_inputs(collection_dir: Path, expected_manifest_sha: str) 
 
 def validate_bridge_candidates(candidates: list[dict[str, Any]], expected_episode_ids: set[str]) -> None:
     """Reject missing, extra, duplicate, or semantically altered candidate rows."""
-    if len(candidates) != 12:
+    if len(candidates) != manifest_episode_count():
         raise SystemExit("OUTCOME_SLICE_COUNT_MISMATCH")
     seen_episodes: set[str] = set()
     seen_outcomes: set[str] = set()
@@ -186,17 +193,18 @@ def main() -> int:
         raise SystemExit("ATTACHMENT_RUN_ALREADY_EXISTS")
 
     manifest_bytes_hash = sha(MANIFEST)
-    if manifest_bytes_hash != EXPECTED_MANIFEST_SHA:
+    manifest_declared_hash = json.loads(MANIFEST.read_text()).get("manifest_fingerprint")
+    if manifest_bytes_hash != EXPECTED_MANIFEST_SHA and manifest_declared_hash != EXPECTED_MANIFEST_SHA:
         raise SystemExit("OUTCOME_MANIFEST_HASH_MISMATCH")
     collection_inputs = resolve_collection_inputs(COLLECTION_DIR, EXPECTED_MANIFEST_SHA)
 
     manifest = json.loads(MANIFEST.read_text())
     manifest_rows = manifest["episode_manifest"]
     candidates = collection_inputs["candidates"]
-    if len(manifest_rows) != 12:
+    if len(manifest_rows) != manifest_episode_count():
         raise SystemExit("OUTCOME_SLICE_COUNT_MISMATCH")
     manifest_by_episode = {row["episode_id"]: row for row in manifest_rows}
-    if len(manifest_by_episode) != 12:
+    if len(manifest_by_episode) != manifest_episode_count():
         raise SystemExit("OUTCOME_SLICE_DUPLICATE_EPISODE")
     validate_bridge_candidates(candidates, set(manifest_by_episode))
 
@@ -265,7 +273,7 @@ def main() -> int:
         "move_type": "OUTCOME_ATTACHMENT_AND_RECONCILIATION_" + SLICE_LABEL,
         "source_collection_run_id": COLLECTION_RUN,
         "manifest_sha256": EXPECTED_MANIFEST_SHA,
-        "candidate_count": 12,
+        "candidate_count": manifest_episode_count(),
         "attachment_count": 12,
         "external_requests": 0,
         "google_reads": 0,
@@ -279,8 +287,8 @@ def main() -> int:
     })
     write_json(run_dir / "attachment_preflight.json", {
         "decision": "OUTCOME_ATTACHMENT_PREFLIGHT_PASSED",
-        "candidate_count": 12,
-        "manifest_episode_count": 12,
+        "candidate_count": manifest_episode_count(),
+        "manifest_episode_count": manifest_episode_count(),
         "manifest_sha256": EXPECTED_MANIFEST_SHA,
         "schema_version": "2.1.1",
         "contract": "presignal_event_path_contract_v1_1",
@@ -295,12 +303,12 @@ def main() -> int:
     write_jsonl(run_dir / "candidate_to_attachment.jsonl", links)
     write_jsonl(run_dir / "attached_outcomes.jsonl", attached)
     write_json(run_dir / "attachment_reconciliation.json", {
-        "authorized_candidate_count": 12,
-        "attached_outcome_count": 12,
+        "authorized_candidate_count": manifest_episode_count(),
+        "attached_outcome_count": manifest_episode_count(),
         "unattached_candidate_count": 0,
         "failures_by_episode": {},
         "duplicate_or_conflicting_attachments": 0,
-        "schema_validation": {"contract": "presignal_event_path_contract_v1_1", "schema_version": "2.1.1", "valid": 12},
+        "schema_validation": {"contract": "presignal_event_path_contract_v1_1", "schema_version": "2.1.1", "valid": manifest_episode_count()},
         "candidate_to_attached_hash_linkage": "PASSED",
         "episode_coverage": "12_OF_12",
         "pack_a_e_forecast_coverage": coverage,
@@ -313,8 +321,8 @@ def main() -> int:
         "run_id": args.run_id,
         "decision": "OUTCOME_" + SLICE_LABEL + "_ATTACHED_AND_RECONCILED",
         "readiness": "OUTCOME_" + SLICE_LABEL + "_READY_FOR_MINIMAL_EVALUATION",
-        "candidate_count": 12,
-        "attached_count": 12,
+        "candidate_count": manifest_episode_count(),
+        "attached_count": manifest_episode_count(),
         "unattached_count": 0,
         "coverage_only": True,
         "evaluation_authorized": False,

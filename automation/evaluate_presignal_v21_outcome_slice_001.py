@@ -31,6 +31,15 @@ INVALID_CALLS = {
 HORIZONS = (5, 15, 30, 60)
 
 
+def manifest_population() -> dict[str, int]:
+    manifest_path = Path(os.environ.get("PRESIGNAL_OUTCOME_MANIFEST_PATH", ""))
+    if not manifest_path.exists():
+        return {"episodes": 12, "valid_forecasts": 44, "pairs": 12}
+    manifest = read_json(manifest_path)
+    population = manifest.get("authorized_forecast_population", {})
+    return {"episodes": len(manifest.get("episode_manifest", [])), "valid_forecasts": population.get("valid_forecasts", 44), "pairs": population.get("complete_pack_a_e_pairs", 12)}
+
+
 def canonical(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
 
@@ -71,7 +80,8 @@ def forecast_rows(episode_ids: set[str]) -> list[dict[str, Any]]:
                 raise ValueError("FORECAST_IDENTITY_DUPLICATE_CONFLICT:" + call_id)
             by_call[call_id] = row
     rows = sorted(by_call.values(), key=lambda row: row["forecast_call_id"])
-    if len(rows) != 44 or len({row["forecast_call_id"] for row in rows}) != 44:
+    expected = manifest_population()
+    if len(rows) != expected["valid_forecasts"] or len({row["forecast_call_id"] for row in rows}) != expected["valid_forecasts"]:
         raise ValueError("SLICE_FORECAST_POPULATION_MISMATCH")
     for row in rows:
         if row.get("terminal_state") != "SUCCEEDED_VALID":
@@ -85,11 +95,12 @@ def validate_population() -> tuple[list[dict[str, Any]], dict[str, dict[str, Any
     if decision.get("decision") != "OUTCOME_" + SLICE_LABEL + "_ATTACHED_AND_RECONCILED":
         raise ValueError("ATTACHMENT_DECISION_NOT_ACCEPTED")
     reconciliation = read_json(ATTACHMENT_DIR / "attachment_reconciliation.json")
-    if reconciliation.get("attached_outcome_count") != 12 or reconciliation.get("unattached_candidate_count") != 0:
+    expected = manifest_population()
+    if reconciliation.get("attached_outcome_count") != expected["episodes"] or reconciliation.get("unattached_candidate_count") != 0:
         raise ValueError("ATTACHMENT_COUNT_CONFLICT")
     links = read_jsonl(ATTACHMENT_DIR / "candidate_to_attachment.jsonl")
     attached = read_jsonl(ATTACHMENT_DIR / "attached_outcomes.jsonl")
-    if len(links) != 12 or len(attached) != 12 or any(row["manifest_sha256"] != EXPECTED_MANIFEST_SHA for row in links):
+    if len(links) != expected["episodes"] or len(attached) != expected["episodes"] or any(row["manifest_sha256"] != EXPECTED_MANIFEST_SHA for row in links):
         raise ValueError("ATTACHMENT_SCOPE_OR_MANIFEST_CONFLICT")
     outcomes: dict[str, dict[str, Any]] = {}
     for row in attached:
@@ -104,7 +115,7 @@ def validate_population() -> tuple[list[dict[str, Any]], dict[str, dict[str, Any
         raise ValueError("ATTACHED_EPISODE_LINK_CONFLICT")
     forecasts = forecast_rows(set(outcomes))
     episode_pair_keys = {(row["episode_id"], row["prediction"]["forecast_cutoff_ts"]) for row in forecasts}
-    if len(episode_pair_keys) != 12:
+    if len(episode_pair_keys) != expected["episodes"]:
         raise ValueError("EPISODE_PAIR_SCOPE_CONFLICT")
     return forecasts, outcomes, {
         "attachment_run_id": ATTACHMENT_RUN,
@@ -233,13 +244,13 @@ def main() -> int:
     write_json(run_dir / "run_manifest.json", {
         "run_id": args.run_id, "move_type": "MINIMAL_EVALUATION_ATTACHED_OUTCOME_" + SLICE_LABEL,
         "attachment_run_id": ATTACHMENT_RUN, "manifest_sha256": EXPECTED_MANIFEST_SHA,
-        "episode_count": 12, "forecast_count": 44, "episode_pair_groups": 12, "provider_model_pair_rows": len(pair_rows),
+        "episode_count": manifest_population()["episodes"], "forecast_count": len(forecasts), "episode_pair_groups": len({row["episode_id"] for row in forecasts}), "provider_model_pair_rows": len(pair_rows),
         "external_requests": 0, "google_reads": 0, "google_writes": 0, "market_data_calls": 0, "provider_calls": 0,
         "outcome_recollection": 0, "additional_attachment": 0, "generated_ts": generated,
     })
     write_json(run_dir / "population_and_denominator_proof.json", {
         "forecast_population_hash": digest(rows), "outcome_population_hash": digest(list(outcomes.values())),
-        "forecast_count": 44, "outcome_count": 12, "complete_episode_pair_groups": 12, "provider_model_pair_rows": len(pair_rows),
+        "forecast_count": len(forecasts), "outcome_count": len(outcomes), "complete_episode_pair_groups": len({row["episode_id"] for row in forecasts}), "provider_model_pair_rows": len(pair_rows),
         "terminal_invalid_excluded": sorted(INVALID_CALLS), "unexecuted_included": 0, "outside_slice_included": 0,
         "pack_counts": {pack: len(values) for pack, values in by_pack.items()}, "missing_outcomes": [], "duplicate_evaluation_rows": 0,
     })
@@ -253,7 +264,7 @@ def main() -> int:
         "decision": "OUTCOME_" + SLICE_LABEL + "_MINIMAL_EVALUATION_COMPLETE", "reproducibility": "" + SLICE_LABEL + "_EVALUATION_REPRODUCIBLE",
         "metrics": ["T+15 directional accuracy", "Immediate Impulse directional accuracy", "magnitude or pip error", "horizon accuracy", "path accuracy", "reversal accuracy"],
         "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED", "external_requests": 0, "google_operations": 0,
-        "limitations": ["12 Episodes and 44 forecasts only", "Immediate Impulse is APPROXIMATION_ONLY and not strict-scored", "descriptive slice; no statistical inference"],
+        "limitations": [f"{manifest_population()['episodes']} Episodes and {len(forecasts)} forecasts only", "Immediate Impulse is APPROXIMATION_ONLY and not strict-scored", "descriptive slice; no statistical inference"],
     })
     write_json(run_dir / "reproducibility_and_boundaries.json", {
         "contract": "presignal_event_path_contract_v1_1", "schema_version": "2.1.1", "primary_endpoint": "T+15",
@@ -261,7 +272,7 @@ def main() -> int:
         "forecast_population_hash": digest(rows), "outcome_population_hash": digest(list(outcomes.values())),
         "no_external_access": True, "no_outcome_modification": True, "no_evaluation_outside_slice": True,
     })
-    print(json.dumps({"run_id": args.run_id, "forecast_count": 44, "pair_rows": len(pair_rows)}, sort_keys=True))
+    print(json.dumps({"run_id": args.run_id, "forecast_count": len(forecasts), "pair_rows": len(pair_rows)}, sort_keys=True))
     return 0
 
 
