@@ -1,0 +1,201 @@
+{
+  "canonical_manifest_fingerprint": "sha256:a686efd9db9210fe937549af40ef245ea57bfe092b2a0ae1c21a5445a2f1f3ba",
+  "excluded_forecast_call_ids": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_7f0463b134c67757968580e8",
+    "FCL_e07264654e9d3da6f63088a1"
+  ],
+  "external_access": {
+    "google": 0,
+    "market_data": 0,
+    "providers": 0
+  },
+  "forecast_partition": {
+    "authoritative_valid": 561,
+    "frozen": 564,
+    "terminal_invalid": 3,
+    "unexecuted": 0
+  },
+  "identity_partition": "ALL_SLICE_002_VALID_FORECASTS_BIND_TO_EXACTLY_ONE_EPISODE_AND_ONE_PACK_A_OR_PACK_E_PAIR",
+  "manifest_fingerprint": "sha256:f2edc1715f6f691c16b45e41fc160947d2add6559e47da7406fd269386bdd5ba",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T120000Z-9c7adf4c2f2e",
+  "pair_rows": [
+    {
+      "episode_id": "EP_BATCH_851b7d8bd3661e168de1",
+      "model": "claude-haiku-4-5",
+      "pack_a_forecast_call_id": "FCL_ff4897e2f55a0fb2a08b47bd",
+      "pack_e_forecast_call_id": "FCL_aef4fa50decf2eb728d948bf",
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_851b7d8bd3661e168de1",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_forecast_call_id": "FCL_36d437ce8ec8c859f532b46c",
+      "pack_e_forecast_call_id": "FCL_915d2cda57e26ee46c773a8f",
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_851b7d8bd3661e168de1",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_forecast_call_id": "FCL_23a61227425d02e7b62e2903",
+      "pack_e_forecast_call_id": "FCL_002172e59e98f1832319eebb",
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_b908a729dc4fa10f46a6",
+      "model": "claude-haiku-4-5",
+      "pack_a_forecast_call_id": "FCL_ddabd49c887b4a4dfe215f63",
+      "pack_e_forecast_call_id": "FCL_ae78b401ea6dc91ee1438914",
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_d5d7aa4435b9e6bab424",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_forecast_call_id": "FCL_97de2ec456c917a0c39f165b",
+      "pack_e_forecast_call_id": "FCL_faf146640f77abc17c7f3334",
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_bf1ad05b4d84df1b733a",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_forecast_call_id": "FCL_e87e51e2097c8e80d8ed63be",
+      "pack_e_forecast_call_id": "FCL_245208f3756d367b6b450aa4",
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_bfcff4089c331ae1d2c8",
+      "model": "claude-haiku-4-5",
+      "pack_a_forecast_call_id": "FCL_fa55f9a2a73bc09a3c917b32",
+      "pack_e_forecast_call_id": "FCL_37d0fbd73cee0eba7c982de2",
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_bfcff4089c331ae1d2c8",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_forecast_call_id": "FCL_028e0926a09e40052883ace4",
+      "pack_e_forecast_call_id": "FCL_6ee14cdd6370478f279648dc",
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_bfcff4089c331ae1d2c8",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_forecast_call_id": "FCL_2922ee3be37b08bc9b8b03fd",
+      "pack_e_forecast_call_id": "FCL_6e3abbb8ab1bdddea0a7afbc",
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+      "model": "claude-haiku-4-5",
+      "pack_a_forecast_call_id": "FCL_40ab9e816d74bd8bd12d6afb",
+      "pack_e_forecast_call_id": "FCL_3d6af8e201b586ece27a68a7",
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_forecast_call_id": "FCL_4efc1fc9d37c6dbacc5bdb0e",
+      "pack_e_forecast_call_id": "FCL_32358cb3cd8ad7ef6a732675",
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_forecast_call_id": "FCL_1ff9d1dd73492c5cb00b1c39",
+      "pack_e_forecast_call_id": "FCL_aac1e417e93670076d265c62",
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_f7f52f894ce4f1929d5a",
+      "model": "claude-haiku-4-5",
+      "pack_a_forecast_call_id": "FCL_befd6d6947490cc19f4754b9",
+      "pack_e_forecast_call_id": "FCL_fbcf662fdfebab69144fe83e",
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_f7f52f894ce4f1929d5a",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_forecast_call_id": "FCL_1ce38eb60f0865beca69bb31",
+      "pack_e_forecast_call_id": "FCL_23d0d5bd9c2ad99073ef8dcc",
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_eeae6fee09edc60d1e7d",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_forecast_call_id": "FCL_1e7b6936b48bf931a7ed5e7d",
+      "pack_e_forecast_call_id": "FCL_502545dc5fbc80770d4b6d02",
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_1c2cb957d0760e40f81e",
+      "model": "claude-haiku-4-5",
+      "pack_a_forecast_call_id": "FCL_64c262f5f677009a4ce5c45a",
+      "pack_e_forecast_call_id": "FCL_fe7830b4cb4c8af4e957dac3",
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_af76f644b423101d91f2",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_forecast_call_id": "FCL_d72f741393a7643ea859edb8",
+      "pack_e_forecast_call_id": "FCL_78aeb095a1802ff63093a81d",
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_af76f644b423101d91f2",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_forecast_call_id": "FCL_6d2f46ed54d14a3397ce7d08",
+      "pack_e_forecast_call_id": "FCL_ace07235cdd9911b6f255588",
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_0ba598718d3db4688437",
+      "model": "claude-haiku-4-5",
+      "pack_a_forecast_call_id": "FCL_113f8f44422ad80fd0ad67b1",
+      "pack_e_forecast_call_id": "FCL_01aa08f00772c1e29269ae05",
+      "provider": "Anthropic"
+    },
+    {
+      "episode_id": "EP_BATCH_0ba598718d3db4688437",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_forecast_call_id": "FCL_bfea493d192be2cd369f3bc3",
+      "pack_e_forecast_call_id": "FCL_5dcf743ebf3ef85dfc8268bc",
+      "provider": "Gemini"
+    },
+    {
+      "episode_id": "EP_BATCH_0ba598718d3db4688437",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_a_forecast_call_id": "FCL_3b785365e98d8042efa606d8",
+      "pack_e_forecast_call_id": "FCL_692dac514581399114ea4347",
+      "provider": "OpenAI"
+    },
+    {
+      "episode_id": "EP_BATCH_58e0d92ad8520bb926bb",
+      "model": "gemini-2.5-flash-lite",
+      "pack_a_forecast_call_id": "FCL_606b05216ccfb825e13803d2",
+      "pack_e_forecast_call_id": "FCL_534ce9aa71a4945472d935a1",
+      "provider": "Gemini"
+    }
+  ],
+  "proof_id": "PPHB-R1-OUTCOME-SLICE-002-POPULATION-PROOF-20260803T120000Z",
+  "provider_model_distribution": {
+    "Anthropic/claude-haiku-4-5": 14,
+    "Gemini/gemini-2.5-flash-lite": 16,
+    "OpenAI/gpt-4o-mini-2024-07-18": 14
+  },
+  "recovered_forecast": {
+    "exclusion_reason": "NOT_IN_THE_ACCEPTED_FIRST_12_EPISODE_SELECTION",
+    "forecast_call_id": "FCL_3d10ae8285471f4e3a980b79",
+    "global_eligibility": "ELIGIBLE_UNDER_FROZEN_IDENTITY_AND_CUTOFF_RULES",
+    "included_in_slice_002": false,
+    "status": "RECOVERED_VALID_FROM_PRESERVED_RAW_OUTPUT"
+  },
+  "slice_population": {
+    "complete_pack_a_e_pairs": 22,
+    "episodes": 12,
+    "pack_a": 22,
+    "pack_a_only": 0,
+    "pack_e": 22,
+    "pack_e_only": 0,
+    "terminal_invalid_excluded": 0,
+    "valid_forecasts": 44
+  }
+}
