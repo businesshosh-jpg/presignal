@@ -1,0 +1,25 @@
+{
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z",
+  "authorization_fingerprint": "sha256:acea3df8666d7d5dc6474bd7d0269a79e02e41d91ef4e449299833fe8fcf9da3",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
+  "manifest_sha256": "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c",
+  "collection_reused": true,
+  "new_collection_external_requests": 0,
+  "attachment_run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-002-20260803T044538Z-5b2104c5270c",
+  "attachment_result": {
+    "authorized_records": 12,
+    "attached_records": 12,
+    "unattached_records": 0,
+    "duplicates": 0,
+    "google_writes": 0,
+    "valid_forecasts": 44,
+    "complete_pack_a_e_pairs": 22
+  },
+  "controller_completion_proof": "BLOCKED",
+  "controller_failure": "END_TO_END_STAGE_COMPLETION_UNPROVEN:attach",
+  "root_cause": "controller_completion_glob_expects_OUTCOME-ATTACHMENT_prefix_but_canonical_run_is_OUTCOME-ATTACH",
+  "evaluation_started": false,
+  "decision": "AUTHORIZED_SLICE_002_ATTACHMENT_COMPLETE_EVALUATION_BLOCKED",
+  "resume": "repair_controller_attachment_completion_proof_then_resume_evaluation_only",
+  "append_only": true
+}
