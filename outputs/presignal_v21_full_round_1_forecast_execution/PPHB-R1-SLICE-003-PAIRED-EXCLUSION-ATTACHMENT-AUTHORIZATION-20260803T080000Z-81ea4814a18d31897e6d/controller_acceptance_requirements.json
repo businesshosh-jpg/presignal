@@ -1,0 +1,7 @@
+{
+  "decision": "SLICE_003_PAIRED_EXCLUSION_ATTACHMENT_AUTHORIZATION_FROZEN",
+  "evaluation_authorized": false,
+  "external_access": 0,
+  "live_state": "SLICE_003_PAIRED_EXCLUSION_ATTACHMENT_AUTHORIZED_NOT_STARTED",
+  "readiness": "SLICE_003_ATTACHMENT_EXECUTION_READY"
+}

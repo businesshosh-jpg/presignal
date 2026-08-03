@@ -1,0 +1,14 @@
+{
+  "append_only": true,
+  "attachment_records": 0,
+  "authorization_fingerprint": "sha256:81ea4814a18d31897e6d31c984f03e68d63227772b4079f11c910c815d90f543",
+  "authorization_id": "PPHB-R1-SLICE-003-PAIRED-EXCLUSION-ATTACHMENT-AUTHORIZATION-20260803T080000Z",
+  "evaluation": 0,
+  "google_reads": 0,
+  "google_writes": 0,
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "market_data_calls": 0,
+  "provider_calls": 0,
+  "run_id": "PPHB-R1-SLICE-003-PAIRED-EXCLUSION-ATTACHMENT-AUTHORIZATION-20260803T080000Z-81ea4814a18d31897e6d"
+}

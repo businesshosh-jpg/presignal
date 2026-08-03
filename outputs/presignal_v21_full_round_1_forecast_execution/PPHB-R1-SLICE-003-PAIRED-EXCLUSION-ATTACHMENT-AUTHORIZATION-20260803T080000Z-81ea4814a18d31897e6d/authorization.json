@@ -1,0 +1,107 @@
+{
+  "attachment_destination": "append-only local Outcome attachment evidence",
+  "attachment_reconciliation_requirements": {
+    "attached": 10,
+    "duplicates": 0,
+    "excluded_episode_attachments": 0,
+    "google_writes": 0,
+    "unattached_eligible": 0,
+    "unresolved_identities": 0
+  },
+  "authorization_fingerprint": "sha256:81ea4814a18d31897e6d31c984f03e68d63227772b4079f11c910c815d90f543",
+  "authorization_id": "PPHB-R1-SLICE-003-PAIRED-EXCLUSION-ATTACHMENT-AUTHORIZATION-20260803T080000Z",
+  "authorization_mode": "PAIRED_EXCLUSION_ATTACHMENT",
+  "authorization_schema_version": "AUTHORIZED_SLICE_PAIRED_EXCLUSION_ATTACHMENT_V1",
+  "authorization_status": "ACTIVE",
+  "authorized_identity_ids": [
+    "EP_EVENT_e8d9ca85a946bdcbc5d9",
+    "EP_EVENT_556c59fe6ef36f4ac156",
+    "EP_EVENT_13e6e3247eaea46e42de",
+    "EP_EVENT_08246fe90d4f62b05721",
+    "EP_EVENT_a8905547406656cf53ae",
+    "EP_BATCH_e14769aca1aaacc9c230",
+    "EP_EVENT_ef630a47cf9a4a6f79fd",
+    "EP_BATCH_5fe2f38977eb016fa947",
+    "EP_BATCH_f537c8eb93513ab66253",
+    "EP_BATCH_1ff2d721e3e93c9a9ac4"
+  ],
+  "authorized_stage": "attachment",
+  "canonical_attachment_entrypoint": "automation/attach_presignal_v21_outcome_slice_001.py",
+  "ceilings": {
+    "google_write_ceiling": 0,
+    "max_apps_script_reads": 0,
+    "max_attachment_records": 10,
+    "max_market_data_attempts": 0,
+    "max_total_external_requests": 0
+  },
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-003-20260803T071136Z-fc2fd1815bd5",
+  "contract": "presignal_event_path_contract_v1_1",
+  "contract_binding": "PPHB-R1-PROSPECTIVE-SLICE-EXECUTION-CONTRACT-20260803T060000Z",
+  "controller_commit": "da52d656b0b20dfd74dd0fa0b7c794b6f42cf2d3",
+  "controller_version": "AUTHORIZED_SLICE_CONTROLLER_V1_PAIRED_EXCLUSION_ATTACHMENT",
+  "duplicate_prevention": "Bind each attachment to manifest, collection run, governance review, authorization, Episode, candidate Outcome ID and candidate fingerprint; fail closed on duplicate or outside-scope identity.",
+  "eligible_outcome_ids": [
+    "OUT_f71bdc304a1a4c3e4fe8",
+    "OUT_9e8d50620a2255231fff",
+    "OUT_074458b56dd25a11f672",
+    "OUT_dbc9395e555ea5826613",
+    "OUT_fc31a3a8469cd7b62a36",
+    "OUT_5e7d50f4a8a8e08964fa",
+    "OUT_b9709e604a506b7a668f",
+    "OUT_f7295d2255b514a11386",
+    "OUT_2f056700ef747f065ff6",
+    "OUT_9d10911ed322e2f30b92"
+  ],
+  "evaluation_authorized": false,
+  "excluded_episode_ids": [
+    "EP_EVENT_4b80366594480b554889",
+    "EP_EVENT_aa41226bcb8107901555"
+  ],
+  "excluded_forecast_call_ids": [
+    "FCL_15c6f4e6f1fc413c5c3845b7",
+    "FCL_ff54346ab7650976cfdf2a77",
+    "FCL_a5c7157c4cf958b3e63af1c9",
+    "FCL_5230a7bccd1ea38969bafbe9",
+    "FCL_2e848bf237c19f8df0f0a1e0",
+    "FCL_6fde6348e4a26fd62d85c6df",
+    "FCL_5ffa9e10262ccdccaea1a64c",
+    "FCL_02c997b37b7e3f54e8187d93"
+  ],
+  "exclusion_evidence": {
+    "governance_decision": "AUTHORIZE_PAIRED_EXCLUSION_OF_TWO_UNAVAILABLE_EPISODES",
+    "preserve_blocked_authorizations": true,
+    "preserve_unavailable_candidates": true
+  },
+  "exclusion_rule": "Exclude both PACK_A and PACK_E forecast references for every excluded Episode; retain no single-Pack forecast.",
+  "governance_review_id": "PPHB-R1-SLICE-003-UNAVAILABLE-OUTCOME-GOVERNANCE-REVIEW-20260803T073000Z",
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "post_attachment_stop_state": "SLICE_003_ATTACHMENT_RECONCILED_EVALUATION_AUTHORIZATION_REQUIRED",
+  "required_collection_artifact": {
+    "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+    "required_files": [
+      "collection_reconciliation.json",
+      "candidate_outcomes.jsonl"
+    ],
+    "run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-003-20260803T071136Z-fc2fd1815bd5"
+  },
+  "resume_authority": "Resume only from accepted append-only collection evidence or accepted attachment reconciliation; never recollect or repeat an accepted attachment.",
+  "retry_boundary": "NO_AUTOMATIC_RETRIES",
+  "revised_evaluation_population": {
+    "complete_pairs": 16,
+    "episodes": 10,
+    "pack_a": 16,
+    "pack_e": 16,
+    "unpaired": 0,
+    "valid_forecasts": 32
+  },
+  "schema_version": "2.1.1",
+  "single_use": true,
+  "slice_id": "SLICE-003",
+  "stage_sequence": [
+    "paired_exclusion_application",
+    "attachment",
+    "attachment_reconciliation"
+  ],
+  "stop_before": "evaluation"
+}

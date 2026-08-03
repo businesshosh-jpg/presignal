@@ -1,0 +1,49 @@
+{
+  "complete_pairs": 16,
+  "eligible_episodes": 10,
+  "eligible_forecasts": 32,
+  "eligible_outcome_ids": [
+    "OUT_f71bdc304a1a4c3e4fe8",
+    "OUT_9e8d50620a2255231fff",
+    "OUT_074458b56dd25a11f672",
+    "OUT_dbc9395e555ea5826613",
+    "OUT_fc31a3a8469cd7b62a36",
+    "OUT_5e7d50f4a8a8e08964fa",
+    "OUT_b9709e604a506b7a668f",
+    "OUT_f7295d2255b514a11386",
+    "OUT_2f056700ef747f065ff6",
+    "OUT_9d10911ed322e2f30b92"
+  ],
+  "excluded_episode_ids": [
+    "EP_EVENT_4b80366594480b554889",
+    "EP_EVENT_aa41226bcb8107901555"
+  ],
+  "excluded_episodes": 2,
+  "excluded_forecast_call_ids": [
+    "FCL_15c6f4e6f1fc413c5c3845b7",
+    "FCL_ff54346ab7650976cfdf2a77",
+    "FCL_a5c7157c4cf958b3e63af1c9",
+    "FCL_5230a7bccd1ea38969bafbe9",
+    "FCL_2e848bf237c19f8df0f0a1e0",
+    "FCL_6fde6348e4a26fd62d85c6df",
+    "FCL_5ffa9e10262ccdccaea1a64c",
+    "FCL_02c997b37b7e3f54e8187d93"
+  ],
+  "external_access": {
+    "apps_script_reads": 0,
+    "attachment": 0,
+    "evaluation": 0,
+    "google_writes": 0,
+    "market_data_attempts": 0,
+    "retries": 0,
+    "total_external_requests": 0
+  },
+  "governance_review_id": "PPHB-R1-SLICE-003-UNAVAILABLE-OUTCOME-GOVERNANCE-REVIEW-20260803T073000Z",
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "original_episodes": 12,
+  "pack_a": 16,
+  "pack_e": 16,
+  "unpaired": 0,
+  "valid_candidates": 10
+}
