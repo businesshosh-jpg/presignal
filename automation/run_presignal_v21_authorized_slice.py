@@ -142,6 +142,8 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
         fail("PAIR_POPULATION_CONFLICT")
     ceilings = auth["ceilings"]
     release_days = {row["release_ts"][:10] for row in rows}
+    if end_to_end and "release_days_utc" in auth and sorted(auth["release_days_utc"]) != sorted(release_days):
+        fail("RELEASE_DAY_SET_CONFLICT")
     expected = {
         "max_apps_script_reads": len(release_days),
         "max_market_data_attempts": 12,

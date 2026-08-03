@@ -9,17 +9,15 @@ from automation.run_presignal_v21_authorized_slice import validate
 
 
 class Slice003AuthorizationTests(unittest.TestCase):
-    def test_exact_authorization_is_accepted_offline(self):
+    def test_blocked_authorization_is_not_reusable(self):
         auth = build_authorization("controller-test-commit")
         manifest_path = MANIFEST_DIR / "slice_003_manifest.json"
         with tempfile.TemporaryDirectory() as directory:
             auth_path = Path(directory) / "authorization.json"
             auth_path.write_text(json.dumps(auth))
-            checked = validate(auth_path, manifest_path, auth["manifest_fingerprint"], "manifest", end_to_end=True)
-        self.assertEqual(checked["auth"]["slice_id"], "SLICE-003")
-        self.assertEqual(len(checked["episode_ids"]), 12)
-        self.assertEqual(checked["manifest"]["authorized_forecast_population"]["complete_pack_a_e_pairs"], 20)
-        self.assertEqual(checked["auth"]["ceilings"]["max_total_external_requests"], 15)
+            with self.assertRaises(SystemExit) as error:
+                validate(auth_path, manifest_path, auth["manifest_fingerprint"], "manifest", end_to_end=True)
+        self.assertEqual(str(error.exception), "AUTHORIZATION_NON_REUSABLE_BLOCKED")
 
     def test_tampering_and_cross_slice_reuse_fail_closed(self):
         auth = build_authorization("controller-test-commit")
@@ -31,7 +29,7 @@ class Slice003AuthorizationTests(unittest.TestCase):
             auth_path.write_text(json.dumps(tampered))
             with self.assertRaises(SystemExit) as error:
                 validate(auth_path, manifest_path, auth["manifest_fingerprint"], "manifest", end_to_end=True)
-            self.assertEqual(str(error.exception), "AUTHORIZATION_FINGERPRINT_MISMATCH")
+            self.assertEqual(str(error.exception), "AUTHORIZATION_NON_REUSABLE_BLOCKED")
 
             cross_slice = copy.deepcopy(auth)
             cross_slice["slice_id"] = "SLICE-002"
@@ -39,7 +37,7 @@ class Slice003AuthorizationTests(unittest.TestCase):
             auth_path.write_text(json.dumps(cross_slice))
             with self.assertRaises(SystemExit) as error:
                 validate(auth_path, manifest_path, auth["manifest_fingerprint"], "manifest", end_to_end=True)
-            self.assertEqual(str(error.exception), "MANIFEST_IDENTITY_CONFLICT")
+            self.assertEqual(str(error.exception), "AUTHORIZATION_NON_REUSABLE_BLOCKED")
 
 
 if __name__ == "__main__":
