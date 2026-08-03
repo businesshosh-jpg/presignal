@@ -1,0 +1,38 @@
+{
+  "authorization_fingerprint": "sha256:928ad5f1b8467105d1253c6600560a443222143fc8d626d5d8abec755c64287b",
+  "authorization_id": "PPHB-R2-SCHEDULE-REFRESH-RECONCILIATION-AUTHORIZATION-20260803T143000Z",
+  "authorization_schema_version": "1.0.0",
+  "authorization_status": "FROZEN_SINGLE_USE_READ_ONLY_RECONCILIATION",
+  "ceilings": {
+    "apps_script_refresh_invocations": 0,
+    "event_sheet_diagnostic_reads": 1,
+    "event_sheet_writes": 0,
+    "fmp_requests": 0,
+    "outcome_activity": 0,
+    "provider_calls": 0,
+    "retries": 0
+  },
+  "classification_rule": "An Event-sheet read can confirm neither creation/update by the prior invocation nor non-application without invocation-specific operation lineage or pre-dispatch baseline. Existing matching rows alone are insufficient.",
+  "prior_refresh_binding": {
+    "authorization_fingerprint": "sha256:2e4bd7300b5098515e25edefe75da10402d633c2ea53bc9e2206d35970a0962c",
+    "authorization_id": "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T142000Z",
+    "prior_remote_state": "UNKNOWN_POST_DISPATCH",
+    "window": {
+      "from_utc_iso": "2026-08-03T00:00:00Z",
+      "to_utc_iso": "2026-08-10T23:59:59Z"
+    }
+  },
+  "stop_conditions": [
+    "duplicate event identity",
+    "schema mismatch",
+    "timezone ambiguity",
+    "revision conflict",
+    "read failure",
+    "missing invocation-specific lineage"
+  ],
+  "workbook_authority": {
+    "read_range": "Event!A:AZ",
+    "sheet": "Event",
+    "spreadsheet_id": "1_gZGnd6h3VzdiBvGBHRSxn78KW8tsOi2UEc6Y_Sc23Q"
+  }
+}

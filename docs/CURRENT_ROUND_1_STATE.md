@@ -273,3 +273,14 @@ Resolve the Google client setup/credential transport blocker, then freeze a new 
 ## Exact Next Round 2 Move
 
 Freeze a narrowly scoped remote-state reconciliation authorization for `PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T142000Z`. It must determine whether the submitted refresh wrote to the Event sheet without dispatching a new FMP request; only after certain reconciliation may a fresh export/snapshot authorization be considered.
+
+## Round 2 Schedule Refresh Remote-State Reconciliation
+
+- Reconciliation authorization: `PPHB-R2-SCHEDULE-REFRESH-RECONCILIATION-AUTHORIZATION-20260803T143000Z` (`sha256:928ad5f1b8467105d1253c6600560a443222143fc8d626d5d8abec755c64287b`), read-only and bound to the ambiguous `PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T142000Z` invocation.
+- Decision: `SCHEDULE_REFRESH_REMOTE_STATE_UNRESOLVED`; therefore `ROUND_2_CURRENT_EVENT_SNAPSHOT_BLOCKED`, `ROUND_2_FIRST_ROLLING_SLICE_MANIFEST_BLOCKED`, and `ROUND_2_FIRST_SLICE_EXACT_DISPATCH_AUTHORIZATION_NOT_READY` remain in force.
+- Actual new activity: FMP `0`; Apps Script refresh invocations `0`; Event-sheet writes `0`; diagnostic reads `1`; retries `0`; provider, Outcome, and evaluation activity `0`.
+- Read proof: canonical Event schema valid (`22` headers, `4,534` rows), `97` FMP rows in the authorized window, and zero duplicate window keys. The sheet has no invocation ID, upsert timestamp, raw-response fingerprint, or pre-dispatch baseline binding; the rows therefore cannot be attributed to the submitted refresh rather than pre-existing data. No snapshot, admission, manifest, or dispatch authority was created.
+
+## Exact Next Round 2 Move
+
+Do not retry or export under the blocked refresh. A new explicit governance decision is required to resolve the ambiguous remote state, for example through an authoritative operation-log or source-lineage capability that can attribute the original invocation without a new FMP request.
