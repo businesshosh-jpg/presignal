@@ -170,6 +170,12 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 | `PPHB-R1-PAIRED-T15-INFERENCE-AUTHORIZATION-20260804T070000Z` | Paired primary-endpoint inference authorization | Single-use local-only authorization (`sha256:5b9f977a9915d9ce9273e3fc89afc5b1e01894ea564134f1badd99c2703916e1`) for the frozen 206 common paired-scoreable T+15 observations and pre-specified exact two-sided McNemar test | Append-only; completed and non-reusable | Separately authorized confirmatory prospective Round 2 protocol |
 | `PPHB-R1-PAIRED-T15-INFERENCE-RESULT-20260804T070000Z` | Paired T+15 inference result | `ROUND_1_PAIRED_T15_INFERENCE_COMPLETE`; 46/40/54/66 four-cell table, paired risk difference A-E `-0.067961`, exact two-sided McNemar p-value `0.179665`, and no null rejection at alpha `0.05`. Its append-only population-proof correction fixes only a 112-to-106 excluded-record metadata literal; all inferential inputs and results are unchanged | Append-only final inference evidence; no confidence interval or other analysis | Separately authorized confirmatory prospective Round 2 protocol |
 
+## ACCEPTED_PROSPECTIVE_ROUND_2_PROTOCOL
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z` | Confirmatory prospective Round 2 scientific protocol | `PROSPECTIVE_ROUND_2_PROTOCOL_FROZEN` and `PROSPECTIVE_ROUND_2_EXECUTION_PREPARATION_READY`; binds Pack A baseline / Pack E experimental comparison, T+15 primary endpoint, coverage and NO_SIGNAL reporting, exact two-sided McNemar at alpha `0.05`, three accepted provider/model routes, 120-Episode target, 144-Episode ceiling, 240 common-pair target, 200-pair inference minimum, maximum 48 Episodes per Slice, and no interim analysis | Append-only; protocol preparation only; no execution authority | Separately authorized Round 2 execution envelope and first prospective Slice manifest |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

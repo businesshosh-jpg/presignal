@@ -1,0 +1,9 @@
+{
+  "decision": "PROSPECTIVE_ROUND_2_PROTOCOL_FROZEN",
+  "external_access": 0,
+  "metrics_calculated": 0,
+  "preparation_readiness": "PROSPECTIVE_ROUND_2_EXECUTION_PREPARATION_READY",
+  "protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+  "protocol_id": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z",
+  "round_2_execution": 0
+}

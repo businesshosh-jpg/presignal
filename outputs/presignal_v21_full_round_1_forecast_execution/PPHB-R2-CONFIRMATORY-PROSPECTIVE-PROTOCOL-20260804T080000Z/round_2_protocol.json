@@ -1,0 +1,241 @@
+{
+  "accepted_round_1_bindings": {
+    "aggregate_result": {
+      "artifact_id": "PPHB-R1-ROUND-1-AGGREGATE-EVALUATION-RESULT-20260804T050000Z",
+      "sha256": "sha256:c293ecf70825b180ee8ee7fc1735fe799a6214d2a5583ba2daa24eb25d40f593"
+    },
+    "final_report": {
+      "artifact_id": "PPHB-R1-ROUND-1-FINAL-REPORT-20260804T060000Z",
+      "sha256": "sha256:2e8344e70b9cea0b8c2640f003674038ef90d85f7f0b3fdcf86de7f303e7878c"
+    },
+    "paired_inference_authorization": {
+      "artifact_id": "PPHB-R1-PAIRED-T15-INFERENCE-AUTHORIZATION-20260804T070000Z",
+      "sha256": "sha256:a91e9269e2e55ac86f02b2ba726e023db0f8ea8d0c7f7099e3b2dd5f22ac1f7a"
+    },
+    "paired_inference_result": {
+      "artifact_id": "PPHB-R1-PAIRED-T15-INFERENCE-RESULT-20260804T070000Z",
+      "sha256": "sha256:d2163c9951b2d3b73851a56d551bc89236f7202a204a3f0c48ac61d1b8de0faf"
+    }
+  },
+  "accepted_round_1_conclusion": {
+    "evidence_strength": "MODERATE_DESCRIPTIVE_EVIDENCE_WITHOUT_INFERENTIAL_SUPPORT",
+    "exact_two_sided_mcnemar_p_value": 0.17966501480803043,
+    "historical_period": "May-July 2024",
+    "pack_a_role": "baseline",
+    "pack_e_role": "hypothesis-supported experimental arm",
+    "paired_t15_four_cell_table": {
+      "both_correct": 46,
+      "both_incorrect": 66,
+      "pack_a_correct_pack_e_incorrect": 40,
+      "pack_a_incorrect_pack_e_correct": 54
+    },
+    "round_1_conclusion_boundary": "Round 1 did not establish Pack E superiority, Pack A replacement, provider selection, or a future-performance guarantee."
+  },
+  "coverage_and_no_signal_plan": {
+    "comparison_boundary": "Different Pack-specific coverage and directional denominators are descriptive. Direct accuracy comparison uses only the common paired-scoreable population.",
+    "directional_coverage_definition": "Accepted directional UP/DOWN/FLAT forecasts divided by accepted valid forecasts with an attached valid Outcome, reported separately by Pack.",
+    "no_signal_definition": "Accepted forecast marked NO_SIGNAL divided by accepted valid forecasts with an attached valid Outcome, reported separately by Pack.",
+    "prohibitions": [
+      "treating NO_SIGNAL as automatically correct",
+      "treating NO_SIGNAL as automatically incorrect",
+      "coverage-adjusted composite scoring",
+      "post-outcome no-signal recoding"
+    ],
+    "separate_descriptive_reports": [
+      "total eligible Episodes",
+      "valid forecast records",
+      "valid attached Outcome records",
+      "directional coverage by Pack",
+      "NO_SIGNAL count and rate by Pack",
+      "T+15 directional accuracy conditional on scoreability by Pack",
+      "common paired-scoreable T+15 count",
+      "unavailable and paired-excluded Episode count"
+    ]
+  },
+  "decision": "PROSPECTIVE_ROUND_2_PROTOCOL_FROZEN",
+  "exact_next_move": "Prepare one separately authorized Round 2 execution envelope and its first prospective Slice manifest, including future Episode eligibility, pre-release cutoff verification, deterministic provider/model allocation, and per-Slice request ceilings; do not dispatch a forecast until that authorization is accepted.",
+  "execution_cadence": {
+    "apps_script_ceiling": "One read per distinct UTC release day in the frozen Slice manifest.",
+    "canonical_outcome_controller": "automation/run_presignal_v21_authorized_slice.py",
+    "default_limits": {
+      "google_writes": 0,
+      "local_attachment_records": "At most the selected eligible Episode count",
+      "retries": 0
+    },
+    "forecast_path": "Existing v2.1 canonical forecast execution path; no new Round 2 forecast runner is created by this protocol.",
+    "market_data_ceiling": "One authorized collection attempt per selected Episode.",
+    "maximum_episodes_per_slice": 48,
+    "mechanical_repair_boundary": "The accepted prospective-slice execution contract permits only deterministic interface repairs that preserve values, hashes, canonical ownership, and frozen ceilings; governance conflicts stop execution.",
+    "per_slice_pattern": "One frozen manifest, one explicit end-to-end authorization, and one coherent Codex execution session. Collection, attachment, and minimal evaluation advance only after accepted append-only evidence.",
+    "round_2_completion": "After final locked Slice completion, reconcile all manifests, authorizations, outcomes, paired exclusions, attachments, evaluations, and common-scoreable identities before separately authorized final inference.",
+    "total_request_ceiling": "Exact sum of the manifest-derived Apps Script and market-data ceilings."
+  },
+  "inferential_plan": {
+    "alpha": 0.05,
+    "calculation": "Two times the lower exact binomial tail under p=0.5, capped at 1.0; no continuity correction.",
+    "confidence_interval": "Not reported: no canonical paired risk-difference interval method and confidence level are governed.",
+    "discordant_pairs": [
+      "Pack A correct / Pack E incorrect",
+      "Pack A incorrect / Pack E correct"
+    ],
+    "endpoint": "T+15 directional accuracy only",
+    "interim_analysis": "Prohibited. Operational completeness counts may be checked for safe execution, but no cumulative Pack comparison, efficacy/futility analysis, or inferential calculation occurs before final Round 2 lock.",
+    "interpretation_boundary": "A result concerns the frozen Round 2 paired population only and does not establish causality, universal superiority, provider selection validity, Pack A replacement, or future performance guarantees.",
+    "missing_data": "No unavailable, terminal-invalid, authority-excluded, NO_SIGNAL, or non-scoreable record enters the common paired-scoreable test population.",
+    "population": "Final Round 2 common paired-scoreable observations only",
+    "test": "Exact two-sided McNemar binomial test",
+    "ties": "Both-correct and both-incorrect pairs do not enter the test statistic and remain in the four-cell table."
+  },
+  "mandatory_governance_stops": [
+    "identity, count, manifest, fingerprint, provider/model, cutoff, or Pack-lineage conflict",
+    "historical leakage or Outcome availability before forecast freeze",
+    "ambiguous artifact authority or remote state",
+    "missing or contradictory Outcome semantics",
+    "unsupported metric, denominator, confidence-interval method, or test substitution",
+    "need for an unauthorized external request, retry, Google write, provider/model replacement, or alternate source",
+    "any repair that changes forecast, Outcome, Pack, or metric meaning"
+  ],
+  "preparation_readiness": "PROSPECTIVE_ROUND_2_EXECUTION_PREPARATION_READY",
+  "primary_endpoint": {
+    "common_paired_scoreable_population": "Direct Pack A/E comparison uses only matching same-Episode/provider/model pairs where both Pack A and Pack E are T+15 scoreable against the same attached Outcome.",
+    "flat_treatment": "FLAT is a directional endpoint label and is correct only when the accepted Outcome direction is FLAT under the existing canonical tie rule.",
+    "forecast_labels": [
+      "UP",
+      "DOWN",
+      "FLAT",
+      "NO_SIGNAL"
+    ],
+    "name": "T+15 directional accuracy",
+    "pack_specific_denominator": "Each Pack denominator is its accepted valid, attached, scoreable T+15 forecasts after NO_SIGNAL, unavailable Outcome, terminal-invalid, and authority exclusions.",
+    "primary": true,
+    "scoreability": "A directional forecast is scoreable only when its accepted T+15 label is UP, DOWN, or FLAT, the attached Outcome is valid, and the canonical evaluator returns boolean T+15 correctness. NO_SIGNAL is not correct or incorrect and is excluded from the directional denominator.",
+    "tie_and_rounding": "Both-correct and both-incorrect pairs are retained in reporting and omitted from the McNemar statistic. Store exact values; display proportions and risk differences to six decimals.",
+    "unavailable_outcome_treatment": "Preserve source evidence and apply only the existing symmetric paired-exclusion rule when its prerequisites are satisfied; otherwise stop for separate governance. Never impute, interpolate, or substitute an Outcome."
+  },
+  "prospective_boundary": {
+    "append_only_evidence": [
+      "frozen manifest",
+      "authorization",
+      "provider request and raw response evidence",
+      "forecast validation evidence",
+      "Outcome evidence",
+      "attachment reconciliation",
+      "minimal evaluation",
+      "final Round 2 reconciliation"
+    ],
+    "episode_eligibility": "A unique authoritative scheduled event Episode with authoritative USD/JPY instrument binding, exact release timestamp, deterministic cutoff, complete paired Pack lineage, and no prior Round 2 identity use.",
+    "event_and_instrument_authority": "Use the existing v2.1 authoritative event identity and USD/JPY instrument binding; reject uncertain event, release-time, cutoff, or instrument identity.",
+    "forecast_identity": "Use the existing canonical v2.1 forecast call identity bound to Episode, provider, model, Pack, cutoff, prompt fingerprint, and immutable manifest lineage.",
+    "historical_leakage_prevention": "Every Episode, provider/model allocation, Pack input, prompt fingerprint, forecast identity, and Outcome identity must be frozen before dispatch and before the Outcome is available. Released actuals, post-cutoff facts, and Outcome observations are prohibited from forecast inputs.",
+    "outcome_identity": "Use the existing canonical Outcome identity under presignal_event_path_contract_v1_1 and schema 2.1.1, bound to Episode, USD/JPY, release timestamp, measurement windows, source authority, and append-only lineage.",
+    "release_and_cutoff_rule": "information_cutoff_ts <= prompt_freeze_ts < forecast_freeze_deadline_ts < release_ts; all Pack A/E shared inputs and prompt fingerprints freeze at or before the cutoff, and both forecast calls complete before release.",
+    "round_2_start_condition": "Begin only after this protocol is accepted, a future study envelope and the first Round 2 Slice manifest are frozen, and one explicit execution authorization is accepted before any provider dispatch."
+  },
+  "protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+  "protocol_id": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z",
+  "protocol_schema_version": "1.0.0",
+  "protocol_status": "FROZEN_EXECUTION_NOT_AUTHORIZED",
+  "provider_model_control": {
+    "allocation_rule": "For every admitted Episode, pre-enumerate one Pack A and one Pack E call for each permitted provider/model route in the frozen manifest. Both arms share the same Episode, provider, model, cutoff, release timestamp, measurement windows, and Outcome identity; only the accepted Pack content differs.",
+    "authority": "Existing prospective v2.1 provider/model control and paired prompt contract.",
+    "permitted_provider_models": [
+      {
+        "model": "claude-haiku-4-5",
+        "provider": "Anthropic"
+      },
+      {
+        "model": "gemini-2.5-flash-lite",
+        "provider": "Gemini"
+      },
+      {
+        "model": "gpt-4o-mini-2024-07-18",
+        "provider": "OpenAI"
+      }
+    ],
+    "prohibitions": [
+      "provider selection based on Round 1",
+      "outcome-informed reallocation",
+      "silent provider/model substitution",
+      "post-outcome provider/model replacement"
+    ],
+    "replacement_rule": "A provider/model replacement or allocation change requires a separate explicit authorization before the affected manifest is frozen."
+  },
+  "round_2_purpose_and_hypothesis": {
+    "alternative_hypothesis": "Among common paired-scoreable prospective observations, the discordant outcome probabilities differ between Pack A and Pack E.",
+    "arms": {
+      "pack_a": "baseline",
+      "pack_e": "experimental"
+    },
+    "not_a_provider_selection_or_meta_forecast_study": true,
+    "null_hypothesis": "Among common paired-scoreable prospective observations, Pack A-correct/Pack E-incorrect and Pack A-incorrect/Pack E-correct discordant outcomes are equally likely.",
+    "purpose": "Prospectively confirm or fail to confirm a Pack E versus Pack A difference in T+15 directional accuracy while separately measuring coverage and no-signal behavior."
+  },
+  "sample_size_and_stopping_design": {
+    "design_type": "Bounded operational scenario design; not a post-hoc power calculation and not a guarantee of future effect or availability.",
+    "insufficient_population_rule": "If the 144-Episode ceiling closes below 200 common paired-scoreable observations, preserve all evidence and do not run the confirmatory test; require a separate authorization for any further interpretation or extension.",
+    "maximum_eligible_episodes": 144,
+    "minimum_common_paired_scoreable_observations_for_confirmatory_test": 200,
+    "round_1_operational_reference": {
+      "available_outcomes": 138,
+      "common_paired_scoreable_pairs": 206,
+      "discordant_pairs": 94,
+      "evaluated_pairs": 259,
+      "pack_a_no_signal": 51,
+      "pack_e_no_signal": 7,
+      "unavailable_paired_exclusions": 10
+    },
+    "scenario_table": [
+      {
+        "eligible_episodes": 96,
+        "planned_provider_episode_pairs": 288,
+        "planning_only_expected_common_pairs": "approximately 214"
+      },
+      {
+        "eligible_episodes": 120,
+        "planned_provider_episode_pairs": 360,
+        "planning_only_expected_common_pairs": "approximately 267"
+      },
+      {
+        "eligible_episodes": 144,
+        "planned_provider_episode_pairs": 432,
+        "planning_only_expected_common_pairs": "approximately 320"
+      }
+    ],
+    "stopping_rule": "Accrue in deterministic frozen Slices through 120 eligible Episodes. If the final locked 120-Episode cohort has fewer than 240 common paired-scoreable observations, continue only with additional whole deterministic Slices up to 144 eligible Episodes. Stop recruitment at the first completed cohort meeting 240 common pairs or at 144 Episodes, whichever comes first.",
+    "target_common_paired_scoreable_observations": 240,
+    "target_eligible_episodes": 120,
+    "unavailable_rule": "Unavailable Outcomes are preserved. Symmetric paired exclusion is permitted only under the existing accepted rule; it does not replace the minimum common-pair requirement."
+  },
+  "secondary_metric_boundary": {
+    "authorized_descriptive_metrics": [
+      "Immediate Impulse directional accuracy",
+      "magnitude interval error (pips)",
+      "horizon accuracy",
+      "path accuracy",
+      "reversal accuracy"
+    ],
+    "immediate_impulse": "Secondary only; report strict directional accuracy only for Outcomes marked SUPPORTED by the existing contract. Do not convert APPROXIMATION_ONLY Outcomes into strict scores.",
+    "not_authorized": [
+      "composite score",
+      "provider-level inference",
+      "subgroup inference",
+      "multiple-comparison adjustment",
+      "Bayesian analysis",
+      "post-hoc threshold selection"
+    ],
+    "other_metrics": "Magnitude/pip error, horizon accuracy, path accuracy, and reversal accuracy remain descriptive and use the existing canonical evaluator, denominators, tie, and rounding rules."
+  },
+  "this_move_limits": {
+    "apps_script_reads": 0,
+    "forecast_dispatches": 0,
+    "google_reads": 0,
+    "google_writes": 0,
+    "market_data_requests": 0,
+    "metric_calculation": 0,
+    "outcome_attachment": 0,
+    "outcome_collection": 0,
+    "provider_calls": 0,
+    "retries": 0,
+    "round_2_execution": 0
+  }
+}

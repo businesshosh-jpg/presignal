@@ -207,6 +207,20 @@ Prepare a separately authorized confirmatory prospective Round 2 protocol. It mu
 - Inference: the null is not rejected at the pre-specified threshold. The evidence is therefore `MODERATE_DESCRIPTIVE_EVIDENCE_WITHOUT_INFERENTIAL_SUPPORT`, not a superiority, replacement, provider-selection, or future-performance claim. Keep Pack E hypothesis-supported and Pack A as the baseline.
 - No external access, metric-population change, Outcome/forecast mutation, confidence interval, provider inference, subgroup test, multiple-comparison adjustment, odds ratio, Bayesian analysis, power analysis, or composite score occurred.
 
+## Prospective Round 2 Protocol
+
+- Decisions: `PROSPECTIVE_ROUND_2_PROTOCOL_FROZEN`; `PROSPECTIVE_ROUND_2_EXECUTION_PREPARATION_READY`.
+- Protocol: `PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z` (`sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f`), append-only and execution-prohibited in this Move.
+- Purpose: a prospective confirmatory Pack A baseline versus Pack E experimental-arm comparison. T+15 directional accuracy remains primary; exact two-sided McNemar at alpha `0.05` is frozen for final common paired-scoreable observations. Immediate Impulse remains secondary and strictly scoreable only for `SUPPORTED` Outcomes. No confidence interval, composite score, provider-level inference, subgroup inference, interim analysis, Pack replacement, or provider selection is authorized.
+- Coverage: report directional coverage and NO_SIGNAL rate separately by Pack. NO_SIGNAL is neither correct nor incorrect and is excluded from directional denominators; direct Pack comparison uses matching same-Episode/provider/model rows scoreable in both Packs against the same Outcome.
+- Bounded design: target 120 eligible Episodes and 240 common paired-scoreable observations; maximum 144 eligible Episodes, minimum 200 common pairs for the confirmatory test, and no more than 48 Episodes per Slice. The Round 1-derived scenario table is operational planning only, not a power claim or expected effect guarantee.
+- Provider/model control: freeze one Pack A/E pair for each admitted Episode on each accepted route: Anthropic / `claude-haiku-4-5`, Gemini / `gemini-2.5-flash-lite`, and OpenAI / `gpt-4o-mini-2024-07-18`. Reallocation, silent substitution, outcome-informed selection, and replacement require separate authorization.
+- Local-only protocol Move: Round 2 execution, forecast dispatches, provider calls, Apps Script reads, market-data requests, Google reads/writes, Outcome collection/attachment, metrics, and retries were all `0`.
+
+## Exact Next Move
+
+Prepare one separately authorized Round 2 execution envelope and first prospective Slice manifest. It must freeze future Episode eligibility, pre-release cutoff and leakage checks, deterministic provider/model allocation, paired forecast identities, and manifest-derived request ceilings before any forecast dispatch.
+
 ## Prohibited reopening
 
 Do not reopen accepted Attention, Pack, planning, Batches 001–003, Batch 003 closure, or prompt-migration evidence without a concrete contradiction in named authoritative artifacts or a focused-test failure.
