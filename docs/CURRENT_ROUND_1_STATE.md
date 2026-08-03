@@ -4,7 +4,7 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted HEAD: `561a4b7f` (Slice 011 completion commit; this state-head update is append-only follow-up).
+- Accepted HEAD: `b180cfde311a7a22dc49245a76e933e3191d5aa4` before prospective-stage reconciliation; this state update is append-only.
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
@@ -169,7 +169,16 @@ The bounded single-slice runner and authorized-slice controller are validated fo
 
 ## Exact next Move
 
-Reconcile the completed ledger through Slice 012 and prepare the next prospective Slice manifest and inactive authorization inputs. Do not collect, attach, or evaluate until a new explicit authorization is frozen.
+Reconcile the completed ledger through Slice 012 and prepare one explicit aggregate Round 1 evaluation authorization. Do not calculate pooled metrics until that authorization is frozen.
+
+## Prospective Outcome/Evaluation Stage Completion
+
+- Decision: `PROSPECTIVE_OUTCOME_EVALUATION_STAGE_COMPLETE`.
+- Reconciliation: `PPHB-R1-PROSPECTIVE-OUTCOME-EVALUATION-STAGE-COMPLETION-20260804T040000Z`.
+- Episode partition: 151 total; 138 completed/evaluated; 10 paired-excluded unavailable; 3 excluded by accepted authority/attention-lineage conflict; 0 eligible; 0 unresolved.
+- Forecast partition: 564 frozen identities; 561 authoritative valid; 3 terminal-invalid; 518 forecast records evaluated in accepted Slice evaluations; no unexecuted forecast identity.
+- Outcome coverage: 138 Outcomes attached; unavailable and paired-excluded evidence preserved; no duplicate attachment or evaluation.
+- Aggregate boundary: no pooled metric, significance test, matrix update, composite score, or broader conclusion was calculated. The smallest next Move is to prepare an explicit aggregate Round 1 evaluation authorization bound to the accepted Slice evaluation artifacts and denominator rules.
 
 ## Prohibited reopening
 

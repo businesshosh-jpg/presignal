@@ -1,0 +1,140 @@
+{
+  "accepted_slice_evaluation_artifacts": [
+    "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z-e8e69ad49e46/slice_completion.json",
+    "PPHB-R1-OUTCOME-SLICE-003-COMPLETION-20260803T081500Z-1a04811ea2b95396242c/slice_completion.json",
+    "PPHB-R1-OUTCOME-SLICE-004-COMPLETION-20260803T083300Z-0ccd2ce593a5/slice_completion.json",
+    "PPHB-R1-OUTCOME-SLICE-005-COMPLETION-20260803T091200Z-7dc7040e7eefe6766505/slice_completion.json",
+    "PPHB-R1-OUTCOME-SLICE-006-COMPLETION-20260803T090600Z-4b6396c50c92/slice_completion.json",
+    "PPHB-R1-OUTCOME-SLICE-007-COMPLETION-20260803T094017Z-0bf9c7477606/slice_completion.json",
+    "PPHB-R1-OUTCOME-SLICE-008-COMPLETION-20260803T101556Z-6c6c24320615/slice_completion.json",
+    "PPHB-R1-OUTCOME-SLICE-009-COMPLETION-20260803T103300Z-42826db48733c8ee9530/slice_completion.json",
+    "PPHB-R1-OUTCOME-SLICE-010-COMPLETION-20260803T104400Z-ace0f9494fad1bb70c01/slice_completion.json",
+    "PPHB-R1-OUTCOME-SLICE-011-COMPLETION-20260803T111500Z-eef0a8b7d52e/slice_completion.json",
+    "PPHB-R1-OUTCOME-SLICE-012-COMPLETION-20260804T030000Z-b7526624ab98c1da4aff/slice_completion.json"
+  ],
+  "aggregate_metrics_calculated": false,
+  "append_only": true,
+  "authorization_must_specify": [
+    "included Slice evaluation artifacts and hashes",
+    "forecast and Outcome identity union/intersection rules",
+    "Pack A/E separation",
+    "T+15 and Immediate Impulse treatment",
+    "no-signal and strict scoreability rules",
+    "denominators, missing Outcomes, paired comparison, rounding, and tie rules",
+    "no new collection, attachment, provider, market-data, or Google access unless separately authorized",
+    "no composite score unless explicitly authorized"
+  ],
+  "decision": "AGGREGATE_EVALUATION_REMAINS_UNAUTHORIZED",
+  "denominator_variation": "Yes; Pack-specific scoreability and no-signal exclusions vary by Slice and Pack; pooled denominators require explicit aggregate authorization.",
+  "metric_schema": "existing six-metric slice evaluation contract; T+15 primary, Immediate Impulse secondary",
+  "next_move": "Prepare one explicit aggregate Round 1 evaluation authorization bound to the listed accepted Slice evaluation artifacts and governing metric contract.",
+  "slice_level_populations": [
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z-e8e69ad49e46/slice_completion.json",
+      "episodes": 12,
+      "forecasts": 44,
+      "pack_a": 22,
+      "pack_e": 22,
+      "pairs": 22,
+      "slice_id": "SLICE-002"
+    },
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-003-COMPLETION-20260803T081500Z-1a04811ea2b95396242c/slice_completion.json",
+      "episodes": 10,
+      "forecasts": 32,
+      "pack_a": 16,
+      "pack_e": 16,
+      "pairs": null,
+      "slice_id": "SLICE-003"
+    },
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-004-COMPLETION-20260803T083300Z-0ccd2ce593a5/slice_completion.json",
+      "episodes": 12,
+      "forecasts": 48,
+      "pack_a": 24,
+      "pack_e": 24,
+      "pairs": null,
+      "slice_id": "SLICE-004"
+    },
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-005-COMPLETION-20260803T091200Z-7dc7040e7eefe6766505/slice_completion.json",
+      "episodes": null,
+      "forecasts": null,
+      "pack_a": null,
+      "pack_e": null,
+      "pairs": null,
+      "slice_id": "SLICE-005"
+    },
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-006-COMPLETION-20260803T090600Z-4b6396c50c92/slice_completion.json",
+      "episodes": 12,
+      "forecasts": 54,
+      "pack_a": 27,
+      "pack_e": 27,
+      "pairs": null,
+      "slice_id": "SLICE-006"
+    },
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-007-COMPLETION-20260803T094017Z-0bf9c7477606/slice_completion.json",
+      "episodes": null,
+      "forecasts": null,
+      "pack_a": null,
+      "pack_e": null,
+      "pairs": null,
+      "slice_id": "SLICE-007"
+    },
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-008-COMPLETION-20260803T101556Z-6c6c24320615/slice_completion.json",
+      "episodes": null,
+      "forecasts": null,
+      "pack_a": null,
+      "pack_e": null,
+      "pairs": null,
+      "slice_id": "SLICE-008"
+    },
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-009-COMPLETION-20260803T103300Z-42826db48733c8ee9530/slice_completion.json",
+      "episodes": null,
+      "forecasts": null,
+      "pack_a": 14,
+      "pack_e": 14,
+      "pairs": null,
+      "slice_id": "SLICE-009"
+    },
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-010-COMPLETION-20260803T104400Z-ace0f9494fad1bb70c01/slice_completion.json",
+      "episodes": 12,
+      "forecasts": 52,
+      "pack_a": 26,
+      "pack_e": 26,
+      "pairs": null,
+      "slice_id": "SLICE-010"
+    },
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-011-COMPLETION-20260803T111500Z-eef0a8b7d52e/slice_completion.json",
+      "episodes": null,
+      "forecasts": null,
+      "pack_a": 62,
+      "pack_e": 62,
+      "pairs": null,
+      "slice_id": "SLICE-011"
+    },
+    {
+      "artifact": "PPHB-R1-OUTCOME-SLICE-012-COMPLETION-20260804T030000Z-b7526624ab98c1da4aff/slice_completion.json",
+      "episodes": 3,
+      "forecasts": 14,
+      "pack_a": 7,
+      "pack_e": 7,
+      "pairs": null,
+      "slice_id": "SLICE-012"
+    }
+  ],
+  "stop_conditions": [
+    "identity or artifact-authority conflict",
+    "denominator or metric-contract conflict",
+    "duplicate evaluation rows",
+    "historical leakage",
+    "need for new external access",
+    "unsupported aggregate metric"
+  ]
+}

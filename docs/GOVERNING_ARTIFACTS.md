@@ -143,6 +143,13 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 | `PPHB-R1-OUTCOME-SLICE-012-END-TO-END-AUTHORIZATION-20260804T020000Z-b7526624ab98c1da4aff` | Slice 012 active authorization | Single-use route bound to the frozen manifest, 1/3/4 ceilings, 0 writes, 0 retries, 3 local attachments, and six-metric allow-list | Append-only; completed and non-reusable | Future Slice authorization |
 | `PPHB-R1-OUTCOME-SLICE-012-COMPLETION-20260804T030000Z-b7526624ab98c1da4aff` | Slice 012 final completion | `AUTHORIZED_EXPANDED_SLICE_END_TO_END_COMPLETE`; 3 Outcomes attached, 14 forecasts evaluated, no unavailable Outcomes, 2 external requests, 0 writes, 0 retries | Append-only final completion | Future prospective Slice manifest |
 
+## ACCEPTED_PROSPECTIVE_STAGE_COMPLETION
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R1-PROSPECTIVE-OUTCOME-EVALUATION-STAGE-COMPLETION-20260804T040000Z` | Slice-level Outcome/evaluation stage through Slice 012 | Confirms the 151-Episode status partition, 0 remaining eligible Episodes, 0 unresolved identities, preserved unavailable/pair exclusions, and no duplicate attachment/evaluation | Append-only | Future aggregate evaluation reconciliation |
+| `aggregate_evaluation_authorization_boundary.json` within the stage-completion artifact | Aggregate evaluation preparation only | Identifies accepted Slice evaluation artifacts, variable denominators, metric schemas, and the exact authorization boundary; calculates no pooled result | Append-only; aggregate evaluation remains unauthorized | Explicit aggregate Round 1 evaluation authorization |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.
