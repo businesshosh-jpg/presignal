@@ -328,3 +328,13 @@ Freeze a separate read-only reconciliation authorization for `R2SCHEDOP_b1aa318a
 - Counts: fetched `97`; appended `0`; upserts `97`; unchanged `0`; rejected/cancelled/superseded `0`; pre/post Event fingerprints both `sha256:aaea9d5ab06a73f04f72d689163b6b4bc8efbfbd418c8cb899f68beb194eac78`.
 - Snapshot: `PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z` (`sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9`) is authoritative. The earlier blocker is retained but superseded by append-only completion correction.
 - Stop: `ROUND_2_PROSPECTIVE_PROMPT_AND_CUTOFF_BINDINGS_NOT_FROZEN`. No accepted Round 2 artifact binds exact Pack A and Pack E prompt fingerprints and per-Episode prospective forecast cutoffs. No Episode admission, Slice manifest, forecast-call inventory, or dispatch authorization was created.
+
+## Round 2 Prompt and Cutoff Authority Review
+
+- Decisions: `ROUND_2_PACK_PROMPT_AUTHORITY_BLOCKED`; `ROUND_2_PROSPECTIVE_CUTOFF_AUTHORITY_BLOCKED`; `ROUND_2_FIRST_ROLLING_SLICE_MANIFEST_BLOCKED`; `ROUND_2_FIRST_SLICE_EXACT_DISPATCH_AUTHORIZATION_NOT_READY`.
+- The Round 2 protocol/envelope define Pack roles, provider routes, and a pre-release cutoff requirement, but do not select one prospective Pack A prompt, one prospective Pack E prompt, or one numeric cutoff offset. Historical Round 1 prompt variants cannot be promoted by inference.
+- No provider, Google, market-data, Outcome, or evaluation activity occurred. No Event was admitted and no dispatch authorization was created.
+
+## Exact Next Round 2 Move
+
+Freeze explicit Round 2 Pack A and Pack E prompt artifacts with fingerprints/output contracts and one numeric prospective cutoff rule, then apply that new authority to the authoritative Event snapshot.
