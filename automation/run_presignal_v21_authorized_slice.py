@@ -141,18 +141,61 @@ def simulate_end_to_end_route(stage_statuses: dict[str, str] | None = None) -> d
     return {"decision": END_TO_END_COMPLETE, "progression": ["COLLECTION_COMPLETE", "ATTACHMENT_RECONCILED", "MINIMAL_EVALUATION_COMPLETE", END_TO_END_COMPLETE], "requires_new_authorization": False}
 
 
-def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str) -> Path | None:
-    prefixes = {"collect": "PPHB-R1-OUTCOME-COLLECTION", "attach": "PPHB-R1-OUTCOME-ATTACHMENT", "evaluate": "PPHB-R1-OUTCOME-EVALUATION"}
-    prefix = prefixes.get(stage)
-    if not prefix:
-        return None
-    for path in BASE.glob(f"{prefix}-{slice_id}-*"):
-        run = path / "run_manifest.json"
-        if run.exists():
-            value = json.loads(run.read_text())
-            if value.get("manifest_sha256") == manifest_sha:
-                return path
-    return None
+def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: dict[str, Any] | None = None) -> Path | None:
+    prefixes = {
+        "collect": ("PPHB-R1-OUTCOME-COLLECTION",),
+        "attach": ("PPHB-R1-OUTCOME-ATTACH", "PPHB-R1-OUTCOME-ATTACHMENT"),
+        "evaluate": ("PPHB-R1-OUTCOME-EVALUATION",),
+    }
+    candidates: list[Path] = []
+    for prefix in prefixes.get(stage, ()):
+        candidates.extend(BASE.glob(f"{prefix}-{slice_id}-*"))
+    eligible: list[Path] = []
+    for path in sorted(set(candidates)):
+        run_path = path / "run_manifest.json"
+        if not run_path.exists():
+            continue
+        run = json.loads(run_path.read_text())
+        if run.get("run_id") != path.name or run.get("manifest_sha256") != manifest_sha:
+            continue
+        if stage == "attach":
+            reconciliation_path = path / "attachment_reconciliation.json"
+            decision_path = path / "attachment_decision.json"
+            if not reconciliation_path.exists() or not decision_path.exists():
+                continue
+            reconciliation = json.loads(reconciliation_path.read_text())
+            decision = json.loads(decision_path.read_text())
+            if (
+                run.get("candidate_count") != 12
+                or run.get("attachment_count") != 12
+                or run.get("google_writes") != 0
+                or reconciliation.get("attached_outcome_count") != 12
+                or reconciliation.get("unattached_candidate_count") != 0
+                or reconciliation.get("duplicate_or_conflicting_attachments") != 0
+                or reconciliation.get("unresolved_identities")
+                or decision.get("decision") != "OUTCOME_" + slice_id.replace("-", "_") + "_ATTACHED_AND_RECONCILED"
+            ):
+                continue
+            if auth and auth.get("authorization_mode") == "END_TO_END":
+                proof_paths = list(BASE.glob("PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-*/attachment_execution_stop.json"))
+                proofs = []
+                for proof_path in proof_paths:
+                    proof = json.loads(proof_path.read_text())
+                    if (
+                        proof.get("authorization_id") == auth.get("authorization_id")
+                        and proof.get("authorization_fingerprint") == auth.get("authorization_fingerprint")
+                        and proof.get("attachment_run_id") == path.name
+                        and proof.get("attachment_result", {}).get("attached_records") == 12
+                        and proof.get("attachment_result", {}).get("duplicates") == 0
+                        and proof.get("attachment_result", {}).get("unattached_records") == 0
+                    ):
+                        proofs.append(proof_path)
+                if len(proofs) != 1:
+                    continue
+        eligible.append(path)
+    if len(eligible) > 1:
+        fail("AMBIGUOUS_ACCEPTED_STAGE_ARTIFACT:" + stage)
+    return eligible[0] if eligible else None
 
 
 def execute_end_to_end(auth: dict[str, Any], manifest_path: Path, manifest_sha: str, prior: dict[str, Path | None]) -> dict[str, Any]:
@@ -175,12 +218,12 @@ def execute_end_to_end(auth: dict[str, Any], manifest_path: Path, manifest_sha: 
         if prior[stage] is not None:
             continue
         if stage == "attach":
-            collection = accepted_stage_artifact("collect", auth["slice_id"], manifest_sha)
+            collection = accepted_stage_artifact("collect", auth["slice_id"], manifest_sha, auth)
             if collection is None:
                 fail("COLLECTION_COMPLETION_REQUIRED")
             env["PRESIGNAL_OUTCOME_COLLECTION_RUN"] = collection.name
         if stage == "evaluate":
-            attachment = accepted_stage_artifact("attach", auth["slice_id"], manifest_sha)
+            attachment = accepted_stage_artifact("attach", auth["slice_id"], manifest_sha, auth)
             if attachment is None:
                 fail("ATTACHMENT_COMPLETION_REQUIRED")
             env["PRESIGNAL_OUTCOME_ATTACHMENT_RUN"] = attachment.name
@@ -191,7 +234,7 @@ def execute_end_to_end(auth: dict[str, Any], manifest_path: Path, manifest_sha: 
         result = subprocess.run(command, cwd=ROOT, env=env, check=False)
         if result.returncode:
             fail("END_TO_END_STAGE_BLOCKED:" + stage)
-        if accepted_stage_artifact(stage, auth["slice_id"], manifest_sha) is None:
+        if accepted_stage_artifact(stage, auth["slice_id"], manifest_sha, auth) is None:
             fail("END_TO_END_STAGE_COMPLETION_UNPROVEN:" + stage)
     return {"decision": END_TO_END_COMPLETE, "progression": ["COLLECTION_COMPLETE", "ATTACHMENT_RECONCILED", "MINIMAL_EVALUATION_COMPLETE", END_TO_END_COMPLETE]}
 
@@ -210,7 +253,7 @@ def main() -> int:
     checked = validate(args.authorization, args.manifest, args.expected_manifest_sha, args.stage, end_to_end=args.end_to_end)
     auth = checked["auth"]
     manifest = checked["manifest"]
-    prior = {stage: accepted_stage_artifact(stage, auth["slice_id"], args.expected_manifest_sha) for stage in ("collect", "attach", "evaluate")}
+    prior = {stage: accepted_stage_artifact(stage, auth["slice_id"], args.expected_manifest_sha, auth) for stage in ("collect", "attach", "evaluate")}
     if args.end_to_end:
         route_proof = simulate_end_to_end_route() if args.mock_clean_route else None
         if auth["authorization_status"] != "ACTIVE":
