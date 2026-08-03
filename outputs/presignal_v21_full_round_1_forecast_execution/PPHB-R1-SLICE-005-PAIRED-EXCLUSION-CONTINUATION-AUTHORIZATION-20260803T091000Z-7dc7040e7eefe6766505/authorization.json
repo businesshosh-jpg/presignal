@@ -1,0 +1,122 @@
+{
+  "attachment_authorized": true,
+  "attachment_destination": "append-only local Outcome attachment evidence",
+  "attachment_reconciliation_requirements": {
+    "attached": 10,
+    "duplicates": 0,
+    "excluded_episode_attachments": 0,
+    "google_writes": 0,
+    "unattached_eligible": 0,
+    "unresolved_identities": 0
+  },
+  "authorization_fingerprint": "sha256:7dc7040e7eefe6766505af3e4a67a85a9d6b7ce0805cff1a268fc01d83db6ba5",
+  "authorization_id": "PPHB-R1-SLICE-005-PAIRED-EXCLUSION-CONTINUATION-AUTHORIZATION-20260803T091000Z",
+  "authorization_mode": "PAIRED_EXCLUSION_END_TO_END",
+  "authorization_schema_version": "AUTHORIZED_SLICE_PAIRED_EXCLUSION_END_TO_END_V1",
+  "authorization_status": "ACTIVE",
+  "authorized_identity_ids": [
+    "EP_EVENT_f782f980ddd2c38256cf",
+    "EP_EVENT_2d825f23b45ef7ca130d",
+    "EP_EVENT_fbeb51f7c51277a6ec74",
+    "EP_BATCH_c6ef5b08263dbc6a8c39",
+    "EP_EVENT_9abf6d24da667544c615",
+    "EP_BATCH_1248dc6390428a4bf6e9",
+    "EP_BATCH_ee85856234debe8c7bfc",
+    "EP_BATCH_4d7f79cce0f991b2673c",
+    "EP_BATCH_daba715d85af4068890b",
+    "EP_EVENT_1a0b20ccc3808c220a9f"
+  ],
+  "authorized_stage": "attachment_through_evaluation",
+  "canonical_attachment_entrypoint": "automation/attach_presignal_v21_outcome_slice_001.py",
+  "canonical_evaluation_entrypoint": "automation/evaluate_presignal_v21_outcome_slice_001.py",
+  "ceilings": {
+    "google_write_ceiling": 0,
+    "max_apps_script_reads": 0,
+    "max_attachment_records": 10,
+    "max_evaluation_artifacts": 1,
+    "max_market_data_attempts": 0,
+    "max_total_external_requests": 0
+  },
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595",
+  "contract": "presignal_event_path_contract_v1_1",
+  "contract_binding": "PPHB-R1-PROSPECTIVE-SLICE-EXECUTION-CONTRACT-20260803T060000Z",
+  "controller_commit": "9e48b24209d7b8fa2aeb399da0e4c96816d197ad",
+  "controller_version": "AUTHORIZED_SLICE_CONTROLLER_V1",
+  "denominator_rules": "Use the existing evaluator: exclude no-signal forecasts from directional, magnitude, path, and reversal denominators; strictly score Immediate Impulse only for SUPPORTED Outcomes.",
+  "eligible_outcome_ids": [
+    "OUT_5898fcce2ac1c4822588",
+    "OUT_87a0378b36156831e946",
+    "OUT_d1b8f5423b5fcd8e0494",
+    "OUT_87831f9f9b8b2f34dfa9",
+    "OUT_a85a3b23b82fb9f43d56",
+    "OUT_d9af192fea3ad075fb48",
+    "OUT_bae2b94bb24fcce6ac5c",
+    "OUT_6938be9c961202f72f33",
+    "OUT_0730ae0bf116975b8018",
+    "OUT_479b8e651976a2c18791"
+  ],
+  "evaluation_authorized": true,
+  "evaluation_output_destination": "append-only local minimal evaluation evidence",
+  "evaluation_population": {
+    "complete_pairs": 19,
+    "episodes": 10,
+    "pack_a": 19,
+    "pack_e": 19,
+    "unpaired": 0,
+    "valid_forecasts": 38
+  },
+  "excluded_episode_ids": [
+    "EP_EVENT_08219d7669dbc263d9f6",
+    "EP_EVENT_f09204427881dfea157f"
+  ],
+  "excluded_forecast_call_ids": [
+    "FCL_c3549379d05f4631dfb294f9",
+    "FCL_c8172e1cc9d8c6c66ec28e54",
+    "FCL_bf97b9bd8239f814c018ffdd",
+    "FCL_7617e91faa7335a8160c95ee"
+  ],
+  "exclusion_rule": "Exclude both PACK_A and PACK_E forecast references for every excluded Episode; retain no single-Pack forecast.",
+  "governance_review_id": "PPHB-R1-SLICE-005-UNAVAILABLE-OUTCOME-GOVERNANCE-REVIEW-20260803T090000Z",
+  "manifest_fingerprint": "sha256:c965903c8e799920d4a3aaee3ed3a173be11b0bfa0bbb7a39b39c28323fe7595",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-005-20260803T100000Z",
+  "pack_separation": true,
+  "permitted_metrics": [
+    "T+15 directional accuracy",
+    "Immediate Impulse directional accuracy",
+    "magnitude or pip error",
+    "horizon accuracy",
+    "path accuracy",
+    "reversal accuracy"
+  ],
+  "primary_endpoint": "T+15",
+  "required_collection_artifact": {
+    "manifest_fingerprint": "sha256:c965903c8e799920d4a3aaee3ed3a173be11b0bfa0bbb7a39b39c28323fe7595",
+    "required_files": [
+      "collection_reconciliation.json",
+      "candidate_outcomes.jsonl"
+    ],
+    "run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595"
+  },
+  "resume_authority": "Resume only from accepted collection evidence, then accepted attachment reconciliation; never recollect or repeat an accepted attachment or evaluation.",
+  "retry_boundary": "NO_AUTOMATIC_RETRIES",
+  "revised_evaluation_population": {
+    "complete_pairs": 19,
+    "episodes": 10,
+    "pack_a": 19,
+    "pack_e": 19,
+    "unpaired": 0,
+    "valid_forecasts": 38
+  },
+  "schema_version": "2.1.1",
+  "secondary_measurement": "Immediate Impulse",
+  "single_use": true,
+  "slice_id": "SLICE-005",
+  "stop_conditions": [
+    "identity, manifest, collection, governance, authorization, or lineage mismatch",
+    "candidate/outcome hash or schema conflict",
+    "duplicate attachment or evaluation",
+    "population or denominator conflict",
+    "unsupported metric",
+    "external request, retry, or write requirement"
+  ]
+}

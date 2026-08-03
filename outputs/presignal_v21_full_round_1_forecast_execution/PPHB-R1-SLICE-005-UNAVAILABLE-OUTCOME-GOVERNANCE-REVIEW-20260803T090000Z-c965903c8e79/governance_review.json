@@ -1,0 +1,151 @@
+{
+  "attachment_or_evaluation_started": false,
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595",
+  "existing_rule": "AUTHORIZE_PAIRED_EXCLUSION_OF_TWO_UNAVAILABLE_EPISODES",
+  "existing_rule_application": "DETERMINISTICALLY_APPLICABLE",
+  "external_access": {
+    "apps_script_reads": 0,
+    "google_writes": 0,
+    "market_data_attempts": 0,
+    "retries": 0,
+    "total_external_requests": 0
+  },
+  "manifest_fingerprint": "sha256:c965903c8e799920d4a3aaee3ed3a173be11b0bfa0bbb7a39b39c28323fe7595",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-005-20260803T100000Z",
+  "per_episode": [
+    {
+      "classification": "OUTCOME_TERMINALLY_UNAVAILABLE_UNDER_CURRENT_SOURCE",
+      "collection_request_id": "OUTCOME_SLICE_005_DAY_20240524",
+      "deterministic_recovery_from_preserved_evidence": false,
+      "episode_id": "EP_EVENT_f09204427881dfea157f",
+      "instrument": "USD/JPY",
+      "linked_pack_a_forecast_call_ids": [
+        "FCL_c3549379d05f4631dfb294f9"
+      ],
+      "linked_pack_e_forecast_call_ids": [
+        "FCL_c8172e1cc9d8c6c66ec28e54"
+      ],
+      "new_external_request_required_for_recovery": true,
+      "outcome_id": "OUT_dd136226f5819a8cd8d7",
+      "provider": "tiingo",
+      "provider_dispatch_occurred": true,
+      "raw_response_hash": "sha256:9a01caaaae5c978c0226dfc8949bb44375c34382521862100a2d316bf9b38fcd",
+      "release_ts": "2024-05-24T13:35:00Z",
+      "request_status": "SUCCESS",
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 157.042,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-05-24T13:50:00.000Z",
+          "request_id": "OUTCOME_SLICE_005_DAY_20240524",
+          "timestamp": "2024-05-24T13:50:00.000Z"
+        },
+        "5": {
+          "accepted_raw_price_field": "close",
+          "close": 157.0935,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-05-24T13:40:00.000Z",
+          "request_id": "OUTCOME_SLICE_005_DAY_20240524",
+          "timestamp": "2024-05-24T13:40:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 157.0075,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-05-24T14:35:00.000Z",
+          "request_id": "OUTCOME_SLICE_005_DAY_20240524",
+          "timestamp": "2024-05-24T14:35:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 157.1065,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-05-24T13:35:00.000Z",
+          "request_id": "OUTCOME_SLICE_005_DAY_20240524",
+          "timestamp": "2024-05-24T13:35:00.000Z"
+        }
+      },
+      "unavailable_reason": "MISSING_OR_STALE_PRICE_30M"
+    },
+    {
+      "classification": "OUTCOME_TERMINALLY_UNAVAILABLE_UNDER_CURRENT_SOURCE",
+      "collection_request_id": "OUTCOME_SLICE_005_DAY_20240530",
+      "deterministic_recovery_from_preserved_evidence": false,
+      "episode_id": "EP_EVENT_08219d7669dbc263d9f6",
+      "instrument": "USD/JPY",
+      "linked_pack_a_forecast_call_ids": [
+        "FCL_bf97b9bd8239f814c018ffdd"
+      ],
+      "linked_pack_e_forecast_call_ids": [
+        "FCL_7617e91faa7335a8160c95ee"
+      ],
+      "new_external_request_required_for_recovery": true,
+      "outcome_id": "OUT_1840f659ffb4a2865e08",
+      "provider": "tiingo",
+      "provider_dispatch_occurred": true,
+      "raw_response_hash": "sha256:ef2b270281bcd786ae3d545e03583ba873fa6a0fea0c38c37add9e11c0a72b90",
+      "release_ts": "2024-05-30T21:00:00Z",
+      "request_status": "SUCCESS",
+      "selected_observations": {
+        "15": {
+          "accepted_raw_price_field": "close",
+          "close": 156.7845,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-05-30T21:15:00.000Z",
+          "request_id": "OUTCOME_SLICE_005_DAY_20240530",
+          "timestamp": "2024-05-30T21:15:00.000Z"
+        },
+        "30": {
+          "accepted_raw_price_field": "close",
+          "close": 156.782,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-05-30T21:30:00.000Z",
+          "request_id": "OUTCOME_SLICE_005_DAY_20240530",
+          "timestamp": "2024-05-30T21:30:00.000Z"
+        },
+        "60": {
+          "accepted_raw_price_field": "close",
+          "close": 156.8135,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-05-30T22:00:00.000Z",
+          "request_id": "OUTCOME_SLICE_005_DAY_20240530",
+          "timestamp": "2024-05-30T22:00:00.000Z"
+        },
+        "anchor": {
+          "accepted_raw_price_field": "close",
+          "close": 156.8195,
+          "provider": "tiingo",
+          "provider_returned_timestamp_raw": "2024-05-30T20:59:00.000Z",
+          "request_id": "OUTCOME_SLICE_005_DAY_20240530",
+          "timestamp": "2024-05-30T20:59:00.000Z"
+        }
+      },
+      "unavailable_reason": "MISSING_OR_STALE_PRICE_5M"
+    }
+  ],
+  "recommended_decision": "AUTHORIZE_PAIRED_EXCLUSION_OF_TWO_UNAVAILABLE_EPISODES",
+  "review_id": "PPHB-R1-SLICE-005-UNAVAILABLE-OUTCOME-GOVERNANCE-REVIEW-20260803T090000Z",
+  "revised_population": {
+    "complete_pairs": 19,
+    "episodes": 10,
+    "pack_a": 19,
+    "pack_e": 19,
+    "unpaired": 0,
+    "valid_forecasts": 38
+  },
+  "rule_conditions": {
+    "forecast_content_not_considered": true,
+    "fully_paired_revised_population": true,
+    "governing_artifacts_permit_paired_exclusion": true,
+    "linked_forecasts_known": true,
+    "neither_recoverable": true,
+    "no_safe_authorized_resume": true,
+    "pack_a_e_symmetric": true
+  },
+  "scope_episode_ids": [
+    "EP_EVENT_08219d7669dbc263d9f6",
+    "EP_EVENT_f09204427881dfea157f"
+  ],
+  "unresolved_conflicts": []
+}

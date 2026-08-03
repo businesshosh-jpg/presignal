@@ -70,8 +70,12 @@ def partial_authorization() -> dict[str, Any] | None:
     if not PARTIAL_AUTH_PATH:
         return None
     auth = json.loads(Path(PARTIAL_AUTH_PATH).read_text())
-    if auth.get("authorization_mode") != "PAIRED_EXCLUSION_ATTACHMENT" or auth.get("evaluation_authorized") is not False:
+    if auth.get("authorization_mode") not in {"PAIRED_EXCLUSION_ATTACHMENT", "PAIRED_EXCLUSION_END_TO_END"}:
         raise SystemExit("PAIRED_EXCLUSION_AUTHORIZATION_CONFLICT")
+    if auth.get("authorization_mode") == "PAIRED_EXCLUSION_ATTACHMENT" and auth.get("evaluation_authorized") is not False:
+        raise SystemExit("PAIRED_EXCLUSION_AUTHORIZATION_CONFLICT")
+    if auth.get("authorization_mode") == "PAIRED_EXCLUSION_END_TO_END" and auth.get("attachment_authorized") is not True:
+        raise SystemExit("PAIRED_EXCLUSION_ATTACHMENT_AUTHORITY_CONFLICT")
     return auth
 
 

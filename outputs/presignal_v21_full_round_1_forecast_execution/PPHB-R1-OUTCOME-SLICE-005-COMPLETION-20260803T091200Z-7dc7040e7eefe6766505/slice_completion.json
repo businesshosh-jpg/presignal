@@ -1,0 +1,17 @@
+{
+  "decision": "AUTHORIZED_SLICE_005_END_TO_END_COMPLETE",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-005-20260803T100000Z",
+  "manifest_fingerprint": "sha256:c965903c8e799920d4a3aaee3ed3a173be11b0bfa0bbb7a39b39c28323fe7595",
+  "blocked_authorization_id": "PPHB-R1-OUTCOME-SLICE-005-END-TO-END-AUTHORIZATION-20260803T110000Z",
+  "continuation_authorization_id": "PPHB-R1-SLICE-005-PAIRED-EXCLUSION-CONTINUATION-AUTHORIZATION-20260803T091000Z",
+  "continuation_authorization_fingerprint": "sha256:7dc7040e7eefe6766505af3e4a67a85a9d6b7ce0805cff1a268fc01d83db6ba5",
+  "governance_decision": "AUTHORIZE_PAIRED_EXCLUSION_OF_TWO_UNAVAILABLE_EPISODES",
+  "excluded_episode_ids": ["EP_EVENT_08219d7669dbc263d9f6", "EP_EVENT_f09204427881dfea157f"],
+  "excluded_forecast_call_ids": ["FCL_c3549379d05f4631dfb294f9", "FCL_c8172e1cc9d8c6c66ec28e54", "FCL_bf97b9bd8239f814c018ffdd", "FCL_7617e91faa7335a8160c95ee"],
+  "revised_population": {"episodes": 10, "valid_forecasts": 38, "pack_a": 19, "pack_e": 19, "complete_pairs": 19, "unpaired": 0},
+  "collection": {"run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595", "reused_without_new_requests": true, "historical_external_requests": 14, "google_writes": 0, "retries": 0},
+  "attachment": {"run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-005-PAIRED-EXCLUSION-20260803T091000Z-7dc7040e7eefe6766505", "attached": 10, "duplicates": 0, "unattached": 0, "google_writes": 0},
+  "evaluation": {"run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-005-PAIRED-EXCLUSION-20260803T091100Z-7dc7040e7eefe6766505", "forecast_count": 38, "provider_model_pair_rows": 19, "metrics": ["T+15 directional accuracy", "Immediate Impulse directional accuracy", "magnitude or pip error", "horizon accuracy", "path accuracy", "reversal accuracy"], "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED"},
+  "remote_state": "CERTAIN",
+  "append_only": true
+}

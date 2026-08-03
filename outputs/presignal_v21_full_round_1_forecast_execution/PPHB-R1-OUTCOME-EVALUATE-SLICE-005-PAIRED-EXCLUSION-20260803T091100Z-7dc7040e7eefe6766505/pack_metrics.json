@@ -1,0 +1,238 @@
+{
+  "PACK_A": {
+    "forecast_count": 19,
+    "metrics": {
+      "Immediate Impulse directional accuracy": {
+        "denominator": 0,
+        "eligible_forecast_count": 19,
+        "evaluated_count": 0,
+        "excluded_count": 19,
+        "exclusion_reason": "APPROXIMATION_ONLY_OUTCOME_NOT_STRICTLY_SCORED",
+        "name": "Immediate Impulse directional accuracy",
+        "numerator": 0,
+        "result": null,
+        "status": "NOT_APPLICABLE_STRICT",
+        "treatment": "Only SUPPORTED outcomes are eligible; this slice uses APPROXIMATION_ONLY."
+      },
+      "T+15 directional accuracy": {
+        "denominator": 17,
+        "eligible_forecast_count": 19,
+        "endpoint": "T+15",
+        "evaluated_count": 17,
+        "excluded_count": 2,
+        "exclusion_reason": "NO_SIGNAL_FORECAST",
+        "name": "T+15 directional accuracy",
+        "numerator": 10,
+        "result": 0.5882352941176471,
+        "treatment_flat": "Exact FLAT label match.",
+        "treatment_no_signal": "Excluded from denominator; no-signal handling remains separate."
+      },
+      "horizon accuracy": {
+        "15": {
+          "denominator": 17,
+          "eligible_forecast_count": 19,
+          "evaluated_count": 17,
+          "excluded_count": 2,
+          "exclusion_reason": "NO_SIGNAL_FORECAST",
+          "name": "T+15 horizon accuracy",
+          "numerator": 10,
+          "result": 0.5882352941176471,
+          "treatment_flat": "FLAT is an exact direction label; correct only when realized direction is FLAT.",
+          "treatment_no_signal": "Excluded from directional denominator; no_signal is handled separately by contract."
+        },
+        "30": {
+          "denominator": 17,
+          "eligible_forecast_count": 19,
+          "evaluated_count": 17,
+          "excluded_count": 2,
+          "exclusion_reason": "NO_SIGNAL_FORECAST",
+          "name": "T+30 horizon accuracy",
+          "numerator": 4,
+          "result": 0.23529411764705882,
+          "treatment_flat": "FLAT is an exact direction label; correct only when realized direction is FLAT.",
+          "treatment_no_signal": "Excluded from directional denominator; no_signal is handled separately by contract."
+        },
+        "5": {
+          "denominator": 17,
+          "eligible_forecast_count": 19,
+          "evaluated_count": 17,
+          "excluded_count": 2,
+          "exclusion_reason": "NO_SIGNAL_FORECAST",
+          "name": "T+5 horizon accuracy",
+          "numerator": 7,
+          "result": 0.4117647058823529,
+          "treatment_flat": "FLAT is an exact direction label; correct only when realized direction is FLAT.",
+          "treatment_no_signal": "Excluded from directional denominator; no_signal is handled separately by contract."
+        },
+        "60": {
+          "denominator": 17,
+          "eligible_forecast_count": 19,
+          "evaluated_count": 17,
+          "excluded_count": 2,
+          "exclusion_reason": "NO_SIGNAL_FORECAST",
+          "name": "T+60 horizon accuracy",
+          "numerator": 5,
+          "result": 0.29411764705882354,
+          "treatment_flat": "FLAT is an exact direction label; correct only when realized direction is FLAT.",
+          "treatment_no_signal": "Excluded from directional denominator; no_signal is handled separately by contract."
+        }
+      },
+      "magnitude or pip error": {
+        "denominator": 17,
+        "eligible_forecast_count": 19,
+        "evaluated_count": 17,
+        "excluded_count": 2,
+        "exclusion_reason": "NO_SIGNAL_FORECAST",
+        "field": "T+15 interval distance error",
+        "midpoint_absolute_error_mean_pips": 13.48529411764706,
+        "name": "magnitude or pip error",
+        "numerator": null,
+        "result": 10.352941176470589,
+        "rounding": "2 decimal pips in source; aggregate shown to 6 decimals.",
+        "unit": "pips"
+      },
+      "path accuracy": {
+        "definition": "Mean of T+5/T+15/T+30/T+60 direction correctness per complete validated path.",
+        "denominator": 17,
+        "eligible_forecast_count": 19,
+        "evaluated_count": 17,
+        "excluded_count": 2,
+        "exclusion_reason": "NO_SIGNAL_FORECAST",
+        "name": "path accuracy",
+        "numerator": null,
+        "result": 0.38235294117647056
+      },
+      "reversal accuracy": {
+        "denominator": 17,
+        "eligible_forecast_count": 19,
+        "evaluated_count": 17,
+        "excluded_count": 2,
+        "exclusion_reason": "NO_SIGNAL_FORECAST",
+        "name": "reversal accuracy",
+        "numerator": 7,
+        "result": 0.4117647058823529,
+        "treatment": "Exact expected_reversal_flag versus Outcome reversal_flag."
+      }
+    },
+    "no_signal_count": 2,
+    "pack": "PACK_A"
+  },
+  "PACK_E": {
+    "forecast_count": 19,
+    "metrics": {
+      "Immediate Impulse directional accuracy": {
+        "denominator": 0,
+        "eligible_forecast_count": 19,
+        "evaluated_count": 0,
+        "excluded_count": 19,
+        "exclusion_reason": "APPROXIMATION_ONLY_OUTCOME_NOT_STRICTLY_SCORED",
+        "name": "Immediate Impulse directional accuracy",
+        "numerator": 0,
+        "result": null,
+        "status": "NOT_APPLICABLE_STRICT",
+        "treatment": "Only SUPPORTED outcomes are eligible; this slice uses APPROXIMATION_ONLY."
+      },
+      "T+15 directional accuracy": {
+        "denominator": 18,
+        "eligible_forecast_count": 19,
+        "endpoint": "T+15",
+        "evaluated_count": 18,
+        "excluded_count": 1,
+        "exclusion_reason": "NO_SIGNAL_FORECAST",
+        "name": "T+15 directional accuracy",
+        "numerator": 12,
+        "result": 0.6666666666666666,
+        "treatment_flat": "Exact FLAT label match.",
+        "treatment_no_signal": "Excluded from denominator; no-signal handling remains separate."
+      },
+      "horizon accuracy": {
+        "15": {
+          "denominator": 18,
+          "eligible_forecast_count": 19,
+          "evaluated_count": 18,
+          "excluded_count": 1,
+          "exclusion_reason": "NO_SIGNAL_FORECAST",
+          "name": "T+15 horizon accuracy",
+          "numerator": 12,
+          "result": 0.6666666666666666,
+          "treatment_flat": "FLAT is an exact direction label; correct only when realized direction is FLAT.",
+          "treatment_no_signal": "Excluded from directional denominator; no_signal is handled separately by contract."
+        },
+        "30": {
+          "denominator": 18,
+          "eligible_forecast_count": 19,
+          "evaluated_count": 18,
+          "excluded_count": 1,
+          "exclusion_reason": "NO_SIGNAL_FORECAST",
+          "name": "T+30 horizon accuracy",
+          "numerator": 4,
+          "result": 0.2222222222222222,
+          "treatment_flat": "FLAT is an exact direction label; correct only when realized direction is FLAT.",
+          "treatment_no_signal": "Excluded from directional denominator; no_signal is handled separately by contract."
+        },
+        "5": {
+          "denominator": 18,
+          "eligible_forecast_count": 19,
+          "evaluated_count": 18,
+          "excluded_count": 1,
+          "exclusion_reason": "NO_SIGNAL_FORECAST",
+          "name": "T+5 horizon accuracy",
+          "numerator": 7,
+          "result": 0.3888888888888889,
+          "treatment_flat": "FLAT is an exact direction label; correct only when realized direction is FLAT.",
+          "treatment_no_signal": "Excluded from directional denominator; no_signal is handled separately by contract."
+        },
+        "60": {
+          "denominator": 18,
+          "eligible_forecast_count": 19,
+          "evaluated_count": 18,
+          "excluded_count": 1,
+          "exclusion_reason": "NO_SIGNAL_FORECAST",
+          "name": "T+60 horizon accuracy",
+          "numerator": 5,
+          "result": 0.2777777777777778,
+          "treatment_flat": "FLAT is an exact direction label; correct only when realized direction is FLAT.",
+          "treatment_no_signal": "Excluded from directional denominator; no_signal is handled separately by contract."
+        }
+      },
+      "magnitude or pip error": {
+        "denominator": 18,
+        "eligible_forecast_count": 19,
+        "evaluated_count": 18,
+        "excluded_count": 1,
+        "exclusion_reason": "NO_SIGNAL_FORECAST",
+        "field": "T+15 interval distance error",
+        "midpoint_absolute_error_mean_pips": 13.075000000000001,
+        "name": "magnitude or pip error",
+        "numerator": null,
+        "result": 10.119444444444445,
+        "rounding": "2 decimal pips in source; aggregate shown to 6 decimals.",
+        "unit": "pips"
+      },
+      "path accuracy": {
+        "definition": "Mean of T+5/T+15/T+30/T+60 direction correctness per complete validated path.",
+        "denominator": 18,
+        "eligible_forecast_count": 19,
+        "evaluated_count": 18,
+        "excluded_count": 1,
+        "exclusion_reason": "NO_SIGNAL_FORECAST",
+        "name": "path accuracy",
+        "numerator": null,
+        "result": 0.3888888888888889
+      },
+      "reversal accuracy": {
+        "denominator": 18,
+        "eligible_forecast_count": 19,
+        "evaluated_count": 18,
+        "excluded_count": 1,
+        "exclusion_reason": "NO_SIGNAL_FORECAST",
+        "name": "reversal accuracy",
+        "numerator": 6,
+        "result": 0.3333333333333333,
+        "treatment": "Exact expected_reversal_flag versus Outcome reversal_flag."
+      }
+    },
+    "no_signal_count": 1,
+    "pack": "PACK_E"
+  }
+}

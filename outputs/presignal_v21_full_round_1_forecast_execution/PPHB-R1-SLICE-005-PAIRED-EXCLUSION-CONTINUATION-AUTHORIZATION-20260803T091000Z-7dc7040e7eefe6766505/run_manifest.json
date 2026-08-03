@@ -1,0 +1,12 @@
+{
+  "append_only": true,
+  "attachment": 0,
+  "authorization_fingerprint": "sha256:7dc7040e7eefe6766505af3e4a67a85a9d6b7ce0805cff1a268fc01d83db6ba5",
+  "authorization_id": "PPHB-R1-SLICE-005-PAIRED-EXCLUSION-CONTINUATION-AUTHORIZATION-20260803T091000Z",
+  "evaluation": 0,
+  "external_requests": 0,
+  "google_writes": 0,
+  "manifest_fingerprint": "sha256:c965903c8e799920d4a3aaee3ed3a173be11b0bfa0bbb7a39b39c28323fe7595",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-005-20260803T100000Z",
+  "run_id": "PPHB-R1-SLICE-005-PAIRED-EXCLUSION-CONTINUATION-AUTHORIZATION-20260803T091000Z-7dc7040e7eefe6766505"
+}
