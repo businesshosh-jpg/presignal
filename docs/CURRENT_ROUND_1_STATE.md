@@ -89,7 +89,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Slice 001 attachment and reconciliation: `PPHB-R1-OUTCOME-ATTACHMENT-SLICE-001-20260803T101500Z-5bbe84a70320` (`OUTCOME_SLICE_001_ATTACHED_AND_RECONCILED`; 12/12 candidates attached locally append-only; 44 valid forecasts covered across 12 complete Pack A/E pairs; evaluation remains unauthorized)
 - Slice 001 minimal evaluation: `PPHB-R1-OUTCOME-EVALUATION-SLICE-001-20260803T103000Z-4f8c2b9a6d10` (`OUTCOME_SLICE_001_MINIMAL_EVALUATION_COMPLETE`; 44 valid forecasts evaluated locally; T+15 primary, Immediate Impulse strict score not applicable for APPROXIMATION_ONLY outcomes; no composite or broader matrix calculated)
 - Bounded Outcome slice runner validation: `PPHB-R1-OUTCOME-SLICE-RUNNER-VALIDATION-20260803T110000Z-90765146ec19` (`OUTCOME_SLICE_RUNNER_IMPLEMENTATION_VALIDATED`; preflight-only default, explicit stage flags, authorization/ceiling/hash/lease/duplicate guards, and Slice 001 offline fixture compatibility passed; no Slice 002 authorization granted)
-- Slice 002 manifest preparation: `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121000Z-9c7adf4c2f2e` (`SLICE_002_OUTCOME_COLLECTION_MANIFEST_FROZEN`; 12 Episodes, 44 valid forecasts, 22 Pack A/E pairs; proposed collection authorization is not active)
+- Slice 002 manifest preparation: `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e` (`SLICE_002_OUTCOME_COLLECTION_MANIFEST_FROZEN`; 12 Episodes, 44 valid forecasts, 22 Pack A/E pairs; proposed collection authorization is not active)
 
 ## Prompt boundary
 

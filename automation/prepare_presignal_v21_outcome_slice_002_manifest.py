@@ -12,7 +12,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution"
 SOURCE_AUTH = BASE / "PPHB-R1-OUTCOME-AUTHORIZATION-PREPARATION-20260803T090000Z-18cddcdc5477"
-OUTPUT = BASE / "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121000Z-9c7adf4c2f2e"
+OUTPUT = BASE / "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e"
 CONTRACT = "presignal_event_path_contract_v1_1"
 SCHEMA = "2.1.1"
 
@@ -105,12 +105,12 @@ def main() -> None:
                 "market_data_source_authority": "accepted apiFetchGovernedHistoricalUsdJpyObservation route; one-minute OHLC close; UTC",
                 "collection_destination": "append-only local Outcome collection evidence",
                 "duplicate_prevention_identity": "SLICE-002|" + episode_id + "|USD/JPY|" + source["release_ts"],
-                "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T120000Z-9c7adf4c2f2e",
+                "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
             },
         })
 
     manifest = {
-        "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T120000Z-9c7adf4c2f2e",
+        "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
         "slice_id": "SLICE-002",
         "manifest_status": "FROZEN_PREPARATION_ONLY",
         "source_definition": "PPHB-R1-OUTCOME-AUTHORIZATION-PREPARATION-20260803T090000Z-18cddcdc5477",
@@ -140,7 +140,7 @@ def main() -> None:
     write(output / "slice_002_manifest.json", manifest)
     manifest_hash = "sha256:" + hashlib.sha256((output / "slice_002_manifest.json").read_bytes()).hexdigest()
     proof = {
-        "proof_id": "PPHB-R1-OUTCOME-SLICE-002-POPULATION-PROOF-20260803T120000Z",
+        "proof_id": "PPHB-R1-OUTCOME-SLICE-002-POPULATION-PROOF-20260803T121500Z",
         "manifest_id": manifest["manifest_id"],
         "manifest_fingerprint": manifest_hash,
         "canonical_manifest_fingerprint": canonical_manifest_hash,

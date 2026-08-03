@@ -1,0 +1,10 @@
+{
+  "attachment": 0,
+  "authorization_decision": "SLICE_002_OUTCOME_COLLECTION_AUTHORIZATION_READY",
+  "canonical_manifest_fingerprint": "sha256:fac3b11bfba351ce5761de6572917a471f992af7566c88e2740d57e91d276b37",
+  "decision": "SLICE_002_OUTCOME_COLLECTION_MANIFEST_FROZEN",
+  "evaluation": 0,
+  "external_requests": 0,
+  "manifest_fingerprint": "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e"
+}
