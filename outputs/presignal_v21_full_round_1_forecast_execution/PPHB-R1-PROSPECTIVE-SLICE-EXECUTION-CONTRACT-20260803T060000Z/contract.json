@@ -1,0 +1,53 @@
+{
+  "contract_id": "PPHB-R1-PROSPECTIVE-SLICE-EXECUTION-CONTRACT-20260803T060000Z",
+  "contract_version": "PROSPECTIVE_SLICE_EXECUTION_CONTRACT_V1",
+  "accepted_proof": {
+    "slice_id": "SLICE-002",
+    "completion_artifact": "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z-e8e69ad49e46/slice_completion.json",
+    "controller": "automation/run_presignal_v21_authorized_slice.py",
+    "route": ["manifest_validation", "authorization_validation", "collection", "collection_reconciliation", "attachment", "attachment_reconciliation", "minimal_evaluation", "final_reconciliation"]
+  },
+  "default_workflow": [
+    "freeze_one_prospective_slice_manifest",
+    "freeze_one_explicit_end_to_end_authorization",
+    "start_one_coherent_codex_execution_session",
+    "execute_only_the_authorized_route",
+    "repair_test_and_resume_purely_mechanical_interface_defects_within_the_same_session",
+    "return_only_completed_slice_or_genuine_governance_blocker"
+  ],
+  "permitted_mechanical_repairs": [
+    "artifact_filename_or_glob_compatibility",
+    "deterministic_serialization_compatibility",
+    "canonical_argument_mapping",
+    "completion_proof_discovery",
+    "accepted_artifact_resume_detection",
+    "local_evidence_path_resolution",
+    "idempotency_and_duplicate_stage_prevention"
+  ],
+  "repair_invariants": [
+    "scientific_values_and_meaning_unchanged",
+    "original_evidence_and_hashes_preserved",
+    "canonical_stage_ownership_reused",
+    "frozen_call_write_retry_population_and_metric_limits_preserved",
+    "append_only_lineage",
+    "focused_regression_tests_required"
+  ],
+  "mandatory_governance_stops": [
+    "identity_count_fingerprint_manifest_or_authorization_conflict",
+    "unresolved_artifact_authority_or_ambiguous_authoritative_artifacts",
+    "missing_or_contradictory_outcome_semantics",
+    "pack_a_e_lineage_conflict_or_historical_leakage",
+    "changed_evaluation_population_denominator_or_unsupported_metric",
+    "unauthorized_external_call_write_attachment_evaluation_or_retry",
+    "remote_state_ambiguity_or_exceeded_authorization_ceiling",
+    "repair_changes_forecast_outcome_or_metric_meaning"
+  ],
+  "formalization_move": {
+    "slice_002_rerun": false,
+    "external_requests": 0,
+    "writes": 0,
+    "evaluations_calculated": 0,
+    "controller_repairs_reexecuted": false
+  },
+  "append_only": true
+}

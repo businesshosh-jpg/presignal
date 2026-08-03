@@ -46,3 +46,10 @@ If a requested change would violate any of the above, ask for clarification befo
 - Commit only bounded implementation, tests, and minimal documentation. Do not commit credentials or generated evidence unless explicitly required by repository policy.
 - Push the accepted commit to the requested branch and report repository, branch, start/final HEAD, artifacts, tests, commit, and push status.
 - Prefer the lowest-cost reliable model: GPT-5.6 Luna for mechanical inspection/documentation, GPT-5.4 for normal implementation/tests, and higher reasoning only for unresolved cross-boundary conflicts.
+
+## Prospective Slice Sessions
+
+- For each future prospective Outcome slice, freeze one immutable manifest and one explicit end-to-end authorization, then use one coherent execution session for the authorized route.
+- Within that session, Codex may perform multiple local implementation, test, and resume cycles for deterministic interface defects such as filename/glob compatibility, serialization, argument mapping, completion-proof discovery, evidence-path resolution, and accepted-artifact resume detection.
+- Mechanical repairs must preserve scientific values, original evidence and hashes, canonical stage ownership, authorization ceilings, retry boundaries, and append-only lineage; each repair requires focused regression tests.
+- Stop and request governance for identity, count, fingerprint, authority, semantic, Pack lineage, leakage, population, denominator, metric, remote-state, or authorization conflicts, or any need for an unauthorized external request, write, attachment, evaluation, retry, or changed scientific meaning.

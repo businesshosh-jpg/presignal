@@ -1,0 +1,19 @@
+{
+  "contract_id": "PPHB-R1-PROSPECTIVE-SLICE-EXECUTION-CONTRACT-20260803T060000Z",
+  "controller_repairs_validated": {
+    "native_collector_evidence_to_attachment": "passed",
+    "canonical_outcome_attach_identity_completion_proof": "passed",
+    "legacy_attachment_identity_compatibility": "passed",
+    "ambiguous_artifact_fail_closed": "passed",
+    "accepted_stage_resume_detection": "passed"
+  },
+  "test_command": "python3 -m unittest automation.test_authorized_slice_attachment_completion_proof automation.test_repair_slice_002_collection_attachment_bridge automation.test_run_presignal_v21_authorized_slice automation.test_prepare_presignal_v21_outcome_slice_002_manifest",
+  "tests": "21 passed",
+  "compilation": "passed",
+  "diff_check": "passed",
+  "formalization_move_external_requests": 0,
+  "formalization_move_writes": 0,
+  "formalization_move_evaluations": 0,
+  "slice_002_rerun": false,
+  "append_only": true
+}
