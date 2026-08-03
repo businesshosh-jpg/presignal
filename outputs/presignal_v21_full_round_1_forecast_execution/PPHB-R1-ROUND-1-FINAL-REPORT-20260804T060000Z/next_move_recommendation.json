@@ -1,0 +1,25 @@
+{
+  "artifact_id": "PPHB-R1-ROUND-1-NEXT-MOVE-RECOMMENDATION-20260804T060000Z",
+  "decision": "ROUND_1_FINAL_REPORT_COMPLETE",
+  "recommended_next_move": "Prepare a separately authorized inferential paired T+15 comparison on the existing 206 common paired-scoreable observations.",
+  "rationale": "This is the smallest next experimental Move because it tests the primary-endpoint descriptive difference without changing population, forecasts, Outcomes, metric definitions, or external state.",
+  "required_future_authorization": {
+    "input_population": "The frozen 206 common paired-scoreable Pack A/E T+15 observations in PPHB-R1-ROUND-1-AGGREGATE-EVALUATION-RESULT-20260804T050000Z.",
+    "external_access": 0,
+    "forecast_or_outcome_modification": 0,
+    "exact_test_and_assumptions": "The exact test and assumptions must be specified and accepted before execution.",
+    "preserve": ["T+15 primary hierarchy", "Pack A/E separation", "existing no-signal treatment", "append-only evidence"],
+    "prohibit": ["provider selection", "meta-forecasting", "subgroup mining", "composite score", "Pack redesign", "Round 2 execution"]
+  },
+  "not_recommended_now": [
+    "Replace Pack A.",
+    "Choose a provider or construct a meta-forecast.",
+    "Refine a Pack from post-hoc results.",
+    "Treat Immediate Impulse as evaluated evidence.",
+    "Begin Round 2."
+  ],
+  "drifting_warning": null,
+  "external_access": 0,
+  "metric_recalculation": false,
+  "new_inference_tests": 0
+}

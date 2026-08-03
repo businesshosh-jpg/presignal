@@ -169,7 +169,7 @@ The bounded single-slice runner and authorized-slice controller are validated fo
 
 ## Exact next Move
 
-Prepare one separately authorized scientific interpretation or final Round 1 reporting Move. Do not add inference, provider selection, subgroup analysis, a composite score, or new metrics without explicit authority.
+Prepare a separately authorized inferential paired T+15 comparison on the frozen 206 common paired-scoreable observations. The authorization must name the test and assumptions before execution; do not add provider selection, subgroup analysis, a composite score, Pack redesign, or Round 2 activity.
 
 ## Prospective Outcome/Evaluation Stage Completion
 
@@ -188,6 +188,14 @@ Prepare one separately authorized scientific interpretation or final Round 1 rep
 - T+15 primary endpoint: Pack A `87/208` (`0.418269`); Pack E `113/252` (`0.448413`). Common paired-scoreable population: 206 pairs, Pack A `86/206` (`0.417476`) and Pack E `100/206` (`0.485437`), descriptive only.
 - Immediate Impulse: `NOT_APPLICABLE_STRICT` for both Packs because no accepted aggregate record has a `SUPPORTED` strict Outcome. No-signal exclusions: Pack A 51; Pack E 7.
 - Other pooled metrics and all identity/denominator proofs are append-only in the aggregate result. No composite score, statistical inference, confidence interval, provider selection, subgroup analysis, or post-hoc optimization was calculated.
+
+## Round 1 Final Interpretation
+
+- Decisions: `ROUND_1_SCIENTIFIC_INTERPRETATION_COMPLETE`; `ROUND_1_FINAL_REPORT_COMPLETE`.
+- Evidence strength: `MODERATE_DESCRIPTIVE_EVIDENCE`. Pack E has the higher T+15 directional accuracy on both Pack-specific pooled denominators and the 206 common paired-scoreable observations; it also has lower magnitude interval error and higher reported horizon and path results, while Pack A has higher reversal accuracy.
+- Coverage boundary: Pack A's 51 no-signal exclusions versus Pack E's 7 prevent the Pack-specific denominators from establishing a like-for-like direct comparison. The common paired-scoreable result is descriptive only and does not provide statistical significance or a superiority claim.
+- Scientific conclusion: continue Pack E as a hypothesis-supported arm and retain Pack A as the baseline comparator. Do not replace Pack A, select providers, create a meta-forecast, revise Pack definitions, or begin Round 2 from Round 1 descriptive evidence alone.
+- Final report: `PPHB-R1-ROUND-1-FINAL-REPORT-20260804T060000Z`; no external access, metric recalculation, new inference test, forecast/Outcome change, or Google operation occurred.
 
 ## Prohibited reopening
 

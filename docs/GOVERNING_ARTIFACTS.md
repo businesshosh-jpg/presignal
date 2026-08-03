@@ -157,6 +157,12 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 | `PPHB-R1-AGGREGATE-EVALUATION-AUTHORIZATION-20260804T050000Z` | Aggregate Round 1 authorization | Single-use local-only authorization (`sha256:806ff5fb1d37c42209690fa601101d7590fb96a856bde491ba16285d284ba0d7`) bound to the prospective-stage completion and eleven accepted Slice evaluation row artifacts; permits only the six existing metrics, no external access or composite score | Append-only; completed and non-reusable | Separately authorized interpretation or reporting only |
 | `PPHB-R1-ROUND-1-AGGREGATE-EVALUATION-RESULT-20260804T050000Z` | Aggregate Round 1 result and completion | `ROUND_1_AGGREGATE_EVALUATION_COMPLETE`; identity-level pooled aggregation of 518 unique evaluated forecasts, 259 per Pack, and 259 complete pairs. T+15 remains primary; Immediate Impulse strict scoring is not applicable; descriptive comparison only | Append-only final aggregate evidence | Separately authorized scientific interpretation or final reporting only |
 
+## ACCEPTED_ROUND_1_FINAL_INTERPRETATION
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R1-ROUND-1-FINAL-REPORT-20260804T060000Z` | Scientific interpretation and final Round 1 report | `ROUND_1_SCIENTIFIC_INTERPRETATION_COMPLETE` and `ROUND_1_FINAL_REPORT_COMPLETE`; moderate descriptive evidence only, with T+15 primary, Immediate Impulse strictly unavailable, Pack separation, no replacement/provider-selection conclusion, and a bounded next inferential-authorization recommendation | Append-only final reporting evidence | Separately authorized inferential paired T+15 comparison or later reporting revision |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

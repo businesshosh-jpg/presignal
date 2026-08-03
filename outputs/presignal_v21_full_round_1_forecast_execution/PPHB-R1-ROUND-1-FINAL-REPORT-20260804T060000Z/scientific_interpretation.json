@@ -1,0 +1,29 @@
+{
+  "artifact_id": "PPHB-R1-ROUND-1-SCIENTIFIC-INTERPRETATION-20260804T060000Z",
+  "decision": "ROUND_1_SCIENTIFIC_INTERPRETATION_COMPLETE",
+  "evidence_strength": "MODERATE_DESCRIPTIVE_EVIDENCE",
+  "source_authorization": {
+    "id": "PPHB-R1-AGGREGATE-EVALUATION-AUTHORIZATION-20260804T050000Z",
+    "fingerprint": "sha256:806ff5fb1d37c42209690fa601101d7590fb96a856bde491ba16285d284ba0d7"
+  },
+  "source_result": "PPHB-R1-ROUND-1-AGGREGATE-EVALUATION-RESULT-20260804T050000Z",
+  "observed_descriptive_result": {
+    "primary_endpoint": "Pack E has the higher pooled T+15 directional accuracy: 113/252 (0.448413) versus Pack A 87/208 (0.418269).",
+    "common_pair_check": "On the 206 common paired-scoreable observations, Pack E is 100/206 (0.485437) and Pack A is 86/206 (0.417476); A-E is -0.067961.",
+    "other_endpoints": "Pack E has lower magnitude interval error and higher T+5, T+30, T+60, and path accuracy. Pack A has higher reversal accuracy, so the descriptive pattern is not uniform across every authorized endpoint.",
+    "coverage": "Pack E has 7 no-signal exclusions and Pack A has 51. This establishes a large difference in directional coverage and selectivity, not a coverage-adjusted quality score."
+  },
+  "scientific_inference": "The record supports moderate descriptive evidence favoring Pack E on the primary endpoint and several supporting endpoints. It does not establish statistical significance, causality, general superiority, or a winner.",
+  "unsupported_speculation": [
+    "Pack E is proven superior to Pack A.",
+    "Pack A should be replaced.",
+    "A provider should be selected or weighted from these results.",
+    "A meta-forecast or new Pack design is justified by these results alone."
+  ],
+  "future_hypothesis": "A separately authorized paired inferential comparison of the existing 206 common T+15-scoreable pairs can test whether the observed descriptive gap is compatible with a stable Pack-level difference. A separate coverage analysis can assess the no-signal asymmetry without changing the current metric contract.",
+  "immediate_impulse": "Immediate Impulse directional accuracy remains NOT_APPLICABLE_STRICT because there are zero SUPPORTED Outcomes. It cannot corroborate or qualify the T+15 result in Round 1.",
+  "conclusion": "Continue Pack E development as a hypothesis-supported arm while retaining Pack A as the baseline comparator. Do not replace Pack A or redesign the Packs on this descriptive evidence alone.",
+  "external_access": 0,
+  "metric_recalculation": false,
+  "new_inference_tests": 0
+}
