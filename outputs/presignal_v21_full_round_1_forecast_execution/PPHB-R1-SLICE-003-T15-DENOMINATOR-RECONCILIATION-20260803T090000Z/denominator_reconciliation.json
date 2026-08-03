@@ -1,0 +1,42 @@
+{
+  "accepted_metrics_preserved": true,
+  "affected_forecast": {
+    "episode_id": "EP_BATCH_e14769aca1aaacc9c230",
+    "forecast_call_id": "FCL_cb40905e9d82b875db434ffd",
+    "forecast_scoreability": "NO_SIGNAL_FORECAST",
+    "outcome_status": "APPROXIMATION_ONLY",
+    "pack": "PACK_E",
+    "pack_lineage": "PACK_E|Anthropic|claude-haiku-4-5",
+    "t15_score": "NOT_APPLICABLE"
+  },
+  "artifact_type": "SLICE_003_T15_DENOMINATOR_RECONCILIATION",
+  "common_pair_comparison": {
+    "complete_pairs": 16,
+    "excluded_pair_episode": "EP_BATCH_e14769aca1aaacc9c230",
+    "pack_a_member_call_id": "FCL_d576400379b9741913d6ec6f",
+    "pack_e_member_call_id": "FCL_cb40905e9d82b875db434ffd",
+    "reason": "Pack E member is no-signal; paired difference is undefined rather than coerced.",
+    "t15_common_scoreable_pairs": 15
+  },
+  "decision": "SLICE_003_T15_DENOMINATORS_CONFIRMED",
+  "evaluation_artifact": "PPHB-R1-OUTCOME-EVALUATION-SLICE-003-PAIRED-EXCLUSION-20260803T081500Z-1a04811ea2b95396242c-v2",
+  "external_access": 0,
+  "google_writes": 0,
+  "metrics_not_recalculated": true,
+  "pack_a_remained_16_reason": "All 16 Pack A forecasts in the accepted population are signal-bearing and T+15-scoreable.",
+  "pack_denominators": {
+    "PACK_A": {
+      "denominator": 16,
+      "no_signal_excluded": 0,
+      "numerator": 5
+    },
+    "PACK_E": {
+      "denominator": 15,
+      "no_signal_excluded": 1,
+      "numerator": 7
+    }
+  },
+  "pack_specific_denominators_authorized": true,
+  "rule": "Directional accuracy denominator is the count of eligible non-no-signal forecasts; no-signal forecasts are excluded from the directional denominator and handled separately by contract.",
+  "unresolved_conflicts": []
+}

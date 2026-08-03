@@ -1,0 +1,8 @@
+{
+  "authorization_inputs_decision": "NEXT_PROSPECTIVE_SLICE_AUTHORIZATION_INPUTS_READY",
+  "decision": "NEXT_PROSPECTIVE_SLICE_MANIFEST_FROZEN",
+  "external_access": 0,
+  "manifest_fingerprint": "sha256:527470dac479af672166e861dc39b33873264fc4fc734208cb370ccd2ce593a5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-004-20260803T090000Z",
+  "next_move": "freeze one active end-to-end authorization for Slice 004"
+}

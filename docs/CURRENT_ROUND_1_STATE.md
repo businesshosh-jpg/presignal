@@ -4,7 +4,7 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted HEAD: `76ef90f68f416c7ad52e4f4e993507c473ff7116`
+- Accepted HEAD: `8137d793ab23c8e3bd46e404c38b2ef3087930ad`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
@@ -105,6 +105,8 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Slice 003 paired-exclusion attachment authorization: `PPHB-R1-SLICE-003-PAIRED-EXCLUSION-ATTACHMENT-AUTHORIZATION-20260803T080000Z` is accepted and reconciled as `10/10` local attachments with zero external requests, writes, or retries.
 - Slice 003 supplementary evaluation authorization: `PPHB-R1-SLICE-003-SUPPLEMENTARY-EVALUATION-AUTHORIZATION-20260803T081500Z`, fingerprint `sha256:1a04811ea2b95396242c37bda8b5430ad9e2b9bc5a9c4c33aa945fa238bd9b0d`, completed once for the revised 32-forecast population.
 - Slice 003 completion: `PPHB-R1-OUTCOME-SLICE-003-COMPLETION-20260803T081500Z-1a04811ea2b95396242c` (`AUTHORIZED_SLICE_003_END_TO_END_COMPLETE`; 10 Outcomes, 32 forecasts, 16 Pack A, 16 Pack E, 16 complete pairs; no new external access or writes). The two unavailable Episodes and their eight paired forecast calls remain excluded under the accepted governance decision; prior blocked authorizations remain non-reusable.
+- Slice 003 T+15 denominator reconciliation: `PPHB-R1-SLICE-003-T15-DENOMINATOR-RECONCILIATION-20260803T090000Z` (`SLICE_003_T15_DENOMINATORS_CONFIRMED`). Pack E call `FCL_cb40905e9d82b875db434ffd` is an explicit no-signal forecast for `EP_BATCH_e14769aca1aaacc9c230`; the governing rule excludes it from the Pack E directional denominator, leaving Pack E `7/15`. Pack A remains `5/16`; a direct paired T+15 comparison has 15 mutually scoreable pairs.
+- Slice 004 manifest preparation: `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-004-20260803T090000Z-527470dac479af672166` (`NEXT_PROSPECTIVE_SLICE_MANIFEST_FROZEN`; fingerprint `sha256:527470dac479af672166e861dc39b33873264fc4fc734208cb370ccd2ce593a5`; 12 Episodes, 48 valid forecasts, 24 Pack A, 24 Pack E, 24 complete pairs, 8 UTC release days). Proposed authorization inputs are inactive.
 
 ## Prompt boundary
 
@@ -132,11 +134,11 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 Slice 001 contains 12 immutable candidate Outcomes under `presignal_event_path_contract_v1_1` schema `2.1.1`. Source collection used 3 Apps Script reads and 3 Tiingo provider attempts. The accepted attachment run links all 12 candidates append-only with unchanged hashes and no external access. Coverage is 44 valid forecasts across 12 complete Pack A/E pairs; no evaluation was calculated.
 The accepted minimal evaluation is limited to those 44 forecasts and attached Outcomes. It reports Pack-specific T+15, horizon, path, magnitude/pip, and reversal metrics plus descriptive Pack A/E differences. Immediate Impulse remains secondary and strict-scoring is not applicable because the slice is `APPROXIMATION_ONLY`; no composite score or statistical inference is authorized.
 
-The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; stage-by-stage mode remains available and end-to-end mode advances only after accepted prior-stage completion. Slice 002 and Slice 003 collection, attachment, and minimal evaluation are complete and append-only under their frozen boundaries. T+15 remains primary and Immediate Impulse remains secondary; no composite score or broader matrix was calculated. Current controller state: `AUTHORIZED_SLICE_003_END_TO_END_COMPLETE`. The original and replacement Slice 003 execution authorizations remain blocked/non-reusable where applicable; the paired-exclusion attachment and supplementary evaluation authorizations are completed single-use artifacts.
+The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; stage-by-stage mode remains available and end-to-end mode advances only after accepted prior-stage completion. Slice 002 and Slice 003 collection, attachment, and minimal evaluation are complete and append-only under their frozen boundaries. T+15 remains primary and Immediate Impulse remains secondary; no composite score or broader matrix was calculated. Current controller state: `SLICE_004_MANIFEST_FROZEN_AUTHORIZATION_INPUTS_READY`. Slice 004 has no active authorization and no external activity is permitted.
 
 ## Exact next Move
 
-Prepare the next prospective Slice manifest and one explicit end-to-end authorization. Do not begin another Slice without its own frozen manifest and single-use authorization.
+Freeze one active end-to-end authorization for `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-004-20260803T090000Z` using fingerprint `sha256:527470dac479af672166e861dc39b33873264fc4fc734208cb370ccd2ce593a5`.
 
 ## Prohibited reopening
 

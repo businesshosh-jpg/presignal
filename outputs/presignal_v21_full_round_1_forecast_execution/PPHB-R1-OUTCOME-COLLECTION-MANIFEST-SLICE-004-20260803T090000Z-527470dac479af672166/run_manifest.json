@@ -1,0 +1,13 @@
+{
+  "append_only": true,
+  "evaluation_calculations": 0,
+  "google_reads": 0,
+  "google_writes": 0,
+  "manifest_fingerprint": "sha256:527470dac479af672166e861dc39b33873264fc4fc734208cb370ccd2ce593a5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-004-20260803T090000Z",
+  "market_data_calls": 0,
+  "move": "PREPARE_NEXT_PROSPECTIVE_OUTCOME_SLICE_MANIFEST",
+  "outcome_attachment": 0,
+  "provider_calls": 0,
+  "run_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-004-20260803T090000Z-527470dac479af672166"
+}
