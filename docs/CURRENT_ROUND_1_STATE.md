@@ -4,7 +4,7 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted HEAD: `05214ea721d53dee78027b8f144481d4eadb5cf9`
+- Accepted HEAD: `30baee07575ff7f9fda8e7b7d39b714cb9fd5fae`
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
