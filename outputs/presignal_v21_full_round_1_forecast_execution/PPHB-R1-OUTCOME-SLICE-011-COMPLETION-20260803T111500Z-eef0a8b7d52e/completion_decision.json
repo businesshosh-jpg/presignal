@@ -1,0 +1,11 @@
+{
+  "attachments": 35,
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-011-PAIRED-EXCLUSION-END-TO-END-AUTHORIZATION-20260803T111500Z",
+  "decision": "AUTHORIZED_EXPANDED_SLICE_END_TO_END_COMPLETE",
+  "external_requests": 28,
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+  "new_external_requests_after_collection": 0,
+  "retries": 0,
+  "unresolved_identities": [],
+  "writes": 0
+}

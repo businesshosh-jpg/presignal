@@ -124,6 +124,16 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 | `PPHB-R1-OUTCOME-ATTACH-SLICE-010-20260803T104301Z-a2340f9b9a1a` plus `PPHB-R1-OUTCOME-EVALUATE-SLICE-010-20260803T104301Z-a2340f9b9a1a` | Slice 010 attachment and minimal evaluation | 12/12 Outcomes attached locally, 52 forecasts evaluated across 26 complete Pack A/E pairs, zero duplicate/unattached records, T+15 primary, Immediate Impulse approximation-only secondary, and no composite score | Append-only | Slice 010 final completion |
 | `PPHB-R1-OUTCOME-SLICE-010-COMPLETION-20260803T104400Z-ace0f9494fad1bb70c01` | Slice 010 final completion | `AUTHORIZED_SLICE_010_END_TO_END_COMPLETE`; 12 Outcomes attached, 52 forecasts evaluated, 26 Pack A/E pairs preserved, 12 external requests, 0 writes, 0 retries, and no unavailable or unresolved identities | Append-only final completion | Future prospective Slice manifest and authorization |
 
+## ACCEPTED_SLICE_011
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R1-COMPLETED-SLICE-LEDGER-RECONCILIATION-THROUGH-011-20260803T111500Z` | Completed Slice ledger through the expanded Slice 011 | Confirms accepted Slice 002–011 order, Slice 002 legacy completion naming, no duplicate Episode use, and no unresolved completion identity | Append-only | Future ledger reconciliation |
+| `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z-4aea7d52a95303768ec8` | Expanded Slice 011 frozen population | 36-Episode selection, 14 UTC release days, 130 pre-treatment valid forecasts, Pack A/E lineage, and `14/36/50` proposed ceilings | Prohibited; append-only evidence | Future prospective Slice manifest |
+| `PPHB-R1-OUTCOME-SLICE-011-END-TO-END-AUTHORIZATION-20260803T230000Z-58c168250acd0b7ffdd8` | Slice 011 original collection authorization | 14 Apps Script reads, 36 market-data-attempt ceiling, 50 total-request ceiling, 0 writes, 0 retries; completed collection boundary remains immutable | Prohibited; partial status preserved | Zero-call paired-exclusion continuation |
+| `PPHB-R1-OUTCOME-SLICE-011-PAIRED-EXCLUSION-END-TO-END-AUTHORIZATION-20260803T111500Z-eef0a8b7d52eb568f106` | Slice 011 continuation authorization | One terminal unavailable Outcome is excluded symmetrically; 35 local attachments and six authorized metrics for 124 forecasts | Append-only; completed and non-reusable | Future Slice authorization |
+| `PPHB-R1-OUTCOME-SLICE-011-COMPLETION-20260803T111500Z-eef0a8b7d52e` | Slice 011 final completion | `AUTHORIZED_EXPANDED_SLICE_END_TO_END_COMPLETE`; 35 Outcomes attached, 124 forecasts evaluated, no new continuation external access, 0 writes, 0 retries | Append-only final completion | Future prospective Slice manifest |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

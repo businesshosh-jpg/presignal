@@ -128,6 +128,7 @@ def validate_paired_exclusion_attachment(auth: dict[str, Any], manifest: dict[st
 
 def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str, end_to_end: bool = False) -> dict[str, Any]:
     auth = json.loads(auth_path.read_text())
+    partial_mode = auth.get("authorization_mode") == "PAIRED_EXCLUSION_END_TO_END"
     reject_blocked_authorization(auth.get("authorization_id", ""))
     missing = sorted(REQUIRED_AUTH_FIELDS - set(auth))
     if missing:
@@ -154,7 +155,7 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
         missing_end_to_end = sorted(required - set(auth))
         if missing_end_to_end:
             fail("END_TO_END_AUTHORITY_FIELDS_MISSING:" + ",".join(missing_end_to_end))
-        if auth["authorization_mode"] != "END_TO_END" or auth["authorized_stage"] != "end_to_end":
+        if auth["authorization_mode"] not in {"END_TO_END", "PAIRED_EXCLUSION_END_TO_END"} or auth["authorized_stage"] != "end_to_end":
             fail("END_TO_END_AUTHORIZATION_MODE_CONFLICT")
         if set(auth["outcome_collection_identity_ids"]) != {
             row["outcome_collection_identity"]["duplicate_prevention_identity"] for row in manifest.get("episode_manifest", [])
@@ -162,12 +163,18 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
             fail("OUTCOME_COLLECTION_IDENTITY_CONFLICT")
         if auth["attachment_destination"] != "append-only local Outcome attachment evidence":
             fail("ATTACHMENT_DESTINATION_CONFLICT")
-        if set(auth["authorized_attachment_identity_ids"]) != set(auth["outcome_collection_identity_ids"]):
+        if not partial_mode and set(auth["authorized_attachment_identity_ids"]) != set(auth["outcome_collection_identity_ids"]):
             fail("ATTACHMENT_IDENTITY_SCOPE_CONFLICT")
-        if auth["attachment_write_ceiling"] != {"google_writes": 0, "local_append_only_records": len(rows)}:
+        if partial_mode and not set(auth["authorized_attachment_identity_ids"]).issubset(set(auth["outcome_collection_identity_ids"])):
+            fail("ATTACHMENT_IDENTITY_SCOPE_CONFLICT")
+        expected_attachment_records = len(auth.get("authorized_attachment_identity_ids", []))
+        if auth["attachment_write_ceiling"] != {"google_writes": 0, "local_append_only_records": expected_attachment_records}:
             fail("ATTACHMENT_WRITE_CEILING_CONFLICT")
         display_slice = auth["slice_id"].replace("-", " ").title()
-        expected_population_prefix = f"{population.get('valid_forecasts')} authoritative valid forecasts mapped one-to-one to {len(rows)} attached {display_slice} Outcomes"
+        evaluation_population = auth.get("evaluation_population", {})
+        expected_valid_forecasts = evaluation_population.get("valid_forecasts", population.get("valid_forecasts"))
+        expected_episodes = len(auth.get("authorized_attachment_identity_ids", rows))
+        expected_population_prefix = f"{expected_valid_forecasts} authoritative valid forecasts mapped one-to-one to {expected_episodes} attached {display_slice} Outcomes"
         if not auth["evaluation_population_rule"].startswith(expected_population_prefix) or "terminal-invalid excluded" not in auth["evaluation_population_rule"]:
             fail("EVALUATION_POPULATION_RULE_CONFLICT")
         permitted_metrics = {
@@ -191,7 +198,7 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
     if auth["destination"] != manifest.get("collection_destination"):
         fail("DESTINATION_CONFLICT")
     ids = [row.get("episode_id") for row in rows]
-    if len(rows) != 12 or len(set(ids)) != 12 or set(ids) != set(auth["authorized_identity_ids"]):
+    if not rows or len(rows) > 36 or len(set(ids)) != len(rows) or (not partial_mode and set(ids) != set(auth["authorized_identity_ids"])) or (partial_mode and not set(auth["authorized_identity_ids"]).issubset(set(ids))):
         fail("AUTHORIZED_IDENTITY_SCOPE_CONFLICT")
     if manifest.get("primary_endpoint") != "T+15" or manifest.get("secondary_measurement") != "Immediate Impulse":
         fail("SCIENTIFIC_BOUNDARY_CONFLICT")
@@ -205,17 +212,21 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
     release_days = {row["release_ts"][:10] for row in rows}
     if end_to_end and "release_days_utc" in auth and sorted(auth["release_days_utc"]) != sorted(release_days):
         fail("RELEASE_DAY_SET_CONFLICT")
+    # Expanded slices authorize one market-data attempt per selected Episode;
+    # established 12-Episode slices therefore retain their historical value.
+    expected_market_attempts = 0 if partial_mode else len(rows)
     expected = {
-        "max_apps_script_reads": len(release_days),
-        "max_market_data_attempts": 12,
-        "max_total_external_requests": len(release_days) + 12,
+        "max_apps_script_reads": 0 if partial_mode else len(release_days),
+        "max_market_data_attempts": expected_market_attempts,
+        "max_total_external_requests": 0 if partial_mode else len(release_days) + expected_market_attempts,
         "google_write_ceiling": 0,
     }
     if any(ceilings.get(key) != value for key, value in expected.items()):
         fail("AUTHORIZATION_CEILING_CONFLICT")
     if not end_to_end and set(ceilings) != set(expected):
         fail("AUTHORIZATION_CEILING_CONFLICT")
-    if end_to_end and (ceilings.get("max_attachment_records") != len(rows) or ceilings.get("max_evaluation_artifacts") != 1):
+    expected_attachment_records = len(auth.get("authorized_attachment_identity_ids", [])) if partial_mode else len(rows)
+    if end_to_end and (ceilings.get("max_attachment_records") != expected_attachment_records or ceilings.get("max_evaluation_artifacts") != 1):
         fail("END_TO_END_CEILING_CONFLICT")
     if auth["retry_boundary"] != "NO_AUTOMATIC_RETRIES":
         fail("RETRY_BOUNDARY_CONFLICT")
@@ -254,7 +265,7 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
                 proof.get("attachment_run_id") == path.name
                 and proof.get("authorization_id") == auth.get("authorization_id")
                 and proof.get("authorization_fingerprint") == auth.get("authorization_fingerprint")
-                and result.get("attached_records") == 12
+                and result.get("attached_records") == (len(auth.get("authorized_identity_ids", [])) or 12)
                 and result.get("duplicates") == 0
                 and result.get("unattached_records") == 0
             ):
@@ -283,11 +294,15 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
             reconciliation = json.loads(reconciliation_path.read_text())
             decision = json.loads(decision_path.read_text())
             expected_count = len(auth.get("authorized_identity_ids", [])) if auth else reconciliation.get("manifest_episode_count")
+            partial_collection = auth and auth.get("authorization_mode") == "PAIRED_EXCLUSION_END_TO_END"
+            missing_or_terminal = reconciliation.get("missing_or_terminal_source_episodes") or []
+            allowed_partial = partial_collection and set(missing_or_terminal) == set(auth.get("excluded_episode_ids", []))
+            expected_candidate_count = len(auth.get("outcome_collection_identity_ids", [])) if partial_collection else expected_count
             if (
-                reconciliation.get("manifest_episode_count") != expected_count
-                or reconciliation.get("candidate_outcomes") != expected_count
-                or reconciliation.get("schema_validated_candidates") != expected_count
-                or reconciliation.get("missing_or_terminal_source_episodes")
+                reconciliation.get("manifest_episode_count") != expected_candidate_count
+                or reconciliation.get("candidate_outcomes") != expected_candidate_count
+                or reconciliation.get("schema_validated_candidates") != expected_candidate_count
+                or (missing_or_terminal and not allowed_partial)
                 or reconciliation.get("unresolved_identities")
                 or reconciliation.get("duplicate_requests") != 0
                 or reconciliation.get("google_writes") != 0
@@ -303,11 +318,12 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
                 continue
             reconciliation = json.loads(reconciliation_path.read_text())
             decision = json.loads(decision_path.read_text())
+            expected_count = (len(auth.get("authorized_identity_ids", [])) or 12) if auth else 12
             if (
-                run.get("candidate_count") != 12
-                or run.get("attachment_count") != 12
+                run.get("candidate_count") != expected_count
+                or run.get("attachment_count") != expected_count
                 or run.get("google_writes") != 0
-                or reconciliation.get("attached_outcome_count") != 12
+                or reconciliation.get("attached_outcome_count") != expected_count
                 or reconciliation.get("unattached_candidate_count") != 0
                 or reconciliation.get("duplicate_or_conflicting_attachments") != 0
                 or reconciliation.get("unresolved_identities")
@@ -355,6 +371,8 @@ def execute_end_to_end(auth: dict[str, Any], auth_path: Path, manifest_path: Pat
         "PRESIGNAL_OUTCOME_AUTHORIZATION_FINGERPRINT": auth["authorization_fingerprint"],
         "PRESIGNAL_EVALUATION_AUTH_PATH": str(auth_path),
     })
+    if auth.get("authorization_mode") == "PAIRED_EXCLUSION_END_TO_END":
+        env["PRESIGNAL_PAIRED_EXCLUSION_AUTH_PATH"] = str(auth_path)
     scripts = {
         "collect": "collect_presignal_v21_outcome_slice_001.py",
         "attach": "attach_presignal_v21_outcome_slice_001.py",

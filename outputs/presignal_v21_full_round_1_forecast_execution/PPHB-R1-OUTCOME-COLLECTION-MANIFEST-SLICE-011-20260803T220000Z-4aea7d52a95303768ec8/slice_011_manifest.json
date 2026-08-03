@@ -1,0 +1,1940 @@
+{
+  "authorized_forecast_population": {
+    "complete_pack_a_e_pairs": 65,
+    "pack_a": 65,
+    "pack_a_only": 0,
+    "pack_e": 65,
+    "pack_e_only": 0,
+    "unpaired": 0,
+    "valid_forecasts": 130
+  },
+  "collection_destination": "append-only local Outcome collection evidence; no Google write",
+  "deterministic_order": "earliest accepted forecast execution_order, then exact release_ts and episode_id",
+  "duplicate_prevention": "one immutable outcome identity and reservation per Slice/Episode/instrument/release timestamp; fail closed on conflict",
+  "episode_count": 36,
+  "episode_manifest": [
+    {
+      "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+      "first_forecast_call_id": "FCL_e6fa745d6b76efa0843a8205",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-12T08:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_9b85a57ccc18c6c1fe48|USD/JPY|2024-07-12T09:00:00Z",
+        "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_e6fa745d6b76efa0843a8205"
+          ],
+          "pack_e": [
+            "FCL_da6a497512908a6cedd914a0"
+          ]
+        },
+        "historical_cutoff": "2024-07-12T08:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-12T09:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_9b85a57ccc18c6c1fe48",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_e6fa745d6b76efa0843a8205",
+            "pack_e_forecast_call_id": "FCL_da6a497512908a6cedd914a0",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-12T09:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-12T09:00:00Z",
+      "selection_order": 1
+    },
+    {
+      "episode_id": "EP_BATCH_fb061059bdfaba9b80f9",
+      "first_forecast_call_id": "FCL_bf0815c9faa71105acdc2f91",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-12T08:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_fb061059bdfaba9b80f9|USD/JPY|2024-07-12T12:30:00Z",
+        "episode_id": "EP_BATCH_fb061059bdfaba9b80f9",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_bf0815c9faa71105acdc2f91",
+            "FCL_52852861e032fbc1bde6c1c6"
+          ],
+          "pack_e": [
+            "FCL_538c5e40c38e4f7dc196a55e",
+            "FCL_b6b55c8556061eff4fa2d8c0"
+          ]
+        },
+        "historical_cutoff": "2024-07-12T08:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-12T12:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_fb061059bdfaba9b80f9",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_bf0815c9faa71105acdc2f91",
+            "pack_e_forecast_call_id": "FCL_538c5e40c38e4f7dc196a55e",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_BATCH_fb061059bdfaba9b80f9",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_52852861e032fbc1bde6c1c6",
+            "pack_e_forecast_call_id": "FCL_b6b55c8556061eff4fa2d8c0",
+            "provider": "Gemini"
+          }
+        ],
+        "release_ts": "2024-07-12T12:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-12T12:30:00Z",
+      "selection_order": 2
+    },
+    {
+      "episode_id": "EP_BATCH_19fb130d30544cb793aa",
+      "first_forecast_call_id": "FCL_0a033fa32c34b262276a8366",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-12T08:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_19fb130d30544cb793aa|USD/JPY|2024-07-12T14:00:00Z",
+        "episode_id": "EP_BATCH_19fb130d30544cb793aa",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_0a033fa32c34b262276a8366"
+          ],
+          "pack_e": [
+            "FCL_ee9be343f01670fa4c75bf75"
+          ]
+        },
+        "historical_cutoff": "2024-07-12T08:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-12T14:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_19fb130d30544cb793aa",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_0a033fa32c34b262276a8366",
+            "pack_e_forecast_call_id": "FCL_ee9be343f01670fa4c75bf75",
+            "provider": "Gemini"
+          }
+        ],
+        "release_ts": "2024-07-12T14:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-12T14:00:00Z",
+      "selection_order": 3
+    },
+    {
+      "episode_id": "EP_EVENT_c6c788eed159215d7220",
+      "first_forecast_call_id": "FCL_7d0e44d7fa232ee1b67c1908",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-15T12:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_c6c788eed159215d7220|USD/JPY|2024-07-15T12:30:00Z",
+        "episode_id": "EP_EVENT_c6c788eed159215d7220",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_7d0e44d7fa232ee1b67c1908"
+          ],
+          "pack_e": [
+            "FCL_be0ab2d6322c584f34234244"
+          ]
+        },
+        "historical_cutoff": "2024-07-15T12:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-15T12:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_c6c788eed159215d7220",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_7d0e44d7fa232ee1b67c1908",
+            "pack_e_forecast_call_id": "FCL_be0ab2d6322c584f34234244",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-15T12:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-15T12:30:00Z",
+      "selection_order": 4
+    },
+    {
+      "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+      "first_forecast_call_id": "FCL_58903de7d41edba2cc8a1d7d",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-15T12:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_fd6599ee741e576ef605|USD/JPY|2024-07-15T16:30:00Z",
+        "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_58903de7d41edba2cc8a1d7d",
+            "FCL_825993b4b46606566fa138fb"
+          ],
+          "pack_e": [
+            "FCL_00a3610a2b8cf2b3a2f47982",
+            "FCL_b9af302afdbf5ec2bfc21ebc"
+          ]
+        },
+        "historical_cutoff": "2024-07-15T12:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-15T16:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_58903de7d41edba2cc8a1d7d",
+            "pack_e_forecast_call_id": "FCL_00a3610a2b8cf2b3a2f47982",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_EVENT_fd6599ee741e576ef605",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_825993b4b46606566fa138fb",
+            "pack_e_forecast_call_id": "FCL_b9af302afdbf5ec2bfc21ebc",
+            "provider": "Gemini"
+          }
+        ],
+        "release_ts": "2024-07-15T16:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-15T16:30:00Z",
+      "selection_order": 5
+    },
+    {
+      "episode_id": "EP_BATCH_43d05e3b42f13722626d",
+      "first_forecast_call_id": "FCL_6dbaa58b9581509e857c8082",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-16T12:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_43d05e3b42f13722626d|USD/JPY|2024-07-16T12:30:00Z",
+        "episode_id": "EP_BATCH_43d05e3b42f13722626d",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_6dbaa58b9581509e857c8082",
+            "FCL_b64dc2fb951a5265ee989341",
+            "FCL_948b6e7de748df8cc93d0228"
+          ],
+          "pack_e": [
+            "FCL_601c384d0ed4fbfdfc7bc2a8",
+            "FCL_70e9467dfbc2cae0c50f5fb6",
+            "FCL_8d8656325af2565cc714a938"
+          ]
+        },
+        "historical_cutoff": "2024-07-16T12:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-16T12:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_43d05e3b42f13722626d",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_6dbaa58b9581509e857c8082",
+            "pack_e_forecast_call_id": "FCL_601c384d0ed4fbfdfc7bc2a8",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_BATCH_43d05e3b42f13722626d",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_b64dc2fb951a5265ee989341",
+            "pack_e_forecast_call_id": "FCL_70e9467dfbc2cae0c50f5fb6",
+            "provider": "Gemini"
+          },
+          {
+            "episode_id": "EP_BATCH_43d05e3b42f13722626d",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_948b6e7de748df8cc93d0228",
+            "pack_e_forecast_call_id": "FCL_8d8656325af2565cc714a938",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-16T12:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-16T12:30:00Z",
+      "selection_order": 6
+    },
+    {
+      "episode_id": "EP_BATCH_9ec7ac559f39aa6c3fe5",
+      "first_forecast_call_id": "FCL_e12558c8aa7b6d27849d528c",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-17T07:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_9ec7ac559f39aa6c3fe5|USD/JPY|2024-07-17T11:00:00Z",
+        "episode_id": "EP_BATCH_9ec7ac559f39aa6c3fe5",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_e12558c8aa7b6d27849d528c"
+          ],
+          "pack_e": [
+            "FCL_3219cd286d1263e40cb2d61f"
+          ]
+        },
+        "historical_cutoff": "2024-07-17T07:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-17T11:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_9ec7ac559f39aa6c3fe5",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_e12558c8aa7b6d27849d528c",
+            "pack_e_forecast_call_id": "FCL_3219cd286d1263e40cb2d61f",
+            "provider": "Anthropic"
+          }
+        ],
+        "release_ts": "2024-07-17T11:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-17T11:00:00Z",
+      "selection_order": 7
+    },
+    {
+      "episode_id": "EP_BATCH_9aa4926ab119d6df42bc",
+      "first_forecast_call_id": "FCL_883b55aeab1d7759a3cacab4",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-17T07:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_9aa4926ab119d6df42bc|USD/JPY|2024-07-17T12:30:00Z",
+        "episode_id": "EP_BATCH_9aa4926ab119d6df42bc",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_883b55aeab1d7759a3cacab4",
+            "FCL_71ed59e97f10cf06ee0735ef",
+            "FCL_ffc94d4c8038e1964fc94668"
+          ],
+          "pack_e": [
+            "FCL_a599c8286c0f8686e992a1f5",
+            "FCL_a4225c77e33d4f29914730d8",
+            "FCL_725680f86980fd8fd3682464"
+          ]
+        },
+        "historical_cutoff": "2024-07-17T07:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-17T12:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_9aa4926ab119d6df42bc",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_883b55aeab1d7759a3cacab4",
+            "pack_e_forecast_call_id": "FCL_a599c8286c0f8686e992a1f5",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_BATCH_9aa4926ab119d6df42bc",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_71ed59e97f10cf06ee0735ef",
+            "pack_e_forecast_call_id": "FCL_a4225c77e33d4f29914730d8",
+            "provider": "Gemini"
+          },
+          {
+            "episode_id": "EP_BATCH_9aa4926ab119d6df42bc",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_ffc94d4c8038e1964fc94668",
+            "pack_e_forecast_call_id": "FCL_725680f86980fd8fd3682464",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-17T12:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-17T12:30:00Z",
+      "selection_order": 8
+    },
+    {
+      "episode_id": "EP_EVENT_f8871150cc589388ba49",
+      "first_forecast_call_id": "FCL_61cb937c559d681c732d0bb2",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-17T07:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_f8871150cc589388ba49|USD/JPY|2024-07-17T13:00:00Z",
+        "episode_id": "EP_EVENT_f8871150cc589388ba49",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_61cb937c559d681c732d0bb2"
+          ],
+          "pack_e": [
+            "FCL_ccd34634048a924fa5a24eb2"
+          ]
+        },
+        "historical_cutoff": "2024-07-17T07:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-17T13:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_f8871150cc589388ba49",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_61cb937c559d681c732d0bb2",
+            "pack_e_forecast_call_id": "FCL_ccd34634048a924fa5a24eb2",
+            "provider": "Anthropic"
+          }
+        ],
+        "release_ts": "2024-07-17T13:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-17T13:00:00Z",
+      "selection_order": 9
+    },
+    {
+      "episode_id": "EP_EVENT_2b14c4d89e903bbc91a3",
+      "first_forecast_call_id": "FCL_140e73a3d34dcba2de066b1e",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-17T07:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_2b14c4d89e903bbc91a3|USD/JPY|2024-07-17T13:35:00Z",
+        "episode_id": "EP_EVENT_2b14c4d89e903bbc91a3",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_140e73a3d34dcba2de066b1e"
+          ],
+          "pack_e": [
+            "FCL_a082c63db8f8fab653be6680"
+          ]
+        },
+        "historical_cutoff": "2024-07-17T07:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-17T13:35:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_2b14c4d89e903bbc91a3",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_140e73a3d34dcba2de066b1e",
+            "pack_e_forecast_call_id": "FCL_a082c63db8f8fab653be6680",
+            "provider": "Anthropic"
+          }
+        ],
+        "release_ts": "2024-07-17T13:35:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-17T13:35:00Z",
+      "selection_order": 10
+    },
+    {
+      "episode_id": "EP_EVENT_053c10a3d4a69d6881af",
+      "first_forecast_call_id": "FCL_ddb42fd7079ca651b1e1c237",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_053c10a3d4a69d6881af|USD/JPY|2024-07-18T07:00:00Z",
+        "episode_id": "EP_EVENT_053c10a3d4a69d6881af",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_ddb42fd7079ca651b1e1c237"
+          ],
+          "pack_e": [
+            "FCL_915f2c3557627a6170db5ccd"
+          ]
+        },
+        "historical_cutoff": "2024-07-18T06:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-18T07:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_053c10a3d4a69d6881af",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_ddb42fd7079ca651b1e1c237",
+            "pack_e_forecast_call_id": "FCL_915f2c3557627a6170db5ccd",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-18T07:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-18T07:00:00Z",
+      "selection_order": 11
+    },
+    {
+      "episode_id": "EP_BATCH_a98cccf099ffdf56e3c3",
+      "first_forecast_call_id": "FCL_81dfd1c0eecd720be1478e1a",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_a98cccf099ffdf56e3c3|USD/JPY|2024-07-18T12:30:00Z",
+        "episode_id": "EP_BATCH_a98cccf099ffdf56e3c3",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_81dfd1c0eecd720be1478e1a"
+          ],
+          "pack_e": [
+            "FCL_74c47d035eed9b9a72810d7a"
+          ]
+        },
+        "historical_cutoff": "2024-07-18T06:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-18T12:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_a98cccf099ffdf56e3c3",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_81dfd1c0eecd720be1478e1a",
+            "pack_e_forecast_call_id": "FCL_74c47d035eed9b9a72810d7a",
+            "provider": "Anthropic"
+          }
+        ],
+        "release_ts": "2024-07-18T12:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-18T12:30:00Z",
+      "selection_order": 12
+    },
+    {
+      "episode_id": "EP_EVENT_a72903fa33e0416764ac",
+      "first_forecast_call_id": "FCL_2bca4c2cba919ba6865285fc",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_a72903fa33e0416764ac|USD/JPY|2024-07-18T17:45:00Z",
+        "episode_id": "EP_EVENT_a72903fa33e0416764ac",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_2bca4c2cba919ba6865285fc",
+            "FCL_358e8eb464737878c96e2779"
+          ],
+          "pack_e": [
+            "FCL_6544cbb46a176d7a8aa29372",
+            "FCL_dc05904ef8fa8a038d9644e1"
+          ]
+        },
+        "historical_cutoff": "2024-07-18T06:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-18T17:45:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_a72903fa33e0416764ac",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_2bca4c2cba919ba6865285fc",
+            "pack_e_forecast_call_id": "FCL_6544cbb46a176d7a8aa29372",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_EVENT_a72903fa33e0416764ac",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_358e8eb464737878c96e2779",
+            "pack_e_forecast_call_id": "FCL_dc05904ef8fa8a038d9644e1",
+            "provider": "Gemini"
+          }
+        ],
+        "release_ts": "2024-07-18T17:45:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-18T17:45:00Z",
+      "selection_order": 13
+    },
+    {
+      "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+      "first_forecast_call_id": "FCL_83ff9d6d96f6a6cf0047c7dd",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_436060b9ef51cddd6534|USD/JPY|2024-07-18T22:05:00Z",
+        "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_83ff9d6d96f6a6cf0047c7dd",
+            "FCL_cdef2fc33f46f82f8148b577"
+          ],
+          "pack_e": [
+            "FCL_fb77e1674c0f30f775f51e1e",
+            "FCL_e0249cea382e4ceac72ca8ae"
+          ]
+        },
+        "historical_cutoff": "2024-07-18T06:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-18T22:05:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_83ff9d6d96f6a6cf0047c7dd",
+            "pack_e_forecast_call_id": "FCL_fb77e1674c0f30f775f51e1e",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_EVENT_436060b9ef51cddd6534",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_cdef2fc33f46f82f8148b577",
+            "pack_e_forecast_call_id": "FCL_e0249cea382e4ceac72ca8ae",
+            "provider": "Gemini"
+          }
+        ],
+        "release_ts": "2024-07-18T22:05:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-18T22:05:00Z",
+      "selection_order": 14
+    },
+    {
+      "episode_id": "EP_EVENT_097fece2ffcfa4f2feb0",
+      "first_forecast_call_id": "FCL_15d8323142059cd607302ea1",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-18T06:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_097fece2ffcfa4f2feb0|USD/JPY|2024-07-18T23:45:00Z",
+        "episode_id": "EP_EVENT_097fece2ffcfa4f2feb0",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_15d8323142059cd607302ea1",
+            "FCL_5712f125b37c6eb029ba2112"
+          ],
+          "pack_e": [
+            "FCL_a273220de6e6748ba0fd8815",
+            "FCL_0b349f03f50236b8ba26f3fd"
+          ]
+        },
+        "historical_cutoff": "2024-07-18T06:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-18T23:45:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_097fece2ffcfa4f2feb0",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_15d8323142059cd607302ea1",
+            "pack_e_forecast_call_id": "FCL_a273220de6e6748ba0fd8815",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_EVENT_097fece2ffcfa4f2feb0",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_5712f125b37c6eb029ba2112",
+            "pack_e_forecast_call_id": "FCL_0b349f03f50236b8ba26f3fd",
+            "provider": "Gemini"
+          }
+        ],
+        "release_ts": "2024-07-18T23:45:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-18T23:45:00Z",
+      "selection_order": 15
+    },
+    {
+      "episode_id": "EP_BATCH_640548c8150c4610e70a",
+      "first_forecast_call_id": "FCL_15b69f1701d65eaf86679b3e",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-19T12:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_640548c8150c4610e70a|USD/JPY|2024-07-19T12:30:00Z",
+        "episode_id": "EP_BATCH_640548c8150c4610e70a",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_15b69f1701d65eaf86679b3e"
+          ],
+          "pack_e": [
+            "FCL_5824284c12adddd37be60d88"
+          ]
+        },
+        "historical_cutoff": "2024-07-19T12:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-19T12:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_640548c8150c4610e70a",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_15b69f1701d65eaf86679b3e",
+            "pack_e_forecast_call_id": "FCL_5824284c12adddd37be60d88",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-19T12:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-19T12:30:00Z",
+      "selection_order": 16
+    },
+    {
+      "episode_id": "EP_EVENT_8d833a01621022980c45",
+      "first_forecast_call_id": "FCL_b04e0add77d7df7b33c27723",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-19T12:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_8d833a01621022980c45|USD/JPY|2024-07-19T14:40:00Z",
+        "episode_id": "EP_EVENT_8d833a01621022980c45",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_b04e0add77d7df7b33c27723",
+            "FCL_e6783d61515de8730d661115"
+          ],
+          "pack_e": [
+            "FCL_4b949f4acb10fd17676dbf7c",
+            "FCL_3d2ecea99024ac764bd445dc"
+          ]
+        },
+        "historical_cutoff": "2024-07-19T12:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-19T14:40:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_8d833a01621022980c45",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_b04e0add77d7df7b33c27723",
+            "pack_e_forecast_call_id": "FCL_4b949f4acb10fd17676dbf7c",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_EVENT_8d833a01621022980c45",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_e6783d61515de8730d661115",
+            "pack_e_forecast_call_id": "FCL_3d2ecea99024ac764bd445dc",
+            "provider": "Gemini"
+          }
+        ],
+        "release_ts": "2024-07-19T14:40:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-19T14:40:00Z",
+      "selection_order": 17
+    },
+    {
+      "episode_id": "EP_BATCH_340b3538a77de98a2a70",
+      "first_forecast_call_id": "FCL_3d84c7e8e856427471949171",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-19T12:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_340b3538a77de98a2a70|USD/JPY|2024-07-19T17:00:00Z",
+        "episode_id": "EP_BATCH_340b3538a77de98a2a70",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_3d84c7e8e856427471949171",
+            "FCL_faabf772233b3e088520c5a5"
+          ],
+          "pack_e": [
+            "FCL_bdf5336d750c5f7d9f3f8ca6",
+            "FCL_9baabe12ad55f746f89ef4c2"
+          ]
+        },
+        "historical_cutoff": "2024-07-19T12:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-19T17:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_340b3538a77de98a2a70",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_3d84c7e8e856427471949171",
+            "pack_e_forecast_call_id": "FCL_bdf5336d750c5f7d9f3f8ca6",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_BATCH_340b3538a77de98a2a70",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_faabf772233b3e088520c5a5",
+            "pack_e_forecast_call_id": "FCL_9baabe12ad55f746f89ef4c2",
+            "provider": "Gemini"
+          }
+        ],
+        "release_ts": "2024-07-19T17:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-19T17:00:00Z",
+      "selection_order": 18
+    },
+    {
+      "episode_id": "EP_EVENT_2de77b689facc34d5811",
+      "first_forecast_call_id": "FCL_804500ad745395a69dfc70cf",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-22T12:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_2de77b689facc34d5811|USD/JPY|2024-07-22T12:30:00Z",
+        "episode_id": "EP_EVENT_2de77b689facc34d5811",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_804500ad745395a69dfc70cf",
+            "FCL_6e935ee89300f69067ceeda6",
+            "FCL_72f521738fac95a19f4a4a8f"
+          ],
+          "pack_e": [
+            "FCL_384533561d53172e89d59820",
+            "FCL_ae51913ce1e55d2510621a87",
+            "FCL_88091ec0ce696ee22813e013"
+          ]
+        },
+        "historical_cutoff": "2024-07-22T12:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-22T12:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_2de77b689facc34d5811",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_804500ad745395a69dfc70cf",
+            "pack_e_forecast_call_id": "FCL_384533561d53172e89d59820",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_EVENT_2de77b689facc34d5811",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_6e935ee89300f69067ceeda6",
+            "pack_e_forecast_call_id": "FCL_ae51913ce1e55d2510621a87",
+            "provider": "Gemini"
+          },
+          {
+            "episode_id": "EP_EVENT_2de77b689facc34d5811",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_72f521738fac95a19f4a4a8f",
+            "pack_e_forecast_call_id": "FCL_88091ec0ce696ee22813e013",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-22T12:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-22T12:30:00Z",
+      "selection_order": 19
+    },
+    {
+      "episode_id": "EP_BATCH_787a214cece1437b7d96",
+      "first_forecast_call_id": "FCL_e41d651d83fd8daf4b1eb2c3",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-23T09:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_787a214cece1437b7d96|USD/JPY|2024-07-23T14:00:00Z",
+        "episode_id": "EP_BATCH_787a214cece1437b7d96",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_e41d651d83fd8daf4b1eb2c3"
+          ],
+          "pack_e": [
+            "FCL_73fd6a6f14db2819fac8ffdd"
+          ]
+        },
+        "historical_cutoff": "2024-07-23T09:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-23T14:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_787a214cece1437b7d96",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_e41d651d83fd8daf4b1eb2c3",
+            "pack_e_forecast_call_id": "FCL_73fd6a6f14db2819fac8ffdd",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-23T14:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-23T14:00:00Z",
+      "selection_order": 20
+    },
+    {
+      "episode_id": "EP_EVENT_53d96ab109f9f8b5361f",
+      "first_forecast_call_id": "FCL_722ad63660766ce2eb967c8a",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-23T09:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_53d96ab109f9f8b5361f|USD/JPY|2024-07-23T20:30:00Z",
+        "episode_id": "EP_EVENT_53d96ab109f9f8b5361f",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_722ad63660766ce2eb967c8a"
+          ],
+          "pack_e": [
+            "FCL_8c808effe19c3959e70c66a9"
+          ]
+        },
+        "historical_cutoff": "2024-07-23T09:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-23T20:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_53d96ab109f9f8b5361f",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_722ad63660766ce2eb967c8a",
+            "pack_e_forecast_call_id": "FCL_8c808effe19c3959e70c66a9",
+            "provider": "Anthropic"
+          }
+        ],
+        "release_ts": "2024-07-23T20:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-23T20:30:00Z",
+      "selection_order": 21
+    },
+    {
+      "episode_id": "EP_EVENT_0f10f1f304b90bac56c6",
+      "first_forecast_call_id": "FCL_ad0ce895d048014ad5121c91",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_0f10f1f304b90bac56c6|USD/JPY|2024-07-24T05:30:00Z",
+        "episode_id": "EP_EVENT_0f10f1f304b90bac56c6",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_ad0ce895d048014ad5121c91"
+          ],
+          "pack_e": [
+            "FCL_f04577a3e43cf637f286e097"
+          ]
+        },
+        "historical_cutoff": "2024-07-24T05:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-24T05:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_0f10f1f304b90bac56c6",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_ad0ce895d048014ad5121c91",
+            "pack_e_forecast_call_id": "FCL_f04577a3e43cf637f286e097",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-24T05:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-24T05:30:00Z",
+      "selection_order": 22
+    },
+    {
+      "episode_id": "EP_EVENT_614284b86a9f85bccb48",
+      "first_forecast_call_id": "FCL_6d43b5148cd0b58777d54855",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_614284b86a9f85bccb48|USD/JPY|2024-07-24T09:00:00Z",
+        "episode_id": "EP_EVENT_614284b86a9f85bccb48",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_6d43b5148cd0b58777d54855",
+            "FCL_0918e9987c268e267c6a69fd"
+          ],
+          "pack_e": [
+            "FCL_8c2d71fe1481784b8d1f48ff",
+            "FCL_f5cc70bf113582e2ed56a799"
+          ]
+        },
+        "historical_cutoff": "2024-07-24T05:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-24T09:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_614284b86a9f85bccb48",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_6d43b5148cd0b58777d54855",
+            "pack_e_forecast_call_id": "FCL_8c2d71fe1481784b8d1f48ff",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_EVENT_614284b86a9f85bccb48",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_0918e9987c268e267c6a69fd",
+            "pack_e_forecast_call_id": "FCL_f5cc70bf113582e2ed56a799",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-24T09:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-24T09:00:00Z",
+      "selection_order": 23
+    },
+    {
+      "episode_id": "EP_BATCH_c7cedd13f77b41781490",
+      "first_forecast_call_id": "FCL_2e56900137d662002fd5eb1e",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_c7cedd13f77b41781490|USD/JPY|2024-07-24T12:30:00Z",
+        "episode_id": "EP_BATCH_c7cedd13f77b41781490",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_2e56900137d662002fd5eb1e"
+          ],
+          "pack_e": [
+            "FCL_f0765f3e446b307522f7e051"
+          ]
+        },
+        "historical_cutoff": "2024-07-24T05:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-24T12:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_c7cedd13f77b41781490",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_2e56900137d662002fd5eb1e",
+            "pack_e_forecast_call_id": "FCL_f0765f3e446b307522f7e051",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-24T12:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-24T12:30:00Z",
+      "selection_order": 24
+    },
+    {
+      "episode_id": "EP_EVENT_bcadac9bf16137d4e17c",
+      "first_forecast_call_id": "FCL_be2e6e80933f548fb373f9ce",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_bcadac9bf16137d4e17c|USD/JPY|2024-07-24T13:05:00Z",
+        "episode_id": "EP_EVENT_bcadac9bf16137d4e17c",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_be2e6e80933f548fb373f9ce"
+          ],
+          "pack_e": [
+            "FCL_e29165aae347c75406eb93fc"
+          ]
+        },
+        "historical_cutoff": "2024-07-24T05:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-24T13:05:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_bcadac9bf16137d4e17c",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_be2e6e80933f548fb373f9ce",
+            "pack_e_forecast_call_id": "FCL_e29165aae347c75406eb93fc",
+            "provider": "Gemini"
+          }
+        ],
+        "release_ts": "2024-07-24T13:05:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-24T13:05:00Z",
+      "selection_order": 25
+    },
+    {
+      "episode_id": "EP_EVENT_f4285f2379fdfb80c38e",
+      "first_forecast_call_id": "FCL_91b4cc82a5182192cbaccb41",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_f4285f2379fdfb80c38e|USD/JPY|2024-07-24T14:00:00Z",
+        "episode_id": "EP_EVENT_f4285f2379fdfb80c38e",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_91b4cc82a5182192cbaccb41",
+            "FCL_2ba3229cd8918ea7bef7f17b"
+          ],
+          "pack_e": [
+            "FCL_b23ccc1d346e21d4b5fcd5f1",
+            "FCL_306731fe687af1461d92ac55"
+          ]
+        },
+        "historical_cutoff": "2024-07-24T05:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-24T14:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_f4285f2379fdfb80c38e",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_91b4cc82a5182192cbaccb41",
+            "pack_e_forecast_call_id": "FCL_b23ccc1d346e21d4b5fcd5f1",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_EVENT_f4285f2379fdfb80c38e",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_2ba3229cd8918ea7bef7f17b",
+            "pack_e_forecast_call_id": "FCL_306731fe687af1461d92ac55",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-24T14:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-24T14:00:00Z",
+      "selection_order": 26
+    },
+    {
+      "episode_id": "EP_BATCH_a9069e611fc171b595c7",
+      "first_forecast_call_id": "FCL_524434fb4d1ae3ac2cf57870",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_a9069e611fc171b595c7|USD/JPY|2024-07-24T14:30:00Z",
+        "episode_id": "EP_BATCH_a9069e611fc171b595c7",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_524434fb4d1ae3ac2cf57870"
+          ],
+          "pack_e": [
+            "FCL_dc1b5dce3c6104e562bc5977"
+          ]
+        },
+        "historical_cutoff": "2024-07-24T05:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-24T14:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_a9069e611fc171b595c7",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_524434fb4d1ae3ac2cf57870",
+            "pack_e_forecast_call_id": "FCL_dc1b5dce3c6104e562bc5977",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-24T14:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-24T14:30:00Z",
+      "selection_order": 27
+    },
+    {
+      "episode_id": "EP_EVENT_ce560e1428b25b69fbb2",
+      "first_forecast_call_id": "FCL_acc89be8bdcb9deed1a7c258",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-24T05:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_ce560e1428b25b69fbb2|USD/JPY|2024-07-24T20:05:00Z",
+        "episode_id": "EP_EVENT_ce560e1428b25b69fbb2",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_acc89be8bdcb9deed1a7c258",
+            "FCL_132d9de4539697ccab71d9c6",
+            "FCL_ba0b399126aa1e7e32b2fd57"
+          ],
+          "pack_e": [
+            "FCL_eb26ecb6da19ffa36a6562ff",
+            "FCL_0632b54503fbb125b560419e",
+            "FCL_569f226cc0cedf0bbc3f1f12"
+          ]
+        },
+        "historical_cutoff": "2024-07-24T05:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-24T20:05:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_ce560e1428b25b69fbb2",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_acc89be8bdcb9deed1a7c258",
+            "pack_e_forecast_call_id": "FCL_eb26ecb6da19ffa36a6562ff",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_EVENT_ce560e1428b25b69fbb2",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_132d9de4539697ccab71d9c6",
+            "pack_e_forecast_call_id": "FCL_0632b54503fbb125b560419e",
+            "provider": "Gemini"
+          },
+          {
+            "episode_id": "EP_EVENT_ce560e1428b25b69fbb2",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_ba0b399126aa1e7e32b2fd57",
+            "pack_e_forecast_call_id": "FCL_569f226cc0cedf0bbc3f1f12",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-24T20:05:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-24T20:05:00Z",
+      "selection_order": 28
+    },
+    {
+      "episode_id": "EP_BATCH_20ee2cf49843a481ea22",
+      "first_forecast_call_id": "FCL_c66503feef093f4e4a6d90c3",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-25T12:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_20ee2cf49843a481ea22|USD/JPY|2024-07-25T12:30:00Z",
+        "episode_id": "EP_BATCH_20ee2cf49843a481ea22",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_c66503feef093f4e4a6d90c3",
+            "FCL_45e5c1aee5b3a44f5ab36a3d",
+            "FCL_9c0f9c19151196c2f4f647f9"
+          ],
+          "pack_e": [
+            "FCL_2618a25c2382c29234c78ecd",
+            "FCL_ac89f351fba1c8d93bee9cbf",
+            "FCL_13b421ae5c833fe1882de6d4"
+          ]
+        },
+        "historical_cutoff": "2024-07-25T12:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-25T12:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_20ee2cf49843a481ea22",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_c66503feef093f4e4a6d90c3",
+            "pack_e_forecast_call_id": "FCL_2618a25c2382c29234c78ecd",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_BATCH_20ee2cf49843a481ea22",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_45e5c1aee5b3a44f5ab36a3d",
+            "pack_e_forecast_call_id": "FCL_ac89f351fba1c8d93bee9cbf",
+            "provider": "Gemini"
+          },
+          {
+            "episode_id": "EP_BATCH_20ee2cf49843a481ea22",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_9c0f9c19151196c2f4f647f9",
+            "pack_e_forecast_call_id": "FCL_13b421ae5c833fe1882de6d4",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-25T12:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-25T12:30:00Z",
+      "selection_order": 29
+    },
+    {
+      "episode_id": "EP_BATCH_b554a03dccfdbbd22623",
+      "first_forecast_call_id": "FCL_c01b01b43c2d3d3c9b8ba078",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-25T12:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_b554a03dccfdbbd22623|USD/JPY|2024-07-26T00:00:00Z",
+        "episode_id": "EP_BATCH_b554a03dccfdbbd22623",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_c01b01b43c2d3d3c9b8ba078",
+            "FCL_c9483eaec86ffcc40d7dee79",
+            "FCL_853fc0d1f22bc2506e07b478"
+          ],
+          "pack_e": [
+            "FCL_7b2a7d8b2bc77c559aae9955",
+            "FCL_62da988e2490610f658f7083",
+            "FCL_1561a6e6fcd5488968143a7f"
+          ]
+        },
+        "historical_cutoff": "2024-07-25T12:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-26T00:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_b554a03dccfdbbd22623",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_c01b01b43c2d3d3c9b8ba078",
+            "pack_e_forecast_call_id": "FCL_7b2a7d8b2bc77c559aae9955",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_BATCH_b554a03dccfdbbd22623",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_c9483eaec86ffcc40d7dee79",
+            "pack_e_forecast_call_id": "FCL_62da988e2490610f658f7083",
+            "provider": "Gemini"
+          },
+          {
+            "episode_id": "EP_BATCH_b554a03dccfdbbd22623",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_853fc0d1f22bc2506e07b478",
+            "pack_e_forecast_call_id": "FCL_1561a6e6fcd5488968143a7f",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-26T00:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-26T00:00:00Z",
+      "selection_order": 30
+    },
+    {
+      "episode_id": "EP_BATCH_c7fcaf85ec5aed86bd5b",
+      "first_forecast_call_id": "FCL_f3b8bac1e2d753a53ca353dc",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-26T06:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_c7fcaf85ec5aed86bd5b|USD/JPY|2024-07-26T12:30:00Z",
+        "episode_id": "EP_BATCH_c7fcaf85ec5aed86bd5b",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_f3b8bac1e2d753a53ca353dc",
+            "FCL_144a93b27ba241b547a4b5c8",
+            "FCL_0ebbeb1f46eb35df13398e3e"
+          ],
+          "pack_e": [
+            "FCL_e06efaa6d265b3895af849ab",
+            "FCL_bf571a95616f903eb8cc4a32",
+            "FCL_ee0fe68fc2d8fa3401e5e561"
+          ]
+        },
+        "historical_cutoff": "2024-07-26T06:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-26T12:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_c7fcaf85ec5aed86bd5b",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_f3b8bac1e2d753a53ca353dc",
+            "pack_e_forecast_call_id": "FCL_e06efaa6d265b3895af849ab",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_BATCH_c7fcaf85ec5aed86bd5b",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_144a93b27ba241b547a4b5c8",
+            "pack_e_forecast_call_id": "FCL_bf571a95616f903eb8cc4a32",
+            "provider": "Gemini"
+          },
+          {
+            "episode_id": "EP_BATCH_c7fcaf85ec5aed86bd5b",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_0ebbeb1f46eb35df13398e3e",
+            "pack_e_forecast_call_id": "FCL_ee0fe68fc2d8fa3401e5e561",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-26T12:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-26T12:30:00Z",
+      "selection_order": 31
+    },
+    {
+      "episode_id": "EP_EVENT_1c9c518e150d8f1eef19",
+      "first_forecast_call_id": "FCL_8a5b2cb9e55cfc27caf39825",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-29T14:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_1c9c518e150d8f1eef19|USD/JPY|2024-07-29T14:30:00Z",
+        "episode_id": "EP_EVENT_1c9c518e150d8f1eef19",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_8a5b2cb9e55cfc27caf39825",
+            "FCL_8bd61a80c0075e0de1e834c7"
+          ],
+          "pack_e": [
+            "FCL_90843b254c05a5c71542870f",
+            "FCL_bc4847676a4ae4959e387484"
+          ]
+        },
+        "historical_cutoff": "2024-07-29T14:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-29T14:30:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_1c9c518e150d8f1eef19",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_8a5b2cb9e55cfc27caf39825",
+            "pack_e_forecast_call_id": "FCL_90843b254c05a5c71542870f",
+            "provider": "Gemini"
+          },
+          {
+            "episode_id": "EP_EVENT_1c9c518e150d8f1eef19",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_8bd61a80c0075e0de1e834c7",
+            "pack_e_forecast_call_id": "FCL_bc4847676a4ae4959e387484",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-29T14:30:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-29T14:30:00Z",
+      "selection_order": 32
+    },
+    {
+      "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+      "first_forecast_call_id": "FCL_d2fad4395093323d81567925",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-29T14:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_a0b824687cdcc10ffc56|USD/JPY|2024-07-29T19:00:00Z",
+        "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_d2fad4395093323d81567925"
+          ],
+          "pack_e": [
+            "FCL_cb581c81970467ecd94773c1"
+          ]
+        },
+        "historical_cutoff": "2024-07-29T14:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-29T19:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_a0b824687cdcc10ffc56",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_d2fad4395093323d81567925",
+            "pack_e_forecast_call_id": "FCL_cb581c81970467ecd94773c1",
+            "provider": "Anthropic"
+          }
+        ],
+        "release_ts": "2024-07-29T19:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-29T19:00:00Z",
+      "selection_order": 33
+    },
+    {
+      "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+      "first_forecast_call_id": "FCL_7e8d08c8fe14ccfe54cc7929",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-30T06:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_EVENT_39346b74b1c5a1f649ed|USD/JPY|2024-07-30T07:00:00Z",
+        "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_7e8d08c8fe14ccfe54cc7929",
+            "FCL_1df5eb4d323ae94a231bd29c",
+            "FCL_50c11131d0a5dfaf6abbc255"
+          ],
+          "pack_e": [
+            "FCL_ef9a9189341f30df00ddfb34",
+            "FCL_99581e99e9069f03156731cb",
+            "FCL_30906e7ea87d7d86e35dd5d8"
+          ]
+        },
+        "historical_cutoff": "2024-07-30T06:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-30T07:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_7e8d08c8fe14ccfe54cc7929",
+            "pack_e_forecast_call_id": "FCL_ef9a9189341f30df00ddfb34",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_1df5eb4d323ae94a231bd29c",
+            "pack_e_forecast_call_id": "FCL_99581e99e9069f03156731cb",
+            "provider": "Gemini"
+          },
+          {
+            "episode_id": "EP_EVENT_39346b74b1c5a1f649ed",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_50c11131d0a5dfaf6abbc255",
+            "pack_e_forecast_call_id": "FCL_30906e7ea87d7d86e35dd5d8",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-30T07:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-30T07:00:00Z",
+      "selection_order": 34
+    },
+    {
+      "episode_id": "EP_BATCH_f8e96996a4fd6bc5ed7c",
+      "first_forecast_call_id": "FCL_8b9a5a6d8358b744eb8a9b63",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-30T06:50:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_f8e96996a4fd6bc5ed7c|USD/JPY|2024-07-30T14:00:00Z",
+        "episode_id": "EP_BATCH_f8e96996a4fd6bc5ed7c",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_8b9a5a6d8358b744eb8a9b63",
+            "FCL_94fa183c8e3192d4c796093f",
+            "FCL_d88646d487a48999023e2646"
+          ],
+          "pack_e": [
+            "FCL_df0e4aab748b6bba7fa4be12",
+            "FCL_9fc749a0f939dbab5906f407",
+            "FCL_7ba0f4408280bc1184ac23ef"
+          ]
+        },
+        "historical_cutoff": "2024-07-30T06:50:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-30T14:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_f8e96996a4fd6bc5ed7c",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_8b9a5a6d8358b744eb8a9b63",
+            "pack_e_forecast_call_id": "FCL_df0e4aab748b6bba7fa4be12",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_BATCH_f8e96996a4fd6bc5ed7c",
+            "model": "gemini-2.5-flash-lite",
+            "pack_a_forecast_call_id": "FCL_94fa183c8e3192d4c796093f",
+            "pack_e_forecast_call_id": "FCL_9fc749a0f939dbab5906f407",
+            "provider": "Gemini"
+          },
+          {
+            "episode_id": "EP_BATCH_f8e96996a4fd6bc5ed7c",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_d88646d487a48999023e2646",
+            "pack_e_forecast_call_id": "FCL_7ba0f4408280bc1184ac23ef",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-30T14:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-30T14:00:00Z",
+      "selection_order": 35
+    },
+    {
+      "episode_id": "EP_BATCH_b70c5198286be51658fb",
+      "first_forecast_call_id": "FCL_23b684c7fff0fee16093c523",
+      "first_pack": "PACK_A",
+      "historical_cutoff": "2024-07-31T05:20:00Z",
+      "outcome_collection_identity": {
+        "append_only_lineage": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+        "collection_destination": "append-only local Outcome collection evidence; no Google write",
+        "duplicate_prevention_identity": "SLICE-011|EP_BATCH_b70c5198286be51658fb|USD/JPY|2024-07-31T11:00:00Z",
+        "episode_id": "EP_BATCH_b70c5198286be51658fb",
+        "forecast_contract": "presignal_event_path_contract_v1_1",
+        "forecast_references": {
+          "pack_a": [
+            "FCL_23b684c7fff0fee16093c523",
+            "FCL_e4bd36d0793660989511675c"
+          ],
+          "pack_e": [
+            "FCL_b51503209c139af2b665a459",
+            "FCL_11c6255b4dd54809a75de0a5"
+          ]
+        },
+        "historical_cutoff": "2024-07-31T05:20:00Z",
+        "instrument": "USD/JPY",
+        "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+        "measurement_windows_min": [
+          5,
+          15,
+          30,
+          60
+        ],
+        "outcome_cutoff": "2024-07-31T11:00:00Z",
+        "outcome_schema_version": "2.1.1",
+        "pack_pairs": [
+          {
+            "episode_id": "EP_BATCH_b70c5198286be51658fb",
+            "model": "claude-haiku-4-5",
+            "pack_a_forecast_call_id": "FCL_23b684c7fff0fee16093c523",
+            "pack_e_forecast_call_id": "FCL_b51503209c139af2b665a459",
+            "provider": "Anthropic"
+          },
+          {
+            "episode_id": "EP_BATCH_b70c5198286be51658fb",
+            "model": "gpt-4o-mini-2024-07-18",
+            "pack_a_forecast_call_id": "FCL_e4bd36d0793660989511675c",
+            "pack_e_forecast_call_id": "FCL_11c6255b4dd54809a75de0a5",
+            "provider": "OpenAI"
+          }
+        ],
+        "release_ts": "2024-07-31T11:00:00Z",
+        "slice_id": "SLICE-011"
+      },
+      "release_ts": "2024-07-31T11:00:00Z",
+      "selection_order": 36
+    }
+  ],
+  "forecast_contract": "presignal_event_path_contract_v1_1",
+  "google_write_ceiling": 0,
+  "instrument": "USD/JPY",
+  "manifest_fingerprint": "sha256:4aea7d52a95303768ec8a20faa76957d41d4a9a0ddd6a2d37fb0b56ebc7495bf",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+  "manifest_schema_version": "presignal_v21_outcome_collection_manifest_v1",
+  "manifest_status": "FROZEN_PREPARATION_ONLY",
+  "market_data_source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; USD/JPY; UTC; one-minute OHLC close; provider fallback tiingo -> eodhd -> massive -> twelvedata",
+  "max_apps_script_reads": 14,
+  "max_market_data_attempts": 36,
+  "max_total_external_requests": 50,
+  "measurement_windows_min": [
+    5,
+    15,
+    30,
+    60
+  ],
+  "outcome_schema_version": "2.1.1",
+  "primary_endpoint": "T+15",
+  "release_days_utc": [
+    "2024-07-12",
+    "2024-07-15",
+    "2024-07-16",
+    "2024-07-17",
+    "2024-07-18",
+    "2024-07-19",
+    "2024-07-22",
+    "2024-07-23",
+    "2024-07-24",
+    "2024-07-25",
+    "2024-07-26",
+    "2024-07-29",
+    "2024-07-30",
+    "2024-07-31"
+  ],
+  "retry_boundary": "NO_AUTOMATIC_RETRIES",
+  "secondary_measurement": "Immediate Impulse",
+  "selection_rule": "next eligible pairable Episodes after completed Slice 010 frontier; exclude prior-Slice, terminal-invalid, unavailable, pairability-conflict, identity, cutoff, lineage, source-authority, and leakage-conflict identities",
+  "slice_id": "SLICE-011",
+  "source_authority": "existing apiFetchGovernedHistoricalUsdJpyObservation route; one-minute OHLC close; UTC",
+  "source_definition": "authoritative eligible forecast ledger and accepted prospective-slice selection rules",
+  "timestamp_timezone": "UTC"
+}

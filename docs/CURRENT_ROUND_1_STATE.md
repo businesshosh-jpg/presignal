@@ -4,7 +4,7 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted HEAD: `f35722e2314fb73828d2368f6e93193f37110f8a`
+- Accepted HEAD: `9a1ddce63db78ba6325fead18fd629d9d2a8af42` before Slice 011 execution; this state update is part of the Slice 011 completion commit.
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
@@ -142,11 +142,23 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 Slice 001 contains 12 immutable candidate Outcomes under `presignal_event_path_contract_v1_1` schema `2.1.1`. Source collection used 3 Apps Script reads and 3 Tiingo provider attempts. The accepted attachment run links all 12 candidates append-only with unchanged hashes and no external access. Coverage is 44 valid forecasts across 12 complete Pack A/E pairs; no evaluation was calculated.
 The accepted minimal evaluation is limited to those 44 forecasts and attached Outcomes. It reports Pack-specific T+15, horizon, path, magnitude/pip, and reversal metrics plus descriptive Pack A/E differences. Immediate Impulse remains secondary and strict-scoring is not applicable because the slice is `APPROXIMATION_ONLY`; no composite score or statistical inference is authorized.
 
-The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; stage-by-stage mode remains available and end-to-end mode advances only after accepted prior-stage completion. Slices 002 through 010 are complete under their frozen boundaries. T+15 remains primary and Immediate Impulse remains secondary; no composite score or broader matrix was calculated. Slice 010 completed with 6 Apps Script reads, 6 market-data attempts, 12 total collection requests, 0 writes, 0 retries, 12 attached Outcomes, and 52 evaluated forecasts across 26 Pack A/E pairs. Current controller state: `AUTHORIZED_SLICE_010_END_TO_END_COMPLETE`. A new prospective Slice requires a new frozen manifest and explicit authorization.
+The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; stage-by-stage mode remains available and end-to-end mode advances only after accepted prior-stage completion. Slices 002 through 010 are complete under their frozen boundaries, and Slice 011 is complete under its expanded boundary. Slice 011 used 14 Apps Script reads and 14 provider attempts (28 total external requests), then applied one deterministic paired exclusion with zero new external access; 35 Outcomes were attached and 124 forecasts evaluated across 62 complete Pack A/E pairs. T+15 remains primary and Immediate Impulse remains secondary; no composite score or broader matrix was calculated. Current controller state: `AUTHORIZED_EXPANDED_SLICE_END_TO_END_COMPLETE`. The original Slice 011 authorization is preserved with partial-collection status; the zero-call continuation authorization is completed and non-reusable. A new prospective Slice requires a new frozen manifest and explicit authorization.
+
+## Slice 011 Completion
+
+- Manifest: `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z-4aea7d52a95303768ec8` (`sha256:4aea7d52a95303768ec8a20faa76957d41d4a9a0ddd6a2d37fb0b56ebc7495bf`)
+- Expanded population: 36 selected Episodes; 14 UTC release days; 130 valid forecasts before treatment; 65 Pack A, 65 Pack E, 65 pairs.
+- Unavailable treatment: `EP_EVENT_ce560e1428b25b69fbb2` was terminally unavailable under the current source because of `MISSING_OR_STALE_PRICE_60M`; its six linked forecasts were excluded symmetrically under the accepted paired-exclusion rule.
+- Revised population: 35 attached Episodes; 124 evaluated forecasts; 62 Pack A; 62 Pack E; 62 complete pairs; 0 unpaired.
+- Collection: `PPHB-R1-OUTCOME-COLLECTION-SLICE-011-20260803T105829Z-b56ebc7495bf` (14 Apps Script reads, 14 market-data attempts, 28 total external requests, 0 writes, 0 retries).
+- Attachment: `PPHB-R1-OUTCOME-ATTACH-SLICE-011-20260803T110347Z-b56ebc7495bf` (35 local append-only attachments, 0 duplicates, 0 unattached eligible Outcomes).
+- Evaluation: `PPHB-R1-OUTCOME-EVALUATE-SLICE-011-20260803T110347Z-b56ebc7495bf` (124 forecasts; six authorized metrics only; Immediate Impulse strict score not applicable).
+- Completion: `PPHB-R1-OUTCOME-SLICE-011-COMPLETION-20260803T111500Z-eef0a8b7d52e` (`AUTHORIZED_EXPANDED_SLICE_END_TO_END_COMPLETE`).
+- Ledger: `PPHB-R1-COMPLETED-SLICE-LEDGER-RECONCILIATION-THROUGH-011-20260803T111500Z`; Slice 002 completion is bound to its accepted evaluation-stage `slice_completion.json`, and no duplicate Episode use or unresolved authoritative identity remains.
 
 ## Exact next Move
 
-Prepare the next prospective Slice manifest and inactive authorization inputs. Do not collect, attach, or evaluate until a new explicit authorization is frozen.
+Reconcile the completed ledger through Slice 011 and prepare the next prospective Slice manifest and inactive authorization inputs. Do not collect, attach, or evaluate until a new explicit authorization is frozen.
 
 ## Prohibited reopening
 

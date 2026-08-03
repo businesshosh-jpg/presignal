@@ -1,0 +1,70 @@
+{
+  "append_only": true,
+  "artifact_hashes": {
+    "attachment_reconciliation": "sha256:de8a27fe3271e721d321f84ae0b71f6c54b894dd9d810fbc4ca21e82fcc77d39",
+    "collection_reconciliation": "sha256:b539e4bdd0ed6735a79f56ea454d689470328939a5ab63ce6001e71abae85043",
+    "evaluation_metrics": "sha256:4b993f0aa2c3432b6e5eca562319662327bf23c43bb4b77a5cd23208c2a298fc",
+    "evaluation_population": "sha256:ae87a85fd27d049649b69b17f36f52215752890e57b95171c0631be89dc4c9f0",
+    "manifest_file": "sha256:8ee84de5f0004ec0e7dc113faaeb0f0b8f4bc3d50745536fd7c7b011eb43cf68"
+  },
+  "authorization_fingerprint": "sha256:eef0a8b7d52eb568f10613fbd73b5013ba54ec494508ffdce9ea6db64760dfe7",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-011-PAIRED-EXCLUSION-END-TO-END-AUTHORIZATION-20260803T111500Z",
+  "decision": "AUTHORIZED_EXPANDED_SLICE_END_TO_END_COMPLETE",
+  "external_operations": {
+    "apps_script_reads": 14,
+    "google_writes": 0,
+    "local_attachments": 35,
+    "market_data_attempts": 14,
+    "new_continuation_external_requests": 0,
+    "retries": 0,
+    "total_external_requests": 28
+  },
+  "manifest_fingerprint": "sha256:4aea7d52a95303768ec8a20faa76957d41d4a9a0ddd6a2d37fb0b56ebc7495bf",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-011-20260803T220000Z",
+  "original_authorization_status": "COLLECTION_COMPLETE_PARTIAL_CONTINUATION_REQUIRED",
+  "population": {
+    "attached_episodes": 35,
+    "complete_pairs": 62,
+    "evaluated_forecasts": 124,
+    "excluded_unavailable_episodes": 1,
+    "original_episodes": 36,
+    "pack_a": 62,
+    "pack_e": 62,
+    "unpaired": 0
+  },
+  "scientific_boundaries": {
+    "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED",
+    "permitted_metrics": [
+      "T+15 directional accuracy",
+      "Immediate Impulse directional accuracy",
+      "magnitude or pip error",
+      "horizon accuracy",
+      "path accuracy",
+      "reversal accuracy"
+    ],
+    "primary_endpoint": "T+15",
+    "secondary_measurement": "Immediate Impulse"
+  },
+  "single_use_status": "COMPLETED",
+  "slice_id": "SLICE-011",
+  "stage_runs": {
+    "attachment": "PPHB-R1-OUTCOME-ATTACH-SLICE-011-20260803T110347Z-b56ebc7495bf",
+    "collection": "PPHB-R1-OUTCOME-COLLECTION-SLICE-011-20260803T105829Z-b56ebc7495bf",
+    "completion": "PPHB-R1-OUTCOME-SLICE-011-COMPLETION-20260803T111500Z-eef0a8b7d52e",
+    "evaluation": "PPHB-R1-OUTCOME-EVALUATE-SLICE-011-20260803T110347Z-b56ebc7495bf"
+  },
+  "unavailable_outcome": {
+    "classification": "OUTCOME_TERMINALLY_UNAVAILABLE_UNDER_CURRENT_SOURCE",
+    "episode_id": "EP_EVENT_ce560e1428b25b69fbb2",
+    "excluded_forecast_calls": [
+      "FCL_0632b54503fbb125b560419e",
+      "FCL_132d9de4539697ccab71d9c6",
+      "FCL_569f226cc0cedf0bbc3f1f12",
+      "FCL_acc89be8bdcb9deed1a7c258",
+      "FCL_ba0b399126aa1e7e32b2fd57",
+      "FCL_eb26ecb6da19ffa36a6562ff"
+    ],
+    "reason": "MISSING_OR_STALE_PRICE_60M; canonical source returned no usable 60-minute close; paired exclusion applied symmetrically"
+  },
+  "unresolved_identities": []
+}

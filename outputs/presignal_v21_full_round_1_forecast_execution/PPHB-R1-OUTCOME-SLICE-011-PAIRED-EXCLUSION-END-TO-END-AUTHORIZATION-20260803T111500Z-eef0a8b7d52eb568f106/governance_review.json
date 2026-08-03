@@ -1,0 +1,28 @@
+{
+  "append_only": true,
+  "classification": "OUTCOME_TERMINALLY_UNAVAILABLE_UNDER_CURRENT_SOURCE",
+  "decision": "AUTHORIZE_PAIRED_EXCLUSION_OF_ONE_UNAVAILABLE_EPISODE",
+  "episode_id": "EP_EVENT_ce560e1428b25b69fbb2",
+  "excluded_forecast_call_ids": [
+    "FCL_0632b54503fbb125b560419e",
+    "FCL_132d9de4539697ccab71d9c6",
+    "FCL_569f226cc0cedf0bbc3f1f12",
+    "FCL_acc89be8bdcb9deed1a7c258",
+    "FCL_ba0b399126aa1e7e32b2fd57",
+    "FCL_eb26ecb6da19ffa36a6562ff"
+  ],
+  "external_access": 0,
+  "reason": "MISSING_OR_STALE_PRICE_60M under canonical Tiingo route; six linked forecasts are excluded symmetrically; no recovery, alternate source, retry, or new request authorized",
+  "retries": 0,
+  "revised_population": {
+    "complete_pack_a_e_pairs": 62,
+    "episodes": 35,
+    "pack_a": 62,
+    "pack_a_only": 0,
+    "pack_e": 62,
+    "pack_e_only": 0,
+    "unpaired": 0,
+    "valid_forecasts": 124
+  },
+  "writes": 0
+}

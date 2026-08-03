@@ -1,0 +1,18 @@
+{
+  "append_only": true,
+  "authorization_fingerprint": "sha256:58c168250acd0b7ffdd8b96e73b047ddc45abed4c2785b36b9321a00a7d3e725",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-011-END-TO-END-AUTHORIZATION-20260803T230000Z",
+  "completed_stages": [
+    "call_free_preflight",
+    "collection",
+    "collection_reconciliation"
+  ],
+  "decision": "AUTHORIZED_SLICE_011_CONTINUATION_REQUIRED",
+  "external_requests": 28,
+  "google_writes": 0,
+  "retries": 0,
+  "status": "COLLECTION_COMPLETE_PARTIAL_CONTINUATION_REQUIRED",
+  "unavailable_episode_ids": [
+    "EP_EVENT_ce560e1428b25b69fbb2"
+  ]
+}

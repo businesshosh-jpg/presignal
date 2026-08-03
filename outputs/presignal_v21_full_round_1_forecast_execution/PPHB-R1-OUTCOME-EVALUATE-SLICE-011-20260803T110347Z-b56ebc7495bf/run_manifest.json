@@ -1,0 +1,20 @@
+{
+  "additional_attachment": 0,
+  "attachment_run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-011-20260803T110347Z-b56ebc7495bf",
+  "authorization_fingerprint": "sha256:eef0a8b7d52eb568f10613fbd73b5013ba54ec494508ffdce9ea6db64760dfe7",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-011-PAIRED-EXCLUSION-END-TO-END-AUTHORIZATION-20260803T111500Z",
+  "episode_count": 35,
+  "episode_pair_groups": 35,
+  "external_requests": 0,
+  "forecast_count": 124,
+  "generated_ts": "2026-08-03T11:03:49Z",
+  "google_reads": 0,
+  "google_writes": 0,
+  "manifest_sha256": "sha256:4aea7d52a95303768ec8a20faa76957d41d4a9a0ddd6a2d37fb0b56ebc7495bf",
+  "market_data_calls": 0,
+  "move_type": "MINIMAL_EVALUATION_ATTACHED_OUTCOME_SLICE_011",
+  "outcome_recollection": 0,
+  "provider_calls": 0,
+  "provider_model_pair_rows": 62,
+  "run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-011-20260803T110347Z-b56ebc7495bf"
+}

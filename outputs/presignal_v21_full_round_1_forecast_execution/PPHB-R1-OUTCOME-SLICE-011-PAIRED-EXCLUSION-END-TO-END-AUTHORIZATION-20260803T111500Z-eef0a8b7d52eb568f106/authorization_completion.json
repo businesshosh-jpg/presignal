@@ -1,0 +1,17 @@
+{
+  "append_only": true,
+  "authorization_fingerprint": "sha256:eef0a8b7d52eb568f10613fbd73b5013ba54ec494508ffdce9ea6db64760dfe7",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-011-PAIRED-EXCLUSION-END-TO-END-AUTHORIZATION-20260803T111500Z",
+  "completed_stages": [
+    "paired_exclusion",
+    "attachment",
+    "attachment_reconciliation",
+    "minimal_evaluation",
+    "final_slice_reconciliation"
+  ],
+  "decision": "AUTHORIZED_SLICE_011_END_TO_END_COMPLETE",
+  "external_requests": 0,
+  "google_writes": 0,
+  "retries": 0,
+  "status": "COMPLETED"
+}
