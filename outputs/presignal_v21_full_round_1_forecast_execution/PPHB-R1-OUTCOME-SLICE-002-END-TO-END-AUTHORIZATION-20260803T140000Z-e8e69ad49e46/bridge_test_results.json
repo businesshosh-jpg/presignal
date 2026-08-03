@@ -1,0 +1,21 @@
+{
+  "tests": {
+    "native_collector_artifact_binding": "passed",
+    "exact_12_record_identity_preservation": "passed",
+    "semantic_field_and_contract_validation": "passed",
+    "source_hash_and_lineage_preservation": "passed",
+    "missing_record_fail_closed": "passed",
+    "extra_record_fail_closed": "passed",
+    "duplicate_record_fail_closed": "passed",
+    "altered_record_fail_closed": "passed",
+    "manifest_binding_fail_closed": "passed",
+    "repeat_finalization_prevention": "passed",
+    "resume_skips_collection": "passed",
+    "zero_external_access": "passed",
+    "no_attachment_or_evaluation": "passed"
+  },
+  "command": "python3 -m unittest automation.test_repair_slice_002_collection_attachment_bridge automation.test_run_presignal_v21_authorized_slice automation.test_prepare_presignal_v21_outcome_slice_002_manifest",
+  "result": "17 tests passed",
+  "compilation": "passed",
+  "diff_check": "passed"
+}

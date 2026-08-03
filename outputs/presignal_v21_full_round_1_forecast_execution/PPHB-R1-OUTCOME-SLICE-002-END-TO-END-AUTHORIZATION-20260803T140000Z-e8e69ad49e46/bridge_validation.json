@@ -1,0 +1,40 @@
+{
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z",
+  "authorization_fingerprint": "sha256:acea3df8666d7d5dc6474bd7d0269a79e02e41d91ef4e449299833fe8fcf9da3",
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-002-20260803T035402Z-5b2104c5270c",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
+  "manifest_sha256": "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c",
+  "root_cause": "filename_and_serialization_entry_point_incompatibility_only",
+  "ownership_boundary": "canonical attachment entry point direct collector-artifact reader",
+  "bridge_rule": "accept collection_reconciliation.json plus candidate_outcomes.jsonl JSON-array representation; retain legacy finalized names; perform no semantic projection",
+  "source_artifact_hashes": {
+    "run_manifest.json": "sha256:1ff008c57815f67eb0f2708640b25c2eebe880e6329db3b2f7bca328ae6226f1",
+    "collection_reconciliation.json": "sha256:711d55162a8acec274739bd595eb646d369fa97b3a8444fe3b783c6eed1138a3",
+    "candidate_outcomes.jsonl": "sha256:451e3d47f503c8f3f19cd0b82d2659e2ebbdc4f0332967b0323fc2414e7cf62b"
+  },
+  "derived_artifact_hashes": {
+    "candidate_attachment_input": "sha256:451e3d47f503c8f3f19cd0b82d2659e2ebbdc4f0332967b0323fc2414e7cf62b",
+    "projection": "NONE_DIRECT_ACCEPTANCE"
+  },
+  "identity_proof": {
+    "episodes": 12,
+    "unique": 12,
+    "candidate_values_unchanged": true,
+    "instrument": "USD/JPY",
+    "schema_version": "2.1.1",
+    "contract": "presignal_event_path_contract_v1_1",
+    "timestamp_and_window_authority": "PASSED",
+    "source_authority": "PASSED",
+    "valid_forecasts": 44,
+    "complete_pack_a_e_pairs": 22,
+    "terminal_invalid_forecasts_introduced": 0
+  },
+  "duplicate_finalization": "PREVENTED_BY_SOURCE_HASH_AND_EXISTING_RUN_CHECKS",
+  "controller_resume_decision": "SLICE_002_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED; accepted collection recognized and skipped on live resume",
+  "collection_requests_repeated": 0,
+  "attachment_performed": 0,
+  "evaluation_performed": 0,
+  "external_requests": 0,
+  "decision": "COLLECTION_TO_ATTACHMENT_EVIDENCE_BRIDGE_REPAIRED",
+  "append_only": true
+}

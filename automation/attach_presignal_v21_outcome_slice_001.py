@@ -49,7 +49,89 @@ def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
-    return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+    text = path.read_text()
+    if text.lstrip().startswith("["):
+        value = json.loads(text)
+        if not isinstance(value, list):
+            raise SystemExit("COLLECTION_RECORDS_NOT_A_LIST")
+        return value
+    return [json.loads(line) for line in text.splitlines() if line.strip()]
+
+
+def resolve_collection_inputs(collection_dir: Path, expected_manifest_sha: str) -> dict[str, Any]:
+    """Accept the collector's native artifacts or the legacy finalized names."""
+    legacy_finalization = collection_dir / "collection_finalization.json"
+    legacy_candidates = collection_dir / "candidate_outcomes_final.jsonl"
+    native_reconciliation = collection_dir / "collection_reconciliation.json"
+    native_candidates = collection_dir / "candidate_outcomes.jsonl"
+    run_manifest = collection_dir / "run_manifest.json"
+
+    if legacy_finalization.exists() and legacy_candidates.exists():
+        finalization = json.loads(legacy_finalization.read_text())
+        candidates_path = legacy_candidates
+        source_mode = "LEGACY_FINALIZED_ARTIFACTS"
+    elif native_reconciliation.exists() and native_candidates.exists() and run_manifest.exists():
+        reconciliation = json.loads(native_reconciliation.read_text())
+        run = json.loads(run_manifest.read_text())
+        if run.get("manifest_sha256") != expected_manifest_sha:
+            raise SystemExit("COLLECTION_MANIFEST_BINDING_MISMATCH")
+        if reconciliation.get("manifest_episode_count") != 12:
+            raise SystemExit("COLLECTION_RECONCILIATION_COUNT_MISMATCH")
+        if reconciliation.get("candidate_outcomes") != 12 or reconciliation.get("schema_validated_candidates") != 12:
+            raise SystemExit("COLLECTION_RECONCILIATION_INCOMPLETE")
+        if reconciliation.get("unresolved_identities") or reconciliation.get("missing_or_terminal_source_episodes"):
+            raise SystemExit("COLLECTION_RECONCILIATION_UNRESOLVED")
+        if reconciliation.get("duplicate_requests") != 0 or reconciliation.get("google_writes") != 0:
+            raise SystemExit("COLLECTION_RECONCILIATION_CONFLICT")
+        decision = json.loads((collection_dir / "collection_decision.json").read_text())
+        if decision.get("collection_decision") != "OUTCOME_COLLECTION_SLICE_002_COMPLETE":
+            raise SystemExit("COLLECTION_COMPLETION_NOT_ACCEPTED")
+        finalization = {"manifest_sha256": expected_manifest_sha, "source_mode": "COLLECTOR_NATIVE_ARTIFACTS"}
+        candidates_path = native_candidates
+        source_mode = "COLLECTOR_NATIVE_ARTIFACTS"
+    else:
+        raise SystemExit("COLLECTION_ARTIFACT_BRIDGE_INPUTS_MISSING")
+
+    if finalization.get("manifest_sha256") != expected_manifest_sha:
+        raise SystemExit("COLLECTION_MANIFEST_BINDING_MISMATCH")
+    candidates = read_jsonl(candidates_path)
+    if len(candidates) != 12:
+        raise SystemExit("OUTCOME_SLICE_COUNT_MISMATCH")
+    return {
+        "candidates": candidates,
+        "candidates_path": str(candidates_path),
+        "source_mode": source_mode,
+        "source_hashes": {
+            "run_manifest": sha(run_manifest),
+            "collection_reconciliation": sha(native_reconciliation if native_reconciliation.exists() else legacy_finalization),
+            "candidate_records": sha(candidates_path),
+        },
+    }
+
+
+def validate_bridge_candidates(candidates: list[dict[str, Any]], expected_episode_ids: set[str]) -> None:
+    """Reject missing, extra, duplicate, or semantically altered candidate rows."""
+    if len(candidates) != 12:
+        raise SystemExit("OUTCOME_SLICE_COUNT_MISMATCH")
+    seen_episodes: set[str] = set()
+    seen_outcomes: set[str] = set()
+    for row in candidates:
+        outcome = row.get("candidate_outcome", {})
+        episode_id = row.get("episode_id")
+        if episode_id in seen_episodes or episode_id not in expected_episode_ids:
+            raise SystemExit("COLLECTION_CANDIDATE_IDENTITY_CONFLICT")
+        seen_episodes.add(episode_id)
+        if outcome.get("episode_id") != episode_id or outcome.get("outcome_id") in seen_outcomes:
+            raise SystemExit("COLLECTION_CANDIDATE_DUPLICATE_OR_IDENTITY_CONFLICT")
+        seen_outcomes.add(outcome.get("outcome_id"))
+        if outcome.get("outcome_fingerprint") != row.get("outcome_fingerprint"):
+            raise SystemExit("COLLECTION_CANDIDATE_FINGERPRINT_CONFLICT")
+        try:
+            contract.validate_outcome(outcome)
+        except Exception as exc:
+            raise SystemExit("COLLECTION_CANDIDATE_SCHEMA_CONFLICT:" + type(exc).__name__) from exc
+    if seen_episodes != expected_episode_ids:
+        raise SystemExit("COLLECTION_CANDIDATE_IDENTITY_CONFLICT")
 
 
 def utc(value: str) -> str:
@@ -103,21 +185,20 @@ def main() -> int:
     if run_dir.exists():
         raise SystemExit("ATTACHMENT_RUN_ALREADY_EXISTS")
 
-    finalization = json.loads((COLLECTION_DIR / "collection_finalization.json").read_text())
     manifest_bytes_hash = sha(MANIFEST)
     if manifest_bytes_hash != EXPECTED_MANIFEST_SHA:
         raise SystemExit("OUTCOME_MANIFEST_HASH_MISMATCH")
-    if finalization["manifest_sha256"] != EXPECTED_MANIFEST_SHA:
-        raise SystemExit("COLLECTION_MANIFEST_BINDING_MISMATCH")
+    collection_inputs = resolve_collection_inputs(COLLECTION_DIR, EXPECTED_MANIFEST_SHA)
 
     manifest = json.loads(MANIFEST.read_text())
     manifest_rows = manifest["episode_manifest"]
-    candidates = read_jsonl(COLLECTION_DIR / "candidate_outcomes_final.jsonl")
-    if len(manifest_rows) != 12 or len(candidates) != 12:
+    candidates = collection_inputs["candidates"]
+    if len(manifest_rows) != 12:
         raise SystemExit("OUTCOME_SLICE_COUNT_MISMATCH")
     manifest_by_episode = {row["episode_id"]: row for row in manifest_rows}
     if len(manifest_by_episode) != 12:
         raise SystemExit("OUTCOME_SLICE_DUPLICATE_EPISODE")
+    validate_bridge_candidates(candidates, set(manifest_by_episode))
 
     prior_attachment_dirs = list(BASE.glob(f"PPHB-R1-OUTCOME-ATTACHMENT-{SLICE_ID}-*"))
     if prior_attachment_dirs:
@@ -190,6 +271,7 @@ def main() -> int:
         "provider_calls": 0,
         "evaluation_calculations": 0,
         "append_only": True,
+        "collection_bridge": collection_inputs,
         "generated_ts": now,
     })
     write_json(run_dir / "attachment_preflight.json", {
