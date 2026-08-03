@@ -351,6 +351,24 @@ def repair_missing_path_boundary(text: str) -> tuple[str, dict[str, Any]]:
     if not path_marker:
         return text, {"status": "NOT_APPLICABLE", "candidate_count": 0}
 
+    def reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        keys = [key for key, _ in pairs]
+        if len(keys) != len(set(keys)):
+            raise ValueError("duplicate JSON key")
+        return dict(pairs)
+
+    # Valid JSON already has unambiguous object boundaries. Duplicate keys are
+    # retained as an ambiguity so the repair path fails closed below.
+    try:
+        json.loads(text, object_pairs_hook=reject_duplicate_keys)
+        return text, {
+            "status": "NO_REPAIR_POSITION",
+            "candidate_count": 0,
+            "reason": "VALID_JSON_NO_STRUCTURAL_REPAIR",
+        }
+    except (json.JSONDecodeError, ValueError):
+        pass
+
     path_text = text[path_marker.end():]
     boundary = re.compile(
         r'("invalidation_condition"\s*:\s*"(?:\\.|[^"\\])*")\s*,\s*("horizon_min"\s*:)'

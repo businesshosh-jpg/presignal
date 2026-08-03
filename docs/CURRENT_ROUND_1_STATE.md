@@ -81,6 +81,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Pack E Batch 024: `PPHB-R1-FORECAST-EXECUTION-BATCH-E024-20260803T060000Z-ee93fecddb2e` plus `PPHB-R1-PACK-E-BATCH-024-COMPLETION-20260803T060000Z`
 - Full forecast execution completion: `PPHB-R1-FORECAST-FULL-EXECUTION-COMPLETION-20260803T060000Z`
 - Pack A deterministic raw recovery: `PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66`
+- Pack A deterministic raw recovery verification: `PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-VERIFICATION-20260803T111500Z-9f2e4c7a1d66` (`FCL_3d10ae8285471f4e3a980b79`; one schema-proven structural boundary restored, strict validation passed, no provider call; prior terminal evidence preserved)
 - Outcome authorization preparation: `PPHB-R1-OUTCOME-AUTHORIZATION-PREPARATION-20260803T090000Z-18cddcdc5477`
 - Outcome source preflight: `PPHB-R1-OUTCOME-COLLECTION-SLICE-001-20260803T000113Z-ceeaad9f41c8` (`OUTCOME_SOURCE_PREFLIGHT_PASSED`; collection blocked before external access by `GOOGLE_OAUTH_TOKEN_MISSING`)
 - OAuth restoration and collection attempt: `PPHB-R1-OUTCOME-OAUTH-RESTORATION-SLICE-001-20260803T000800Z` (`GOOGLE_OAUTH_ROUTE_NOT_RESTORED`; preflight blocked before external access)

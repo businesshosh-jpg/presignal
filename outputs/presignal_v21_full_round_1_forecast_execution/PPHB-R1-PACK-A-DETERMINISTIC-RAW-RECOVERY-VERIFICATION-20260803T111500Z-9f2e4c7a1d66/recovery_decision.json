@@ -1,0 +1,40 @@
+{
+  "run_id": "PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-VERIFICATION-20260803T111500Z-9f2e4c7a1d66",
+  "decision": "PACK_A_TERMINAL_INVALID_CALL_MECHANICALLY_RECOVERED",
+  "recovered_status": "RECOVERED_VALID_FROM_PRESERVED_RAW_OUTPUT",
+  "forecast_call_id": "FCL_3d10ae8285471f4e3a980b79",
+  "scope": {
+    "provider_calls": 0,
+    "google_access": false,
+    "market_data_access": false,
+    "outcome_access": false,
+    "evaluation": false,
+    "other_terminal_invalid_calls_inspected": false
+  },
+  "recovery_rule_version": "PACK_A_PATH_BOUNDARY_REPAIR_V1",
+  "recovery_rule": "For malformed JSON only, identify exactly one schema-shaped transition from an invalidation_condition string directly to a second horizon_min key, insert the missing path-object boundary, and fail closed on zero or multiple candidates. Valid JSON is returned unchanged.",
+  "original_raw_output_hash": "sha256:1f6c333ccb4489eb1f634d90a2b6ee8de7c42277066ef3568cced8e11e007860",
+  "repaired_representation_hash": "sha256:142487ec9cad381f7e268c2afb20ad16045f15e7cb92e3e42f835b23821b946d",
+  "normalized_output_hash": "sha256:d8639e8c9805e6f1dd03299475037507118e09556c7431823a6488163ba40f48",
+  "strict_validation": "PASSED",
+  "authority": "PASSED_WITH_ORIGINAL_PROVIDER_MODEL_PACK_PROMPT_EPISODE_TARGET_AND_CUTOFF_BINDING",
+  "counts": {
+    "frozen_calls": 564,
+    "authoritative_valid_forecasts": 561,
+    "terminal_invalid_completed_calls": 3,
+    "unexecuted_calls": 0,
+    "remote_state_unknown_calls": 0,
+    "unresolved_authoritative_identities": 0,
+    "pack_a_valid": 280,
+    "pack_a_terminal_invalid": 2,
+    "pack_e_valid": 281,
+    "pack_e_terminal_invalid": 1
+  },
+  "remaining_terminal_invalid_calls": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_7f0463b134c67757968580e8",
+    "FCL_e07264654e9d3da6f63088a1"
+  ],
+  "original_terminal_evidence_preserved": true,
+  "provider_retry": false
+}

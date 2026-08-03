@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -16,7 +17,7 @@ from automation import run_presignal_v21_single_event_path_pair_v1_1 as step6
 from automation.build_presignal_v21_event_path_inputs import reject_leakage
 
 OUTPUT_ROOT = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution"
-RUN_ID = "PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66"
+RUN_ID = os.environ.get("PRESIGNAL_PACK_A_RECOVERY_RUN_ID", "PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66")
 TARGET = "FCL_3d10ae8285471f4e3a980b79"
 SOURCE_RUN = OUTPUT_ROOT / "PPHB-R1-FORECAST-EXECUTION-BATCH-010-20260801T190644Z-17f70b192668"
 FEASIBILITY_RUN = OUTPUT_ROOT / "PPHB-R1-PACK-A-TERMINAL-INVALID-RECOVERY-FEASIBILITY-REVIEW-20260803T070000Z-385b501cd5dc"

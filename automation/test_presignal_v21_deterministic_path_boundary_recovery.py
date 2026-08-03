@@ -42,6 +42,13 @@ class DeterministicPathBoundaryRecoveryTests(unittest.TestCase):
         self.assertEqual(normalized_audit["path_boundary_repair"]["status"], "REPAIRED_ONE_STRUCTURAL_BOUNDARY")
         self.assertNotEqual(raw, repaired)
         self.assertEqual(repaired.count('"horizon_min"'), raw.count('"horizon_min"'))
+        self.assertEqual(__import__('hashlib').sha256(repaired.encode()).hexdigest(), "142487ec9cad381f7e268c2afb20ad16045f15e7cb92e3e42f835b23821b946d")
+
+    def test_valid_structure_is_unchanged(self):
+        valid = '{"path":[{"invalidation_condition":"a","horizon_min":5},{"horizon_min":15},{"horizon_min":30},{"horizon_min":60}]}'
+        repaired, audit = step6.repair_missing_path_boundary(valid)
+        self.assertEqual(repaired, valid)
+        self.assertEqual(audit["status"], "NO_REPAIR_POSITION")
 
     def test_zero_and_multiple_candidates_fail_closed(self):
         clean = '{"path": [{"horizon_min": 5}]}'
