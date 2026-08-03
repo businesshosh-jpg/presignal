@@ -1,0 +1,41 @@
+[
+  {
+    "anchor_available": true,
+    "episode_id": "EP_EVENT_10bb8b09f0707ed45e3b",
+    "market_data_provider": "tiingo",
+    "max_excursion_available": true,
+    "outcome_status": "AVAILABLE",
+    "price_15m_available": true,
+    "price_30m_available": true,
+    "price_5m_available": true,
+    "price_60m_available": true,
+    "release_ts": "2024-07-31T18:00:00Z",
+    "unavailable_reason": ""
+  },
+  {
+    "anchor_available": true,
+    "episode_id": "EP_EVENT_192edf701510c6f5e4ca",
+    "market_data_provider": "tiingo",
+    "max_excursion_available": true,
+    "outcome_status": "AVAILABLE",
+    "price_15m_available": true,
+    "price_30m_available": true,
+    "price_5m_available": true,
+    "price_60m_available": true,
+    "release_ts": "2024-07-31T18:30:00Z",
+    "unavailable_reason": ""
+  },
+  {
+    "anchor_available": true,
+    "episode_id": "EP_EVENT_d58c66e4ce2481c58c28",
+    "market_data_provider": "tiingo",
+    "max_excursion_available": true,
+    "outcome_status": "AVAILABLE",
+    "price_15m_available": true,
+    "price_30m_available": true,
+    "price_5m_available": true,
+    "price_60m_available": true,
+    "release_ts": "2024-07-31T11:30:00Z",
+    "unavailable_reason": ""
+  }
+]

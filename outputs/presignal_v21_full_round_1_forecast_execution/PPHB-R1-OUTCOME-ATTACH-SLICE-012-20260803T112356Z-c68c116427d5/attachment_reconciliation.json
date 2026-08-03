@@ -1,0 +1,47 @@
+{
+  "attached_outcome_count": 3,
+  "authorized_candidate_count": 3,
+  "candidate_to_attached_hash_linkage": "PASSED",
+  "duplicate_or_conflicting_attachments": 0,
+  "episode_coverage": "3_OF_3",
+  "evaluation_calculations": 0,
+  "external_requests": 0,
+  "failures_by_episode": {},
+  "google_writes": 0,
+  "pack_a_e_forecast_coverage": {
+    "complete_pack_a_e_pairs_outcome_covered": 3,
+    "forecast_call_ids": [
+      "FCL_1e1b31169a70a3fcd7c51c06",
+      "FCL_251f020ac9a2e5a3b386507c",
+      "FCL_25685218ef4ade0ab1e88e71",
+      "FCL_3ede5e94f72e343620d58ec6",
+      "FCL_48c662cb06ed1ae924481169",
+      "FCL_5f6e9930585d0f67689ae389",
+      "FCL_6b754bbab1423580e46abaaf",
+      "FCL_75e7cdf64628ebd960a77692",
+      "FCL_77f35d2830f001641f6d2dc7",
+      "FCL_8a9ba1e198d10819ad0298f0",
+      "FCL_90e54c935a369ee8a6ad2a7e",
+      "FCL_cf186919d92e5a25bd183c8b",
+      "FCL_da8209966ad48e8cd0e73065",
+      "FCL_dd494d3a6e49e34f65e4b7de"
+    ],
+    "invalid_calls_excluded": [
+      "FCL_27720b8b23236b173b96fdee",
+      "FCL_7f0463b134c67757968580e8",
+      "FCL_e07264654e9d3da6f63088a1"
+    ],
+    "pack_a_only_valid_forecasts_outcome_covered": 0,
+    "pack_e_only_valid_forecasts_outcome_covered": 0,
+    "unresolved_pair_keys": [],
+    "valid_forecasts_outcome_covered": 14
+  },
+  "paired_exclusion": [],
+  "schema_validation": {
+    "contract": "presignal_event_path_contract_v1_1",
+    "schema_version": "2.1.1",
+    "valid": 3
+  },
+  "unattached_candidate_count": 0,
+  "unresolved_identities": []
+}

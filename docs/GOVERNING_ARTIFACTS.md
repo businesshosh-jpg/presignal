@@ -134,6 +134,15 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 | `PPHB-R1-OUTCOME-SLICE-011-PAIRED-EXCLUSION-END-TO-END-AUTHORIZATION-20260803T111500Z-eef0a8b7d52eb568f106` | Slice 011 continuation authorization | One terminal unavailable Outcome is excluded symmetrically; 35 local attachments and six authorized metrics for 124 forecasts | Append-only; completed and non-reusable | Future Slice authorization |
 | `PPHB-R1-OUTCOME-SLICE-011-COMPLETION-20260803T111500Z-eef0a8b7d52e` | Slice 011 final completion | `AUTHORIZED_EXPANDED_SLICE_END_TO_END_COMPLETE`; 35 Outcomes attached, 124 forecasts evaluated, no new continuation external access, 0 writes, 0 retries | Append-only final completion | Future prospective Slice manifest |
 
+## ACCEPTED_SLICE_012
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R1-COMPLETED-SLICE-LEDGER-RECONCILIATION-THROUGH-012-20260804T030000Z` | Completed Slice ledger through Slice 012 | Confirms unique Slice and Episode authority through the final 3-Episode frontier | Append-only | Future ledger reconciliation |
+| `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-012-20260804T010000Z-2254278251fac1f625ab` | Slice 012 frozen population | 3 Episodes, 14 valid forecasts, 7 Pack A/E pairs, 1 UTC release day, and exact `1/3/4` request ceilings | Prohibited; append-only evidence | Future prospective Slice manifest |
+| `PPHB-R1-OUTCOME-SLICE-012-END-TO-END-AUTHORIZATION-20260804T020000Z-b7526624ab98c1da4aff` | Slice 012 active authorization | Single-use route bound to the frozen manifest, 1/3/4 ceilings, 0 writes, 0 retries, 3 local attachments, and six-metric allow-list | Append-only; completed and non-reusable | Future Slice authorization |
+| `PPHB-R1-OUTCOME-SLICE-012-COMPLETION-20260804T030000Z-b7526624ab98c1da4aff` | Slice 012 final completion | `AUTHORIZED_EXPANDED_SLICE_END_TO_END_COMPLETE`; 3 Outcomes attached, 14 forecasts evaluated, no unavailable Outcomes, 2 external requests, 0 writes, 0 retries | Append-only final completion | Future prospective Slice manifest |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

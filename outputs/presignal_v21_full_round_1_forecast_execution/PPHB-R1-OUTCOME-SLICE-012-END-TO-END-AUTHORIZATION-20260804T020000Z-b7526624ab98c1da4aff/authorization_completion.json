@@ -1,0 +1,10 @@
+{
+  "append_only": true,
+  "authorization_fingerprint": "sha256:b7526624ab98c1da4affb9d9b503c8ec17f862bbe311041115d479a881b1d505",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-012-END-TO-END-AUTHORIZATION-20260804T020000Z",
+  "decision": "AUTHORIZED_EXPANDED_SLICE_END_TO_END_COMPLETE",
+  "external_requests": 2,
+  "google_writes": 0,
+  "retries": 0,
+  "status": "COMPLETED"
+}

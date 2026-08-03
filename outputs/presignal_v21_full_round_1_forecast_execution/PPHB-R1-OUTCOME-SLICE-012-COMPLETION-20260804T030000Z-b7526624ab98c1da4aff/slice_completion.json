@@ -1,0 +1,66 @@
+{
+  "append_only": true,
+  "artifact_hashes": {
+    "attachment_reconciliation": "sha256:7473f86469a1b583ab6bb9dd54b92818f137cef38d48c7e9d17f2aa20fb5c902",
+    "collection_reconciliation": "sha256:97d6ca95a2f7afdd40d57d81ed7c0e9040436e2d8ee3d8cf65807c5020b05aa3",
+    "evaluation_metrics": "sha256:8527200d17849f59dfc8fa16d24165f1e6b299a8d3847d3cf2147c8d433f1355",
+    "evaluation_population": "sha256:b77e3297d64b6cf03e6368ac4c6c83eedb4a16382b1e8490e7e55af6dc818883",
+    "manifest_file": "sha256:42d3afa9b237930b3ca350440cf9049ff7a88f4d2647dea2c125548797dde9d0"
+  },
+  "authorization_fingerprint": "sha256:b7526624ab98c1da4affb9d9b503c8ec17f862bbe311041115d479a881b1d505",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-012-END-TO-END-AUTHORIZATION-20260804T020000Z",
+  "ceilings": {
+    "google_write_ceiling": 0,
+    "max_apps_script_reads": 1,
+    "max_attachment_records": 3,
+    "max_evaluation_artifacts": 1,
+    "max_market_data_attempts": 3,
+    "max_total_external_requests": 4
+  },
+  "decision": "AUTHORIZED_EXPANDED_SLICE_END_TO_END_COMPLETE",
+  "external_operations": {
+    "apps_script_reads": 1,
+    "google_writes": 0,
+    "local_attachments": 3,
+    "market_data_attempts": 1,
+    "new_continuation_external_requests": 0,
+    "retries": 0,
+    "total_external_requests": 2
+  },
+  "manifest_fingerprint": "sha256:2254278251fac1f625ab06948c2275b996f59727b93a6eb9ddddc68c116427d5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-012-20260804T010000Z",
+  "population": {
+    "complete_pairs": 7,
+    "episodes": 3,
+    "pack_a": 7,
+    "pack_e": 7,
+    "unpaired": 0,
+    "valid_forecasts": 14
+  },
+  "release_days_utc": [
+    "2024-07-31"
+  ],
+  "scientific_boundaries": {
+    "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED",
+    "permitted_metrics": [
+      "T+15 directional accuracy",
+      "Immediate Impulse directional accuracy",
+      "magnitude or pip error",
+      "horizon accuracy",
+      "path accuracy",
+      "reversal accuracy"
+    ],
+    "primary_endpoint": "T+15",
+    "secondary_measurement": "Immediate Impulse"
+  },
+  "single_use_status": "COMPLETED",
+  "slice_id": "SLICE-012",
+  "stage_runs": {
+    "attachment": "PPHB-R1-OUTCOME-ATTACH-SLICE-012-20260803T112356Z-c68c116427d5",
+    "collection": "PPHB-R1-OUTCOME-COLLECTION-SLICE-012-20260803T112350Z-c68c116427d5",
+    "completion": "PPHB-R1-OUTCOME-SLICE-012-COMPLETION-20260804T030000Z-b7526624ab98c1da4aff",
+    "evaluation": "PPHB-R1-OUTCOME-EVALUATE-SLICE-012-20260803T112356Z-c68c116427d5"
+  },
+  "unavailable_outcomes": [],
+  "unresolved_identities": []
+}

@@ -1,0 +1,9 @@
+{
+  "authorization_fingerprint": "sha256:b7526624ab98c1da4affb9d9b503c8ec17f862bbe311041115d479a881b1d505",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-012-END-TO-END-AUTHORIZATION-20260804T020000Z",
+  "authorization_inputs_decision": "EXPANDED_SLICE_AUTHORIZATION_READY",
+  "decision": "EXPANDED_SLICE_MANIFEST_FROZEN",
+  "manifest_fingerprint": "sha256:2254278251fac1f625ab06948c2275b996f59727b93a6eb9ddddc68c116427d5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-012-20260804T010000Z",
+  "next_move": "validate and execute the active end-to-end authorization"
+}

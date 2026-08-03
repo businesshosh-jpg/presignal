@@ -1,0 +1,17 @@
+{
+  "apps_script_reads": 1,
+  "candidate_outcomes": 3,
+  "contract": "presignal_event_path_contract_v1_1",
+  "duplicate_requests": 0,
+  "evaluation_calculations": 0,
+  "google_writes": 0,
+  "leakage_control": "PASSED",
+  "manifest_episode_count": 3,
+  "market_data_provider_attempts": 1,
+  "missing_or_terminal_source_episodes": [],
+  "outcome_attachment": 0,
+  "schema_validated_candidates": 3,
+  "schema_version": "2.1.1",
+  "total_external_requests": 2,
+  "unresolved_identities": []
+}

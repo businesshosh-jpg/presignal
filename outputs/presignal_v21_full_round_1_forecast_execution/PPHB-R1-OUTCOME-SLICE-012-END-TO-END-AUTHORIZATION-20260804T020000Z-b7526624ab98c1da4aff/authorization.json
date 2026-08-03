@@ -1,0 +1,111 @@
+{
+  "attachment_destination": "append-only local Outcome attachment evidence",
+  "attachment_write_ceiling": {
+    "google_writes": 0,
+    "local_append_only_records": 3
+  },
+  "authorization_expiration": "single-use; completed or blocked status is non-reusable",
+  "authorization_fingerprint": "sha256:b7526624ab98c1da4affb9d9b503c8ec17f862bbe311041115d479a881b1d505",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-012-END-TO-END-AUTHORIZATION-20260804T020000Z",
+  "authorization_mode": "END_TO_END",
+  "authorization_schema_version": "presignal_v21_prospective_slice_end_to_end_authorization_v1",
+  "authorization_scope": "one single-use end-to-end execution for SLICE-012 only",
+  "authorization_status": "ACTIVE",
+  "authorized_attachment_identity_ids": [
+    "SLICE-012|EP_EVENT_d58c66e4ce2481c58c28|USD/JPY|2024-07-31T11:30:00Z",
+    "SLICE-012|EP_EVENT_10bb8b09f0707ed45e3b|USD/JPY|2024-07-31T18:00:00Z",
+    "SLICE-012|EP_EVENT_192edf701510c6f5e4ca|USD/JPY|2024-07-31T18:30:00Z"
+  ],
+  "authorized_identity_ids": [
+    "EP_EVENT_d58c66e4ce2481c58c28",
+    "EP_EVENT_10bb8b09f0707ed45e3b",
+    "EP_EVENT_192edf701510c6f5e4ca"
+  ],
+  "authorized_stage": "end_to_end",
+  "ceilings": {
+    "google_write_ceiling": 0,
+    "max_apps_script_reads": 1,
+    "max_attachment_records": 3,
+    "max_evaluation_artifacts": 1,
+    "max_market_data_attempts": 3,
+    "max_total_external_requests": 4
+  },
+  "contract": "presignal_event_path_contract_v1_1",
+  "controller_commit": "9a1ddce63db78ba6325fead18fd629d9d2a8af42",
+  "controller_version": "AUTHORIZED_SLICE_CONTROLLER_V1",
+  "destination": "append-only local Outcome collection evidence; no Google write",
+  "evaluation_authorized": true,
+  "evaluation_output_destination": "append-only local SLICE-012 minimal evaluation evidence",
+  "evaluation_population": {
+    "complete_pack_a_e_pairs": 7,
+    "episodes": 3,
+    "pack_a": 7,
+    "pack_a_only": 0,
+    "pack_e": 7,
+    "pack_e_only": 0,
+    "unpaired": 0,
+    "valid_forecasts": 14
+  },
+  "evaluation_population_rule": "14 authoritative valid forecasts mapped one-to-one to 3 attached Slice 012 Outcomes; 7 Pack A and 7 Pack E forecasts; 7 complete Pack A/E pairs; terminal-invalid excluded; no-signal forecasts excluded from directional denominators.",
+  "expanded_slice": true,
+  "manifest_fingerprint": "sha256:2254278251fac1f625ab06948c2275b996f59727b93a6eb9ddddc68c116427d5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-012-20260804T010000Z",
+  "manifest_sha256": "sha256:2254278251fac1f625ab06948c2275b996f59727b93a6eb9ddddc68c116427d5",
+  "max_episode_count": 48,
+  "outcome_collection_identity_ids": [
+    "SLICE-012|EP_EVENT_d58c66e4ce2481c58c28|USD/JPY|2024-07-31T11:30:00Z",
+    "SLICE-012|EP_EVENT_10bb8b09f0707ed45e3b|USD/JPY|2024-07-31T18:00:00Z",
+    "SLICE-012|EP_EVENT_192edf701510c6f5e4ca|USD/JPY|2024-07-31T18:30:00Z"
+  ],
+  "permitted_mechanical_repairs": "general deterministic interface, serialization, path, completion-proof, request-day lineage, resume, and idempotency repairs only; no scientific-semantic changes",
+  "permitted_metrics": [
+    "T+15 directional accuracy",
+    "Immediate Impulse directional accuracy",
+    "magnitude or pip error",
+    "horizon accuracy",
+    "path accuracy",
+    "reversal accuracy"
+  ],
+  "primary_endpoint": "T+15",
+  "prohibited_scope": [
+    "other slices",
+    "other manifests",
+    "terminal-invalid forecasts",
+    "Google writes",
+    "retries",
+    "market-data source substitution",
+    "forecast or Outcome mutation",
+    "unauthorized metrics"
+  ],
+  "prospective_contract": "PPHB-R1-PROSPECTIVE-SLICE-EXECUTION-CONTRACT-20260803T060000Z",
+  "release_days_utc": [
+    "2024-07-31"
+  ],
+  "resume_authority": "resume only from accepted append-only stage artifacts with exact authorization and manifest bindings; completed external requests and attachments are never repeated",
+  "retry_boundary": "NO_AUTOMATIC_RETRIES",
+  "schema_version": "2.1.1",
+  "secondary_measurement": "Immediate Impulse",
+  "single_use": true,
+  "slice_id": "SLICE-012",
+  "stage_sequence": [
+    "call_free_preflight",
+    "collection",
+    "collection_reconciliation",
+    "attachment",
+    "attachment_reconciliation",
+    "minimal_evaluation",
+    "final_slice_reconciliation"
+  ],
+  "stage_stop_conditions": [
+    "identity/count/fingerprint/day-set conflict",
+    "unresolved artifact authority",
+    "missing or contradictory Outcome semantics",
+    "Pack A/E lineage conflict",
+    "historical leakage",
+    "population/denominator conflict",
+    "unsupported metric",
+    "unauthorized request/write/attachment/retry",
+    "remote-state ambiguity",
+    "ceiling exceeded"
+  ]
+}
