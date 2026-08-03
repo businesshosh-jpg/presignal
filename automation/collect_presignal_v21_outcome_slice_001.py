@@ -88,6 +88,7 @@ def preflight() -> tuple[dict[str, Any], list[dict[str, Any]], Path]:
     if FUNCTION != "apiFetchGovernedHistoricalUsdJpyObservation" or contract.CONTRACT_VERSION != "presignal_event_path_contract_v1_1" or contract.SCHEMA_VERSION != "2.1.1":
         raise RuntimeError("OUTCOME_ROUTE_OR_SCHEMA_CONFLICT")
     existing = list(OUTPUT_ROOT.glob(f"PPHB-R1-OUTCOME-COLLECTION-{SLICE_ID}-*"))
+    resume_dir = None
     for prior in existing:
         decision_path = prior / "collection_decision.json"
         prior_decision = read_json(decision_path) if decision_path.exists() else {}
@@ -95,14 +96,16 @@ def preflight() -> tuple[dict[str, Any], list[dict[str, Any]], Path]:
             run_path = prior / "run_manifest.json"
             run = read_json(run_path) if run_path.exists() else {}
             if run.get("external_access_before_preflight") is False and all(run.get(key, 0) == 0 for key in ("google_reads", "market_data_calls", "provider_calls", "google_writes")):
+                resume_dir = prior
                 continue
             raise RuntimeError("OUTCOME_COLLECTION_RESUME_STATE_AMBIGUOUS")
         if prior_decision.get("collection_decision") != f"OUTCOME_COLLECTION_{SLICE_LABEL}_BLOCKED":
             raise RuntimeError("OUTCOME_COLLECTION_ALREADY_EXISTS")
-    run_id = f"PPHB-R1-OUTCOME-COLLECTION-{SLICE_ID}-{RUN_STAMP}-{manifest_hash[-12:]}"
-    run_dir = OUTPUT_ROOT / run_id
-    write(run_dir / "run_manifest.json", {"run_id": run_id, "move_type": "OUTCOME_SOURCE_PREFLIGHT_AND_IMMUTABLE_COLLECTION", "manifest_path": str(MANIFEST_PATH.relative_to(ROOT)), "manifest_sha256": manifest_hash, "provider_calls": 0, "google_reads": 0, "google_writes": 0, "market_data_calls": 0, "outcome_attachment": 0, "evaluation_calculations": 0, "append_only": True, "external_access_before_preflight": False, "authorization_id": AUTHORIZATION_ID or None, "authorization_fingerprint": AUTHORIZATION_FINGERPRINT or None})
-    write(run_dir / "preflight_decision.json", {"decision": "OUTCOME_SOURCE_PREFLIGHT_PASSED", "repository": "presignal-historical-baseline-r1", "branch": "codex/immediate-impulse-outcome-recovery-r1", "head": head(), "manifest_sha256": manifest_hash, "episode_count": len(episodes), "episode_ids": [row["episode_id"] for row in episodes], "release_timestamp_authority": "episode_rows.jsonl exact UTC release_ts", "instrument": "USD/JPY", "timezone": "UTC", "contract": contract.CONTRACT_VERSION, "schema_version": contract.SCHEMA_VERSION, "route_function": FUNCTION, "deployment": DEPLOYMENT, "source_resolution": "ONE_MINUTE", "source_observation_type": "OHLC", "accepted_price_field": "close", "prior_collection_conflict": False, "duplicate_conflict": False, "forecast_or_leakage_conflict": False})
+    run_id = resume_dir.name if resume_dir is not None else f"PPHB-R1-OUTCOME-COLLECTION-{SLICE_ID}-{RUN_STAMP}-{manifest_hash[-12:]}"
+    run_dir = resume_dir or (OUTPUT_ROOT / run_id)
+    if resume_dir is None:
+        write(run_dir / "run_manifest.json", {"run_id": run_id, "move_type": "OUTCOME_SOURCE_PREFLIGHT_AND_IMMUTABLE_COLLECTION", "manifest_path": str(MANIFEST_PATH.relative_to(ROOT)), "manifest_sha256": manifest_hash, "provider_calls": 0, "google_reads": 0, "google_writes": 0, "market_data_calls": 0, "outcome_attachment": 0, "evaluation_calculations": 0, "append_only": True, "external_access_before_preflight": False, "authorization_id": AUTHORIZATION_ID or None, "authorization_fingerprint": AUTHORIZATION_FINGERPRINT or None})
+        write(run_dir / "preflight_decision.json", {"decision": "OUTCOME_SOURCE_PREFLIGHT_PASSED", "repository": "presignal-historical-baseline-r1", "branch": "codex/immediate-impulse-outcome-recovery-r1", "head": head(), "manifest_sha256": manifest_hash, "episode_count": len(episodes), "episode_ids": [row["episode_id"] for row in episodes], "release_timestamp_authority": "episode_rows.jsonl exact UTC release_ts", "instrument": "USD/JPY", "timezone": "UTC", "contract": contract.CONTRACT_VERSION, "schema_version": contract.SCHEMA_VERSION, "route_function": FUNCTION, "deployment": DEPLOYMENT, "source_resolution": "ONE_MINUTE", "source_observation_type": "OHLC", "accepted_price_field": "close", "prior_collection_conflict": False, "duplicate_conflict": False, "forecast_or_leakage_conflict": False})
     return manifest, selected, run_dir
 
 
@@ -116,7 +119,22 @@ def collect(manifest: dict[str, Any], episodes: list[dict[str, Any]], run_dir: P
     all_observations = []
     request_lineage = {}
     provider_attempt_count = 0
+    # Resume from preserved raw day responses without redispatching completed
+    # external requests after a process interruption.
+    existing_raw = {path.stem: path for path in (run_dir / "raw_source_responses").glob("*.json")}
+    for day, raw_path in sorted(existing_raw.items()):
+        result = read_json(raw_path)
+        attempts = result.get("provider_attempts", []) if isinstance(result, dict) else []
+        request_id = "OUTCOME_" + SLICE_ID.replace("-", "_") + "_DAY_" + day.replace("-", "")
+        record = {"request_id": request_id, "day": day, "window_start": day + "T00:00:00Z", "window_end": day + "T23:59:00Z", "status": result.get("status", "TRANSPORT_FAILURE") if isinstance(result, dict) else "TRANSPORT_FAILURE", "selected_provider": result.get("selected_provider", "") if isinstance(result, dict) else "", "provider_attempt_count": len(attempts), "provider_attempts": [{k: v for k, v in attempt.items() if k != "observations"} for attempt in attempts], "raw_response_path": str(raw_path.relative_to(ROOT)), "raw_response_hash": sha(result), "transport_error": None, "transport_before": "PRESERVED_RESUME", "transport_after": "PRESERVED_RESUME", "started_ts": None, "completed_ts": None}
+        request_ledger.append(record)
+        request_lineage[day] = {k: record[k] for k in ("request_id", "day", "window_start", "window_end", "status", "selected_provider", "provider_attempt_count", "raw_response_hash")}
+        provider_attempt_count += len(attempts)
+        for observation in (result.get("observations", []) if isinstance(result, dict) else []):
+            all_observations.append({"timestamp": observation["returned_observation_timestamp"], "close": float(observation["accepted_raw_price"]), "provider": result.get("selected_provider", ""), "request_id": request_id, "provider_returned_timestamp_raw": observation.get("provider_returned_timestamp_raw"), "accepted_raw_price_field": observation.get("accepted_raw_price_field", "close")})
     for day in sorted(by_day):
+        if day in existing_raw:
+            continue
         if len(request_ledger) >= MAX_GOOGLE_READS:
             raise RuntimeError("OUTCOME_GOOGLE_READ_LIMIT")
         request_id = "OUTCOME_" + SLICE_ID.replace("-", "_") + "_DAY_" + day.replace("-", "")

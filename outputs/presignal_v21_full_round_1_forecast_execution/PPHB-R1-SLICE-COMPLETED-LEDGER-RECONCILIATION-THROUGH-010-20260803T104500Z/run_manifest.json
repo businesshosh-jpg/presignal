@@ -1,0 +1,8 @@
+{
+  "append_only": true,
+  "decision": "SLICE_COMPLETED_LEDGER_RECONCILED",
+  "evaluations": 0,
+  "external_requests": 0,
+  "run_id": "PPHB-R1-SLICE-COMPLETED-LEDGER-RECONCILIATION-THROUGH-010-20260803T104500Z",
+  "writes": 0
+}

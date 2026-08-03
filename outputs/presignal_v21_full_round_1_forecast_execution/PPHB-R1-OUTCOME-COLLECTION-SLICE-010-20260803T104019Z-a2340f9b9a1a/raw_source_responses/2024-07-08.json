@@ -1,0 +1,6 @@
+{
+  "error": {
+    "message": "The read operation timed out",
+    "type": "timeout"
+  }
+}

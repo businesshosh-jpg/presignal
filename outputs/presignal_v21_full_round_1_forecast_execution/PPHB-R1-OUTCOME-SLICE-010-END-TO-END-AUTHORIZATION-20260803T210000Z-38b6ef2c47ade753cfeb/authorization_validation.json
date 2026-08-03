@@ -1,0 +1,7 @@
+{
+  "authorization_fingerprint": "sha256:38b6ef2c47ade753cfeb20b01b58fc36a3fa01ae8cb62d091663faa4cd69a430",
+  "decision": "SLICE_010_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED",
+  "external_access": 0,
+  "manifest_fingerprint": "sha256:ace0f9494fad1bb70c01254756de43cc514c8bed0a883530e6e4a2340f9b9a1a",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-010-20260803T200000Z"
+}

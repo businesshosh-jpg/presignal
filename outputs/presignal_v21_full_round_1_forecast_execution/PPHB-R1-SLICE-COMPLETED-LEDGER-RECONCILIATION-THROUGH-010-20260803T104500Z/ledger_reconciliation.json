@@ -1,0 +1,65 @@
+{
+  "decision": "SLICE_COMPLETED_LEDGER_RECONCILED",
+  "duplicate_episode_use": 0,
+  "next_completed_slice": "SLICE-010",
+  "ordered_slices": [
+    {
+      "completion_artifact": null,
+      "completion_count": 0,
+      "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
+      "slice_id": "SLICE-002"
+    },
+    {
+      "completion_artifact": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-SLICE-003-COMPLETION-20260803T081500Z-1a04811ea2b95396242c/slice_completion.json",
+      "completion_count": 1,
+      "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+      "slice_id": "SLICE-003"
+    },
+    {
+      "completion_artifact": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-SLICE-004-COMPLETION-20260803T083300Z-0ccd2ce593a5/slice_completion.json",
+      "completion_count": 1,
+      "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-004-20260803T090000Z",
+      "slice_id": "SLICE-004"
+    },
+    {
+      "completion_artifact": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-SLICE-005-COMPLETION-20260803T091200Z-7dc7040e7eefe6766505/slice_completion.json",
+      "completion_count": 1,
+      "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-005-20260803T100000Z",
+      "slice_id": "SLICE-005"
+    },
+    {
+      "completion_artifact": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-SLICE-006-COMPLETION-20260803T090600Z-4b6396c50c92/slice_completion.json",
+      "completion_count": 1,
+      "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-006-20260803T120000Z",
+      "slice_id": "SLICE-006"
+    },
+    {
+      "completion_artifact": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-SLICE-007-COMPLETION-20260803T094017Z-0bf9c7477606/slice_completion.json",
+      "completion_count": 1,
+      "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-007-20260803T140000Z",
+      "slice_id": "SLICE-007"
+    },
+    {
+      "completion_artifact": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-SLICE-008-COMPLETION-20260803T101556Z-6c6c24320615/slice_completion.json",
+      "completion_count": 1,
+      "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-008-20260803T160000Z",
+      "slice_id": "SLICE-008"
+    },
+    {
+      "completion_artifact": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-SLICE-009-COMPLETION-20260803T103300Z-42826db48733c8ee9530/slice_completion.json",
+      "completion_count": 1,
+      "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-009-20260803T180000Z",
+      "slice_id": "SLICE-009"
+    },
+    {
+      "completion_artifact": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-SLICE-010-COMPLETION-20260803T104400Z-ace0f9494fad1bb70c01/slice_completion.json",
+      "completion_count": 1,
+      "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-010-20260803T200000Z",
+      "slice_id": "SLICE-010"
+    }
+  ],
+  "slice_008_before_slice_009": true,
+  "slice_008_or_009_reexecution": false,
+  "slice_009_excluded_prior_and_unavailable": true,
+  "unresolved_completion_state": 0
+}

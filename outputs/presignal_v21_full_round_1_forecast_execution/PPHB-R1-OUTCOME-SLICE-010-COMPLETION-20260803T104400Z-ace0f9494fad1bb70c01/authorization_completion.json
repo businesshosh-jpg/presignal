@@ -1,0 +1,16 @@
+{
+  "attachment_run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-010-20260803T104301Z-a2340f9b9a1a",
+  "authorization_fingerprint": "sha256:38b6ef2c47ade753cfeb20b01b58fc36a3fa01ae8cb62d091663faa4cd69a430",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-010-END-TO-END-AUTHORIZATION-20260803T210000Z",
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-010-20260803T104019Z-a2340f9b9a1a",
+  "decision": "AUTHORIZATION_COMPLETED",
+  "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-010-20260803T104301Z-a2340f9b9a1a",
+  "external_requests": 12,
+  "manifest_fingerprint": "sha256:ace0f9494fad1bb70c01254756de43cc514c8bed0a883530e6e4a2340f9b9a1a",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-010-20260803T200000Z",
+  "retries": 0,
+  "single_use": true,
+  "slice_id": "SLICE-010",
+  "status": "COMPLETED",
+  "writes": 0
+}

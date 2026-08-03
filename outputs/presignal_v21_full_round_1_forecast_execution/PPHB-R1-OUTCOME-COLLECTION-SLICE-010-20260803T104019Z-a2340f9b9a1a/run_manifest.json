@@ -1,0 +1,16 @@
+{
+  "append_only": true,
+  "authorization_fingerprint": "sha256:38b6ef2c47ade753cfeb20b01b58fc36a3fa01ae8cb62d091663faa4cd69a430",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-010-END-TO-END-AUTHORIZATION-20260803T210000Z",
+  "evaluation_calculations": 0,
+  "external_access_before_preflight": false,
+  "google_reads": 0,
+  "google_writes": 0,
+  "manifest_path": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-010-20260803T200000Z-ace0f9494fad1bb70c01/slice_010_manifest.json",
+  "manifest_sha256": "sha256:ace0f9494fad1bb70c01254756de43cc514c8bed0a883530e6e4a2340f9b9a1a",
+  "market_data_calls": 0,
+  "move_type": "OUTCOME_SOURCE_PREFLIGHT_AND_IMMUTABLE_COLLECTION",
+  "outcome_attachment": 0,
+  "provider_calls": 0,
+  "run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-010-20260803T104019Z-a2340f9b9a1a"
+}

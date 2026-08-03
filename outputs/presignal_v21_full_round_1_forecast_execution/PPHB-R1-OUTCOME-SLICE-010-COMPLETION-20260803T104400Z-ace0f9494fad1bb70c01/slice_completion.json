@@ -1,0 +1,32 @@
+{
+  "attachment_run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-010-20260803T104301Z-a2340f9b9a1a",
+  "authorization_fingerprint": "sha256:38b6ef2c47ade753cfeb20b01b58fc36a3fa01ae8cb62d091663faa4cd69a430",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-010-END-TO-END-AUTHORIZATION-20260803T210000Z",
+  "authorization_status": "COMPLETED",
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-010-20260803T104019Z-a2340f9b9a1a",
+  "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED",
+  "decision": "AUTHORIZED_SLICE_010_END_TO_END_COMPLETE",
+  "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-010-20260803T104301Z-a2340f9b9a1a",
+  "manifest_fingerprint": "sha256:ace0f9494fad1bb70c01254756de43cc514c8bed0a883530e6e4a2340f9b9a1a",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-010-20260803T200000Z",
+  "operations": {
+    "apps_script_reads": 6,
+    "attachments": 12,
+    "google_writes": 0,
+    "market_data_attempts": 6,
+    "resumed_days_without_repeat": 2,
+    "retries": 0,
+    "total_external_requests": 12,
+    "unavailable_outcomes": []
+  },
+  "population": {
+    "complete_pairs": 26,
+    "episodes": 12,
+    "pack_a": 26,
+    "pack_e": 26,
+    "unpaired": 0,
+    "valid_forecasts": 52
+  },
+  "slice_id": "SLICE-010",
+  "unresolved_identities": []
+}
