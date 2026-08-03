@@ -1,0 +1,33 @@
+{
+  "activity": {
+    "evaluation_activity": 0,
+    "google_access": 0,
+    "market_data_access": 0,
+    "outcome_activity": 0,
+    "provider_calls": 0,
+    "retries": 0
+  },
+  "classification": {
+    "classification_clock_utc": "2026-08-03T15:35:13Z",
+    "counts": {
+      "ALREADY_RELEASED": 3,
+      "AUTHORITY_UNRESOLVED": 174,
+      "CANCELLED_OR_SUPERSEDED": 0,
+      "ELIGIBLE_PROSPECTIVE": 88,
+      "FUTURE_NOT_YET_ADMITTED": 0,
+      "HISTORICAL": 4268,
+      "IDENTITY_OR_INSTRUMENT_INVALID": 1,
+      "PAST_CUTOFF": 0,
+      "SYNTHETIC_OR_DRY_RUN": 0
+    },
+    "snapshot_export_timestamp_utc": "2026-08-03T15:10:22Z",
+    "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+    "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z",
+    "total_events": 4534
+  },
+  "timing_counts": {
+    "CUTOFF_PASSED_NOT_AUTHORIZED": 0,
+    "DISPATCH_DUE_NOW": 186,
+    "FROZEN_NOT_YET_DISPATCHABLE": 0
+  }
+}

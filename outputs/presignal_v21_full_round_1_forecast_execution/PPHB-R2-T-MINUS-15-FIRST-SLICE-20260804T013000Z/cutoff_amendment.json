@@ -1,0 +1,25 @@
+{
+  "amendment_id": "PPHB-R2-T-MINUS-15-CUTOFF-PROTOCOL-AMENDMENT-20260804T013000Z",
+  "decision": "ROUND_2_T_MINUS_15_CUTOFF_AUTHORITY_FROZEN",
+  "fingerprint": "sha256:a4200c3e5704ea1ba172967847e71d664f63b75d64c013fe2fbaf78ee0290085",
+  "rule": "forecast_cutoff_utc = authoritative release_timestamp_utc - 15 minutes",
+  "rules": {
+    "already_released": "ineligible",
+    "ambiguous_release_or_timezone": "fail closed",
+    "cancelled_or_superseded": "ineligible",
+    "comparison_precision": "one second after canonical timestamp normalization",
+    "comparison_timezone": "UTC",
+    "cutoff_passed_state": "CUTOFF_PASSED_NOT_AUTHORIZED",
+    "dispatch_boundary": "transport creation and dispatch must begin strictly before cutoff; no call at or after cutoff",
+    "dispatch_clock": "recorded execution-environment UTC clock",
+    "manifest_freeze": "before forecast_cutoff_utc",
+    "retries": 0,
+    "revised_release": "recalculate cutoff before dispatch",
+    "waiver": "cutoff cannot be moved or waived"
+  },
+  "schema_version": "1.0.0",
+  "supplements": {
+    "protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+    "protocol_id": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
+  }
+}

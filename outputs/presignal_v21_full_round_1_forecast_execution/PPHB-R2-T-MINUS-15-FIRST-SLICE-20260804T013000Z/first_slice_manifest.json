@@ -1,0 +1,1047 @@
+{
+  "amendment_fingerprint": "sha256:a4200c3e5704ea1ba172967847e71d664f63b75d64c013fe2fbaf78ee0290085",
+  "amendment_id": "PPHB-R2-T-MINUS-15-CUTOFF-PROTOCOL-AMENDMENT-20260804T013000Z",
+  "attachment_and_evaluation": "not authorized in this Move",
+  "complete_pack_pairs": 93,
+  "deployment_id": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+  "deployment_version": "83",
+  "deterministic_order": "release_timestamp_utc ascending, then episode_id",
+  "envelope_fingerprint": "sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0",
+  "envelope_id": "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z",
+  "episode_count": 31,
+  "episodes": [
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:a46b0aec255c7b18266fea6e2c8aa95f639a9a23b9f8da71618c5eb093e1ce3b",
+      "episode_id": "EP_BATCH_86be7e23eca13e2b4a79",
+      "event_ids": [
+        "a272-3fca-7a7a-5282",
+        "6bfa-7bb2-9b22-ca4a"
+      ],
+      "event_name_category": [
+        "Total Vehicle Sales (Jul)",
+        "Loan Officer Survey"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "a272-3fca-7a7a-5282",
+          "6bfa-7bb2-9b22-ca4a"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-03T17:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-03T18:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:e9a42663029d0f9db4863a70640bdbaae02c0b71dcd3150135cb6fe27aa5870e",
+      "episode_id": "EP_EVENT_d2b1b2e00a9135546049",
+      "event_ids": [
+        "0eb0-bef0-1f70-3030"
+      ],
+      "event_name_category": [
+        "LMI Logistics Managers Index (Jul)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "0eb0-bef0-1f70-3030"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-04T09:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-04T10:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:0da919e8cd30bba1bd4ea32c6dd1bbdc5c32f081563b4b269052e2a76eacd83a",
+      "episode_id": "EP_BATCH_c16f003ad811c22e4f81",
+      "event_ids": [
+        "87cf-e583-a0eb-ba07",
+        "86be-d7a6-7976-6c2e",
+        "6a0b-628f-5397-3d23"
+      ],
+      "event_name_category": [
+        "Exports (Jun)",
+        "Imports (Jun)",
+        "Balance of Trade (Jun)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "87cf-e583-a0eb-ba07",
+          "86be-d7a6-7976-6c2e",
+          "6a0b-628f-5397-3d23"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-04T12:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-04T12:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:5513502209cea3d4eb74d949c5f35e4fd47c22801f8b8ea974895a4e6048e66a",
+      "episode_id": "EP_EVENT_0ab860cec8ac565706fe",
+      "event_ids": [
+        "7cc8-5628-08e8-9508"
+      ],
+      "event_name_category": [
+        "Redbook YoY (Aug/01)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "7cc8-5628-08e8-9508"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-04T12:40:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-04T12:55:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:21dca7dc67576816be3a4c259512e19021cad0c9edbbf7f29ea03cec72cbf26a",
+      "episode_id": "EP_BATCH_8119a5ac78139c8bd70f",
+      "event_ids": [
+        "79c1-2ecd-98e5-b809",
+        "af05-e341-4bb9-e86d",
+        "67f3-4757-061f-a44b",
+        "55a8-5988-6148-6ce8",
+        "cdb6-723e-bb4e-a8e6"
+      ],
+      "event_name_category": [
+        "Factory Orders ex Transportation (Jun)",
+        "JOLTs Job Openings (Jun)",
+        "Factory Orders MoM (Jun)",
+        "Economic Optimism Index (Aug)",
+        "JOLTs Job Quits (Jun)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "79c1-2ecd-98e5-b809",
+          "af05-e341-4bb9-e86d",
+          "67f3-4757-061f-a44b",
+          "55a8-5988-6148-6ce8",
+          "cdb6-723e-bb4e-a8e6"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-04T13:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-04T14:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:3ed3921f7b60240714c97a9cd8d51de8fa879075c67c08a18b8683f893d35ae1",
+      "episode_id": "EP_EVENT_54666435a4a5b9b6cefc",
+      "event_ids": [
+        "6be1-7a6d-9785-c329"
+      ],
+      "event_name_category": [
+        "52-Week Bill Auction"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "6be1-7a6d-9785-c329"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-04T15:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-04T15:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:9e0da672a9deecc19c8240a4479c648077a67385a10e763133e7e50c84d20c73",
+      "episode_id": "EP_EVENT_ed26f59bba6cbb73784e",
+      "event_ids": [
+        "3c0d-0ca9-ade1-1fb5"
+      ],
+      "event_name_category": [
+        "API Crude Oil Stock Change (Jul/31)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "3c0d-0ca9-ade1-1fb5"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-04T20:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-04T20:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:4ae78a23f91d656caf078fadd56ad4cea4873b3aa2795f3176636215f9b70aa7",
+      "episode_id": "EP_BATCH_b5dda89c209542b1d89c",
+      "event_ids": [
+        "301a-7152-f3c2-b76a",
+        "a129-2f15-4aed-f4b1",
+        "defb-52bf-3a47-9593",
+        "fe65-eb21-c499-8acd",
+        "9b4b-e2cf-71d7-4863"
+      ],
+      "event_name_category": [
+        "MBA Mortgage Market Index (Jul/31)",
+        "MBA Mortgage Refinance Index (Jul/31)",
+        "MBA 30-Year Mortgage Rate (Jul/31)",
+        "MBA Mortgage Applications (Jul/31)",
+        "MBA Purchase Index (Jul/31)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "301a-7152-f3c2-b76a",
+          "a129-2f15-4aed-f4b1",
+          "defb-52bf-3a47-9593",
+          "fe65-eb21-c499-8acd",
+          "9b4b-e2cf-71d7-4863"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-05T10:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-05T11:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:46272ebc2a91544d93d7853429aaf1e209e39d1f6a6bb638f1167b2454162c76",
+      "episode_id": "EP_EVENT_895faabec388c7683d59",
+      "event_ids": [
+        "cefb-82bf-ea47-0593"
+      ],
+      "event_name_category": [
+        "ADP Employment Change (Jul)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "cefb-82bf-ea47-0593"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-05T12:00:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-05T12:15:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:69d86e0df5c310e7c3182f83b44aac0eec6b92e6d2ef898a0a34cda7c72d4750",
+      "episode_id": "EP_EVENT_e85374a5d8cb9af10c34",
+      "event_ids": [
+        "227b-c03f-fbc7-d513"
+      ],
+      "event_name_category": [
+        "Treasury Refunding Announcement"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "227b-c03f-fbc7-d513"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-05T12:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-05T12:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:789436fbba9ba77eb9b5ad2c2d0a7c19470a5e42359be22389d81ab1fdf16a41",
+      "episode_id": "EP_BATCH_90b0b6d9862064b50944",
+      "event_ids": [
+        "8cb4-2524-5604-1f54",
+        "4060-44e0-4de0-5b60",
+        "52b7-334b-f473-962f",
+        "7b39-41e5-cf3d-2341",
+        "1cc1-75cd-27e5-3309",
+        "6d1f-8a93-c57b-1dd7",
+        "8add-0d39-11f1-9905",
+        "1b9a-66d2-fd42-deea",
+        "42ba-6372-a4e2-070a",
+        "8ddb-341f-80a7-7373"
+      ],
+      "event_name_category": [
+        "ISM Non-Manufacturing New Orders (Jul)",
+        "ISM Non-Manufacturing Business Activity (Jul)",
+        "ISM Services PMI (Jul)",
+        "ISM Non-Manufacturing Prices (Jul)",
+        "ISM Services Employment (Jul)",
+        "ISM Services Prices (Jul)",
+        "ISM Non-Manufacturing PMI (Jul)",
+        "ISM Services New Orders (Jul)",
+        "ISM Services Business Activity (Jul)",
+        "ISM Non-Manufacturing Employment (Jul)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "8cb4-2524-5604-1f54",
+          "4060-44e0-4de0-5b60",
+          "52b7-334b-f473-962f",
+          "7b39-41e5-cf3d-2341",
+          "1cc1-75cd-27e5-3309",
+          "6d1f-8a93-c57b-1dd7",
+          "8add-0d39-11f1-9905",
+          "1b9a-66d2-fd42-deea",
+          "42ba-6372-a4e2-070a",
+          "8ddb-341f-80a7-7373"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-05T13:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-05T14:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:e22a9b7def30fe3dbc0d854bbc996171261b81b8afb006cd40d41399d9d7fab4",
+      "episode_id": "EP_BATCH_b65bb9b6994ac69d6e37",
+      "event_ids": [
+        "5b6a-a462-3652-113a",
+        "3e8c-2d1c-0a3c-d5ec",
+        "d917-062b-6053-e78f",
+        "9507-915b-8a03-7eff",
+        "17be-34a6-6e76-c52e",
+        "f4b2-6d0a-5dba-c6c2",
+        "e474-99e4-04c4-2514",
+        "f2d8-54f8-1938-3f98",
+        "dda9-4195-096d-3531",
+        "bd0e-99b6-5306-e8fe",
+        "8773-e0d7-939f-9fcb"
+      ],
+      "event_name_category": [
+        "Crude Oil Imports",
+        "EIA Crude Oil Imports Change (Jul/31)",
+        "EIA Distillate Fuel Production Change (Jul/31)",
+        "EIA Weekly Refinery Utilization Rates WoW",
+        "EIA Heating Oil Stocks Change (Jul/31)",
+        "EIA Refinery Crude Runs Change (Jul/31)",
+        "EIA Gasoline Production Change (Jul/31)",
+        "EIA Gasoline Stocks Change (Jul/31)",
+        "EIA Crude Oil Stocks Change (Jul/31)",
+        "EIA Cushing Crude Oil Stocks Change (Jul/31)",
+        "EIA Distillate Stocks Change (Jul/31)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "5b6a-a462-3652-113a",
+          "3e8c-2d1c-0a3c-d5ec",
+          "d917-062b-6053-e78f",
+          "9507-915b-8a03-7eff",
+          "17be-34a6-6e76-c52e",
+          "f4b2-6d0a-5dba-c6c2",
+          "e474-99e4-04c4-2514",
+          "f2d8-54f8-1938-3f98",
+          "dda9-4195-096d-3531",
+          "bd0e-99b6-5306-e8fe",
+          "8773-e0d7-939f-9fcb"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-05T14:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-05T14:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:7212a74187162d3f8b0853be9f52a49bd759fda77535f749354576461e5d940d",
+      "episode_id": "EP_EVENT_e69d05242d7c507f2a67",
+      "event_ids": [
+        "dfab-5baf-53b7-c7c3"
+      ],
+      "event_name_category": [
+        "17-Week Bill Auction"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "dfab-5baf-53b7-c7c3"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-05T15:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-05T15:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:973235ec8237372d967dc1c17e259c98ff84bef65838ebed9d7465ac6a479bf8",
+      "episode_id": "EP_EVENT_ef7ac9eb72a45a4e06dc",
+      "event_ids": [
+        "1795-3291-6889-b97d"
+      ],
+      "event_name_category": [
+        "Fed Cook Speech"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "1795-3291-6889-b97d"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-05T19:50:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-05T20:05:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:6db754f7cd6fadbd96eb46632b0e0e6e7904398a10c1ba9d0d634c8e620993cd",
+      "episode_id": "EP_EVENT_588a279140d694129088",
+      "event_ids": [
+        "a4bd-5d99-cf51-f9e5"
+      ],
+      "event_name_category": [
+        "Challenger Job Cuts (Jul)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "a4bd-5d99-cf51-f9e5"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-06T09:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-06T09:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:1b94b5b328bb0b5243554910f2ac06656d6afe4d4e7585c9fa42b01dcee283da",
+      "episode_id": "EP_BATCH_001f36c2238a4e879c0b",
+      "event_ids": [
+        "1c67-713b-1ae3-195f",
+        "b50c-319c-2abc-a06c",
+        "5fbe-dca6-d676-4d2e",
+        "fdd3-e3b7-af7f-612b",
+        "c07b-c63f-d1c7-e313"
+      ],
+      "event_name_category": [
+        "Initial Jobless Claims (Aug/01)",
+        "Unit Labour Costs QoQ (Q2)",
+        "Nonfarm Productivity QoQ (Q2)",
+        "Continuing Jobless Claims (Jul/25)",
+        "Jobless Claims 4-Week Average (Aug/01)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "1c67-713b-1ae3-195f",
+          "b50c-319c-2abc-a06c",
+          "5fbe-dca6-d676-4d2e",
+          "fdd3-e3b7-af7f-612b",
+          "c07b-c63f-d1c7-e313"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-06T12:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-06T12:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:df4e3c803d183bf49389d5a2f1a3eff7dee5042b80a822ef41015a3d83a3c89d",
+      "episode_id": "EP_EVENT_cdcb4f9d8e1aa5f02f87",
+      "event_ids": [
+        "b6c2-47da-6a0a-1d52"
+      ],
+      "event_name_category": [
+        "Wholesale Sales MoM (Jun)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "b6c2-47da-6a0a-1d52"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-06T13:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-06T14:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:638130ea259e355c8496e1a57bf4027188fa731898838c529818b35251cf7b3e",
+      "episode_id": "EP_EVENT_f58b265928641e689b31",
+      "event_ids": [
+        "e681-b48d-50a5-bac9"
+      ],
+      "event_name_category": [
+        "EIA Natural Gas Stocks Change (Jul/31)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "e681-b48d-50a5-bac9"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-06T14:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-06T14:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:1476e8bf824a52b6a45ac4b4d205a5d3d081ee7a6488056ee81200dfbf3f38d2",
+      "episode_id": "EP_BATCH_cf5e769585a2a116fbc0",
+      "event_ids": [
+        "3e60-2ae0-03e0-c960",
+        "c564-0614-8774-4984"
+      ],
+      "event_name_category": [
+        "4-Week Bill Auction",
+        "8-Week Bill Auction"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "3e60-2ae0-03e0-c960",
+          "c564-0614-8774-4984"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-06T15:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-06T15:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:89ef87ab9a59c66c4bd8382c3986576962f72f175bb2047efe15df9ac81f186e",
+      "episode_id": "EP_BATCH_3b5d4cb8bc769365510a",
+      "event_ids": [
+        "fe14-e704-b8e4-73b4",
+        "decd-5069-33a1-8875"
+      ],
+      "event_name_category": [
+        "15-Year Mortgage Rate (Aug/06)",
+        "30-Year Mortgage Rate (Aug/06)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "fe14-e704-b8e4-73b4",
+          "decd-5069-33a1-8875"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-06T15:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-06T16:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:461f87180b6d765350f15ec5196fc49906f42c038e882cf9bbd03c2c020626ac",
+      "episode_id": "EP_EVENT_2df187ab06f5af3f635d",
+      "event_ids": [
+        "7a23-33c7-a70f-d3fb"
+      ],
+      "event_name_category": [
+        "Fed Balance Sheet (Aug/05)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "7a23-33c7-a70f-d3fb"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-06T20:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-06T20:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:b5aeb816deb5ce3044c78d515fe262b3cae2afe5e674548f79c7504625e891f6",
+      "episode_id": "EP_EVENT_b86af15cefeb7d15be03",
+      "event_ids": [
+        "ee61-1aed-7405-f9a9"
+      ],
+      "event_name_category": [
+        "Fed Musalem Speech"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "ee61-1aed-7405-f9a9"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-06T21:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-06T21:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:d48fec25b8e9e274d8307e05529a448b056dff5f8d534aa9cab74f14d22d9502",
+      "episode_id": "EP_BATCH_9e0b0a31ebe7cf715e52",
+      "event_ids": [
+        "3088-76e8-03a8-d6c8",
+        "108c-d71c-643c-b7ec",
+        "2b41-324d-4065-5589",
+        "72a7-d27b-9223-b19f",
+        "251f-e293-5d7b-95d7",
+        "778f-1243-47ab-17c7",
+        "716a-c262-6452-573a",
+        "7064-b514-3e74-0c84",
+        "a450-5810-bf90-dad0",
+        "a974-9ae4-7dc4-5214"
+      ],
+      "event_name_category": [
+        "U-6 Unemployment Rate (Jul)",
+        "Government Payrolls (Jul)",
+        "Manufacturing Payrolls (Jul)",
+        "Average Hourly Earnings YoY (Jul)",
+        "Nonfarm Payrolls Private (Jul)",
+        "Average Hourly Earnings MoM (Jul)",
+        "Unemployment Rate (Jul)",
+        "Average Weekly Hours (Jul)",
+        "Participation Rate (Jul)",
+        "Non Farm Payrolls (Jul)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "3088-76e8-03a8-d6c8",
+          "108c-d71c-643c-b7ec",
+          "2b41-324d-4065-5589",
+          "72a7-d27b-9223-b19f",
+          "251f-e293-5d7b-95d7",
+          "778f-1243-47ab-17c7",
+          "716a-c262-6452-573a",
+          "7064-b514-3e74-0c84",
+          "a450-5810-bf90-dad0",
+          "a974-9ae4-7dc4-5214"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-07T12:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-07T12:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:bd2f375e818f2c3d8ba32d5c2d77bc687c6c8acfb28d643a6b3dccc700de9a48",
+      "episode_id": "EP_BATCH_3c631e760524a87605b9",
+      "event_ids": [
+        "0d71-aebd-f155-d539",
+        "0889-6ef5-3bcd-6f11"
+      ],
+      "event_name_category": [
+        "Used Car Prices MoM (Jul)",
+        "Used Car Prices YoY (Jul)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "0d71-aebd-f155-d539",
+          "0889-6ef5-3bcd-6f11"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-07T12:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-07T13:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:8148117bfa6c3fd1c2f1141bdcacd725e0422c34bc4b252ff8ad51f9c5801843",
+      "episode_id": "EP_EVENT_36c1a846e7666c924b4f",
+      "event_ids": [
+        "6928-5708-32c8-fc68"
+      ],
+      "event_name_category": [
+        "Fed Barkin Speech"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "6928-5708-32c8-fc68"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-07T13:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-07T14:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:2aa4e0a9279bc59a6729cf02bd0468cca4227074c0455a8162f70eb978c4f3b7",
+      "episode_id": "EP_EVENT_2a121941e8cb95689490",
+      "event_ids": [
+        "60ad-e8c9-f901-9155"
+      ],
+      "event_name_category": [
+        "Consumer Inflation Expectation (Jul)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "60ad-e8c9-f901-9155"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-07T14:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-07T15:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:b1c4be5d95364763483015cad14f173128b5902a032fbeed29fef2aae4c50d28",
+      "episode_id": "EP_EVENT_b0c1e4cc57a509d9a9c8",
+      "event_ids": [
+        "3ecb-304f-1357-e7e3"
+      ],
+      "event_name_category": [
+        "Baker Hughes Oil Rig Count (Aug/07)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "3ecb-304f-1357-e7e3"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-07T16:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-07T17:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:d9c9a9a82b378a81eb629c28e4663b6c72d4ccad9ed672f1b03fa75dd4d3f72f",
+      "episode_id": "EP_EVENT_0193ed3d92a7217f2d8d",
+      "event_ids": [
+        "0658-5278-eab8-cf18"
+      ],
+      "event_name_category": [
+        "Consumer Credit Change (Jun)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "0658-5278-eab8-cf18"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-07T18:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-07T19:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:d943ae84c9e141260a12a9267c31fe014b12f2d117f948e458cc67193c1ac503",
+      "episode_id": "EP_BATCH_1bdcf4e5420fa0a945f1",
+      "event_ids": [
+        "ec96-039e-31ae-76c6",
+        "52bf-33b3-f59b-9877",
+        "a8b4-9124-6204-1b54",
+        "c69b-15df-b467-a233",
+        "22ed-c609-0c41-f595",
+        "0988-7be8-60a8-b7c8",
+        "272e-fd56-a9a6-2c1e",
+        "cda7-717b-b923-a49f",
+        "7c38-4ed8-f418-6bf8",
+        "c27f-e073-1c5b-7637",
+        "e9f3-e157-d01f-b64b"
+      ],
+      "event_name_category": [
+        "CFTC Corn speculative net positions",
+        "CFTC Aluminium Speculative net positions",
+        "CFTC Soybeans speculative net positions",
+        "CFTC Silver Speculative net positions",
+        "CFTC Wheat speculative net positions",
+        "CFTC Natural Gas speculative net positions",
+        "CFTC Gold Speculative net positions",
+        "CFTC Copper Speculative net positions",
+        "CFTC S&P 500 speculative net positions",
+        "CFTC Crude Oil speculative net positions",
+        "CFTC Nasdaq 100 speculative net positions"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "ec96-039e-31ae-76c6",
+          "52bf-33b3-f59b-9877",
+          "a8b4-9124-6204-1b54",
+          "c69b-15df-b467-a233",
+          "22ed-c609-0c41-f595",
+          "0988-7be8-60a8-b7c8",
+          "272e-fd56-a9a6-2c1e",
+          "cda7-717b-b923-a49f",
+          "7c38-4ed8-f418-6bf8",
+          "c27f-e073-1c5b-7637",
+          "e9f3-e157-d01f-b64b"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-07T19:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-07T19:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:121818aa2a59e44b4948af8aba5a4be286fdf7cc1393d73b30007c74b1897693",
+      "episode_id": "EP_EVENT_a78f52e88c00ceadb43a",
+      "event_ids": [
+        "7365-dc21-ad99-e7cd"
+      ],
+      "event_name_category": [
+        "CB Employment Trends Index (Jul)"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "7365-dc21-ad99-e7cd"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-10T13:45:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-10T14:00:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    },
+    {
+      "admission_timestamp_utc": "2026-08-03T15:35:13Z",
+      "country": "US",
+      "duplicate_prevention_identity": "sha256:c10557ca6e40c57fea9823becbb5f951441014349d1f9d04727f0a5fb37c62f0",
+      "episode_id": "EP_BATCH_bf0c7debe327a7e8389a",
+      "event_ids": [
+        "30d7-7aeb-0f13-ed4f",
+        "adba-d272-1be2-8a0a"
+      ],
+      "event_name_category": [
+        "6-Month Bill Auction",
+        "3-Month Bill Auction"
+      ],
+      "event_sheet_identity": {
+        "event_ids": [
+          "30d7-7aeb-0f13-ed4f",
+          "adba-d272-1be2-8a0a"
+        ],
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      },
+      "event_source": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+      "forecast_cutoff_utc": "2026-08-10T15:15:00Z",
+      "instrument": "USD/JPY",
+      "manifest_freeze_timestamp_utc": "2026-08-03T15:35:13Z",
+      "release_timestamp_utc": "2026-08-10T15:30:00Z",
+      "snapshot_lineage": {
+        "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+        "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z"
+      }
+    }
+  ],
+  "exclusions": {
+    "authority_unresolved": "snapshot classification",
+    "historical_and_released": "snapshot classification",
+    "terminal_or_synthetic": "snapshot classification"
+  },
+  "forecast_call_count": 186,
+  "forecast_contract": "presignal_event_path_contract_v1_1",
+  "manifest_fingerprint": "sha256:4eba0d76f06bc29b3c6360acf1c0d18153c2a0d59ae40e02df995b1aa636342e",
+  "manifest_id": "PPHB-R2-FIRST-ROLLING-SLICE-MANIFEST-20260804T013000Z",
+  "pack_a_count": 93,
+  "pack_e_count": 93,
+  "pairing_proof": "Every admitted Episode has exactly one Pack A and one Pack E call for each of the three fixed provider/model routes.",
+  "protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+  "protocol_id": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z",
+  "provider_model_counts": {
+    "Anthropic/claude-haiku-4-5": 62,
+    "Gemini/gemini-2.5-flash-lite": 62,
+    "OpenAI/gpt-4o-mini-2024-07-18": 62
+  },
+  "schema_version": "presignal_r2_first_slice_manifest_v1",
+  "schema_version_output": "2.1.1",
+  "slice_id": "PPHB-R2-FIRST-ROLLING-SLICE-001-20260804T013000Z",
+  "snapshot_fingerprint": "sha256:afab082d51abdd725b7c1a802c3391673de91e65c2b964b5cd31a29f3475b6d9",
+  "snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z",
+  "status": "FROZEN_PREPARATION_ONLY"
+}

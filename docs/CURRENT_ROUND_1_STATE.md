@@ -348,3 +348,14 @@ Freeze explicit Round 2 Pack A and Pack E prompt artifacts with fingerprints/out
 ## Exact Next Round 2 Move
 
 Freeze one explicit prospective cutoff policy with its numeric release-relative offset, clock authority, revised-release handling, and dispatch window; then apply it to the accepted Event snapshot together with the already frozen prompt authority.
+
+## Round 2 T-15 Cutoff and First Slice Preparation
+
+- Amendment `PPHB-R2-T-MINUS-15-CUTOFF-PROTOCOL-AMENDMENT-20260804T013000Z` is frozen with fingerprint `sha256:a4200c3e5704ea1ba172967847e71d664f63b75d64c013fe2fbaf78ee0290085`: `forecast_cutoff_utc = authoritative release_timestamp_utc - 15 minutes`, UTC comparison, one-second precision, strict pre-cutoff dispatch, zero retries, release-revision recalculation, and fail-closed ambiguity handling.
+- The accepted Event snapshot was classified at recorded UTC `2026-08-03T15:35:13Z`: `4,268` historical; `174` authority-unresolved; `3` already released; `1` identity/instrument-invalid; `88` eligible prospective; `0` future-not-yet-admitted; `0` past-cutoff; `0` cancelled/superseded; `0` synthetic/dry-run.
+- First Slice `PPHB-R2-FIRST-ROLLING-SLICE-001-20260804T013000Z` contains `31` Episodes and `186` exact calls: `93` Pack A, `93` Pack E, with `62` calls per fixed provider/model route. Manifest fingerprint: `sha256:4eba0d76f06bc29b3c6360acf1c0d18153c2a0d59ae40e02df995b1aa636342e`.
+- Dispatch authorization `PPHB-R2-FIRST-ROLLING-SLICE-DISPATCH-AUTHORIZATION-20260804T013000Z` is frozen preparation-only with fingerprint `sha256:04bd63ca29550357bbf49161d862291fba7b4aafe4676e1342b1b9cec1c73692`; it is not active. Timing classification is `186 DISPATCH_DUE_NOW`, `0 FROZEN_NOT_YET_DISPATCHABLE`, `0 CUTOFF_PASSED_NOT_AUTHORIZED`. Provider, Google, market-data, Outcome, evaluation, and retry activity: `0`.
+
+## Exact Next Round 2 Move
+
+Activate the exact first-Slice provider-dispatch authorization and dispatch only the enumerated calls after an immediate T−15 cutoff recheck.
