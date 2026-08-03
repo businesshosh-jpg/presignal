@@ -393,3 +393,15 @@ Before forecasting any new prospective Slice, separately authorize and freeze th
 ## Exact Next Round 2 Move
 
 Freeze a narrow prospective shared-market-state source and acquisition contract, including its exact source authority, source-item schema, pre-cutoff timestamp rule, per-identity external ceiling, timeout/lead-time bound, and immutable evidence requirements. Only then can the controller derive an admission deadline and prepare exact Attention, request, Pack-materialization, and forecast-dispatch authorizations for a newly admissible Slice.
+
+## Round 2 Shared-Market-State Contract Reconciliation
+
+- `ROUND_2_SHARED_MARKET_STATE_CONTRACT_BLOCKED`; `ROUND_2_SHARED_MARKET_STATE_SOURCE_AUTHORITY_CONFLICT`; `ROUND_2_SHARED_MARKET_STATE_LEAD_TIME_AUTHORITY_BLOCKED`; `CONTINUOUS_ROUND_2_PRE_CUTOFF_ORCHESTRATION_BLOCKED`; and `ROUND_2_NEW_SLICE_GOVERNANCE_BLOCKED`.
+- Pack E's canonical container requires `pack_id`, `pack_freeze_id`, `session_id`, `information_cutoff_ts`, `pack_generated_ts`, `items`, `source_request_run_ids`, `source_kind`, and `pack_fingerprint`. Each item must include `source_timestamp` strictly before the information cutoff and excludes Outcome/evaluation/released-value fields. There is no accepted prospective market-state field/category inventory beyond that container requirement.
+- The exact historical source is `automation/build_true_shared_market_state_pack_e_v0.py::build`; accepted adapter evidence records `current_deployed_equivalent: NONE`, and the deployed Apps Script exposes no return-only shared-market-state entry point. Its historical input bundles and mutable sheet state cannot be promoted to prospective source authority. Therefore exact source schemas, timestamp precedence, stale/missing/revision rules, request identities, call ceilings, and an admission deadline cannot be frozen without inventing authority.
+- The controller now also names the full required pre-cutoff state sequence, including event-before-deadline, acquisition authorization/in-progress, shared-market-state complete, Pack-inputs complete, and dispatch-authorization required. It continues to prohibit forecast-call freezing before both immutable Pack inputs exist.
+- Artifact: `PPHB-R2-SHARED-MARKET-STATE-CONTRACT-RECONCILIATION-20260804T025000Z/shared_market_state_contract_reconciliation.json` (`sha256:79e07aaf969606b2b112cea3e8807cbe1e28a3712972005e02b67286062357fb`). Slice 001 remains non-reusable. No Event was admitted and no authorization inputs were prepared. Provider, Google, market-data, Outcome, evaluation, and retry activity: `0`.
+
+## Exact Next Round 2 Move
+
+Create a separately governed prospective Pack E field/source specification and deploy a return-only/no-write acquisition adapter with exact source, timestamp, schema, identity, and bounded-time authority. This is required before a shared-market-state contract, lead-time rule, or exact prerequisite acquisition authorization can be frozen.

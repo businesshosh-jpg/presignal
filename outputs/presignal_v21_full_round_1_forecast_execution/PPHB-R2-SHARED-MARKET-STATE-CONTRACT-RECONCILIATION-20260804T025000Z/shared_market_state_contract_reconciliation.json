@@ -1,0 +1,92 @@
+{
+  "bindings": {
+    "cutoff_amendment": "PPHB-R2-T-MINUS-15-CUTOFF-PROTOCOL-AMENDMENT-20260804T013000Z",
+    "envelope": "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z",
+    "prompt_fingerprint": "sha256:2515e6c09742e58507efe8d9196ba58473c01f2d5bb9e8b5405405088d323a77",
+    "protocol": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
+  },
+  "canonical_pack_e_schema": {
+    "field_inventory_decision": "No canonical prospective market-state field/category list is defined. The historical builder accepts source bundles and mutable sheet state, so field-level source, unit, stale-data, and schema authority cannot be inferred.",
+    "item_required_fields": [
+      "source_timestamp"
+    ],
+    "item_timestamp_rule": "source_timestamp must be strictly before information_cutoff_ts; forbidden Outcome/evaluation/released-value fields are rejected.",
+    "pack_required_fields": [
+      "pack_id",
+      "pack_freeze_id",
+      "session_id",
+      "information_cutoff_ts",
+      "pack_generated_ts",
+      "items",
+      "source_request_run_ids",
+      "source_kind",
+      "pack_fingerprint"
+    ]
+  },
+  "decisions": {
+    "contract": "ROUND_2_SHARED_MARKET_STATE_CONTRACT_BLOCKED",
+    "controller": "CONTINUOUS_ROUND_2_PRE_CUTOFF_ORCHESTRATION_BLOCKED",
+    "lead_time": "ROUND_2_SHARED_MARKET_STATE_LEAD_TIME_AUTHORITY_BLOCKED",
+    "new_slice": "ROUND_2_NEW_SLICE_GOVERNANCE_BLOCKED",
+    "source_authority": "ROUND_2_SHARED_MARKET_STATE_SOURCE_AUTHORITY_CONFLICT"
+  },
+  "external_activity": {
+    "evaluation_activity": 0,
+    "google_reads": 0,
+    "google_writes": 0,
+    "market_data_calls": 0,
+    "outcome_activity": 0,
+    "provider_calls": 0,
+    "retries": 0
+  },
+  "fingerprint": "sha256:79e07aaf969606b2b112cea3e8807cbe1e28a3712972005e02b67286062357fb",
+  "lead_time": {
+    "admission_deadline": "NOT_FROZEN: maximum prerequisite execution window cannot be derived while a required source is undefined.",
+    "known_provider_limits_seconds": {
+      "attention": 180,
+      "information_requests": 180
+    },
+    "unknown_component": "shared-market-state source execution ceiling and response/availability bound"
+  },
+  "reconciliation_id": "PPHB-R2-SHARED-MARKET-STATE-CONTRACT-RECONCILIATION-20260804T025000Z",
+  "recorded_utc": "2026-08-03T15:59:09Z",
+  "required_next_authority": "Freeze one explicit prospective shared-market-state field inventory and source contract, including each source route, canonical schema, timestamp precedence, exact request identity construction, call ceilings, and bounded completion time before authorizing any acquisition.",
+  "slice_001": {
+    "decision": "ROUND_2_SLICE_001_PRE_CUTOFF_PACK_INPUTS_MISSING_NON_REUSABLE",
+    "reused": false
+  },
+  "source_authority": {
+    "current_deployed_equivalent": "NONE",
+    "deployed_return_only_entrypoint": false,
+    "historical_entrypoint": "build",
+    "historical_input_schema": [
+      "Market_State_Pack_Shadow",
+      "Market_Session_Members",
+      "Market_State_Pack_Candidates",
+      "Market_State_Pack_Acquisition_Backlog",
+      "source bundles"
+    ],
+    "historical_source_path": "automation/build_true_shared_market_state_pack_e_v0.py",
+    "reason": "No accepted prospective source route, adapter, schema, authentication path, response authority, or request ceiling exists. Historical replay/sheet inputs cannot be promoted to prospective authority."
+  },
+  "timestamp_and_leakage": {
+    "blocked_without_source_contract": [
+      "observation-vs-publication precedence",
+      "stale-data rule",
+      "missing-data rule",
+      "revised-data rule",
+      "timezone authority",
+      "same-second source behavior"
+    ],
+    "prohibited": [
+      "post-cutoff observations",
+      "post-release revisions",
+      "Outcome prices",
+      "later market moves",
+      "Round 1 results",
+      "provider-performance data",
+      "historical reconstructed snapshots without availability proof"
+    ],
+    "required_if_authorized": "item_available_timestamp_utc < Episode forecast cutoff; use authoritative publication/observation time rather than retrieval time where defined."
+  }
+}
