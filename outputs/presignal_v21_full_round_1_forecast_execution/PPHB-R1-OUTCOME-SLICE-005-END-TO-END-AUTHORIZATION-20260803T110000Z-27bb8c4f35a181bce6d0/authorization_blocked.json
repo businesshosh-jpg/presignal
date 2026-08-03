@@ -1,0 +1,24 @@
+{
+  "decision": "AUTHORIZED_NEXT_SLICE_GOVERNANCE_BLOCKED",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-005-END-TO-END-AUTHORIZATION-20260803T110000Z",
+  "authorization_fingerprint": "sha256:27bb8c4f35a181bce6d0d86402f8304ed1ec80c3e400e9e496b6ec070178e877",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-005-20260803T100000Z",
+  "manifest_fingerprint": "sha256:c965903c8e799920d4a3aaee3ed3a173be11b0bfa0bbb7a39b39c28323fe7595",
+  "status": "BLOCKED_NON_REUSABLE",
+  "completed_stage": "collection",
+  "incomplete_stages": ["attachment", "attachment_reconciliation", "minimal_evaluation", "final_slice_reconciliation"],
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595",
+  "external_requests": 14,
+  "apps_script_reads": 7,
+  "market_data_attempts": 7,
+  "google_writes": 0,
+  "retries": 0,
+  "remote_state": "CERTAIN",
+  "unavailable_outcomes": [
+    {"episode_id": "EP_EVENT_08219d7669dbc263d9f6", "status": "UNAVAILABLE", "treatment": "NO_ACCEPTED_SLICE_005_TREATMENT"},
+    {"episode_id": "EP_EVENT_f09204427881dfea157f", "status": "UNAVAILABLE", "treatment": "NO_ACCEPTED_SLICE_005_TREATMENT"}
+  ],
+  "attachment_count": 0,
+  "evaluation_count": 0,
+  "governance_reason": "Newly unavailable Outcomes require a separate accepted treatment decision before attachment or evaluation; silent exclusion or recovery is prohibited."
+}

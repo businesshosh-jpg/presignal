@@ -1,0 +1,9 @@
+{
+  "authorization_fingerprint": "sha256:27bb8c4f35a181bce6d0d86402f8304ed1ec80c3e400e9e496b6ec070178e877",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-005-END-TO-END-AUTHORIZATION-20260803T110000Z",
+  "decision": "SLICE_005_END_TO_END_AUTHORIZATION_FROZEN",
+  "execution_decision": "SLICE_005_END_TO_END_EXECUTION_READY",
+  "external_access": 0,
+  "manifest_fingerprint": "sha256:c965903c8e799920d4a3aaee3ed3a173be11b0bfa0bbb7a39b39c28323fe7595",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-005-20260803T100000Z"
+}

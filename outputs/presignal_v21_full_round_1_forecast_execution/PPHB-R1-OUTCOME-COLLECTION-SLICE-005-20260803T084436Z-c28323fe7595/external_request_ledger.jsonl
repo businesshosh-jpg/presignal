@@ -1,0 +1,366 @@
+[
+  {
+    "completed_ts": "2026-08-03T08:44:42.422458Z",
+    "day": "2024-05-24",
+    "provider_attempt_count": 1,
+    "provider_attempts": [
+      {
+        "credential_available": true,
+        "credential_property_name": "TIINGO_API_KEY",
+        "http_status": 200,
+        "missing_data_reason": "",
+        "observation_type": "OHLC",
+        "provider": "tiingo",
+        "requested_window_end": "2024-05-24T23:59:00Z",
+        "requested_window_start": "2024-05-24T00:00:00Z",
+        "source_resolution": "ONE_MINUTE",
+        "status": "SUCCESS"
+      }
+    ],
+    "raw_response_hash": "sha256:9a01caaaae5c978c0226dfc8949bb44375c34382521862100a2d316bf9b38fcd",
+    "raw_response_path": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595/raw_source_responses/2024-05-24.json",
+    "request_id": "OUTCOME_SLICE_005_DAY_20240524",
+    "selected_provider": "tiingo",
+    "started_ts": "2026-08-03T08:44:36.484596Z",
+    "status": "SUCCESS",
+    "transport_after": {
+      "authorized_http_object_id": 4406951648,
+      "authorized_http_type": "AuthorizedHttp",
+      "close_errors": [],
+      "closed_paths": [
+        "service.close",
+        "authorized_http.close",
+        "underlying_http.close"
+      ],
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4384359088,
+      "underlying_http_object_id": 4406949920,
+      "underlying_http_type": "Http"
+    },
+    "transport_before": {
+      "authorized_http_object_id": 4406951648,
+      "authorized_http_type": "AuthorizedHttp",
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4384359088,
+      "underlying_http_object_id": 4406949920,
+      "underlying_http_type": "Http"
+    },
+    "transport_error": null,
+    "window_end": "2024-05-24T23:59:00Z",
+    "window_start": "2024-05-24T00:00:00Z"
+  },
+  {
+    "completed_ts": "2026-08-03T08:44:46.694434Z",
+    "day": "2024-05-29",
+    "provider_attempt_count": 1,
+    "provider_attempts": [
+      {
+        "credential_available": true,
+        "credential_property_name": "TIINGO_API_KEY",
+        "http_status": 200,
+        "missing_data_reason": "",
+        "observation_type": "OHLC",
+        "provider": "tiingo",
+        "requested_window_end": "2024-05-29T23:59:00Z",
+        "requested_window_start": "2024-05-29T00:00:00Z",
+        "source_resolution": "ONE_MINUTE",
+        "status": "SUCCESS"
+      }
+    ],
+    "raw_response_hash": "sha256:ed079b8f64d5eb72bde90ebc6b5817e77337ba6a803846b9611f77a15fd8f856",
+    "raw_response_path": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595/raw_source_responses/2024-05-29.json",
+    "request_id": "OUTCOME_SLICE_005_DAY_20240529",
+    "selected_provider": "tiingo",
+    "started_ts": "2026-08-03T08:44:42.423623Z",
+    "status": "SUCCESS",
+    "transport_after": {
+      "authorized_http_object_id": 4384308672,
+      "authorized_http_type": "AuthorizedHttp",
+      "close_errors": [],
+      "closed_paths": [
+        "service.close",
+        "authorized_http.close",
+        "underlying_http.close"
+      ],
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4407411040,
+      "underlying_http_object_id": 4406949536,
+      "underlying_http_type": "Http"
+    },
+    "transport_before": {
+      "authorized_http_object_id": 4384308672,
+      "authorized_http_type": "AuthorizedHttp",
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4407411040,
+      "underlying_http_object_id": 4406949536,
+      "underlying_http_type": "Http"
+    },
+    "transport_error": null,
+    "window_end": "2024-05-29T23:59:00Z",
+    "window_start": "2024-05-29T00:00:00Z"
+  },
+  {
+    "completed_ts": "2026-08-03T08:44:51.770560Z",
+    "day": "2024-05-30",
+    "provider_attempt_count": 1,
+    "provider_attempts": [
+      {
+        "credential_available": true,
+        "credential_property_name": "TIINGO_API_KEY",
+        "http_status": 200,
+        "missing_data_reason": "",
+        "observation_type": "OHLC",
+        "provider": "tiingo",
+        "requested_window_end": "2024-05-30T23:59:00Z",
+        "requested_window_start": "2024-05-30T00:00:00Z",
+        "source_resolution": "ONE_MINUTE",
+        "status": "SUCCESS"
+      }
+    ],
+    "raw_response_hash": "sha256:ef2b270281bcd786ae3d545e03583ba873fa6a0fea0c38c37add9e11c0a72b90",
+    "raw_response_path": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595/raw_source_responses/2024-05-30.json",
+    "request_id": "OUTCOME_SLICE_005_DAY_20240530",
+    "selected_provider": "tiingo",
+    "started_ts": "2026-08-03T08:44:46.696443Z",
+    "status": "SUCCESS",
+    "transport_after": {
+      "authorized_http_object_id": 4407414496,
+      "authorized_http_type": "AuthorizedHttp",
+      "close_errors": [],
+      "closed_paths": [
+        "service.close",
+        "authorized_http.close",
+        "underlying_http.close"
+      ],
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4404507072,
+      "underlying_http_object_id": 4407414208,
+      "underlying_http_type": "Http"
+    },
+    "transport_before": {
+      "authorized_http_object_id": 4407414496,
+      "authorized_http_type": "AuthorizedHttp",
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4404507072,
+      "underlying_http_object_id": 4407414208,
+      "underlying_http_type": "Http"
+    },
+    "transport_error": null,
+    "window_end": "2024-05-30T23:59:00Z",
+    "window_start": "2024-05-30T00:00:00Z"
+  },
+  {
+    "completed_ts": "2026-08-03T08:44:55.988781Z",
+    "day": "2024-05-31",
+    "provider_attempt_count": 1,
+    "provider_attempts": [
+      {
+        "credential_available": true,
+        "credential_property_name": "TIINGO_API_KEY",
+        "http_status": 200,
+        "missing_data_reason": "",
+        "observation_type": "OHLC",
+        "provider": "tiingo",
+        "requested_window_end": "2024-05-31T23:59:00Z",
+        "requested_window_start": "2024-05-31T00:00:00Z",
+        "source_resolution": "ONE_MINUTE",
+        "status": "SUCCESS"
+      }
+    ],
+    "raw_response_hash": "sha256:93844cf52a5f0946d8d9515055e64a3dd17d45c2f2f7f0ff2457dd7c5d801630",
+    "raw_response_path": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595/raw_source_responses/2024-05-31.json",
+    "request_id": "OUTCOME_SLICE_005_DAY_20240531",
+    "selected_provider": "tiingo",
+    "started_ts": "2026-08-03T08:44:51.771997Z",
+    "status": "SUCCESS",
+    "transport_after": {
+      "authorized_http_object_id": 4406949056,
+      "authorized_http_type": "AuthorizedHttp",
+      "close_errors": [],
+      "closed_paths": [
+        "service.close",
+        "authorized_http.close",
+        "underlying_http.close"
+      ],
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4411066496,
+      "underlying_http_object_id": 4406951456,
+      "underlying_http_type": "Http"
+    },
+    "transport_before": {
+      "authorized_http_object_id": 4406949056,
+      "authorized_http_type": "AuthorizedHttp",
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4411066496,
+      "underlying_http_object_id": 4406951456,
+      "underlying_http_type": "Http"
+    },
+    "transport_error": null,
+    "window_end": "2024-05-31T23:59:00Z",
+    "window_start": "2024-05-31T00:00:00Z"
+  },
+  {
+    "completed_ts": "2026-08-03T08:45:01.427098Z",
+    "day": "2024-06-03",
+    "provider_attempt_count": 1,
+    "provider_attempts": [
+      {
+        "credential_available": true,
+        "credential_property_name": "TIINGO_API_KEY",
+        "http_status": 200,
+        "missing_data_reason": "",
+        "observation_type": "OHLC",
+        "provider": "tiingo",
+        "requested_window_end": "2024-06-03T23:59:00Z",
+        "requested_window_start": "2024-06-03T00:00:00Z",
+        "source_resolution": "ONE_MINUTE",
+        "status": "SUCCESS"
+      }
+    ],
+    "raw_response_hash": "sha256:6a50d601a32f9ab491a136e93aa229e483a7392136b468c53d7fa08ea2d68cc2",
+    "raw_response_path": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595/raw_source_responses/2024-06-03.json",
+    "request_id": "OUTCOME_SLICE_005_DAY_20240603",
+    "selected_provider": "tiingo",
+    "started_ts": "2026-08-03T08:44:55.990322Z",
+    "status": "SUCCESS",
+    "transport_after": {
+      "authorized_http_object_id": 4406951600,
+      "authorized_http_type": "AuthorizedHttp",
+      "close_errors": [],
+      "closed_paths": [
+        "service.close",
+        "authorized_http.close",
+        "underlying_http.close"
+      ],
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4407414640,
+      "underlying_http_object_id": 4388133664,
+      "underlying_http_type": "Http"
+    },
+    "transport_before": {
+      "authorized_http_object_id": 4406951600,
+      "authorized_http_type": "AuthorizedHttp",
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4407414640,
+      "underlying_http_object_id": 4388133664,
+      "underlying_http_type": "Http"
+    },
+    "transport_error": null,
+    "window_end": "2024-06-03T23:59:00Z",
+    "window_start": "2024-06-03T00:00:00Z"
+  },
+  {
+    "completed_ts": "2026-08-03T08:45:06.497815Z",
+    "day": "2024-06-04",
+    "provider_attempt_count": 1,
+    "provider_attempts": [
+      {
+        "credential_available": true,
+        "credential_property_name": "TIINGO_API_KEY",
+        "http_status": 200,
+        "missing_data_reason": "",
+        "observation_type": "OHLC",
+        "provider": "tiingo",
+        "requested_window_end": "2024-06-04T23:59:00Z",
+        "requested_window_start": "2024-06-04T00:00:00Z",
+        "source_resolution": "ONE_MINUTE",
+        "status": "SUCCESS"
+      }
+    ],
+    "raw_response_hash": "sha256:399432863154bc868e5529287c8a55f8e07152351061f9341b0e3c5c6ddfda73",
+    "raw_response_path": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595/raw_source_responses/2024-06-04.json",
+    "request_id": "OUTCOME_SLICE_005_DAY_20240604",
+    "selected_provider": "tiingo",
+    "started_ts": "2026-08-03T08:45:01.428449Z",
+    "status": "SUCCESS",
+    "transport_after": {
+      "authorized_http_object_id": 4411026112,
+      "authorized_http_type": "AuthorizedHttp",
+      "close_errors": [],
+      "closed_paths": [
+        "service.close",
+        "authorized_http.close",
+        "underlying_http.close"
+      ],
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4411023424,
+      "underlying_http_object_id": 4411068224,
+      "underlying_http_type": "Http"
+    },
+    "transport_before": {
+      "authorized_http_object_id": 4411026112,
+      "authorized_http_type": "AuthorizedHttp",
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4411023424,
+      "underlying_http_object_id": 4411068224,
+      "underlying_http_type": "Http"
+    },
+    "transport_error": null,
+    "window_end": "2024-06-04T23:59:00Z",
+    "window_start": "2024-06-04T00:00:00Z"
+  },
+  {
+    "completed_ts": "2026-08-03T08:45:10.286547Z",
+    "day": "2024-06-05",
+    "provider_attempt_count": 1,
+    "provider_attempts": [
+      {
+        "credential_available": true,
+        "credential_property_name": "TIINGO_API_KEY",
+        "http_status": 200,
+        "missing_data_reason": "",
+        "observation_type": "OHLC",
+        "provider": "tiingo",
+        "requested_window_end": "2024-06-05T23:59:00Z",
+        "requested_window_start": "2024-06-05T00:00:00Z",
+        "source_resolution": "ONE_MINUTE",
+        "status": "SUCCESS"
+      }
+    ],
+    "raw_response_hash": "sha256:711116c2315975b674aaf9b3bf48ba85017c9ee3147579d43008bf5eedbec8e9",
+    "raw_response_path": "outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595/raw_source_responses/2024-06-05.json",
+    "request_id": "OUTCOME_SLICE_005_DAY_20240605",
+    "selected_provider": "tiingo",
+    "started_ts": "2026-08-03T08:45:06.499269Z",
+    "status": "SUCCESS",
+    "transport_after": {
+      "authorized_http_object_id": 4411027120,
+      "authorized_http_type": "AuthorizedHttp",
+      "close_errors": [],
+      "closed_paths": [
+        "service.close",
+        "authorized_http.close",
+        "underlying_http.close"
+      ],
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4407414640,
+      "underlying_http_object_id": 4411026784,
+      "underlying_http_type": "Http"
+    },
+    "transport_before": {
+      "authorized_http_object_id": 4411027120,
+      "authorized_http_type": "AuthorizedHttp",
+      "connection_count": 0,
+      "connection_keys": [],
+      "service_object_id": 4407414640,
+      "underlying_http_object_id": 4411026784,
+      "underlying_http_type": "Http"
+    },
+    "transport_error": null,
+    "window_end": "2024-06-05T23:59:00Z",
+    "window_start": "2024-06-05T00:00:00Z"
+  }
+]

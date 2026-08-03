@@ -94,6 +94,9 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 
 `PPHB-R1-PACK-A-TERMINAL-INVALID-RECOVERY-FEASIBILITY-REVIEW-20260803T070000Z-385b501cd5dc` is diagnostic-only append-only evidence for the three Pack A terminal-invalid calls. It does not alter terminal classifications, authoritative counts, or the full-execution completion boundary; it identifies one separately authorized mechanical-recovery candidate only.
 
+| `PPHB-R1-OUTCOME-SLICE-005-END-TO-END-AUTHORIZATION-20260803T110000Z-27bb8c4f35a181bce6d0` | Slice 005 active end-to-end authorization | Single-use authorization (`sha256:27bb8c4f35a181bce6d0d86402f8304ed1ec80c3e400e9e496b6ec070178e877`) bound to the frozen Slice 005 manifest, 7/12/19 request ceilings, 0 writes, 0 retries, and six-metric allow-list; blocked and non-reusable after two unavailable Outcomes | Append-only; blocked/non-reusable | New governance treatment decision for unavailable Slice 005 Outcomes |
+| `PPHB-R1-OUTCOME-SLICE-005-COLLECTION-BLOCKER-20260803T084500Z-c28323fe7595` | Slice 005 governance blocker | Collection reached 12 candidate records within ceiling, but `EP_EVENT_08219d7669dbc263d9f6` and `EP_EVENT_f09204427881dfea157f` are unavailable; no accepted exclusion/recovery treatment, attachment, evaluation, retry, or write occurred | Append-only blocker | Separate Slice 005 unavailable-Outcome governance review |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

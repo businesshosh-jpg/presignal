@@ -1,0 +1,52 @@
+{
+  "pairability": [
+    "EP_EVENT_d6fce9c8901236c9cdd2",
+    "EP_BATCH_55166f262d069c0e7828",
+    "EP_BATCH_8a51e1bb638289aeb7df"
+  ],
+  "prior_and_governance": [
+    "EP_BATCH_0ba598718d3db4688437",
+    "EP_BATCH_0cf5e270557880a488b8",
+    "EP_BATCH_1c2cb957d0760e40f81e",
+    "EP_BATCH_1ff2d721e3e93c9a9ac4",
+    "EP_BATCH_55618f3282f5c812c160",
+    "EP_BATCH_58e0d92ad8520bb926bb",
+    "EP_BATCH_5fe2f38977eb016fa947",
+    "EP_BATCH_6c539b74501349cffd89",
+    "EP_BATCH_6fe19af827bb13a0511e",
+    "EP_BATCH_851b7d8bd3661e168de1",
+    "EP_BATCH_af76f644b423101d91f2",
+    "EP_BATCH_bf1ad05b4d84df1b733a",
+    "EP_BATCH_e14769aca1aaacc9c230",
+    "EP_BATCH_eeae6fee09edc60d1e7d",
+    "EP_BATCH_f537c8eb93513ab66253",
+    "EP_BATCH_f7f52f894ce4f1929d5a",
+    "EP_EVENT_01893936c223ec52cb7a",
+    "EP_EVENT_08246fe90d4f62b05721",
+    "EP_EVENT_0bdc3a14a83964458ed4",
+    "EP_EVENT_13e6e3247eaea46e42de",
+    "EP_EVENT_1eb58a8dd29907ace6d9",
+    "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+    "EP_EVENT_4b80366594480b554889",
+    "EP_EVENT_4c7017820e55586a2667",
+    "EP_EVENT_556c59fe6ef36f4ac156",
+    "EP_EVENT_82563db31e94ae9d1799",
+    "EP_EVENT_84dbc3fa51c46f7727c1",
+    "EP_EVENT_9057e45c0a3429423d83",
+    "EP_EVENT_a8905547406656cf53ae",
+    "EP_EVENT_aa41226bcb8107901555",
+    "EP_EVENT_ac12e6d3e66e6b92e1ef",
+    "EP_EVENT_b908a729dc4fa10f46a6",
+    "EP_EVENT_bfcff4089c331ae1d2c8",
+    "EP_EVENT_c1e9ad44fb070df76be1",
+    "EP_EVENT_d5d7aa4435b9e6bab424",
+    "EP_EVENT_e8d9ca85a946bdcbc5d9",
+    "EP_EVENT_ef630a47cf9a4a6f79fd"
+  ],
+  "terminal_invalid": [
+    "FCL_27720b8b23236b173b96fdee",
+    "FCL_7f0463b134c67757968580e8",
+    "FCL_e07264654e9d3da6f63088a1"
+  ],
+  "unresolved_conflicts": []
+}

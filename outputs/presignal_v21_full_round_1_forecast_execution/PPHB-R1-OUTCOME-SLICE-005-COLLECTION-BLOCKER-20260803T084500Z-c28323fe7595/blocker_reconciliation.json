@@ -1,0 +1,16 @@
+{
+  "decision": "AUTHORIZED_NEXT_SLICE_GOVERNANCE_BLOCKED",
+  "slice_id": "SLICE-005",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-005-20260803T100000Z",
+  "manifest_fingerprint": "sha256:c965903c8e799920d4a3aaee3ed3a173be11b0bfa0bbb7a39b39c28323fe7595",
+  "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-005-20260803T084436Z-c28323fe7595",
+  "population": {"episodes": 12, "candidate_records": 12, "valid_candidates": 10, "unavailable_candidates": 2, "attachment_eligible": 0, "evaluation_eligible": 0},
+  "unavailable_episode_ids": ["EP_EVENT_08219d7669dbc263d9f6", "EP_EVENT_f09204427881dfea157f"],
+  "requests": {"apps_script_reads": 7, "market_data_attempts": 7, "total_external_requests": 14, "google_writes": 0, "retries": 0},
+  "remote_state": "CERTAIN",
+  "duplicate_requests": 0,
+  "unresolved_identity_count": 0,
+  "attachment_started": false,
+  "evaluation_started": false,
+  "required_next_move": "separate governance decision for the two unavailable Slice 005 Outcomes"
+}
