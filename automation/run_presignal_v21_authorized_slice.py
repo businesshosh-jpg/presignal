@@ -22,6 +22,7 @@ STOP_STATES = {
     "evaluate": "MINIMAL_EVALUATION_COMPLETE",
 }
 END_TO_END_STOP = "MANIFEST_ACCEPTED_END_TO_END_AUTHORIZATION_REQUIRED"
+END_TO_END_AUTHORIZED_NOT_STARTED = "SLICE_002_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED"
 END_TO_END_COMPLETE = "AUTHORIZED_SLICE_COMPLETE"
 REQUIRED_AUTH_FIELDS = {
     "authorization_status", "slice_id", "manifest_id", "manifest_sha256",
@@ -66,7 +67,7 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
     if auth["manifest_id"] != manifest.get("manifest_id") or auth["slice_id"] != manifest.get("slice_id"):
         fail("MANIFEST_IDENTITY_CONFLICT")
     if end_to_end:
-        required = {"authorization_mode", "outcome_collection_identity_ids", "attachment_destination", "evaluation_population_rule", "permitted_metrics", "stage_stop_conditions", "resume_authority"}
+        required = {"authorization_id", "authorization_schema_version", "controller_version", "controller_commit", "authorization_mode", "outcome_collection_identity_ids", "authorized_attachment_identity_ids", "attachment_destination", "attachment_write_ceiling", "evaluation_population_rule", "evaluation_output_destination", "permitted_metrics", "stage_sequence", "stage_stop_conditions", "resume_authority", "single_use"}
         missing_end_to_end = sorted(required - set(auth))
         if missing_end_to_end:
             fail("END_TO_END_AUTHORITY_FIELDS_MISSING:" + ",".join(missing_end_to_end))
@@ -78,10 +79,26 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
             fail("OUTCOME_COLLECTION_IDENTITY_CONFLICT")
         if auth["attachment_destination"] != "append-only local Outcome attachment evidence":
             fail("ATTACHMENT_DESTINATION_CONFLICT")
-        if auth["evaluation_population_rule"] != "authoritative valid forecasts mapped one-to-one to attached Slice 002 Outcomes; terminal-invalid excluded":
+        if set(auth["authorized_attachment_identity_ids"]) != set(auth["outcome_collection_identity_ids"]):
+            fail("ATTACHMENT_IDENTITY_SCOPE_CONFLICT")
+        if auth["attachment_write_ceiling"] != {"google_writes": 0, "local_append_only_records": 12}:
+            fail("ATTACHMENT_WRITE_CEILING_CONFLICT")
+        if not auth["evaluation_population_rule"].startswith("44 authoritative valid forecasts mapped one-to-one to 12 attached Slice 002 Outcomes") or "terminal-invalid excluded" not in auth["evaluation_population_rule"]:
             fail("EVALUATION_POPULATION_RULE_CONFLICT")
-        if not auth["permitted_metrics"] or "T+15 directional accuracy" not in auth["permitted_metrics"]:
+        permitted_metrics = {
+            "T+15 directional accuracy",
+            "Immediate Impulse directional accuracy",
+            "magnitude or pip error",
+            "horizon accuracy",
+            "path accuracy",
+            "reversal accuracy",
+        }
+        if set(auth["permitted_metrics"]) != permitted_metrics:
             fail("PERMITTED_METRICS_CONFLICT")
+        if auth["stage_sequence"] != ["call_free_preflight", "collection", "collection_reconciliation", "attachment", "attachment_reconciliation", "minimal_evaluation", "final_slice_reconciliation"]:
+            fail("STAGE_SEQUENCE_CONFLICT")
+        if auth["single_use"] is not True:
+            fail("SINGLE_USE_CONFLICT")
     elif stage != auth["authorized_stage"] and not (stage == "manifest" and auth["authorized_stage"] == "collect"):
         fail("AUTHORIZED_STAGE_CONFLICT")
     if auth["contract"] != manifest.get("forecast_contract") or auth["schema_version"] != manifest.get("outcome_schema_version"):
@@ -101,14 +118,13 @@ def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str
     if sum(len(row["outcome_collection_identity"]["pack_pairs"]) for row in rows) != 22:
         fail("PAIR_POPULATION_CONFLICT")
     ceilings = auth["ceilings"]
-    expected = {
-        "max_apps_script_reads": 3,
-        "max_market_data_attempts": 12,
-        "max_total_external_requests": 15,
-        "google_write_ceiling": 0,
-    }
-    if ceilings != expected:
+    expected = {"max_apps_script_reads": 3, "max_market_data_attempts": 12, "max_total_external_requests": 15, "google_write_ceiling": 0}
+    if any(ceilings.get(key) != value for key, value in expected.items()):
         fail("AUTHORIZATION_CEILING_CONFLICT")
+    if not end_to_end and set(ceilings) != set(expected):
+        fail("AUTHORIZATION_CEILING_CONFLICT")
+    if end_to_end and (ceilings.get("max_attachment_records") != 12 or ceilings.get("max_evaluation_artifacts") != 1):
+        fail("END_TO_END_CEILING_CONFLICT")
     if auth["retry_boundary"] != "NO_AUTOMATIC_RETRIES":
         fail("RETRY_BOUNDARY_CONFLICT")
     return {"auth": auth, "manifest": manifest, "actual_sha": actual_sha, "episode_ids": ids}
@@ -200,7 +216,7 @@ def main() -> int:
         if auth["authorization_status"] != "ACTIVE":
             decision = END_TO_END_STOP
         elif args.offline_validation:
-            decision = END_TO_END_STOP
+            decision = END_TO_END_AUTHORIZED_NOT_STARTED
         else:
             if route_proof is not None and route_proof["decision"] != END_TO_END_COMPLETE:
                 fail("END_TO_END_ROUTE_BLOCKED")

@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RUN = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution" / "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e"
 MANIFEST = RUN / "slice_002_manifest.json"
 AUTH = RUN / "controller_validation_authorization.json"
+ACTIVE_AUTH = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution" / "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z-e8e69ad49e46" / "authorization.json"
 EXPECTED = "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c"
 
 
@@ -93,9 +94,14 @@ class AuthorizedSliceControllerTest(unittest.TestCase):
     def test_end_to_end_inactive_fixture_stops_before_external_access(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "evidence.json"
+            inactive = json.loads(ACTIVE_AUTH.read_text())
+            inactive["authorization_status"] = "PROPOSED"
+            inactive["authorization_fingerprint"] = auth_fingerprint(inactive)
+            auth_path = Path(tmp) / "inactive_authorization.json"
+            auth_path.write_text(json.dumps(inactive))
             result = subprocess.run([
                 sys.executable, str(ROOT / "automation" / "run_presignal_v21_authorized_slice.py"),
-                "--authorization", str(RUN / "end_to_end_validation_authorization.json"),
+                "--authorization", str(auth_path),
                 "--manifest", str(MANIFEST), "--expected-manifest-sha", EXPECTED,
                 "--end-to-end", "--mock-clean-route", "--offline-validation", "--output", str(output),
             ], capture_output=True, text=True)
@@ -103,6 +109,34 @@ class AuthorizedSliceControllerTest(unittest.TestCase):
             evidence = json.loads(output.read_text())
             self.assertEqual(evidence["decision"], "MANIFEST_ACCEPTED_END_TO_END_AUTHORIZATION_REQUIRED")
             self.assertEqual(evidence["external_access"]["total_external_requests"], 0)
+
+    def test_active_authorization_is_ready_but_not_started(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "evidence.json"
+            subprocess.run([
+                sys.executable, str(ROOT / "automation" / "run_presignal_v21_authorized_slice.py"),
+                "--authorization", str(ACTIVE_AUTH), "--manifest", str(MANIFEST),
+                "--expected-manifest-sha", EXPECTED, "--end-to-end", "--offline-validation", "--output", str(output),
+            ], check=True)
+            evidence = json.loads(output.read_text())
+            self.assertEqual(evidence["decision"], "SLICE_002_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED")
+            self.assertEqual(evidence["recognized_ceilings"]["max_attachment_records"], 12)
+            self.assertEqual(evidence["external_access"]["total_external_requests"], 0)
+
+    def test_active_authorization_tampering_fails_closed(self):
+        original = json.loads(ACTIVE_AUTH.read_text())
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "auth.json"
+            tampered = dict(original)
+            tampered["permitted_metrics"] = list(original["permitted_metrics"]) + ["unsupported metric"]
+            tampered["authorization_fingerprint"] = auth_fingerprint(tampered)
+            path.write_text(json.dumps(tampered))
+            result = subprocess.run([
+                sys.executable, str(ROOT / "automation" / "run_presignal_v21_authorized_slice.py"),
+                "--authorization", str(path), "--manifest", str(MANIFEST),
+                "--expected-manifest-sha", EXPECTED, "--end-to-end", "--offline-validation",
+            ], capture_output=True, text=True)
+            self.assertIn("PERMITTED_METRICS_CONFLICT", result.stderr)
 
 
 if __name__ == "__main__":
