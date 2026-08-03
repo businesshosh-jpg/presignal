@@ -1,0 +1,32 @@
+{
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-003-REPLACEMENT-END-TO-END-AUTHORIZATION-20260803T171000Z",
+  "authorization_fingerprint": "sha256:27ebd3d15f91637f217a2621edecf48c32d61698587d3bf785b2ffdef743e49b",
+  "decision": "AUTHORIZED_SLICE_003_GOVERNANCE_BLOCKED",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "blocked_stage": "attachment_preflight",
+  "root_cause": "COLLECTION_RECONCILIATION_UNRESOLVED",
+  "accepted_collection_run": "PPHB-R1-OUTCOME-COLLECTION-SLICE-003-20260803T071136Z-fc2fd1815bd5",
+  "collection_result": {
+    "episodes": 12,
+    "apps_script_reads": 10,
+    "market_data_attempts": 12,
+    "total_external_requests": 22,
+    "google_writes": 0,
+    "candidate_outcomes": 12,
+    "missing_or_terminal_source_episodes": [
+      "EP_EVENT_4b80366594480b554889",
+      "EP_EVENT_aa41226bcb8107901555"
+    ],
+    "duplicate_requests": 0,
+    "unresolved_identities": []
+  },
+  "completed_stages": ["call_free_preflight", "collection", "collection_reconciliation"],
+  "incomplete_stages": ["attachment", "attachment_reconciliation", "minimal_evaluation", "final_slice_reconciliation"],
+  "attachment_records": 0,
+  "evaluation_calculations": 0,
+  "remote_state": "CERTAIN_COLLECTION_COMPLETE_ATTACHMENT_NOT_STARTED",
+  "retry_performed": false,
+  "resume": "REQUIRES_NEW_EXPLICIT_AUTHORIZATION_AFTER_GOVERNANCE_REVIEW",
+  "reason": "The authorization forbids attaching missing or ambiguous Outcomes; two Episodes have explicit unavailable source status. No collection retry is authorized."
+}

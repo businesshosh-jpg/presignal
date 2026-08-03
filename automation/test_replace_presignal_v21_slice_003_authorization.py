@@ -12,8 +12,15 @@ from automation.run_presignal_v21_authorized_slice import fingerprint, validate
 
 
 class Slice003ReplacementAuthorizationTests(unittest.TestCase):
-    def test_day_bound_replacement_is_accepted(self):
+    @staticmethod
+    def test_authorization():
         auth, proof = build_authorization("controller-test-commit")
+        auth["authorization_id"] = "PPHB-R1-TEST-SLICE-003-REPLACEMENT-AUTHORIZATION"
+        auth["authorization_fingerprint"] = fingerprint(auth)
+        return auth, proof
+
+    def test_day_bound_replacement_is_accepted(self):
+        auth, proof = self.test_authorization()
         manifest = MANIFEST_DIR / "slice_003_manifest.json"
         self.assertEqual(proof["distinct_release_day_count"], 10)
         self.assertEqual(auth["ceilings"]["max_apps_script_reads"], 10)
@@ -26,7 +33,7 @@ class Slice003ReplacementAuthorizationTests(unittest.TestCase):
         self.assertEqual(checked["manifest"]["authorized_forecast_population"]["complete_pack_a_e_pairs"], 20)
 
     def test_ceiling_tampering_fails_closed(self):
-        auth, _ = build_authorization("controller-test-commit")
+        auth, _ = self.test_authorization()
         auth["ceilings"]["max_apps_script_reads"] = 9
         auth["authorization_fingerprint"] = fingerprint(auth)
         with tempfile.TemporaryDirectory() as directory:
@@ -37,7 +44,7 @@ class Slice003ReplacementAuthorizationTests(unittest.TestCase):
         self.assertEqual(str(error.exception), "AUTHORIZATION_CEILING_CONFLICT")
 
     def test_day_set_tampering_fails_closed(self):
-        auth, _ = build_authorization("controller-test-commit")
+        auth, _ = self.test_authorization()
         auth["release_days_utc"][0] = "2024-05-05"
         auth["authorization_fingerprint"] = fingerprint(auth)
         with tempfile.TemporaryDirectory() as directory:
