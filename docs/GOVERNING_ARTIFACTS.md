@@ -210,6 +210,13 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 |---|---|---|---|---|
 | `PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-20260803T150000Z` | One-shot attribution-hardened Apps Script deployment authorization and execution evidence | `ROUND_2_HARDENED_APPS_SCRIPT_DEPLOYMENT_BLOCKED`. Authorization `PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-AUTHORIZATION-20260803T150000Z` (`sha256:e0e6458043422251f47c08449104db2ef1b40374a40cb1a8da0874ad150b06c3`) permitted one source update, one version creation, one activation, and two verification reads. One source update and one version creation completed. Five `EXECUTION_API` deployments existed with no accepted deterministic selection rule, so activation and live verification did not occur. No FMP, schedule refresh, Event write/export, provider, Outcome, or evaluation activity occurred. | Append-only blocked/non-reusable partial-operation evidence; all prior refresh evidence remains unchanged | New deployment authorization with one exact accepted `EXECUTION_API` deployment identity, then a separately authorized refresh |
 
+## ROUND_2_AUTHORITATIVE_DEPLOYMENT_AND_REFRESH
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-BINDING-20260804T000000Z` | Exact authoritative deployment inventory, authorization, activation, and contract verification | `AUTHORITATIVE_EXECUTION_API_DEPLOYMENT_CONFIRMED`; `ROUND_2_HARDENED_APPS_SCRIPT_DEPLOYED`. The five-deployment inventory selected only `AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN`, because accepted Round 1 invocation evidence binds that exact endpoint. It was updated from version 82 to the already-created hardened version 83 and returned the required read-only attribution contract. | Append-only deployment-binding evidence; exact activation complete | New exact schedule-refresh authorization |
+| `PPHB-R2-SCHEDULE-REFRESH-20260803T151000Z` | One-call attributed refresh attempt after hardened deployment verification | `SCHEDULE_REFRESH_REMOTE_STATE_UNRESOLVED`. Operation intent `R2SCHEDOP_b1aa318ac0a9fb92002b789b` was persisted, then the sole invocation left no attributable response or terminal record. Apps Script `1`; FMP and Event write `UNKNOWN_UP_TO_1`; export `0`; retries `0`. No snapshot/admission/dispatch authority exists. | Append-only blocked/non-reusable evidence | Separate read-only reconciliation authorization only |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

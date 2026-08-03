@@ -20,7 +20,7 @@ from automation.run_presignal_v21_continuous_round_2 import SOURCE_AUTHORITY
 BASE = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution"
 OUTPUT_DIR = BASE / "PPHB-R2-SCHEDULE-REFRESH-20260803T151000Z"
 AUTH_ID = "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T151000Z"
-DEPLOYMENT_DIR = BASE / "PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-20260803T150000Z"
+DEPLOYMENT_DIR = BASE / "PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-BINDING-20260804T000000Z"
 PROTOCOL_ID = "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
 PROTOCOL_FP = "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f"
 ENVELOPE_ID = "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z"
@@ -40,7 +40,7 @@ def digest(value: Any) -> str:
 
 def deployment_binding() -> dict[str, Any]:
     """Require the accepted hardened deployment before freezing a refresh."""
-    path = DEPLOYMENT_DIR / "deployment_execution.json"
+    path = DEPLOYMENT_DIR / "deployment_activation_result.json"
     if not path.exists():
         raise RuntimeError("HARDENED_DEPLOYMENT_EVIDENCE_REQUIRED")
     value = json.loads(path.read_text())
@@ -53,9 +53,9 @@ def deployment_binding() -> dict[str, Any]:
     if not required <= set(contract.get("required_response_fields", [])):
         raise RuntimeError("HARDENED_DEPLOYMENT_RESPONSE_CONTRACT_INCOMPLETE")
     return {
-        "deployment_authorization_id": json.loads((DEPLOYMENT_DIR / "deployment_authorization.json").read_text())["authorization_id"],
+        "deployment_authorization_id": json.loads((DEPLOYMENT_DIR / "deployment_binding_authorization.json").read_text())["authorization_id"],
         "deployment_id": value["deployment_id"],
-        "version_number": value["version_number"],
+        "version_number": value["resulting_version"],
         "source_fingerprint": value["source_fingerprint"],
         "contract_version": contract["contract_version"],
     }
@@ -122,6 +122,13 @@ def execute(output_dir: Path, value: dict[str, Any], evidence: dict[str, Any]) -
         return evidence
     try:
         result = google_clients.run_script_function_with_metadata(service, google_clients.default_script_id(), "apiUpsertEventWindow", [{"from_utc_iso": FROM_UTC, "to_utc_iso": TO_UTC, "operation_id": operation_id, "authorization_id": AUTH_ID, "source_window_fingerprint": source_window_fingerprint}], dev_mode=True)
+    except Exception as exc:
+        journal_event = {"event": "REFRESH_RESPONSE_UNAVAILABLE", "operation_id": operation_id, "authorization_id": AUTH_ID, "error_type": type(exc).__name__, "remote_state": "UNKNOWN_POST_DISPATCH"}
+        with (output_dir / "operation_journal.jsonl").open("a") as journal:
+            journal.write(json.dumps(journal_event, sort_keys=True) + "\n")
+        evidence.update({"decision": "SCHEDULE_REFRESH_REMOTE_STATE_UNRESOLVED", "operation_id": operation_id, "source_window_fingerprint": source_window_fingerprint, "apps_script_invocations": 1, "fmp_requests": "UNKNOWN_UP_TO_1", "event_sheet_writes": "UNKNOWN_UP_TO_1", "export_reads": 0, "remote_state": "UNKNOWN_POST_DISPATCH", "stop": "SCHEDULE_REFRESH_RESPONSE_UNAVAILABLE", "error_type": type(exc).__name__})
+        (output_dir / "schedule_refresh_execution.json").write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n")
+        return evidence
     finally:
         google_clients.close_google_service(service)
     terminal = result.get("result") if result.get("ok") else None

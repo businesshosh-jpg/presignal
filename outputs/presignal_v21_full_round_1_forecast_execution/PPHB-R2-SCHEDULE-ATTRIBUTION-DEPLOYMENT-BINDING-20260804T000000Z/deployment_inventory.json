@@ -1,0 +1,115 @@
+{
+  "authority_proof": {
+    "accepted_invocation_references": [
+      "PPHB-R1-OUTCOME-COLLECTION-SLICE-002-20260803T035402Z-5b2104c5270c/preflight_decision.json",
+      "PPHB-R1-OUTCOME-COLLECTION-SLICE-012-20260803T112350Z-c68c116427d5/preflight_decision.json",
+      "PPHB-R1-OUTCOME-ATTACH-SLICE-012-20260803T112356Z-c68c116427d5/run_manifest.json"
+    ],
+    "decision": "AUTHORITATIVE_EXECUTION_API_DEPLOYMENT_CONFIRMED",
+    "inventory_count": 5,
+    "selected_before_version": 82,
+    "selected_deployment_id": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+    "selection_rule": "Exact deployment endpoint repeatedly bound by accepted Round 1 collection preflight and attachment manifests; other deployment descriptions, versions, recency, and list order are not selection inputs."
+  },
+  "deployments": [
+    {
+      "deploymentConfig": {
+        "manifestFileName": "appsscript",
+        "scriptId": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9"
+      },
+      "deploymentId": "AKfycbxHxQUtTkWFWolnUqO-wrCxcnr4NQHYYtF07RKZpcM",
+      "entryPoints": [
+        {
+          "entryPointType": "EXECUTION_API",
+          "executionApi": {
+            "entryPointConfig": {
+              "access": "MYSELF"
+            }
+          }
+        }
+      ],
+      "updateTime": "1970-01-01T00:00:00Z"
+    },
+    {
+      "deploymentConfig": {
+        "description": "Read-only governed historical USD/JPY endpoint v1; non-authoritative replay deployment",
+        "manifestFileName": "appsscript",
+        "scriptId": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9",
+        "versionNumber": 80
+      },
+      "deploymentId": "AKfycbz4i2XXECnKXRpG8jEvE9hfqJXlMfaklmTxHpih2oy_H2MlElyV49uqCLyvuSWu7SdD",
+      "entryPoints": [
+        {
+          "entryPointType": "EXECUTION_API",
+          "executionApi": {
+            "entryPointConfig": {
+              "access": "ANYONE"
+            }
+          }
+        }
+      ],
+      "updateTime": "2026-07-18T14:38:30.565Z"
+    },
+    {
+      "deploymentConfig": {
+        "description": "Read-only governed historical USD/JPY endpoint v1; provider/all_available surface",
+        "manifestFileName": "appsscript",
+        "scriptId": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9",
+        "versionNumber": 82
+      },
+      "deploymentId": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+      "entryPoints": [
+        {
+          "entryPointType": "EXECUTION_API",
+          "executionApi": {
+            "entryPointConfig": {
+              "access": "MYSELF"
+            }
+          }
+        }
+      ],
+      "updateTime": "2026-07-27T10:12:02.659Z"
+    },
+    {
+      "deploymentConfig": {
+        "description": "Codex Fresh vs Original Replay",
+        "manifestFileName": "appsscript",
+        "scriptId": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9",
+        "versionNumber": 79
+      },
+      "deploymentId": "AKfycbxd31I_td72HW0ZgScfYthYqliKfzBkQxE9EdURpTQU6ObQawGmX1sB5aVO3MADqXWf",
+      "entryPoints": [
+        {
+          "entryPointType": "EXECUTION_API",
+          "executionApi": {
+            "entryPointConfig": {
+              "access": "ANYONE"
+            }
+          }
+        }
+      ],
+      "updateTime": "2026-07-17T18:22:01.938Z"
+    },
+    {
+      "deploymentConfig": {
+        "description": "PreSignal Automation",
+        "manifestFileName": "appsscript",
+        "scriptId": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9",
+        "versionNumber": 4
+      },
+      "deploymentId": "AKfycbwuoRwcTFUxo89l6YB5wbvKQRNu0WDOo5YrI814cxwK4vH8odw-gMK6EX2_o1NtpU7B",
+      "entryPoints": [
+        {
+          "entryPointType": "EXECUTION_API",
+          "executionApi": {
+            "entryPointConfig": {
+              "access": "ANYONE"
+            }
+          }
+        }
+      ],
+      "updateTime": "2026-05-29T23:43:47.008Z"
+    }
+  ],
+  "project_id": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9"
+}

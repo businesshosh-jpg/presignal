@@ -1,0 +1,26 @@
+{
+  "authorization_id": "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T151000Z",
+  "authorization_fingerprint": "sha256:771f69fbf645849603e37944aa82fcdfc5bc3db31b8b74c3a40810490946edb4",
+  "decision": "SCHEDULE_REFRESH_REMOTE_STATE_UNRESOLVED",
+  "operation_id": "R2SCHEDOP_b1aa318ac0a9fb92002b789b",
+  "source_window_fingerprint": "sha256:da37879d8b0e3e5c4b945e28ee5892da52ca14217dfc40b8c068dcc0df0159e3",
+  "reason": "The durable operation intent was persisted before the one authorized Apps Script invocation. No attributable response, completion record, or terminal remote-state record was persisted after dispatch. No additional remote inspection is authorized because the refresh state is not certain.",
+  "actuals": {
+    "fmp_requests": "UNKNOWN_UP_TO_1",
+    "apps_script_invocations": 1,
+    "event_sheet_writes": "UNKNOWN_UP_TO_1",
+    "event_sheet_export_reads": 0,
+    "provider_calls": 0,
+    "outcome_activity": 0,
+    "evaluation_activity": 0,
+    "retries": 0
+  },
+  "remote_state": "UNKNOWN_POST_DISPATCH",
+  "authorization_status": "BLOCKED_NON_REUSABLE",
+  "downstream_status": {
+    "authoritative_event_snapshot": "NOT_AUTHORIZED",
+    "episode_admission": "NOT_AUTHORIZED",
+    "slice_manifest": "NOT_AUTHORIZED",
+    "provider_dispatch_authorization": "NOT_AUTHORIZED"
+  }
+}

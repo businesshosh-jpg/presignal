@@ -308,3 +308,16 @@ Publish/activate the attribution-hardened Apps Script route under a separately a
 ## Exact Next Round 2 Move
 
 Freeze a new deployment authorization that binds exactly one accepted `EXECUTION_API` deployment ID in project `1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9`, activates the already-created hardened version after a deterministic selection proof, verifies the attribution contract, and only then separately authorizes one new attributed schedule refresh.
+
+## Round 2 Authoritative Deployment Binding and Refresh Attempt
+
+- Deployment authority: `AUTHORITATIVE_EXECUTION_API_DEPLOYMENT_CONFIRMED`. The historically accepted Round 1 endpoint `AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN` is the sole selection target, proven by accepted collection and attachment invocation lineage rather than version, description, recency, or list order.
+- Binding authorization: `PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-BINDING-AUTHORIZATION-20260804T000000Z` (`sha256:61a5dc5d1faceeb59cdd4b6de6d4d40d43b299cdd06444f48cbff7f173867f6b`). It updated only that deployment from version `82` to the previously created hardened version `83`; source fingerprint `sha256:5c9558f51b6ea7cca8f905b543ef3306d9e6a0acd9a5d07f2c33d7dc8acbf670`.
+- Deployment result: `ROUND_2_HARDENED_APPS_SCRIPT_DEPLOYED`; remote state certain. The live read-only probe returned the required attribution schema. No unrelated Apps Script, Event-sheet, provider, Outcome, or evaluation operation occurred.
+- New refresh authorization: `PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T151000Z` (`sha256:771f69fbf645849603e37944aa82fcdfc5bc3db31b8b74c3a40810490946edb4`), one FMP request, one Apps Script invocation, one Event upsert operation, one export read, and zero retries.
+- Refresh result: `SCHEDULE_REFRESH_REMOTE_STATE_UNRESOLVED`. Intent `R2SCHEDOP_b1aa318ac0a9fb92002b789b` was persisted before the sole invocation, but no attributable response or terminal record was persisted. Actuals are Apps Script `1`, FMP `UNKNOWN_UP_TO_1`, Event write `UNKNOWN_UP_TO_1`, export `0`, retries `0`; provider, Outcome, and evaluation activity `0`. The refresh authorization is blocked and non-reusable.
+- No authoritative Event snapshot, Episode admission, Round 2 Slice manifest, forecast-call inventory, or provider-dispatch authorization was created.
+
+## Exact Next Round 2 Move
+
+Freeze a separate read-only reconciliation authorization for `R2SCHEDOP_b1aa318ac0a9fb92002b789b`. It must establish the invocation's remote state from attributable operation-journal or Apps Script evidence without a new FMP request or Event write; do not export, admit, or dispatch unless that state is certain.

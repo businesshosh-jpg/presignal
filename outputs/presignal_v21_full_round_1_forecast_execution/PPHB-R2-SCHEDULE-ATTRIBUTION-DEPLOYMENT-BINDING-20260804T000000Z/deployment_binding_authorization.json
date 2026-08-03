@@ -1,0 +1,33 @@
+{
+  "authority_proof": {
+    "accepted_invocation_references": [
+      "PPHB-R1-OUTCOME-COLLECTION-SLICE-002-20260803T035402Z-5b2104c5270c/preflight_decision.json",
+      "PPHB-R1-OUTCOME-COLLECTION-SLICE-012-20260803T112350Z-c68c116427d5/preflight_decision.json",
+      "PPHB-R1-OUTCOME-ATTACH-SLICE-012-20260803T112356Z-c68c116427d5/run_manifest.json"
+    ],
+    "decision": "AUTHORITATIVE_EXECUTION_API_DEPLOYMENT_CONFIRMED",
+    "inventory_count": 5,
+    "selected_before_version": 82,
+    "selected_deployment_id": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+    "selection_rule": "Exact deployment endpoint repeatedly bound by accepted Round 1 collection preflight and attachment manifests; other deployment descriptions, versions, recency, and list order are not selection inputs."
+  },
+  "authorization_fingerprint": "sha256:61a5dc5d1faceeb59cdd4b6de6d4d40d43b299cdd06444f48cbff7f173867f6b",
+  "authorization_id": "PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-BINDING-AUTHORIZATION-20260804T000000Z",
+  "authorization_schema_version": "1.0.0",
+  "authorization_status": "FROZEN_SINGLE_USE_ACTIVE_FOR_EXACT_DEPLOYMENT_UPDATE",
+  "canonical_function": "apiUpsertEventWindow_",
+  "ceilings": {
+    "deployment_updates": 1,
+    "retries": 0,
+    "unrelated_google_operations": 0,
+    "verification_reads": 2
+  },
+  "deployment_id": "AKfycbw-SXeE8pE85mISnpH_xygFLjgysQqGpzAmcj9h8P9kRg4LCq3iI7BnoB5hYL-x72xN",
+  "event_sheet_binding": "Event",
+  "prior_partial_deployment": "PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-20260803T150000Z",
+  "project_id": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9",
+  "source_fingerprint": "sha256:5c9558f51b6ea7cca8f905b543ef3306d9e6a0acd9a5d07f2c33d7dc8acbf670",
+  "target_hardened_version": 83,
+  "verification_function": "apiGetScheduleRefreshAttributionContract",
+  "workbook_binding": "accepted configured Event workbook via automation.google_clients.DEFAULT_SPREADSHEET_ID"
+}
