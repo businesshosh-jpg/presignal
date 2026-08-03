@@ -1,0 +1,12 @@
+{
+  "controller_version": "AUTHORIZED_SLICE_CONTROLLER_V1_END_TO_END",
+  "decision": "MANIFEST_ACCEPTED_END_TO_END_AUTHORIZATION_REQUIRED",
+  "local_validation_decision": "SLICE_002_END_TO_END_LOCAL_VALIDATION_PASSED",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
+  "manifest_sha256": "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c",
+  "mock_progression": ["COLLECTION_COMPLETE", "ATTACHMENT_RECONCILED", "MINIMAL_EVALUATION_COMPLETE", "AUTHORIZED_SLICE_COMPLETE"],
+  "external_access": {"google_reads": 0, "market_data_attempts": 0, "total_external_requests": 0, "google_writes": 0},
+  "stage_by_stage_mode_retained": true,
+  "automatic_attachment": false,
+  "automatic_evaluation": false
+}

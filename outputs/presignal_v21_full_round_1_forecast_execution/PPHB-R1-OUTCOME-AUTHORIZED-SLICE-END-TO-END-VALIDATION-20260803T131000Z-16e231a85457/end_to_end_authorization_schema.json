@@ -1,0 +1,24 @@
+{
+  "authorization_mode": "END_TO_END",
+  "required_bindings": [
+    "slice_id",
+    "manifest_id",
+    "manifest_sha256",
+    "authorized_identity_ids",
+    "outcome_collection_identity_ids",
+    "ceilings",
+    "retry_boundary",
+    "contract",
+    "schema_version",
+    "destination",
+    "attachment_destination",
+    "evaluation_population_rule",
+    "permitted_metrics",
+    "stage_stop_conditions",
+    "resume_authority"
+  ],
+  "automatic_progression": "allowed only after accepted append-only completion and exact reconciliation of each prior stage",
+  "blocked_or_partial_behavior": "stop and require new explicit authorization",
+  "stage_order": ["collection", "attachment", "evaluation", "final_reconciliation"],
+  "scientific_boundary": {"primary_endpoint": "T+15", "secondary_measurement": "Immediate Impulse", "pack_populations": ["PACK_A", "PACK_E"]}
+}

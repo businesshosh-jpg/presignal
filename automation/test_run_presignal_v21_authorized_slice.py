@@ -6,6 +6,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from automation.run_presignal_v21_authorized_slice import simulate_end_to_end_route
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RUN = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution" / "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e"
@@ -71,6 +73,36 @@ class AuthorizedSliceControllerTest(unittest.TestCase):
         source = (ROOT / "automation" / "run_presignal_v21_authorized_slice.py").read_text()
         for name in ("collect_presignal_v21_outcome_slice_001.py", "attach_presignal_v21_outcome_slice_001.py", "evaluate_presignal_v21_outcome_slice_001.py"):
             self.assertIn(name, source)
+
+    def test_end_to_end_clean_route_progresses_without_intermediate_authorization(self):
+        result = simulate_end_to_end_route()
+        self.assertEqual(result["decision"], "AUTHORIZED_SLICE_COMPLETE")
+        self.assertEqual(result["progression"], [
+            "COLLECTION_COMPLETE", "ATTACHMENT_RECONCILED",
+            "MINIMAL_EVALUATION_COMPLETE", "AUTHORIZED_SLICE_COMPLETE",
+        ])
+        self.assertFalse(result["requires_new_authorization"])
+
+    def test_end_to_end_stops_on_partial_or_ambiguous_stage(self):
+        for stage, state in (("collection", "PARTIAL"), ("attachment", "DUPLICATE_OUTCOME"), ("evaluation", "UNRESOLVED_POPULATION"), ("final", "REMOTE_STATE_UNKNOWN")):
+            result = simulate_end_to_end_route({"collection": "COMPLETE", "attachment": "RECONCILED", "evaluation": "COMPLETE", "final": "COMPLETE", stage: state})
+            self.assertEqual(result["decision"], "END_TO_END_ROUTE_STOPPED")
+            self.assertEqual(result["failed_stage"], stage)
+            self.assertTrue(result["requires_new_authorization"])
+
+    def test_end_to_end_inactive_fixture_stops_before_external_access(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "evidence.json"
+            result = subprocess.run([
+                sys.executable, str(ROOT / "automation" / "run_presignal_v21_authorized_slice.py"),
+                "--authorization", str(RUN / "end_to_end_validation_authorization.json"),
+                "--manifest", str(MANIFEST), "--expected-manifest-sha", EXPECTED,
+                "--end-to-end", "--mock-clean-route", "--offline-validation", "--output", str(output),
+            ], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            evidence = json.loads(output.read_text())
+            self.assertEqual(evidence["decision"], "MANIFEST_ACCEPTED_END_TO_END_AUTHORIZATION_REQUIRED")
+            self.assertEqual(evidence["external_access"]["total_external_requests"], 0)
 
 
 if __name__ == "__main__":
