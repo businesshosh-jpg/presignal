@@ -30,6 +30,7 @@ REQUIRED_AUTH_FIELDS = {
     "authorized_stage", "authorized_identity_ids", "ceilings", "retry_boundary",
     "contract", "schema_version", "destination",
 }
+PAIRED_EXCLUSION_MODE = "PAIRED_EXCLUSION_ATTACHMENT"
 
 
 def canonical(value: Any) -> str:
@@ -63,6 +64,66 @@ def reject_blocked_authorization(auth_id: str) -> None:
             and str(proof.get("decision", "")).endswith("_GOVERNANCE_BLOCKED")
         ):
             fail("AUTHORIZATION_NON_REUSABLE_BLOCKED")
+
+
+def validate_paired_exclusion_attachment(auth: dict[str, Any], manifest: dict[str, Any], expected_sha: str) -> dict[str, Any]:
+    """Validate a no-call attachment authorization against accepted collection evidence."""
+    if auth.get("authorization_mode") != PAIRED_EXCLUSION_MODE:
+        fail("PAIRED_EXCLUSION_AUTHORIZATION_MODE_CONFLICT")
+    if auth.get("authorization_status") != "ACTIVE" or auth.get("single_use") is not True:
+        fail("PAIRED_EXCLUSION_AUTHORIZATION_NOT_ACTIVE")
+    if auth.get("authorization_fingerprint") != fingerprint(auth):
+        fail("AUTHORIZATION_FINGERPRINT_MISMATCH")
+    if auth.get("manifest_id") != manifest.get("manifest_id") or auth.get("slice_id") != manifest.get("slice_id"):
+        fail("MANIFEST_IDENTITY_CONFLICT")
+    if auth.get("manifest_fingerprint") != expected_sha:
+        fail("MANIFEST_FINGERPRINT_CONFLICT")
+    if auth.get("authorized_stage") != "attachment":
+        fail("AUTHORIZED_STAGE_CONFLICT")
+    rows = manifest.get("episode_manifest", [])
+    excluded = set(auth.get("excluded_episode_ids", []))
+    expected_excluded = {"EP_EVENT_4b80366594480b554889", "EP_EVENT_aa41226bcb8107901555"}
+    if excluded != expected_excluded:
+        fail("PAIRED_EXCLUSION_EPISODE_SCOPE_CONFLICT")
+    eligible_rows = [row for row in rows if row.get("episode_id") not in excluded]
+    if len(rows) != 12 or len(eligible_rows) != 10:
+        fail("PAIRED_EXCLUSION_EPISODE_COUNT_CONFLICT")
+    eligible_ids = [row["episode_id"] for row in eligible_rows]
+    if auth.get("authorized_identity_ids") != eligible_ids:
+        fail("PAIRED_EXCLUSION_IDENTITY_ORDER_CONFLICT")
+    population = auth.get("revised_evaluation_population", {})
+    if population != {"episodes": 10, "valid_forecasts": 32, "pack_a": 16, "pack_e": 16, "complete_pairs": 16, "unpaired": 0}:
+        fail("PAIRED_EXCLUSION_POPULATION_CONFLICT")
+    if auth.get("ceilings") != {"max_apps_script_reads": 0, "max_market_data_attempts": 0, "max_total_external_requests": 0, "google_write_ceiling": 0, "max_attachment_records": 10}:
+        fail("PAIRED_EXCLUSION_CEILING_CONFLICT")
+    if auth.get("retry_boundary") != "NO_AUTOMATIC_RETRIES" or auth.get("evaluation_authorized") is not False:
+        fail("PAIRED_EXCLUSION_BOUNDARY_CONFLICT")
+    if auth.get("attachment_destination") != "append-only local Outcome attachment evidence":
+        fail("ATTACHMENT_DESTINATION_CONFLICT")
+    if auth.get("canonical_attachment_entrypoint") != "automation/attach_presignal_v21_outcome_slice_001.py":
+        fail("ATTACHMENT_ENTRYPOINT_CONFLICT")
+    collection_dir = BASE / auth["collection_run_id"]
+    reconciliation = collection_dir / "collection_reconciliation.json"
+    candidates = collection_dir / "candidate_outcomes.jsonl"
+    if not reconciliation.exists() or not candidates.exists():
+        fail("COLLECTION_EVIDENCE_REQUIRED")
+    collection = json.loads(reconciliation.read_text())
+    if collection.get("candidate_outcomes") != 12 or collection.get("outcome_attachment") != 0 or collection.get("evaluation_calculations") != 0 or collection.get("google_writes") != 0:
+        fail("COLLECTION_COMPLETION_FACTS_CONFLICT")
+    if set(collection.get("missing_or_terminal_source_episodes", [])) != excluded:
+        fail("COLLECTION_EXCLUSION_BINDING_CONFLICT")
+    candidate_document = json.loads(candidates.read_text())
+    candidate_records = candidate_document if isinstance(candidate_document, list) else [candidate_document]
+    valid_candidates = []
+    for record in candidate_records:
+        candidate = record.get("candidate_outcome", record)
+        if candidate.get("status") == "VALID":
+            valid_candidates.append({**record, **candidate})
+    if {record.get("episode_id") for record in valid_candidates} != set(eligible_ids) or len(valid_candidates) != 10:
+        fail("ATTACHMENT_CANDIDATE_POPULATION_CONFLICT")
+    if auth.get("eligible_outcome_ids") != [record["outcome_id"] for record in valid_candidates]:
+        fail("ATTACHMENT_OUTCOME_IDENTITY_CONFLICT")
+    return {"auth": auth, "manifest": manifest, "actual_sha": expected_sha, "manifest_file_sha": expected_sha, "episode_ids": eligible_ids, "valid_candidate_count": len(valid_candidates), "population": population}
 
 
 def validate(auth_path: Path, manifest_path: Path, expected_sha: str, stage: str, end_to_end: bool = False) -> dict[str, Any]:
