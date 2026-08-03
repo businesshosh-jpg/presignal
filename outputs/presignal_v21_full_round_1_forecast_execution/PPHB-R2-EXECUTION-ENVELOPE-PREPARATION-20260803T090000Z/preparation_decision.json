@@ -1,0 +1,8 @@
+{
+  "dispatch_decision": "ROUND_2_FIRST_SLICE_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY",
+  "envelope_decision": "ROUND_2_EXECUTION_ENVELOPE_FROZEN",
+  "envelope_fingerprint": "sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0",
+  "envelope_id": "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z",
+  "external_access": 0,
+  "manifest_decision": "ROUND_2_FIRST_PROSPECTIVE_SLICE_MANIFEST_BLOCKED"
+}

@@ -1,0 +1,89 @@
+{
+  "append_only_requirements": [
+    "manifest",
+    "authorization",
+    "lease and reservation records",
+    "raw provider output",
+    "request/response metadata",
+    "strict validation result",
+    "resume evidence",
+    "blocker evidence"
+  ],
+  "completion_conditions": [
+    "all authorized Slice manifests complete",
+    "all forecast and Outcome identities reconciled",
+    "no duplicate or unresolved identity",
+    "target/minimum common-pair rule resolved at final lock",
+    "separately authorized final Round 2 inference completed"
+  ],
+  "decision": "ROUND_2_EXECUTION_ENVELOPE_FROZEN",
+  "duplicate_and_resume": {
+    "duplicate_dispatch_prevention": "Reserve each exact call identity before client construction or dispatch; an accepted response is never dispatched again.",
+    "resume": "Resume only from accepted append-only reservation and response evidence; ambiguous post-dispatch state stops and requires governance."
+  },
+  "envelope_fingerprint": "sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0",
+  "envelope_id": "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z",
+  "envelope_schema_version": "1.0.0",
+  "envelope_status": "FROZEN_INACTIVE_NO_PROVIDER_AUTHORITY",
+  "identity_construction": {
+    "forecast": "Existing canonical v2.1 call identity bound to Slice, Episode, Pack, provider, model, cutoff, prompt version/fingerprint, release timestamp, instrument, horizons, and append-only lineage.",
+    "outcome": "Existing presignal_event_path_contract_v1_1 / schema 2.1.1 identity bound to Episode, USD/JPY, release timestamp, windows, source authority, and append-only lineage."
+  },
+  "mandatory_governance_stops": [
+    "identity, count, manifest, fingerprint, provider/model, cutoff, or Pack-lineage conflict",
+    "historical leakage or Outcome availability before forecast freeze",
+    "ambiguous artifact authority or remote state",
+    "missing or contradictory Outcome semantics",
+    "unsupported metric, denominator, confidence-interval method, or test substitution",
+    "need for an unauthorized external request, retry, Google write, provider/model replacement, or alternate source",
+    "any repair that changes forecast, Outcome, Pack, or metric meaning"
+  ],
+  "not_authorized_by_envelope": [
+    "provider calls",
+    "Google access or writes",
+    "market-data access",
+    "Outcome collection or attachment",
+    "evaluation",
+    "retries",
+    "manifest selection without an authoritative prospective source"
+  ],
+  "population_limits": {
+    "maximum_admitted_episodes": 144,
+    "maximum_episodes_per_slice": 48,
+    "minimum_common_paired_scoreable_observations": 200,
+    "target_admitted_episodes": 120,
+    "target_common_paired_scoreable_observations": 240
+  },
+  "prompt_and_cutoff_authority": {
+    "cutoff_rule": "information_cutoff_ts <= prompt_freeze_ts < forecast_freeze_deadline_ts < release_ts; all Pack A/E shared inputs and prompt fingerprints freeze at or before the cutoff, and both forecast calls complete before release.",
+    "historical_leakage": "Every Episode, provider/model allocation, Pack input, prompt fingerprint, forecast identity, and Outcome identity must be frozen before dispatch and before the Outcome is available. Released actuals, post-cutoff facts, and Outcome observations are prohibited from forecast inputs.",
+    "prompt_fingerprint": "Must be recorded per call before dispatch; any mismatch is a governance stop.",
+    "prompt_version": "Frozen canonical prospective v2.1 prompt version from the accepted forecast contract and first Slice manifest."
+  },
+  "prospective_start_condition": "Accepted protocol, authoritative future Episode source, first Slice manifest, and separate forecast-dispatch authorization must all be frozen before provider dispatch.",
+  "protocol_binding": {
+    "protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+    "protocol_id": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
+  },
+  "provider_model_allocation": {
+    "pack_pairing": "One Pack A and one Pack E call per admitted Episode and provider/model route, with shared cutoff and release identity.",
+    "routes": [
+      {
+        "model": "claude-haiku-4-5",
+        "provider": "Anthropic"
+      },
+      {
+        "model": "gemini-2.5-flash-lite",
+        "provider": "Gemini"
+      },
+      {
+        "model": "gpt-4o-mini-2024-07-18",
+        "provider": "OpenAI"
+      }
+    ],
+    "rule": "For every admitted Episode, pre-enumerate one Pack A and one Pack E call for each permitted provider/model route in the frozen manifest. Both arms share the same Episode, provider, model, cutoff, release timestamp, measurement windows, and Outcome identity; only the accepted Pack content differs."
+  },
+  "round_2_identity": "PRESIGNAL-R2-CONFIRMATORY-PACK-A-VS-PACK-E",
+  "selection_and_ordering": "Select unique future Episodes in authoritative release order, then exact release timestamp and Episode identity, excluding all Round 1 identities and any unresolved or reused identity.",
+  "timestamp_semantics": "Deterministic artifact naming metadata only; not an issuance or validity boundary."
+}

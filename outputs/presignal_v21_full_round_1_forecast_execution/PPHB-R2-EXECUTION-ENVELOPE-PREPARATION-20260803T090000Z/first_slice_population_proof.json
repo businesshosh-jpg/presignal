@@ -1,0 +1,26 @@
+{
+  "artifact_status": "FIRST_SLICE_MANIFEST_BLOCKED_NOT_FROZEN",
+  "complete_pairs": 0,
+  "decision": "ROUND_2_FIRST_PROSPECTIVE_SLICE_MANIFEST_BLOCKED",
+  "eligible_episode_count": 0,
+  "envelope_binding": {
+    "envelope_fingerprint": "sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0",
+    "envelope_id": "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z"
+  },
+  "exclusions": {
+    "round_1_historical_episodes": "All accepted real Episode manifests are May-July 2024 Round 1 identities and are excluded.",
+    "synthetic_prospective_fixtures": "PSS dry-run records such as EP_EVENT_PROSPECTIVE use placeholder 2030 timestamps and are explicitly non-authoritative test fixtures; they cannot populate a live Slice."
+  },
+  "external_access": 0,
+  "frozen_forecast_call_count": 0,
+  "pack_a_count": 0,
+  "pack_e_count": 0,
+  "protocol_binding": {
+    "protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+    "protocol_id": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
+  },
+  "selected_episode_count": 0,
+  "selection_rule": "Select unique future Episodes in authoritative release order, then exact release timestamp and Episode identity, excluding all Round 1 identities and any unresolved or reused identity.",
+  "source_authority_finding": "No authoritative current prospective Episode registry, release schedule, or future event source is present in repository evidence.",
+  "unresolved_conflict": "PROSPECTIVE_EPISODE_SOURCE_AUTHORITY_MISSING"
+}

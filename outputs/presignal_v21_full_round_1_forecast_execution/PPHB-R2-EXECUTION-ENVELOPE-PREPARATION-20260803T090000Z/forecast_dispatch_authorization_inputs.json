@@ -1,0 +1,47 @@
+{
+  "artifact_status": "DISPATCH_AUTHORIZATION_INPUTS_NOT_READY",
+  "authorized_provider_model_routes": [
+    {
+      "model": "claude-haiku-4-5",
+      "provider": "Anthropic"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "provider": "Gemini"
+    },
+    {
+      "model": "gpt-4o-mini-2024-07-18",
+      "provider": "OpenAI"
+    }
+  ],
+  "blocking_reference": "PROSPECTIVE_EPISODE_SOURCE_AUTHORITY_MISSING",
+  "decision": "ROUND_2_FIRST_SLICE_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY",
+  "envelope_binding": {
+    "envelope_fingerprint": "sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0",
+    "envelope_id": "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z"
+  },
+  "exact_forecast_call_identities": [],
+  "lease_and_reservation": "Exclusive execution lease and durable per-call reservation are required before dispatch.",
+  "manifest_binding": null,
+  "maximum_calls_per_provider": {
+    "Anthropic": 0,
+    "Gemini": 0,
+    "OpenAI": 0
+  },
+  "maximum_provider_calls": 0,
+  "prohibited_operations": [
+    "Outcome access",
+    "market-data access",
+    "Google writes",
+    "evaluation",
+    "contingency calls"
+  ],
+  "protocol_binding": {
+    "protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+    "protocol_id": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
+  },
+  "raw_output_preservation": "Required before parsing or validation.",
+  "remote_state_stop": "Any ambiguous post-dispatch state is remote-state-unknown and stops without retry.",
+  "retry_boundary": 0,
+  "transport_path": "Existing canonical provider dispatch path only, once separately authorized."
+}

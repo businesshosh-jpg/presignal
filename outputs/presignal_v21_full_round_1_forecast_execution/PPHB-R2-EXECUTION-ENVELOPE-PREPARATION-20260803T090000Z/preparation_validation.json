@@ -1,0 +1,15 @@
+{
+  "blocking_conflict": "PROSPECTIVE_EPISODE_SOURCE_AUTHORITY_MISSING",
+  "decision": "ROUND_2_EXECUTION_ENVELOPE_FROZEN",
+  "dispatch_decision": "ROUND_2_FIRST_SLICE_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY",
+  "external_access": 0,
+  "google_writes": 0,
+  "manifest_decision": "ROUND_2_FIRST_PROSPECTIVE_SLICE_MANIFEST_BLOCKED",
+  "market_data_access": 0,
+  "metric_calculation": 0,
+  "outcome_activity": 0,
+  "prospective_only_selection": true,
+  "protocol_binding_valid": true,
+  "provider_calls": 0,
+  "synthetic_fixture_excluded": true
+}

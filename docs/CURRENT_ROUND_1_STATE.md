@@ -221,6 +221,18 @@ Prepare a separately authorized confirmatory prospective Round 2 protocol. It mu
 
 Prepare one separately authorized Round 2 execution envelope and first prospective Slice manifest. It must freeze future Episode eligibility, pre-release cutoff and leakage checks, deterministic provider/model allocation, paired forecast identities, and manifest-derived request ceilings before any forecast dispatch.
 
+## Round 2 Execution Envelope Preparation
+
+- Envelope decision: `ROUND_2_EXECUTION_ENVELOPE_FROZEN`.
+- Envelope: `PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z` (`sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0`), inactive and not provider-call authority. It binds to protocol `PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z` (`sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f`) and preserves the 144 maximum / 120 target / 240 target common-pair / 200 minimum / 48-per-Slice limits.
+- First-Slice decision: `ROUND_2_FIRST_PROSPECTIVE_SLICE_MANIFEST_BLOCKED`; dispatch decision: `ROUND_2_FIRST_SLICE_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY`.
+- Blocker: `PROSPECTIVE_EPISODE_SOURCE_AUTHORITY_MISSING`. Repository evidence contains only completed May-July 2024 Round 1 Episodes and explicitly synthetic prospective dry-run fixtures with placeholder 2030 timestamps. No authoritative current prospective Episode registry or release schedule is available, so no Episode, call, prompt fingerprint, cutoff, or manifest identity was fabricated.
+- Activity: provider calls `0`; Google/market-data access `0`; Outcome activity `0`; metric calculation `0`.
+
+## Exact Round 2 Next Move
+
+Establish or provide an authoritative current prospective Episode source and release schedule, then freeze the first Slice manifest and one explicit forecast-dispatch authorization. Execute that authorization only after local identity, Pack A/E pairing, prompt, cutoff, lease, reservation, and leakage validation passes.
+
 ## Prohibited reopening
 
 Do not reopen accepted Attention, Pack, planning, Batches 001–003, Batch 003 closure, or prompt-migration evidence without a concrete contradiction in named authoritative artifacts or a focused-test failure.

@@ -176,6 +176,14 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 |---|---|---|---|---|
 | `PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z` | Confirmatory prospective Round 2 scientific protocol | `PROSPECTIVE_ROUND_2_PROTOCOL_FROZEN` and `PROSPECTIVE_ROUND_2_EXECUTION_PREPARATION_READY`; binds Pack A baseline / Pack E experimental comparison, T+15 primary endpoint, coverage and NO_SIGNAL reporting, exact two-sided McNemar at alpha `0.05`, three accepted provider/model routes, 120-Episode target, 144-Episode ceiling, 240 common-pair target, 200-pair inference minimum, maximum 48 Episodes per Slice, and no interim analysis | Append-only; protocol preparation only; no execution authority | Separately authorized Round 2 execution envelope and first prospective Slice manifest |
 
+## ROUND_2_EXECUTION_ENVELOPE_PREPARATION
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z` | Round 2 execution envelope | `ROUND_2_EXECUTION_ENVELOPE_FROZEN`; inactive envelope bound to the frozen protocol, 144 maximum / 120 target Episodes, 240 common-pair target, 200 minimum, 48-per-Slice maximum, fixed provider/model routes, prospective cutoff/leakage rules, and append-only dispatch controls. It authorizes no provider calls. Fingerprint: `sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0` | Append-only preparation evidence | First authoritative prospective Episode source, Slice manifest, and explicit dispatch authorization |
+| `PPHB-R2-EXECUTION-ENVELOPE-PREPARATION-20260803T090000Z/first_slice_population_proof.json` | First prospective Slice selection proof | `ROUND_2_FIRST_PROSPECTIVE_SLICE_MANIFEST_BLOCKED`; zero eligible Episodes because no authoritative current prospective Episode source exists. Synthetic 2030 dry-run fixtures and all Round 1 historical Episodes are excluded. | Append-only blocker evidence | Authoritative prospective Episode source and first Slice manifest |
+| `PPHB-R2-EXECUTION-ENVELOPE-PREPARATION-20260803T090000Z/forecast_dispatch_authorization_inputs.json` | First-Slice dispatch inputs | `ROUND_2_FIRST_SLICE_DISPATCH_AUTHORIZATION_INPUTS_NOT_READY`; zero call identities and zero maximum calls because the first manifest is not frozen; no provider, Google, market-data, Outcome, or evaluation activity occurred | Append-only inactive inputs | Explicit first-Slice forecast-dispatch authorization |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.
