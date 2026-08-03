@@ -1,0 +1,29 @@
+{
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-007-20260803T140000Z",
+  "manifest_fingerprint": "sha256:ccda175cf0e787462e1c316e7da4911eedc18c2cd107ffcba5d8c8c13ac7c042",
+  "slice_id": "SLICE-007",
+  "selection_decision": "NEXT_PROSPECTIVE_SLICE_MANIFEST_FROZEN",
+  "episode_count": 12,
+  "valid_forecasts": 42,
+  "pack_a": 21,
+  "pack_e": 21,
+  "complete_pairs": 21,
+  "unpaired": 0,
+  "release_days_utc": [
+    "2024-06-13",
+    "2024-06-14",
+    "2024-06-17",
+    "2024-06-18",
+    "2024-06-20",
+    "2024-06-21",
+    "2024-06-24",
+    "2024-06-25"
+  ],
+  "excluded_rules": [
+    "prior Slice Episodes",
+    "terminal-invalid forecasts",
+    "accepted unavailable/pairability-conflict Episodes",
+    "identity/cutoff/lineage/source/leakage conflicts"
+  ],
+  "external_access": 0
+}

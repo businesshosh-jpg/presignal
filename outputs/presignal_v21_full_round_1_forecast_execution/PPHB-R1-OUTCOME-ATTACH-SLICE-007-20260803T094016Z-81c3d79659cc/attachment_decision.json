@@ -1,0 +1,10 @@
+{
+  "attached_count": 12,
+  "candidate_count": 12,
+  "coverage_only": true,
+  "decision": "OUTCOME_SLICE_007_ATTACHED_AND_RECONCILED",
+  "evaluation_authorized": false,
+  "readiness": "OUTCOME_SLICE_007_READY_FOR_MINIMAL_EVALUATION",
+  "run_id": "PPHB-R1-OUTCOME-ATTACH-SLICE-007-20260803T094016Z-81c3d79659cc",
+  "unattached_count": 0
+}

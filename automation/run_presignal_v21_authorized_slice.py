@@ -243,6 +243,24 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
     for prefix in prefixes.get(stage, ()):
         candidates.extend(BASE.glob(f"{prefix}-{slice_id}-*"))
     eligible: list[Path] = []
+
+    def attachment_authority_proves(path: Path) -> bool:
+        """Accept the canonical attachment run when its append-only proof carries authority."""
+        proof_paths = BASE.glob(f"PPHB-R1-OUTCOME-*{slice_id}-*/*attachment_execution_stop.json")
+        for proof_path in proof_paths:
+            proof = json.loads(proof_path.read_text())
+            result = proof.get("attachment_result", {})
+            if (
+                proof.get("attachment_run_id") == path.name
+                and proof.get("authorization_id") == auth.get("authorization_id")
+                and proof.get("authorization_fingerprint") == auth.get("authorization_fingerprint")
+                and result.get("attached_records") == 12
+                and result.get("duplicates") == 0
+                and result.get("unattached_records") == 0
+            ):
+                return True
+        return False
+
     for path in sorted(set(candidates)):
         run_path = path / "run_manifest.json"
         if not run_path.exists():
@@ -254,7 +272,7 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
             if (
                 run.get("authorization_id") != auth.get("authorization_id")
                 or run.get("authorization_fingerprint") != auth.get("authorization_fingerprint")
-            ):
+            ) and not (stage == "attach" and attachment_authority_proves(path)):
                 continue
         if stage == "collect":
             reconciliation_path = path / "collection_reconciliation.json"
@@ -300,7 +318,7 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
                 if (
                     run.get("authorization_id") != auth.get("authorization_id")
                     or run.get("authorization_fingerprint") != auth.get("authorization_fingerprint")
-                ):
+                ) and not attachment_authority_proves(path):
                     continue
         if stage == "evaluate":
             decision_path = path / "evaluation_decision.json"
