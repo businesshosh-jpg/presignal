@@ -195,6 +195,7 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 | Artifact | Scope | Decision controlled | Modification | Superseding artifact |
 |---|---|---|---|---|
 | `PPHB-R2-SCHEDULE-REFRESH-20260803T141000Z` | Bounded current prospective Event-sheet refresh and export attempt | `ROUND_2_SCHEDULE_REFRESH_BLOCKED`; authorization was frozen for `2026-08-03T00:00:00Z` through `2026-08-10T23:59:59Z`, but Google client setup did not reach Apps Script dispatch. Actual FMP requests, Apps Script invocations, Event-sheet writes, and export reads were all `0`; remote state is `CONFIRMED_NOT_DISPATCHED`. | Append-only blocked evidence; authorization is non-reusable | New explicit schedule-refresh authorization after credential/client setup resolution |
+| `PPHB-R2-SCHEDULE-REFRESH-20260803T142000Z` | Repaired-route bounded current prospective Event-sheet refresh attempt | Google route health is restored (`presignalRuntimeHealthCheck=READY`) through the accepted explicit token path. The sole `apiUpsertEventWindow` invocation did not return before interruption, so `ROUND_2_SCHEDULE_REFRESH_BLOCKED` with Apps Script `1`, FMP `UNKNOWN_UP_TO_1`, Event-sheet writes `UNKNOWN_UP_TO_1`, export reads `0`, retries `0`, and remote state `UNKNOWN_POST_DISPATCH`. No snapshot or admission authority exists. | Append-only blocked and non-reusable evidence | Explicit remote-state reconciliation authorization; no refresh retry permitted |
 
 ## SUPERSEDED_REPORT
 

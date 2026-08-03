@@ -1,0 +1,65 @@
+{
+  "authorization_fingerprint": "sha256:2e4bd7300b5098515e25edefe75da10402d633c2ea53bc9e2206d35970a0962c",
+  "authorization_id": "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T142000Z",
+  "authorization_schema_version": "1.0.0",
+  "authorization_status": "FROZEN_SINGLE_USE_ACTIVE_FOR_REFRESH_ONLY",
+  "ceilings": {
+    "apps_script_invocations": 1,
+    "event_sheet_export_reads": 1,
+    "event_sheet_upsert_operations": 1,
+    "fmp_api_requests": 1,
+    "retries": 0
+  },
+  "duplicate_revision_rules": "Canonical event identity and fallback country|indicator_name|release_ts prevent duplicate insertion; revision/cancellation changes after snapshot validation stop admission rather than silently replacing identity.",
+  "envelope_binding": {
+    "envelope_fingerprint": "sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0",
+    "envelope_id": "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z"
+  },
+  "export_destination": "/Users/junhoshino/projects/presignal-historical-baseline-r1/outputs/presignal_v21_full_round_1_forecast_execution/PPHB-R2-SCHEDULE-REFRESH-20260803T142000Z/event_sheet_snapshot.json",
+  "fmp_window": {
+    "from_utc_iso": "2026-08-03T00:00:00Z",
+    "reason": "Smallest date-bounded window providing current prospective lead time for first Slice admission.",
+    "to_utc_iso": "2026-08-10T23:59:59Z"
+  },
+  "not_authorized": [
+    "provider dispatch",
+    "Outcome collection",
+    "market-data requests",
+    "evaluation",
+    "retries",
+    "unrelated Google writes"
+  ],
+  "preservation": [
+    "request identity",
+    "window",
+    "FMP response authority and source timestamps",
+    "Apps Script request/response metadata",
+    "upsert counts",
+    "export rows and headers",
+    "remote-state certainty",
+    "append-only lineage"
+  ],
+  "protocol_binding": {
+    "protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+    "protocol_id": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
+  },
+  "routes": {
+    "apps_script_deployment": "existing configured script ID via automation.google_clients.default_script_id",
+    "apps_script_function": "apiUpsertEventWindow",
+    "event_sheet": "Event",
+    "export_route": "Google Sheets values read of Event!A:AZ",
+    "fmp_entry_point": "fmpFetchRangeUtc_"
+  },
+  "source_authority": "FMP_ECONOMIC_CALENDAR_VIA_APPS_SCRIPT_EVENT_SHEET",
+  "stop_conditions": [
+    "ambiguous FMP response",
+    "Apps Script partial or unknown write state",
+    "duplicate identity",
+    "schema mismatch",
+    "timezone ambiguity",
+    "revision conflict",
+    "ceiling exceeded",
+    "credential or transport state not certain"
+  ],
+  "timestamp_semantics": "Deterministic artifact naming metadata only; not a validity boundary."
+}

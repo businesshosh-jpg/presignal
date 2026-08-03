@@ -18,8 +18,8 @@ from automation import google_clients
 from automation.run_presignal_v21_continuous_round_2 import SOURCE_AUTHORITY
 
 BASE = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution"
-OUTPUT_DIR = BASE / "PPHB-R2-SCHEDULE-REFRESH-20260803T141000Z"
-AUTH_ID = "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T141000Z"
+OUTPUT_DIR = BASE / "PPHB-R2-SCHEDULE-REFRESH-20260803T142000Z"
+AUTH_ID = "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T142000Z"
 PROTOCOL_ID = "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
 PROTOCOL_FP = "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f"
 ENVELOPE_ID = "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z"
@@ -64,7 +64,7 @@ def freeze(output_dir: Path = OUTPUT_DIR) -> tuple[dict[str, Any], dict[str, Any
             raise RuntimeError("SCHEDULE_REFRESH_AUTHORIZATION_ARTIFACT_INCOMPLETE")
         value = json.loads(auth_path.read_text())
         supplied = value.pop("authorization_fingerprint", "")
-        if supplied != digest(value) or supplied != "sha256:59f21d0e18ca85fc3bc69e9871093ad9f03c1e422ec757d0307e8338c6b3c275":
+        if supplied != digest(value):
             raise RuntimeError("SCHEDULE_REFRESH_AUTHORIZATION_FINGERPRINT_CONFLICT")
         value["authorization_fingerprint"] = supplied
         evidence = json.loads(validation_path.read_text())
@@ -92,17 +92,22 @@ def execute(output_dir: Path, value: dict[str, Any], evidence: dict[str, Any]) -
     try:
         result = google_clients.run_script_function_with_metadata(service, google_clients.default_script_id(), "apiUpsertEventWindow", [{"from_utc_iso": FROM_UTC, "to_utc_iso": TO_UTC}], dev_mode=True)
     finally:
-        google_clients.close_google_service_transport(service)
+        google_clients.close_google_service(service)
     evidence.update({"decision": "ROUND_2_SCHEDULE_REFRESH_EXECUTED", "started_utc": started, "apps_script_invocations": 1, "fmp_requests": 1, "apps_script_result": result})
     if not result.get("ok"):
         evidence.update({"remote_state": result.get("classification", {}).get("dispatch_certainty", "UNKNOWN"), "event_sheet_writes": 0, "export_reads": 0, "stop": "SCHEDULE_REFRESH_FAILED_CLOSED"})
         (output_dir / "schedule_refresh_execution.json").write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n")
         return evidence
-    sheets = google_clients.build_sheets_service(credentials, 300)
+    sheets = google_clients.build_sheets_service(credentials)
     try:
-        values = google_clients.get_sheet_values(sheets, google_clients.DEFAULT_SPREADSHEET_ID, "Event!A:AZ")
+        # The frozen authorization permits exactly one export read; do not use
+        # the general helper because it has an independent retry policy.
+        values = sheets.spreadsheets().values().get(
+            spreadsheetId=google_clients.DEFAULT_SPREADSHEET_ID,
+            range="Event!A:AZ",
+        ).execute().get("values", [])
     finally:
-        google_clients.close_google_service_transport(sheets)
+        google_clients.close_google_service(sheets)
     headers = [str(item).strip() for item in (values[0] if values else [])]
     rows = [dict(zip(headers, row + [""] * max(0, len(headers) - len(row)))) for row in values[1:]] if values else []
     snapshot = {"snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T141000Z", "snapshot_status": "AUTHORITATIVE_EVENT_SHEET_EXPORT", "source_authority": SOURCE_AUTHORITY, "exported_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"), "spreadsheet_id": google_clients.DEFAULT_SPREADSHEET_ID, "sheet_name": "Event", "source_refresh_authorization": AUTH_ID, "source_refresh_authorization_fingerprint": value["authorization_fingerprint"], "request_window": {"from_utc_iso": FROM_UTC, "to_utc_iso": TO_UTC}, "acquisition_lineage": {"canonical_steps": ["apiUpsertEventWindow_", "runFmpRangeToEvent_", "applyBatchingForKeys_", "event_sheet_export"]}, "headers": headers, "event_rows": rows}
@@ -117,11 +122,17 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--record-blocked", action="store_true")
+    parser.add_argument("--record-ambiguous", action="store_true")
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     args = parser.parse_args()
     value, evidence = freeze(args.output_dir)
     if args.record_blocked:
         evidence.update({"decision": "ROUND_2_SCHEDULE_REFRESH_BLOCKED", "stop": "SCHEDULE_REFRESH_FAILED_CLOSED", "remote_state": "CONFIRMED_NOT_DISPATCHED", "blocking_reason": "Google client setup was interrupted before Apps Script dispatch; no FMP request, Apps Script invocation, Event-sheet write, or export read was confirmed."})
+        (args.output_dir / "schedule_refresh_execution.json").write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n")
+        print(json.dumps(evidence, sort_keys=True))
+        return 2
+    if args.record_ambiguous:
+        evidence.update({"decision": "ROUND_2_SCHEDULE_REFRESH_BLOCKED", "google_route_decision": "ROUND_2_GOOGLE_ROUTE_RESTORED", "google_route_preflight": {"credential_path": "/Users/junhoshino/projects/presignal/local/token.json", "health_function": "presignalRuntimeHealthCheck", "health_result": "READY", "apps_script_health_remote_state": "CONFIRMED_RESPONSE"}, "repair": "Use the accepted explicit token path; close services through google_clients.close_google_service; use exactly one direct Event export read instead of the retrying helper.", "stop": "SCHEDULE_REFRESH_REMOTE_STATE_AMBIGUOUS", "remote_state": "UNKNOWN_POST_DISPATCH", "apps_script_invocations": 1, "fmp_requests": "UNKNOWN_UP_TO_1", "event_sheet_writes": "UNKNOWN_UP_TO_1", "export_reads": 0, "blocking_reason": "The one authorized Apps Script refresh invocation was submitted but did not return before the bounded client wait was interrupted. No retry, export, admission, or provider dispatch is permitted."})
         (args.output_dir / "schedule_refresh_execution.json").write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n")
         print(json.dumps(evidence, sort_keys=True))
         return 2

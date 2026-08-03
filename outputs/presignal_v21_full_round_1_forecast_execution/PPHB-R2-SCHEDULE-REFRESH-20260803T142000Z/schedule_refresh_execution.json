@@ -1,0 +1,20 @@
+{
+  "apps_script_invocations": 1,
+  "authorization_fingerprint": "sha256:2e4bd7300b5098515e25edefe75da10402d633c2ea53bc9e2206d35970a0962c",
+  "blocking_reason": "The one authorized Apps Script refresh invocation was submitted but did not return before the bounded client wait was interrupted. No retry, export, admission, or provider dispatch is permitted.",
+  "decision": "ROUND_2_SCHEDULE_REFRESH_BLOCKED",
+  "event_sheet_writes": "UNKNOWN_UP_TO_1",
+  "export_reads": 0,
+  "external_access": 0,
+  "fmp_requests": "UNKNOWN_UP_TO_1",
+  "google_route_decision": "ROUND_2_GOOGLE_ROUTE_RESTORED",
+  "google_route_preflight": {
+    "apps_script_health_remote_state": "CONFIRMED_RESPONSE",
+    "credential_path": "/Users/junhoshino/projects/presignal/local/token.json",
+    "health_function": "presignalRuntimeHealthCheck",
+    "health_result": "READY"
+  },
+  "remote_state": "UNKNOWN_POST_DISPATCH",
+  "repair": "Use the accepted explicit token path; close services through google_clients.close_google_service; use exactly one direct Event export read instead of the retrying helper.",
+  "stop": "SCHEDULE_REFRESH_REMOTE_STATE_AMBIGUOUS"
+}

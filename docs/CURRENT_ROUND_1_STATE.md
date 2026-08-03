@@ -260,3 +260,16 @@ Do not reopen accepted Attention, Pack, planning, Batches 001–003, Batch 003 c
 ## Exact Next Round 2 Move
 
 Resolve the Google client setup/credential transport blocker, then freeze a new bounded schedule-refresh authorization before attempting the canonical FMP/Apps Script refresh. Do not reuse the blocked authorization or prepare provider dispatch without a validated append-only Event snapshot.
+
+## Round 2 Google Route Repair and Refresh Attempt
+
+- Google route decision: `ROUND_2_GOOGLE_ROUTE_RESTORED`. The accepted explicit credential path `/Users/junhoshino/projects/presignal/local/token.json` loaded successfully and the idempotent `presignalRuntimeHealthCheck` returned `READY` with confirmed response state.
+- Mechanical repair: use `google_clients.close_google_service` (the previously called transport-close helper does not exist) and perform the authorized Event export through one direct Sheets read rather than the independently retrying helper.
+- New authorization: `PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T142000Z` (`sha256:2e4bd7300b5098515e25edefe75da10402d633c2ea53bc9e2206d35970a0962c`), independent of and not a reactivation of the prior blocked authorization.
+- Refresh decision: `ROUND_2_CURRENT_EVENT_SNAPSHOT_BLOCKED`; `ROUND_2_FIRST_ROLLING_SLICE_MANIFEST_BLOCKED`; `ROUND_2_FIRST_SLICE_EXACT_DISPATCH_AUTHORIZATION_NOT_READY`.
+- The one authorized `apiUpsertEventWindow` invocation was submitted but did not return before the bounded wait was interrupted. Apps Script invocations: `1`; FMP requests: `UNKNOWN_UP_TO_1`; Event-sheet writes: `UNKNOWN_UP_TO_1`; export reads: `0`; retries: `0`; provider calls, Outcome collection, and evaluation: `0`; remote state: `UNKNOWN_POST_DISPATCH`.
+- No snapshot, admission, manifest, forecast-call inventory, or dispatch authorization was created. The new refresh authorization is blocked and non-reusable. No further Google inspection or retry is permitted without a new explicit reconciliation authorization.
+
+## Exact Next Round 2 Move
+
+Freeze a narrowly scoped remote-state reconciliation authorization for `PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T142000Z`. It must determine whether the submitted refresh wrote to the Event sheet without dispatching a new FMP request; only after certain reconciliation may a fresh export/snapshot authorization be considered.
