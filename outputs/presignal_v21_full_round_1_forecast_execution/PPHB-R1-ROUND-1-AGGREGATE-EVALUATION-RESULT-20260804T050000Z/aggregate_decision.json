@@ -1,0 +1,21 @@
+{
+  "analyses_not_authorized": [
+    "statistical significance",
+    "confidence intervals",
+    "hypothesis tests",
+    "provider selection",
+    "meta-forecast performance",
+    "subgroup mining",
+    "post-hoc optimization",
+    "composite score"
+  ],
+  "composite_score": "NOT_CALCULATED_NOT_AUTHORIZED",
+  "decision": "ROUND_1_AGGREGATE_EVALUATION_COMPLETE",
+  "external_operations": 0,
+  "immediate_impulse_status": {
+    "PACK_A": "NOT_APPLICABLE_STRICT",
+    "PACK_E": "NOT_APPLICABLE_STRICT"
+  },
+  "primary_endpoint": "T+15 directional accuracy",
+  "secondary_measurement": "Immediate Impulse directional accuracy"
+}

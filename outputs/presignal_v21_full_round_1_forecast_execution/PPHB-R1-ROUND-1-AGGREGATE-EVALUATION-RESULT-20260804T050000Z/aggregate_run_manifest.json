@@ -1,0 +1,16 @@
+{
+  "authorization_fingerprint": "sha256:806ff5fb1d37c42209690fa601101d7590fb96a856bde491ba16285d284ba0d7",
+  "authorization_id": "PPHB-R1-AGGREGATE-EVALUATION-AUTHORIZATION-20260804T050000Z",
+  "external_operations": 0,
+  "metrics": [
+    "T+15 directional accuracy",
+    "Immediate Impulse directional accuracy",
+    "magnitude or pip error",
+    "horizon accuracy",
+    "path accuracy",
+    "reversal accuracy"
+  ],
+  "outcome_attachment_operations": 0,
+  "run_id": "PPHB-R1-ROUND-1-AGGREGATE-EVALUATION-RESULT-20260804T050000Z",
+  "source_slice_count": 11
+}

@@ -1,0 +1,136 @@
+{
+  "PACK_A": {
+    "Immediate Impulse directional accuracy": {
+      "denominator": 0,
+      "excluded_approximation_or_no_signal": 259,
+      "numerator": 0,
+      "result": null,
+      "status": "NOT_APPLICABLE_STRICT"
+    },
+    "T+15 directional accuracy": {
+      "denominator": 208,
+      "excluded_no_signal": 51,
+      "numerator": 87,
+      "result": 0.4182692307692308
+    },
+    "evaluation_records": 259,
+    "horizon accuracy": {
+      "15": {
+        "denominator": 208,
+        "excluded_no_signal": 51,
+        "numerator": 87,
+        "result": 0.4182692307692308
+      },
+      "30": {
+        "denominator": 208,
+        "excluded_no_signal": 51,
+        "numerator": 68,
+        "result": 0.3269230769230769
+      },
+      "5": {
+        "denominator": 208,
+        "excluded_no_signal": 51,
+        "numerator": 88,
+        "result": 0.4230769230769231
+      },
+      "60": {
+        "denominator": 208,
+        "excluded_no_signal": 51,
+        "numerator": 72,
+        "result": 0.34615384615384615
+      }
+    },
+    "magnitude or pip error": {
+      "denominator": 208,
+      "excluded_no_signal": 51,
+      "mean_interval_distance_error_pips": 8.052163461538461,
+      "mean_midpoint_absolute_error_pips": 10.951682692307692
+    },
+    "no_signal_excluded_from_directional_metrics": 51,
+    "pack": "PACK_A",
+    "path accuracy": {
+      "denominator": 208,
+      "excluded_no_signal": 51,
+      "result": 0.3786057692307692
+    },
+    "reversal accuracy": {
+      "denominator": 208,
+      "excluded_no_signal": 51,
+      "numerator": 104,
+      "result": 0.5
+    }
+  },
+  "PACK_E": {
+    "Immediate Impulse directional accuracy": {
+      "denominator": 0,
+      "excluded_approximation_or_no_signal": 259,
+      "numerator": 0,
+      "result": null,
+      "status": "NOT_APPLICABLE_STRICT"
+    },
+    "T+15 directional accuracy": {
+      "denominator": 252,
+      "excluded_no_signal": 7,
+      "numerator": 113,
+      "result": 0.44841269841269843
+    },
+    "evaluation_records": 259,
+    "horizon accuracy": {
+      "15": {
+        "denominator": 252,
+        "excluded_no_signal": 7,
+        "numerator": 113,
+        "result": 0.44841269841269843
+      },
+      "30": {
+        "denominator": 252,
+        "excluded_no_signal": 7,
+        "numerator": 84,
+        "result": 0.3333333333333333
+      },
+      "5": {
+        "denominator": 252,
+        "excluded_no_signal": 7,
+        "numerator": 112,
+        "result": 0.4444444444444444
+      },
+      "60": {
+        "denominator": 252,
+        "excluded_no_signal": 7,
+        "numerator": 91,
+        "result": 0.3611111111111111
+      }
+    },
+    "magnitude or pip error": {
+      "denominator": 252,
+      "excluded_no_signal": 7,
+      "mean_interval_distance_error_pips": 7.186706349206349,
+      "mean_midpoint_absolute_error_pips": 10.019246031746032
+    },
+    "no_signal_excluded_from_directional_metrics": 7,
+    "pack": "PACK_E",
+    "path accuracy": {
+      "denominator": 252,
+      "excluded_no_signal": 7,
+      "result": 0.3968253968253968
+    },
+    "reversal accuracy": {
+      "denominator": 252,
+      "excluded_no_signal": 7,
+      "numerator": 118,
+      "result": 0.46825396825396826
+    }
+  },
+  "aggregation_method": "Identity-level record-pooled aggregation from accepted per-forecast Slice rows; never average Slice percentages.",
+  "paired_comparison": {
+    "common_paired_t15_scoreable": 206,
+    "complete_pairs": 259,
+    "difference_a_minus_e": -0.06796116504854371,
+    "interpretation": "Descriptive common-pair comparison only; no significance, confidence intervals, winner selection, or generalization.",
+    "pack_a_t15_numerator": 86,
+    "pack_a_t15_result": 0.4174757281553398,
+    "pack_e_t15_numerator": 100,
+    "pack_e_t15_result": 0.4854368932038835
+  },
+  "rounding": "Store exact ratios and means; display to six decimals in reports."
+}

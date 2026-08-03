@@ -1,0 +1,12 @@
+{
+  "duplicate_evaluation_identities": 0,
+  "evaluation_record_count": 518,
+  "evaluation_record_sha256": "sha256:76ed5a959a0666fcaa156b641c97f501f8c6637052485ce16a535f1edb389f87",
+  "pack_counts": {
+    "PACK_A": 259,
+    "PACK_E": 259
+  },
+  "terminal_invalid_or_excluded_records_included": 0,
+  "unique_episodes": 138,
+  "unique_forecast_call_ids": 518
+}

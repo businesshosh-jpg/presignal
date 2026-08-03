@@ -1,0 +1,12 @@
+{
+  "authorization_status": "COMPLETED",
+  "complete_pairs": 259,
+  "decision": "ROUND_1_AGGREGATE_EVALUATION_COMPLETE",
+  "duplicate_evaluation_identities": 0,
+  "evaluation_records": 518,
+  "external_operations": 0,
+  "outcome_modifications": 0,
+  "pack_a_records": 259,
+  "pack_e_records": 259,
+  "unresolved_identities": 0
+}

@@ -1,0 +1,127 @@
+{
+  "slice_artifacts": [
+    {
+      "evaluation_decision_sha256": "sha256:ebf6731acc85e9a11d602175593631a51e753dd110328dda120aa3711cc5eefc",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-002-20260803T045628Z-5b2104c5270c",
+      "per_forecast_rows_sha256": "sha256:e35a71c67267d04f6f4703cc77483e38f3ebe27b8383da26fd710796caea727a",
+      "slice_id": "SLICE-002"
+    },
+    {
+      "evaluation_decision_sha256": "sha256:26f881639996553b49be59f9497c5b5fc41a9eef200deb2a4cb9fc586732e9a6",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATION-SLICE-003-PAIRED-EXCLUSION-20260803T081500Z-1a04811ea2b95396242c-v2",
+      "per_forecast_rows_sha256": "sha256:2e1307054f578411a359e1c5d2c7058622545087bfc60832e4937e44273a899a",
+      "slice_id": "SLICE-003"
+    },
+    {
+      "evaluation_decision_sha256": "sha256:d429d0b687be777690da66c083edb02ef66eb7da3affc0542edb125800b15402",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-004-20260803T083241Z-0ccd2ce593a5",
+      "per_forecast_rows_sha256": "sha256:76466c9fd9854342f3fa7e55c881cc4fc0cf4eaa1d5ab4169b004a67efa0127b",
+      "slice_id": "SLICE-004"
+    },
+    {
+      "evaluation_decision_sha256": "sha256:10a1f455e27f2d6e103f1e2176873fe70d04093cedfe0e4a6eecbde4a8ff9e10",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-005-PAIRED-EXCLUSION-20260803T091100Z-7dc7040e7eefe6766505",
+      "per_forecast_rows_sha256": "sha256:0a2291042ff0ba68b3140123a1c8f0b58429ce2f141f2f9a9b7bf8805fcdc203",
+      "slice_id": "SLICE-005"
+    },
+    {
+      "evaluation_decision_sha256": "sha256:68b8118a0f46803488e33f358040b14a00dac602470f46f36aaa63743e058319",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-006-20260803T090526Z-4b6396c50c92",
+      "per_forecast_rows_sha256": "sha256:505228571892a33c6746d1b957ad61cabbc28b0b3f02240942c031ab7d8531e1",
+      "slice_id": "SLICE-006"
+    },
+    {
+      "evaluation_decision_sha256": "sha256:2b40efed41a8c7bfead6168b47395df01b0314ec858ea8cca85c7084529aaf3b",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-007-20260803T094016Z-81c3d79659cc",
+      "per_forecast_rows_sha256": "sha256:daccfe45c4fd166e617d8f65152ee29b7d90a88a1bbb29393e553120de3c7c09",
+      "slice_id": "SLICE-007"
+    },
+    {
+      "evaluation_decision_sha256": "sha256:dc6c416cc8816568f6088c5a2251da3c7b78fe885f965eac4b35e03afe3590ff",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-008-20260803T101555Z-b162981a8f90",
+      "per_forecast_rows_sha256": "sha256:ac45bca0ae40c1a7665a7bb1c6e0c100291948977ae234c11f0c6f837e8d52dd",
+      "slice_id": "SLICE-008"
+    },
+    {
+      "evaluation_decision_sha256": "sha256:d5fd100065cf3d749eec10c6dccdee680533e744a86cc386e60bcdb50265c266",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-009-20260803T103200Z-af38aa3c6a26",
+      "per_forecast_rows_sha256": "sha256:857279cb5dcc9fea878d60f13b21c2fd3ba43eb00e24b0e0f97e928f026ea696",
+      "slice_id": "SLICE-009"
+    },
+    {
+      "evaluation_decision_sha256": "sha256:2af5ddacbbaade1bcf04ecca4d69dd6de1e2f47cf899eb054086d770a5578086",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-010-20260803T104301Z-a2340f9b9a1a",
+      "per_forecast_rows_sha256": "sha256:fa45360400d1ccaf66a4136d1fc8574b4c1430ea0759b7064db34a19911ff31d",
+      "slice_id": "SLICE-010"
+    },
+    {
+      "evaluation_decision_sha256": "sha256:17e9d6f418607e2c8323911bfaaaac404d2ac0a19bf21ffd9f271ef772b91f4a",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-011-20260803T110347Z-b56ebc7495bf",
+      "per_forecast_rows_sha256": "sha256:68bf5f32ab91299aadddb1c356a8ea4c8fa70b4b7d33991ff8918c167904bee5",
+      "slice_id": "SLICE-011"
+    },
+    {
+      "evaluation_decision_sha256": "sha256:68551ba80c73251492337f521fbe348f346efc282e522214b7348dadb4be28e8",
+      "evaluation_run_id": "PPHB-R1-OUTCOME-EVALUATE-SLICE-012-20260803T112356Z-c68c116427d5",
+      "per_forecast_rows_sha256": "sha256:48a4d24a2fe24ad69babe29c29709cb0790c624972c1890525f3dd2c89d70b10",
+      "slice_id": "SLICE-012"
+    }
+  ],
+  "source_rows": [
+    {
+      "row_count": 44,
+      "rows_sha256": "sha256:e35a71c67267d04f6f4703cc77483e38f3ebe27b8383da26fd710796caea727a",
+      "slice_id": "SLICE-002"
+    },
+    {
+      "row_count": 32,
+      "rows_sha256": "sha256:2e1307054f578411a359e1c5d2c7058622545087bfc60832e4937e44273a899a",
+      "slice_id": "SLICE-003"
+    },
+    {
+      "row_count": 48,
+      "rows_sha256": "sha256:76466c9fd9854342f3fa7e55c881cc4fc0cf4eaa1d5ab4169b004a67efa0127b",
+      "slice_id": "SLICE-004"
+    },
+    {
+      "row_count": 38,
+      "rows_sha256": "sha256:0a2291042ff0ba68b3140123a1c8f0b58429ce2f141f2f9a9b7bf8805fcdc203",
+      "slice_id": "SLICE-005"
+    },
+    {
+      "row_count": 54,
+      "rows_sha256": "sha256:505228571892a33c6746d1b957ad61cabbc28b0b3f02240942c031ab7d8531e1",
+      "slice_id": "SLICE-006"
+    },
+    {
+      "row_count": 42,
+      "rows_sha256": "sha256:daccfe45c4fd166e617d8f65152ee29b7d90a88a1bbb29393e553120de3c7c09",
+      "slice_id": "SLICE-007"
+    },
+    {
+      "row_count": 42,
+      "rows_sha256": "sha256:ac45bca0ae40c1a7665a7bb1c6e0c100291948977ae234c11f0c6f837e8d52dd",
+      "slice_id": "SLICE-008"
+    },
+    {
+      "row_count": 28,
+      "rows_sha256": "sha256:857279cb5dcc9fea878d60f13b21c2fd3ba43eb00e24b0e0f97e928f026ea696",
+      "slice_id": "SLICE-009"
+    },
+    {
+      "row_count": 52,
+      "rows_sha256": "sha256:fa45360400d1ccaf66a4136d1fc8574b4c1430ea0759b7064db34a19911ff31d",
+      "slice_id": "SLICE-010"
+    },
+    {
+      "row_count": 124,
+      "rows_sha256": "sha256:68bf5f32ab91299aadddb1c356a8ea4c8fa70b4b7d33991ff8918c167904bee5",
+      "slice_id": "SLICE-011"
+    },
+    {
+      "row_count": 14,
+      "rows_sha256": "sha256:48a4d24a2fe24ad69babe29c29709cb0790c624972c1890525f3dd2c89d70b10",
+      "slice_id": "SLICE-012"
+    }
+  ]
+}

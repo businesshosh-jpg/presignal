@@ -169,7 +169,7 @@ The bounded single-slice runner and authorized-slice controller are validated fo
 
 ## Exact next Move
 
-Reconcile the completed ledger through Slice 012 and prepare one explicit aggregate Round 1 evaluation authorization. Do not calculate pooled metrics until that authorization is frozen.
+Prepare one separately authorized scientific interpretation or final Round 1 reporting Move. Do not add inference, provider selection, subgroup analysis, a composite score, or new metrics without explicit authority.
 
 ## Prospective Outcome/Evaluation Stage Completion
 
@@ -178,7 +178,16 @@ Reconcile the completed ledger through Slice 012 and prepare one explicit aggreg
 - Episode partition: 151 total; 138 completed/evaluated; 10 paired-excluded unavailable; 3 excluded by accepted authority/attention-lineage conflict; 0 eligible; 0 unresolved.
 - Forecast partition: 564 frozen identities; 561 authoritative valid; 3 terminal-invalid; 518 forecast records evaluated in accepted Slice evaluations; no unexecuted forecast identity.
 - Outcome coverage: 138 Outcomes attached; unavailable and paired-excluded evidence preserved; no duplicate attachment or evaluation.
-- Aggregate boundary: no pooled metric, significance test, matrix update, composite score, or broader conclusion was calculated. The smallest next Move is to prepare an explicit aggregate Round 1 evaluation authorization bound to the accepted Slice evaluation artifacts and denominator rules.
+- Historical aggregate boundary: at prospective-stage completion, no pooled metric, significance test, matrix update, composite score, or broader conclusion had been calculated. Its prescribed aggregate authorization has since been completed below.
+
+## Round 1 Aggregate Evaluation
+
+- Decision: `ROUND_1_AGGREGATE_EVALUATION_COMPLETE`.
+- Authorization: `PPHB-R1-AGGREGATE-EVALUATION-AUTHORIZATION-20260804T050000Z` (`sha256:806ff5fb1d37c42209690fa601101d7590fb96a856bde491ba16285d284ba0d7`), single-use and completed against the eleven accepted Slice evaluation artifacts.
+- Result: `PPHB-R1-ROUND-1-AGGREGATE-EVALUATION-RESULT-20260804T050000Z`; 518 unique evaluated forecasts, 259 Pack A, 259 Pack E, and 259 complete Pack A/E pairs. No external access, Google operation, Outcome attachment, retry, or Outcome modification occurred.
+- T+15 primary endpoint: Pack A `87/208` (`0.418269`); Pack E `113/252` (`0.448413`). Common paired-scoreable population: 206 pairs, Pack A `86/206` (`0.417476`) and Pack E `100/206` (`0.485437`), descriptive only.
+- Immediate Impulse: `NOT_APPLICABLE_STRICT` for both Packs because no accepted aggregate record has a `SUPPORTED` strict Outcome. No-signal exclusions: Pack A 51; Pack E 7.
+- Other pooled metrics and all identity/denominator proofs are append-only in the aggregate result. No composite score, statistical inference, confidence interval, provider selection, subgroup analysis, or post-hoc optimization was calculated.
 
 ## Prohibited reopening
 
