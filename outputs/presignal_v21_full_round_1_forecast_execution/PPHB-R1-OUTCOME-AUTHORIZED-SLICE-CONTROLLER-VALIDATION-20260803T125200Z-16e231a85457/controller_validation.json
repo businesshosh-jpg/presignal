@@ -1,0 +1,31 @@
+{
+  "decision": "AUTHORIZED_SLICE_AUTOMATION_IMPLEMENTED",
+  "stop_state": "MANIFEST_ACCEPTED_COLLECTION_AUTHORIZATION_REQUIRED",
+  "recognized_population": {
+    "episodes": 12,
+    "valid_forecasts": 44,
+    "pack_a": 22,
+    "pack_e": 22,
+    "complete_pairs": 22
+  },
+  "recognized_limits": {
+    "max_apps_script_reads": 3,
+    "max_market_data_attempts": 12,
+    "max_total_external_requests": 15,
+    "google_write_ceiling": 0,
+    "retry_policy": "NO_AUTOMATIC_RETRIES"
+  },
+  "stage_reuse": [
+    "automation/collect_presignal_v21_outcome_slice_001.py",
+    "automation/attach_presignal_v21_outcome_slice_001.py",
+    "automation/evaluate_presignal_v21_outcome_slice_001.py"
+  ],
+  "automatic_attachment": false,
+  "automatic_evaluation": false,
+  "external_access": {
+    "google_reads": 0,
+    "market_data_attempts": 0,
+    "total_external_requests": 0,
+    "google_writes": 0
+  }
+}

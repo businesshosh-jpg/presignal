@@ -1,0 +1,32 @@
+{
+  "authorization_status": "PROPOSED_NOT_ACTIVE",
+  "slice_id": "SLICE-002",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
+  "manifest_sha256": "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c",
+  "authorized_stage": "collect",
+  "authorized_identity_ids": [
+    "EP_BATCH_851b7d8bd3661e168de1",
+    "EP_EVENT_b908a729dc4fa10f46a6",
+    "EP_EVENT_d5d7aa4435b9e6bab424",
+    "EP_BATCH_bf1ad05b4d84df1b733a",
+    "EP_EVENT_bfcff4089c331ae1d2c8",
+    "EP_EVENT_3b3e1fa49f2b3ba4edf1",
+    "EP_BATCH_f7f52f894ce4f1929d5a",
+    "EP_BATCH_eeae6fee09edc60d1e7d",
+    "EP_BATCH_1c2cb957d0760e40f81e",
+    "EP_BATCH_af76f644b423101d91f2",
+    "EP_BATCH_0ba598718d3db4688437",
+    "EP_BATCH_58e0d92ad8520bb926bb"
+  ],
+  "ceilings": {
+    "max_apps_script_reads": 3,
+    "max_market_data_attempts": 12,
+    "max_total_external_requests": 15,
+    "google_write_ceiling": 0
+  },
+  "retry_boundary": "NO_AUTOMATIC_RETRIES",
+  "contract": "presignal_event_path_contract_v1_1",
+  "schema_version": "2.1.1",
+  "destination": "append-only local Outcome collection evidence; no Google write",
+  "authorization_fingerprint": "sha256:55c105f614485f21a808ce46d196351aa4c4f3ce506c05523b963ebb4f4c39c9"
+}

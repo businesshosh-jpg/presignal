@@ -1,0 +1,13 @@
+{
+  "run_id": "PPHB-R1-OUTCOME-AUTHORIZED-SLICE-CONTROLLER-VALIDATION-20260803T125200Z-16e231a85457",
+  "controller_version": "AUTHORIZED_SLICE_CONTROLLER_V1",
+  "slice_id": "SLICE-002",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
+  "manifest_sha256": "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c",
+  "validation_only": true,
+  "external_requests": 0,
+  "google_writes": 0,
+  "outcome_attachment": 0,
+  "evaluation_calculations": 0,
+  "append_only": true
+}

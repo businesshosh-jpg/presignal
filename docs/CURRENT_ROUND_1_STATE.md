@@ -90,6 +90,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Slice 001 minimal evaluation: `PPHB-R1-OUTCOME-EVALUATION-SLICE-001-20260803T103000Z-4f8c2b9a6d10` (`OUTCOME_SLICE_001_MINIMAL_EVALUATION_COMPLETE`; 44 valid forecasts evaluated locally; T+15 primary, Immediate Impulse strict score not applicable for APPROXIMATION_ONLY outcomes; no composite or broader matrix calculated)
 - Bounded Outcome slice runner validation: `PPHB-R1-OUTCOME-SLICE-RUNNER-VALIDATION-20260803T110000Z-90765146ec19` (`OUTCOME_SLICE_RUNNER_IMPLEMENTATION_VALIDATED`; preflight-only default, explicit stage flags, authorization/ceiling/hash/lease/duplicate guards, and Slice 001 offline fixture compatibility passed; no Slice 002 authorization granted)
 - Slice 002 manifest preparation: `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e` (`SLICE_002_OUTCOME_COLLECTION_MANIFEST_FROZEN`; 12 Episodes, 44 valid forecasts, 22 Pack A/E pairs; proposed collection authorization is not active)
+- Authorized-slice controller validation: `PPHB-R1-OUTCOME-AUTHORIZED-SLICE-CONTROLLER-VALIDATION-20260803T125200Z-16e231a85457` (`AUTHORIZED_SLICE_AUTOMATION_IMPLEMENTED`; Slice 002 accepted offline and stopped at `MANIFEST_ACCEPTED_COLLECTION_AUTHORIZATION_REQUIRED`; zero external access)
 
 ## Prompt boundary
 
@@ -117,11 +118,11 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 Slice 001 contains 12 immutable candidate Outcomes under `presignal_event_path_contract_v1_1` schema `2.1.1`. Source collection used 3 Apps Script reads and 3 Tiingo provider attempts. The accepted attachment run links all 12 candidates append-only with unchanged hashes and no external access. Coverage is 44 valid forecasts across 12 complete Pack A/E pairs; no evaluation was calculated.
 The accepted minimal evaluation is limited to those 44 forecasts and attached Outcomes. It reports Pack-specific T+15, horizon, path, magnitude/pip, and reversal metrics plus descriptive Pack A/E differences. Immediate Impulse remains secondary and strict-scoring is not applicable because the slice is `APPROXIMATION_ONLY`; no composite score or statistical inference is authorized.
 
-The bounded single-slice runner is validated for future use. It requires a separate machine-readable authorization, exact manifest hash, explicit stage flags, and a slice lease; default execution is preflight-only. Slice 002 is frozen for preparation only; it has not been collected, attached, or evaluated, and its proposed authorization is not active.
+The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; no stage advances automatically. Slice 002 is frozen for preparation only; it has not been collected, attached, or evaluated, and its proposed authorization is not active. Current controller stop state: `MANIFEST_ACCEPTED_COLLECTION_AUTHORIZATION_REQUIRED`.
 
 ## Exact next Move
 
-Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. Slice 001 is attached and minimally evaluated under its accepted boundary. The next bounded Move is to explicitly authorize and then perform call-free preflight for the frozen Slice 002 collection manifest; no Slice 002 external request is currently authorized.
+Forecast execution is complete with `561` authoritative valid forecasts, three unrecovered terminal-invalid calls, and no unexecuted calls. Slice 001 is attached and minimally evaluated under its accepted boundary. The next bounded Move is to issue explicit active authorization and perform call-free preflight for the frozen Slice 002 collection manifest; no Slice 002 external request is currently authorized.
 
 ## Prohibited reopening
 
