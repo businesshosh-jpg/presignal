@@ -49,6 +49,7 @@ This index is a compact pointer to current control boundaries. It does not repla
 | `PPHB-R1-FORECAST-FULL-EXECUTION-COMPLETION-20260803T060000Z` | Full Round 1 forecast execution | 560 authoritative valid forecasts, 4 terminal-invalid calls, 0 unexecuted, 0 unresolved | Prohibited |
 | `PPHB-R1-PACK-A-DETERMINISTIC-RAW-RECOVERY-20260803T080000Z-9f2e4c7a1d66` | Pack A `FCL_3d10ae8285471f4e3a980b79` | One existing preserved provider payload recovered by deterministic structural boundary repair; 561 authoritative valid forecasts, 3 unrecovered terminal-invalid calls, 0 unexecuted | Append-only; original terminal evidence remains prohibited | Supersedes the recovered call's terminal-invalid status for current authoritative counting only |
 | `PPHB-R1-OUTCOME-COLLECTION-SLICE-001-20260803T001512Z-ceeaad9f41c8` | First 12-Episode immutable Outcome source slice | 12 schema-valid candidate Outcomes, source request lineage and raw hashes; candidates remain unattached and unevaluated | Append-only | Future attachment/reconciliation artifact |
+| `PPHB-R1-OUTCOME-ATTACHMENT-SLICE-001-20260803T101500Z-5bbe84a70320` | First 12-Episode Outcome attachment | 12 unchanged candidate-to-attachment links and coverage-only reconciliation for 44 valid forecasts across 12 complete Pack A/E pairs; evaluation remains unauthorized | Append-only | Future evaluation authorization artifact |
 
 ## AUTHORITATIVE_CURRENT: PROMPT MANIFEST BOUNDARY
 
