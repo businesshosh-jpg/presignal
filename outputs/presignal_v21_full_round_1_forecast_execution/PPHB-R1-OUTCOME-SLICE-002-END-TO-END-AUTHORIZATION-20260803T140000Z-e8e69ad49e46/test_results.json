@@ -1,0 +1,17 @@
+{
+  "tests": {
+    "manifest_and_controller_binding": "passed",
+    "exact_population": "passed",
+    "collection_ceilings": "passed",
+    "attachment_write_ceiling": "passed",
+    "metric_allow_list": "passed",
+    "single_slice_scope": "passed",
+    "single_use_and_resume": "passed",
+    "modified_authorization_rejected": "passed",
+    "no_external_access": "passed"
+  },
+  "command": "python3 -m unittest automation.test_run_presignal_v21_authorized_slice automation.test_prepare_presignal_v21_outcome_slice_002_manifest",
+  "result": "14 tests passed",
+  "compile_check": "passed",
+  "scientific_execution": "not performed"
+}

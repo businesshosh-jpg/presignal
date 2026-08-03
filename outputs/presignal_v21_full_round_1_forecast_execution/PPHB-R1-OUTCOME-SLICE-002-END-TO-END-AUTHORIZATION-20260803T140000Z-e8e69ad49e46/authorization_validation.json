@@ -1,0 +1,58 @@
+{
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z",
+  "authorization_schema_version": "AUTHORIZED_SLICE_END_TO_END_AUTH_V1",
+  "authorization_fingerprint": "sha256:acea3df8666d7d5dc6474bd7d0269a79e02e41d91ef4e449299833fe8fcf9da3",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
+  "manifest_sha256": "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c",
+  "controller_commit": "856b562f6cead831ab838f48bca90284e3dd3cb7",
+  "controller_version": "AUTHORIZED_SLICE_CONTROLLER_V1_END_TO_END",
+  "authorization_status": "ACTIVE",
+  "recognized_population": {
+    "episodes": 12,
+    "authoritative_valid_forecasts": 44,
+    "pack_a_forecasts": 22,
+    "pack_e_forecasts": 22,
+    "complete_pack_a_e_pairs": 22,
+    "unpaired_forecasts": 0
+  },
+  "collection_limits": {
+    "max_apps_script_reads": 3,
+    "max_market_data_attempts": 12,
+    "max_total_external_requests": 15,
+    "google_write_ceiling": 0,
+    "retries": 0
+  },
+  "attachment_authority": {
+    "destination": "append-only local Outcome attachment evidence",
+    "google_writes": 0,
+    "local_append_only_records": 12,
+    "identity_scope": "the 12 manifest outcome collection identities"
+  },
+  "evaluation_authority": {
+    "population": "44 authoritative valid forecasts mapped one-to-one to 12 attached Slice 002 Outcomes; terminal-invalid excluded; Pack A/E remain distinct",
+    "metrics": [
+      "T+15 directional accuracy",
+      "Immediate Impulse directional accuracy",
+      "magnitude or pip error",
+      "horizon accuracy",
+      "path accuracy",
+      "reversal accuracy"
+    ],
+    "output": "append-only local minimal evaluation evidence"
+  },
+  "stage_sequence": [
+    "call_free_preflight",
+    "collection",
+    "collection_reconciliation",
+    "attachment",
+    "attachment_reconciliation",
+    "minimal_evaluation",
+    "final_slice_reconciliation"
+  ],
+  "automatic_progression": true,
+  "single_use": true,
+  "zero_external_access_in_this_move": true,
+  "decision": "SLICE_002_END_TO_END_AUTHORIZATION_FROZEN",
+  "execution_decision": "SLICE_002_END_TO_END_EXECUTION_READY",
+  "live_stop_state": "SLICE_002_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED"
+}

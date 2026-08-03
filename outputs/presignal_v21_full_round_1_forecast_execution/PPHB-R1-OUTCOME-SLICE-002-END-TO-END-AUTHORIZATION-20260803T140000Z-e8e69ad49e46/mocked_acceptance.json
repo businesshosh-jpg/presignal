@@ -1,0 +1,23 @@
+{
+  "manifest_binding": "PASSED",
+  "controller_binding": "PASSED",
+  "population_binding": "PASSED",
+  "collection_ceiling_binding": "PASSED",
+  "attachment_write_ceiling_binding": "PASSED",
+  "evaluation_allow_list_binding": "PASSED",
+  "single_slice_scope": "PASSED",
+  "single_use_and_resume_binding": "PASSED",
+  "clean_mock_progression": [
+    "COLLECTION_COMPLETE",
+    "ATTACHMENT_RECONCILED",
+    "MINIMAL_EVALUATION_COMPLETE",
+    "AUTHORIZED_SLICE_COMPLETE"
+  ],
+  "blocked_or_partial_stage_requires_new_authorization": true,
+  "modified_authorization_rejected": true,
+  "external_requests": 0,
+  "google_reads": 0,
+  "google_writes": 0,
+  "market_data_attempts": 0,
+  "live_decision": "SLICE_002_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED"
+}

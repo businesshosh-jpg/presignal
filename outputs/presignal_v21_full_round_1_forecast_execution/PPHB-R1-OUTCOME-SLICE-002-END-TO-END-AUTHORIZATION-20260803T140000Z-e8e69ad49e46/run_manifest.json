@@ -1,0 +1,19 @@
+{
+  "run_id": "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z-e8e69ad49e46",
+  "run_type": "END_TO_END_AUTHORIZATION_PREPARATION",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-002-END-TO-END-AUTHORIZATION-20260803T140000Z",
+  "authorization_fingerprint": "sha256:acea3df8666d7d5dc6474bd7d0269a79e02e41d91ef4e449299833fe8fcf9da3",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-002-20260803T121500Z-9c7adf4c2f2e",
+  "manifest_sha256": "sha256:16e231a854572c72e1869ff04d3c6dcb038021af7bfe9bb059a05b2104c5270c",
+  "controller_commit": "856b562f6cead831ab838f48bca90284e3dd3cb7",
+  "external_access": {
+    "google_reads": 0,
+    "google_writes": 0,
+    "market_data_attempts": 0,
+    "total_external_requests": 0
+  },
+  "decision": "SLICE_002_END_TO_END_AUTHORIZATION_FROZEN",
+  "execution_decision": "SLICE_002_END_TO_END_EXECUTION_READY",
+  "live_stop_state": "SLICE_002_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED",
+  "append_only": true
+}
