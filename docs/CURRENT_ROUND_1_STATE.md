@@ -4,7 +4,7 @@
 
 - Repository: `presignal-historical-baseline-r1`
 - Branch: `codex/immediate-impulse-outcome-recovery-r1`
-- Accepted HEAD: `9a1ddce63db78ba6325fead18fd629d9d2a8af42` before Slice 011 execution; this state update is part of the Slice 011 completion commit.
+- Accepted HEAD: `561a4b7f` (Slice 011 completion commit; this state-head update is append-only follow-up).
 - Forecast contract: `presignal_event_path_contract_v1_1`
 - Primary endpoint: `T+15`
 - Secondary measurement: `Immediate Impulse`
