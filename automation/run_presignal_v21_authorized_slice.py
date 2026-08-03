@@ -145,7 +145,7 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
     prefixes = {
         "collect": ("PPHB-R1-OUTCOME-COLLECTION",),
         "attach": ("PPHB-R1-OUTCOME-ATTACH", "PPHB-R1-OUTCOME-ATTACHMENT"),
-        "evaluate": ("PPHB-R1-OUTCOME-EVALUATION",),
+        "evaluate": ("PPHB-R1-OUTCOME-EVALUATE", "PPHB-R1-OUTCOME-EVALUATION"),
     }
     candidates: list[Path] = []
     for prefix in prefixes.get(stage, ()):
@@ -192,6 +192,19 @@ def accepted_stage_artifact(stage: str, slice_id: str, manifest_sha: str, auth: 
                         proofs.append(proof_path)
                 if len(proofs) != 1:
                     continue
+        if stage == "evaluate":
+            decision_path = path / "evaluation_decision.json"
+            if not decision_path.exists():
+                continue
+            decision = json.loads(decision_path.read_text())
+            if (
+                run.get("episode_count") != 12
+                or run.get("forecast_count") != 44
+                or run.get("google_writes") != 0
+                or run.get("external_requests") != 0
+                or decision.get("decision") != "OUTCOME_" + slice_id.replace("-", "_") + "_MINIMAL_EVALUATION_COMPLETE"
+            ):
+                continue
         eligible.append(path)
     if len(eligible) > 1:
         fail("AMBIGUOUS_ACCEPTED_STAGE_ARTIFACT:" + stage)

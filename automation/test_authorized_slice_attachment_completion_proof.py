@@ -83,6 +83,25 @@ class AttachmentCompletionProofTest(unittest.TestCase):
             finally:
                 controller.BASE = old
 
+    def test_canonical_evaluation_identity_is_selected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            path = base / "PPHB-R1-OUTCOME-EVALUATE-SLICE-002-20260803T045628Z-x"
+            write_json(path / "run_manifest.json", {
+                "run_id": path.name, "manifest_sha256": EXPECTED,
+                "episode_count": 12, "forecast_count": 44,
+                "google_writes": 0, "external_requests": 0,
+            })
+            write_json(path / "evaluation_decision.json", {
+                "decision": "OUTCOME_SLICE_002_MINIMAL_EVALUATION_COMPLETE",
+            })
+            old = controller.BASE
+            controller.BASE = base
+            try:
+                self.assertEqual(controller.accepted_stage_artifact("evaluate", "SLICE-002", EXPECTED), path)
+            finally:
+                controller.BASE = old
+
 
 if __name__ == "__main__":
     unittest.main()
