@@ -204,6 +204,12 @@ Existing attention, population, lineage, and reconciliation audits that are not 
 |---|---|---|---|---|
 | `PPHB-R2-SCHEDULE-REFRESH-20260803T144000Z` | Attribution-hardened one-call current schedule refresh | `ROUND_2_SCHEDULE_REFRESH_ATTRIBUTION_HARDENED` locally, but `SCHEDULE_REFRESH_REMOTE_STATE_UNRESOLVED` at execution because the remote response omitted operation/invocation, authorization, source-window, pre/post fingerprint, timestamp, and terminal-state fields. It returned `ok` with fetched `97`, appended `0`, upserts `97`, skipped `0`; one FMP request, one Apps Script invocation, one upsert operation, one export read, zero retries. The export is diagnostic-only and no Slice authority was created. | Append-only hardening, operation journal, execution evidence, and diagnostic export; no authoritative snapshot | Separately authorized deployment activation, then a new exact refresh authorization |
 
+## ROUND_2_HARDENED_DEPLOYMENT_ATTEMPT
+
+| Artifact | Scope | Decision controlled | Modification | Superseding artifact |
+|---|---|---|---|---|
+| `PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-20260803T150000Z` | One-shot attribution-hardened Apps Script deployment authorization and execution evidence | `ROUND_2_HARDENED_APPS_SCRIPT_DEPLOYMENT_BLOCKED`. Authorization `PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-AUTHORIZATION-20260803T150000Z` (`sha256:e0e6458043422251f47c08449104db2ef1b40374a40cb1a8da0874ad150b06c3`) permitted one source update, one version creation, one activation, and two verification reads. One source update and one version creation completed. Five `EXECUTION_API` deployments existed with no accepted deterministic selection rule, so activation and live verification did not occur. No FMP, schedule refresh, Event write/export, provider, Outcome, or evaluation activity occurred. | Append-only blocked/non-reusable partial-operation evidence; all prior refresh evidence remains unchanged | New deployment authorization with one exact accepted `EXECUTION_API` deployment identity, then a separately authorized refresh |
+
 ## SUPERSEDED_REPORT
 
 Earlier planning, execution, blocker, and recovery summaries are retained in place and are superseded only where the accepted current artifacts above explicitly establish a later boundary. No evidence is moved, renamed, or deleted.

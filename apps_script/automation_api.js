@@ -901,6 +901,18 @@ function apiUpsertEventWindow(params) {
   return apiUpsertEventWindow_(params);
 }
 
+/** Read-only deployment verification for the schedule-refresh attribution contract. */
+function apiGetScheduleRefreshAttributionContract() {
+  return {
+    status: 'READY',
+    contract_version: 'presignal_r2_schedule_refresh_attribution_v1',
+    canonical_function: 'apiUpsertEventWindow_',
+    required_request_fields: ['operation_id', 'authorization_id', 'source_window_fingerprint'],
+    required_response_fields: ['operation_id', 'invocation_id', 'authorization_id', 'source_window_fingerprint', 'pre_refresh_event_sheet_fingerprint', 'post_refresh_event_sheet_fingerprint', 'dispatch_timestamp', 'completion_timestamp', 'upsert', 'status_counts', 'terminal_status', 'remote_state'],
+    event_semantics_changed: false
+  };
+}
+
 function apiDiagnoseProspectiveEventIdentityRuntime(payload) {
   var out = {status: 'error', last_stage: 'ENTRYPOINT_STARTED', spreadsheet_id: '', spreadsheet_name: '', sheet_name: '', sheet_row_count: 0, normalized_header_map: {}, event_id_column: -1, batch_id_column: -1, type_column: -1, future_rows_found: 0, eligible_rows_found: 0, missing_event_id_before: 0, missing_batch_id_before: 0, missing_type_before: 0, flush_completed: false, postpass_called: false, postpass_argument_mode: 'undefined_all_rows', postpass_return_type: '', postpass_return_value: null, updated_keys_count: 0, missing_event_id_after: 0, missing_batch_id_after: 0, missing_type_after: 0, writeback_detected: false, error_name: '', error_message: '', error_stage: ''};
   try {

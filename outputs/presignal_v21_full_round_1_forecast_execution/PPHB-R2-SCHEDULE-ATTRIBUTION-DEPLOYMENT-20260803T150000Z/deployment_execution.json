@@ -1,0 +1,10 @@
+{
+  "decision": "ROUND_2_HARDENED_APPS_SCRIPT_DEPLOYMENT_BLOCKED",
+  "deployment_activations": 0,
+  "deployment_count": 5,
+  "remote_state": "CONFIRMED_RESPONSE",
+  "source_updates": 1,
+  "stage": "DEPLOYMENT_SELECTION",
+  "verification_reads": 1,
+  "version_creations": 1
+}

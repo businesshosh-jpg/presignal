@@ -296,3 +296,15 @@ Do not retry or export under the blocked refresh. A new explicit governance deci
 ## Exact Next Round 2 Move
 
 Publish/activate the attribution-hardened Apps Script route under a separately authorized deployment change, then run a new one-call refresh authorization. The existing 144000Z Event export cannot be promoted without server-side attribution.
+
+## Round 2 Hardened Deployment Attempt
+
+- Decision: `ROUND_2_HARDENED_APPS_SCRIPT_DEPLOYMENT_BLOCKED`.
+- Authorization: `PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-AUTHORIZATION-20260803T150000Z` (`sha256:e0e6458043422251f47c08449104db2ef1b40374a40cb1a8da0874ad150b06c3`). The local source fingerprint is `sha256:5c9558f51b6ea7cca8f905b543ef3306d9e6a0acd9a5d07f2c33d7dc8acbf670`.
+- Certain partial-operation boundary: one Apps Script source update and one version creation completed; zero deployment activations and zero schedule refresh operations occurred. The project returned five `EXECUTION_API` deployments, but accepted evidence supplied no exact deployment ID or deterministic selection rule. Activation therefore failed closed before live route verification.
+- Preserved activity: FMP `0`; Apps Script refresh `0`; Event-sheet writes `0`; Event export reads `0`; provider, Outcome, and evaluation activity `0`; retries `0`; remote state `CONFIRMED_RESPONSE`.
+- The deployment authorization is non-reusable after its partial operation. Both prior refresh authorizations remain permanently non-reusable and their evidence is unchanged. No authoritative Event snapshot, Round 2 Episode admission, Slice manifest, or provider-dispatch authorization exists.
+
+## Exact Next Round 2 Move
+
+Freeze a new deployment authorization that binds exactly one accepted `EXECUTION_API` deployment ID in project `1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9`, activates the already-created hardened version after a deterministic selection proof, verifies the attribution contract, and only then separately authorizes one new attributed schedule refresh.

@@ -1,0 +1,37 @@
+{
+  "authorization_fingerprint": "sha256:e0e6458043422251f47c08449104db2ef1b40374a40cb1a8da0874ad150b06c3",
+  "authorization_id": "PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-AUTHORIZATION-20260803T150000Z",
+  "authorization_schema_version": "1.0.0",
+  "authorization_status": "FROZEN_SINGLE_USE_ACTIVE_FOR_ATTRIBUTION_DEPLOYMENT",
+  "canonical_function": "apiUpsertEventWindow_",
+  "ceilings": {
+    "apps_script_source_updates": 1,
+    "deployment_activations": 1,
+    "deployment_verification_reads": 2,
+    "deployment_version_creations": 1,
+    "retries": 0
+  },
+  "envelope_binding": {
+    "envelope_fingerprint": "sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0",
+    "envelope_id": "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z"
+  },
+  "not_authorized": [
+    "Event-sheet writes",
+    "FMP requests",
+    "provider calls",
+    "Outcome collection",
+    "evaluation",
+    "unrelated Apps Script changes"
+  ],
+  "project_id": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9",
+  "protocol_binding": {
+    "protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+    "protocol_id": "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
+  },
+  "source_files": [
+    "apps_script/automation_api.js",
+    "apps_script/fmp_calendar.js"
+  ],
+  "source_fingerprint": "sha256:5c9558f51b6ea7cca8f905b543ef3306d9e6a0acd9a5d07f2c33d7dc8acbf670",
+  "verification_function": "apiGetScheduleRefreshAttributionContract"
+}

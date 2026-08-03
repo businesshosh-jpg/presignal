@@ -1,0 +1,28 @@
+{
+  "authorization_id": "PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-AUTHORIZATION-20260803T150000Z",
+  "authorization_fingerprint": "sha256:e0e6458043422251f47c08449104db2ef1b40374a40cb1a8da0874ad150b06c3",
+  "decision": "ROUND_2_HARDENED_APPS_SCRIPT_DEPLOYMENT_BLOCKED",
+  "blocked_authorization_status": "NON_REUSABLE_AFTER_PARTIAL_DEPLOYMENT_OPERATION",
+  "project_id": "1A-iJDmNb1RFSCGS9YIPJfboNCO3sGUS1OomKf4yyQhQceSJlgXqWdGA9",
+  "reason": "Five EXECUTION_API deployments were returned by the authoritative project and accepted repository evidence contains no deterministic deployment ID or selection rule.",
+  "actuals": {
+    "apps_script_source_updates": 1,
+    "deployment_version_creations": 1,
+    "deployment_activations": 0,
+    "deployment_verification_reads": 1,
+    "fmp_requests": 0,
+    "apps_script_refresh_invocations": 0,
+    "event_sheet_writes": 0,
+    "event_sheet_export_reads": 0,
+    "provider_calls": 0,
+    "outcome_activity": 0,
+    "evaluation_activity": 0,
+    "retries": 0
+  },
+  "remote_state": "CONFIRMED_RESPONSE",
+  "required_next_authority": "A new deployment authorization must bind one exact accepted EXECUTION_API deployment ID and may activate the already-created attribution source version only after verifying that selection rule.",
+  "preserved_prior_refreshes": [
+    "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T142000Z",
+    "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T144000Z"
+  ]
+}

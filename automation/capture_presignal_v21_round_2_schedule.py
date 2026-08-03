@@ -18,8 +18,9 @@ from automation import google_clients
 from automation.run_presignal_v21_continuous_round_2 import SOURCE_AUTHORITY
 
 BASE = ROOT / "outputs" / "presignal_v21_full_round_1_forecast_execution"
-OUTPUT_DIR = BASE / "PPHB-R2-SCHEDULE-REFRESH-20260803T144000Z"
-AUTH_ID = "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T144000Z"
+OUTPUT_DIR = BASE / "PPHB-R2-SCHEDULE-REFRESH-20260803T151000Z"
+AUTH_ID = "PPHB-R2-SCHEDULE-REFRESH-AUTHORIZATION-20260803T151000Z"
+DEPLOYMENT_DIR = BASE / "PPHB-R2-SCHEDULE-ATTRIBUTION-DEPLOYMENT-20260803T150000Z"
 PROTOCOL_ID = "PPHB-R2-CONFIRMATORY-PROSPECTIVE-PROTOCOL-20260804T080000Z"
 PROTOCOL_FP = "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f"
 ENVELOPE_ID = "PPHB-R2-EXECUTION-ENVELOPE-20260803T090000Z"
@@ -37,6 +38,29 @@ def digest(value: Any) -> str:
     return "sha256:" + hashlib.sha256(canonical(value).encode()).hexdigest()
 
 
+def deployment_binding() -> dict[str, Any]:
+    """Require the accepted hardened deployment before freezing a refresh."""
+    path = DEPLOYMENT_DIR / "deployment_execution.json"
+    if not path.exists():
+        raise RuntimeError("HARDENED_DEPLOYMENT_EVIDENCE_REQUIRED")
+    value = json.loads(path.read_text())
+    if value.get("decision") != "ROUND_2_HARDENED_APPS_SCRIPT_DEPLOYED":
+        raise RuntimeError("HARDENED_DEPLOYMENT_NOT_ACCEPTED")
+    contract = value.get("contract")
+    if not isinstance(contract, dict) or contract.get("contract_version") != ATTRIBUTION_VERSION:
+        raise RuntimeError("HARDENED_DEPLOYMENT_CONTRACT_CONFLICT")
+    required = {"operation_id", "authorization_id", "source_window_fingerprint", "invocation_id"}
+    if not required <= set(contract.get("required_response_fields", [])):
+        raise RuntimeError("HARDENED_DEPLOYMENT_RESPONSE_CONTRACT_INCOMPLETE")
+    return {
+        "deployment_authorization_id": json.loads((DEPLOYMENT_DIR / "deployment_authorization.json").read_text())["authorization_id"],
+        "deployment_id": value["deployment_id"],
+        "version_number": value["version_number"],
+        "source_fingerprint": value["source_fingerprint"],
+        "contract_version": contract["contract_version"],
+    }
+
+
 def authorization() -> dict[str, Any]:
     return {
         "authorization_id": AUTH_ID,
@@ -45,6 +69,7 @@ def authorization() -> dict[str, Any]:
         "timestamp_semantics": "Deterministic artifact naming metadata only; not a validity boundary.",
         "protocol_binding": {"protocol_id": PROTOCOL_ID, "protocol_fingerprint": PROTOCOL_FP},
         "envelope_binding": {"envelope_id": ENVELOPE_ID, "envelope_fingerprint": ENVELOPE_FP},
+        "hardened_deployment_binding": deployment_binding(),
         "source_authority": SOURCE_AUTHORITY,
         "attribution_control_version": ATTRIBUTION_VERSION,
         "fmp_window": {"from_utc_iso": FROM_UTC, "to_utc_iso": TO_UTC, "reason": "Smallest date-bounded window providing current prospective lead time for first Slice admission."},
@@ -125,7 +150,7 @@ def execute(output_dir: Path, value: dict[str, Any], evidence: dict[str, Any]) -
         google_clients.close_google_service(sheets)
     headers = [str(item).strip() for item in (values[0] if values else [])]
     rows = [dict(zip(headers, row + [""] * max(0, len(headers) - len(row)))) for row in values[1:]] if values else []
-    snapshot = {"snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T144000Z", "snapshot_status": "AUTHORITATIVE_EVENT_SHEET_EXPORT", "source_authority": SOURCE_AUTHORITY, "exported_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"), "spreadsheet_id": google_clients.DEFAULT_SPREADSHEET_ID, "sheet_name": "Event", "source_refresh_authorization": AUTH_ID, "source_refresh_authorization_fingerprint": value["authorization_fingerprint"], "operation_id": operation_id, "operation_result": terminal, "request_window": {"from_utc_iso": FROM_UTC, "to_utc_iso": TO_UTC}, "acquisition_lineage": {"canonical_steps": ["apiUpsertEventWindow_", "runFmpRangeToEvent_", "applyBatchingForKeys_", "event_sheet_export"]}, "headers": headers, "event_rows": rows}
+    snapshot = {"snapshot_id": "PPHB-R2-CURRENT-EVENT-SNAPSHOT-20260803T151000Z", "snapshot_status": "AUTHORITATIVE_EVENT_SHEET_EXPORT", "source_authority": SOURCE_AUTHORITY, "exported_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"), "spreadsheet_id": google_clients.DEFAULT_SPREADSHEET_ID, "sheet_name": "Event", "source_refresh_authorization": AUTH_ID, "source_refresh_authorization_fingerprint": value["authorization_fingerprint"], "hardened_deployment_binding": value["hardened_deployment_binding"], "operation_id": operation_id, "operation_result": terminal, "request_window": {"from_utc_iso": FROM_UTC, "to_utc_iso": TO_UTC}, "acquisition_lineage": {"canonical_steps": ["apiUpsertEventWindow_", "runFmpRangeToEvent_", "applyBatchingForKeys_", "event_sheet_export"]}, "headers": headers, "event_rows": rows}
     snapshot["snapshot_fingerprint"] = digest(snapshot)
     evidence.update({"event_sheet_writes": 1, "export_reads": 1, "remote_state": "CERTAIN", "event_rows": len(rows), "snapshot_id": snapshot["snapshot_id"], "snapshot_fingerprint": snapshot["snapshot_fingerprint"]})
     (output_dir / "event_sheet_snapshot.json").write_text(json.dumps(snapshot, indent=2, sort_keys=True) + "\n")
