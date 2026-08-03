@@ -1,0 +1,38 @@
+{
+  "append_only": true,
+  "authorized_stage": "end_to_end",
+  "automatic_stage_transition": false,
+  "controller_version": "AUTHORIZED_SLICE_CONTROLLER_V1",
+  "decision": "SLICE_003_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED",
+  "end_to_end_mode": true,
+  "external_access": {
+    "google_reads": 0,
+    "google_writes": 0,
+    "market_data_attempts": 0,
+    "total_external_requests": 0
+  },
+  "generated_ts": "2026-08-03T06:28:39Z",
+  "manifest_file_sha256": "sha256:5974ee2084649011f0c2a287d252e5752ed601d5a13ab215e0fe4b927bafd295",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "manifest_sha256": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "mock_clean_route": null,
+  "prior_stage_artifacts": {
+    "attach": null,
+    "collect": null,
+    "evaluate": null
+  },
+  "recognized_ceilings": {
+    "google_write_ceiling": 0,
+    "max_apps_script_reads": 3,
+    "max_attachment_records": 12,
+    "max_evaluation_artifacts": 1,
+    "max_market_data_attempts": 12,
+    "max_total_external_requests": 15
+  },
+  "recognized_complete_pairs": 20,
+  "recognized_episode_count": 12,
+  "recognized_pack_a_count": 20,
+  "recognized_pack_e_count": 20,
+  "recognized_valid_forecast_count": 40,
+  "slice_id": "SLICE-003"
+}

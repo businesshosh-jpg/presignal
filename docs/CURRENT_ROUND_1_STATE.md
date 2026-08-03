@@ -96,6 +96,7 @@ Attention population and consolidation, Pack lineage repair, Pack A/E constructi
 - Slice 002 attachment: `PPHB-R1-OUTCOME-ATTACH-SLICE-002-20260803T044538Z-5b2104c5270c` (`OUTCOME_SLICE_002_ATTACHED_AND_RECONCILED`; 12/12 attached, 44 valid forecasts, 22 complete Pack A/E pairs, 0 writes). The controller completion-proof compatibility repair was accepted before evaluation.
 - Slice 002 evaluation and completion: `PPHB-R1-OUTCOME-EVALUATE-SLICE-002-20260803T045628Z-5b2104c5270c` plus `slice_completion.json` (`AUTHORIZED_SLICE_002_END_TO_END_COMPLETE`; collection and attachment reused, 44 forecasts evaluated locally, six authorized metrics only, no external access).
 - Next Slice 003 manifest preparation: `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z` (fingerprint recorded in the package; `NEXT_PROSPECTIVE_SLICE_MANIFEST_FROZEN`; 12 Episodes, 40 valid forecasts, 20 Pack A, 20 Pack E, 20 complete pairs; authorization inputs are proposed and inactive).
+- Active Slice 003 end-to-end authorization: `PPHB-R1-OUTCOME-SLICE-003-END-TO-END-AUTHORIZATION-20260803T160000Z-42faad88745d71b047fb` (`SLICE_003_END_TO_END_AUTHORIZATION_FROZEN`; fingerprint `sha256:42faad88745d71b047fb1136b5f799b45501bed621874b85a894f6c2def36eb8`; authorized but not started).
 
 ## Prompt boundary
 
@@ -123,11 +124,11 @@ Pack A and Pack E remain separate. Provider/model lineage remains frozen. No pro
 Slice 001 contains 12 immutable candidate Outcomes under `presignal_event_path_contract_v1_1` schema `2.1.1`. Source collection used 3 Apps Script reads and 3 Tiingo provider attempts. The accepted attachment run links all 12 candidates append-only with unchanged hashes and no external access. Coverage is 44 valid forecasts across 12 complete Pack A/E pairs; no evaluation was calculated.
 The accepted minimal evaluation is limited to those 44 forecasts and attached Outcomes. It reports Pack-specific T+15, horizon, path, magnitude/pip, and reversal metrics plus descriptive Pack A/E differences. Immediate Impulse remains secondary and strict-scoring is not applicable because the slice is `APPROXIMATION_ONLY`; no composite score or statistical inference is authorized.
 
-The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; stage-by-stage mode remains available and end-to-end mode advances only after accepted prior-stage completion. Slice 002 collection, attachment, and minimal evaluation are complete and append-only under the frozen boundary. T+15 remains primary and Immediate Impulse remains secondary; no broader evaluation or composite score was calculated. Current controller state: `AUTHORIZED_SLICE_002_END_TO_END_COMPLETE`. The prospective-slice contract remains active for Slice 003, with no live authorization yet frozen.
+The bounded single-slice runner and authorized-slice controller are validated for future use. They require separate machine-readable authorization, exact manifest hash, explicit stage controls, and append-only stage evidence; stage-by-stage mode remains available and end-to-end mode advances only after accepted prior-stage completion. Slice 002 collection, attachment, and minimal evaluation are complete and append-only under the frozen boundary. T+15 remains primary and Immediate Impulse remains secondary; no broader evaluation or composite score was calculated. Current controller state: `SLICE_003_END_TO_END_EXECUTION_AUTHORIZED_NOT_STARTED`. The prospective-slice contract remains active for Slice 003.
 
 ## Exact next Move
 
-Freeze one active end-to-end authorization for `SLICE-003` using the proposed inputs in `PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z`.
+Execute the single active Slice 003 end-to-end authorization in one coherent Codex session using `automation/run_presignal_v21_authorized_slice.py`.
 
 ## Prohibited reopening
 

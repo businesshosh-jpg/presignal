@@ -1,0 +1,16 @@
+{
+  "append_only": true,
+  "attachment": 0,
+  "authorization_fingerprint": "sha256:42faad88745d71b047fb1136b5f799b45501bed621874b85a894f6c2def36eb8",
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-003-END-TO-END-AUTHORIZATION-20260803T160000Z",
+  "controller_commit": "70f1df9f2f4c55e1d7a8116686cbf1a85d194e36",
+  "evaluation": 0,
+  "google_reads": 0,
+  "google_writes": 0,
+  "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+  "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+  "market_data_calls": 0,
+  "move": "FREEZE_SLICE_003_END_TO_END_AUTHORIZATION",
+  "provider_calls": 0,
+  "run_id": "PPHB-R1-OUTCOME-SLICE-003-END-TO-END-AUTHORIZATION-20260803T160000Z-42faad88745d71b047fb"
+}

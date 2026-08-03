@@ -1,0 +1,7 @@
+{
+  "authorization_id": "PPHB-R1-OUTCOME-SLICE-003-END-TO-END-AUTHORIZATION-20260803T160000Z",
+  "classification": "DETERMINISTIC_ARTIFACT_NAMING_METADATA",
+  "decision": "TIMESTAMP_AUTHORITY_CONFIRMED",
+  "external_access": 0,
+  "validity_boundary": "not an issuance or future-effective time"
+}
