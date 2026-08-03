@@ -1,0 +1,11 @@
+{
+  "run_id": "PPHB-R1-SLICE-003-UNAVAILABLE-OUTCOME-GOVERNANCE-REVIEW-20260803T073000Z",
+  "run_type": "GOVERNANCE_REVIEW",
+  "authorized_episode_ids": ["EP_EVENT_4b80366594480b554889", "EP_EVENT_aa41226bcb8107901555"],
+  "external_requests": 0,
+  "google_writes": 0,
+  "outcome_attachments": 0,
+  "evaluation_calculations": 0,
+  "preserved_evidence_modified": false,
+  "status": "COMPLETE"
+}

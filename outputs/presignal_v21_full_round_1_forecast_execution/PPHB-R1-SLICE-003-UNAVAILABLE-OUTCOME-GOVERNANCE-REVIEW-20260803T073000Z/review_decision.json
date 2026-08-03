@@ -1,0 +1,9 @@
+{
+  "decision": "AUTHORIZE_PAIRED_EXCLUSION_OF_TWO_UNAVAILABLE_EPISODES",
+  "readiness": "SLICE_003_RESUME_AUTHORIZATION_READY",
+  "scope": ["EP_EVENT_4b80366594480b554889", "EP_EVENT_aa41226bcb8107901555"],
+  "external_access": 0,
+  "attachment": 0,
+  "evaluation": 0,
+  "next_move": "Freeze one bounded Slice 003 paired-unavailable-exclusion plus local attachment-reconciliation authorization for the ten existing VALID candidate Outcomes; do not recollect or evaluate."
+}

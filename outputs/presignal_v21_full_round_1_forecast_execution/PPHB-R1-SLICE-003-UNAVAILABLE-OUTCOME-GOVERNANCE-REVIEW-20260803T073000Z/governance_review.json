@@ -1,0 +1,130 @@
+{
+  "artifact_id": "PPHB-R1-SLICE-003-UNAVAILABLE-OUTCOME-GOVERNANCE-REVIEW-20260803T073000Z",
+  "artifact_schema_version": "1.0",
+  "move_type": "NO_CALL_NO_WRITE_GOVERNANCE_REVIEW",
+  "bindings": {
+    "manifest_id": "PPHB-R1-OUTCOME-COLLECTION-MANIFEST-SLICE-003-20260803T154000Z",
+    "manifest_fingerprint": "sha256:c15ec51effbb6ac5d26a48ead4c28504d0f5fc8e8a157e650726fc2fd1815bd5",
+    "collection_run_id": "PPHB-R1-OUTCOME-COLLECTION-SLICE-003-20260803T071136Z-fc2fd1815bd5",
+    "replacement_authorization_id": "PPHB-R1-OUTCOME-SLICE-003-REPLACEMENT-END-TO-END-AUTHORIZATION-20260803T171000Z",
+    "replacement_authorization_fingerprint": "sha256:27ebd3d15f91637f217a2621edecf48c32d61698587d3bf785b2ffdef743e49b",
+    "blocked_authorization_id": "PPHB-R1-OUTCOME-SLICE-003-END-TO-END-AUTHORIZATION-20260803T160000Z",
+    "blocked_authorization_status": "BLOCKED_NON_REUSABLE"
+  },
+  "preserved_collection_facts": {
+    "apps_script_reads": 10,
+    "market_data_attempts": 12,
+    "total_external_requests": 22,
+    "google_writes": 0,
+    "retries": 0,
+    "candidate_outcome_records": 12,
+    "attachment_records": 0,
+    "evaluation_started": false,
+    "remote_state": "CERTAIN"
+  },
+  "episodes": [
+    {
+      "episode_id": "EP_EVENT_4b80366594480b554889",
+      "instrument": "USD/JPY",
+      "release_ts": "2024-05-04T18:20:00Z",
+      "utc_release_day": "2024-05-04",
+      "historical_cutoff": "2024-05-04T18:10:00Z",
+      "measurement_windows_min": [5, 15, 30, 60],
+      "collection_identity": "SLICE-003|EP_EVENT_4b80366594480b554889|USD/JPY|2024-05-04T18:20:00Z",
+      "request_identity": "OUTCOME_SLICE_003_DAY_20240504",
+      "candidate_outcome_id": "OUT_783a4b6efb6a4fa744b3",
+      "candidate_outcome_fingerprint": "sha256:16af7a43a7a55387eb6008c4a61a897efb398fd86523059a8388d4ce69ca71f8",
+      "raw_response_hash": "sha256:3f0a68c2f2f47a35cf23aedcebbb56825cf60302a1059f7398aac48cdb7bac7f",
+      "raw_response_reference": "raw_source_responses/2024-05-04.json",
+      "source_authority": "apiFetchGovernedHistoricalUsdJpyObservation; UTC one-minute OHLC close; tiingo -> eodhd -> massive -> twelvedata",
+      "provider_attempts_dispatched": 4,
+      "raw_status": "MISSING_OR_UNUSABLE",
+      "raw_reason": "Tiingo and EODHD returned HTTP 200 with zero exact timestamp observations; Massive returned HTTP 403 and TwelveData HTTP 400.",
+      "candidate_status": "UNAVAILABLE",
+      "candidate_reason": "MISSING_OR_STALE_ANCHOR_PRICE_5M_PRICE_15M_PRICE_30M_PRICE_60M",
+      "classification": "OUTCOME_TERMINALLY_UNAVAILABLE_UNDER_CURRENT_SOURCE",
+      "deterministic_recovery_from_preserved_evidence": false,
+      "recovery_reason": "The preserved response contains no anchor or horizon observation. Supplying any price, direction, pip, excursion, or reversal value would require new source information.",
+      "new_external_request_required_for_recovery": true,
+      "forecast_pairs": [
+        {"provider": "Anthropic", "model": "claude-haiku-4-5", "pack_a": "FCL_15c6f4e6f1fc413c5c3845b7", "pack_e": "FCL_5230a7bccd1ea38969bafbe9"},
+        {"provider": "Gemini", "model": "gemini-2.5-flash-lite", "pack_a": "FCL_ff54346ab7650976cfdf2a77", "pack_e": "FCL_2e848bf237c19f8df0f0a1e0"},
+        {"provider": "OpenAI", "model": "gpt-4o-mini-2024-07-18", "pack_a": "FCL_a5c7157c4cf958b3e63af1c9", "pack_e": "FCL_6fde6348e4a26fd62d85c6df"}
+      ]
+    },
+    {
+      "episode_id": "EP_EVENT_aa41226bcb8107901555",
+      "instrument": "USD/JPY",
+      "release_ts": "2024-05-17T07:00:00Z",
+      "utc_release_day": "2024-05-17",
+      "historical_cutoff": "2024-05-17T06:50:00Z",
+      "measurement_windows_min": [5, 15, 30, 60],
+      "collection_identity": "SLICE-003|EP_EVENT_aa41226bcb8107901555|USD/JPY|2024-05-17T07:00:00Z",
+      "request_identity": "OUTCOME_SLICE_003_DAY_20240517",
+      "candidate_outcome_id": "OUT_7f991b76aa8beefed69a",
+      "candidate_outcome_fingerprint": "sha256:3b4c869f7e8e6f155dc588631b48fbdbc82ec005f8d0d68c3d876f138dc0e7fc",
+      "raw_response_hash": "sha256:6bd1a97c2fa796de84978e13fec82b4ffa34ff2fbe86c84c37e9f61e5d18c445",
+      "raw_response_reference": "raw_source_responses/2024-05-17.json",
+      "source_authority": "apiFetchGovernedHistoricalUsdJpyObservation; UTC one-minute OHLC close; tiingo -> eodhd -> massive -> twelvedata",
+      "provider_attempts_dispatched": 0,
+      "raw_status": "TRANSPORT_FAILURE",
+      "raw_reason": "The preserved route failed with SSLEOFError before a provider request or observation response was recorded.",
+      "candidate_status": "UNAVAILABLE",
+      "candidate_reason": "MISSING_OR_STALE_ANCHOR_PRICE_5M_PRICE_15M_PRICE_30M_PRICE_60M",
+      "classification": "OUTCOME_REQUIRES_SEPARATE_EXTERNAL_RECOVERY_AUTHORIZATION",
+      "deterministic_recovery_from_preserved_evidence": false,
+      "recovery_reason": "The preserved failure contains no market observations. A complete Outcome cannot be reconstructed without a new external request.",
+      "new_external_request_required_for_recovery": true,
+      "forecast_pairs": [
+        {"provider": "OpenAI", "model": "gpt-4o-mini-2024-07-18", "pack_a": "FCL_5ffa9e10262ccdccaea1a64c", "pack_e": "FCL_02c997b37b7e3f54e8187d93"}
+      ]
+    }
+  ],
+  "treatment_options": {
+    "A_paired_exclusion": {
+      "permitted_basis": "The existing evaluation contract requires a stop for a missing canonical Outcome on an attached pair, while permitting governed exclusion of incomplete Pack A/E pairs from paired performance metrics with completeness reconciliation retained.",
+      "population_after_exclusion": {"episodes": 10, "valid_forecasts": 32, "pack_a": 16, "pack_e": 16, "complete_pairs": 16, "excluded_forecasts": 8},
+      "metric_denominators": {
+        "T+15 directional accuracy": "Per Pack: the 16 retained forecasts excluding only retained NO_SIGNAL forecasts under the existing rule.",
+        "Immediate Impulse directional accuracy": "Per Pack: retained non-NO_SIGNAL forecasts whose attached Outcome state is SUPPORTED; otherwise not applicable under the existing strict rule.",
+        "magnitude or pip error": "Per Pack: the 16 retained forecasts excluding only retained NO_SIGNAL forecasts.",
+        "horizon accuracy": "Per Pack and each supported horizon: the 16 retained forecasts excluding only retained NO_SIGNAL forecasts.",
+        "path accuracy": "Per Pack: the 16 retained forecasts excluding only retained NO_SIGNAL forecasts.",
+        "reversal accuracy": "Per Pack: the 16 retained forecasts excluding only retained NO_SIGNAL forecasts."
+      },
+      "scientific_treatment": "Exclude both Pack A and Pack E forecasts for each unavailable Episode before attachment; retain all eight exclusions and both UNAVAILABLE candidates in append-only completeness reconciliation. No Outcome value, forecast, or metric definition changes."
+    },
+    "B_bounded_external_recovery": {
+      "scientific_status": "Possible only under a new separate authorization; not recommended for completeness alone.",
+      "exact_identities": ["SLICE-003|EP_EVENT_4b80366594480b554889|USD/JPY|2024-05-04T18:20:00Z", "SLICE-003|EP_EVENT_aa41226bcb8107901555|USD/JPY|2024-05-17T07:00:00Z"],
+      "canonical_source_only": true,
+      "alternate_source_permitted": false,
+      "illustrative_ceiling_if_separately_authorized": {"apps_script_reads": 2, "market_data_attempts": 8, "total_external_requests": 10, "google_writes": 0, "automatic_retries": 0},
+      "stop_conditions": ["duplicate request identity", "remote-state ambiguity", "source authority conflict", "timestamp or schema conflict", "transport defect shared across identities", "any request beyond the frozen ceiling"],
+      "attachment_and_evaluation": "Remain unauthorized until a separate recovery reconciliation is accepted."
+    },
+    "C_slice_unevaluable": {
+      "required": false,
+      "reason": "No governing artifact requires the full Slice to remain blocked solely because a paired Episode has a contract-valid UNAVAILABLE Outcome; the contract instead preserves completeness reconciliation and excludes incomplete pairs from paired performance metrics."
+    }
+  },
+  "recommended_decision": "AUTHORIZE_PAIRED_EXCLUSION_OF_TWO_UNAVAILABLE_EPISODES",
+  "readiness_decision": "SLICE_003_RESUME_AUTHORIZATION_READY",
+  "recommendation_reason": "Paired exclusion is the smallest plan-aligned treatment: it preserves Pack A/E pairing, avoids invented Outcome semantics and new requests, keeps T+15 primary and Immediate Impulse secondary, and makes the changed population and denominator rules explicit before any attachment or evaluation.",
+  "proposed_next_authorization": {
+    "authorization_scope": "Freeze and execute one bounded Slice 003 paired-unavailable-exclusion plus local attachment-reconciliation Move; minimal evaluation remains unauthorized until attachment reconciliation passes.",
+    "exact_episode_exclusions": ["EP_EVENT_4b80366594480b554889", "EP_EVENT_aa41226bcb8107901555"],
+    "exact_forecast_exclusions": ["FCL_15c6f4e6f1fc413c5c3845b7", "FCL_ff54346ab7650976cfdf2a77", "FCL_a5c7157c4cf958b3e63af1c9", "FCL_5230a7bccd1ea38969bafbe9", "FCL_2e848bf237c19f8df0f0a1e0", "FCL_6fde6348e4a26fd62d85c6df", "FCL_5ffa9e10262ccdccaea1a64c", "FCL_02c997b37b7e3f54e8187d93"],
+    "eligible_population": {"episodes": 10, "valid_forecasts": 32, "pack_a": 16, "pack_e": 16, "complete_pairs": 16},
+    "external_requests": 0,
+    "apps_script_reads": 0,
+    "market_data_attempts": 0,
+    "google_writes": 0,
+    "automatic_retries": 0,
+    "attachment_rule": "Attach only the ten existing VALID candidate Outcomes, exactly once, through the canonical append-only local path. Retain the two existing UNAVAILABLE candidates unmodified as excluded completeness evidence.",
+    "duplicate_prevention": "Bind each attachment to the frozen manifest, authorization, Episode, candidate fingerprint, and source raw hash; fail closed on an existing attachment or a candidate outside the ten retained identities.",
+    "stop_conditions": ["identity, manifest, authorization, candidate hash, source lineage, schema, cutoff, or Pack-lineage conflict", "missing or extra retained candidate", "attempt to attach an UNAVAILABLE candidate", "duplicate attachment", "remote-state ambiguity"],
+    "evaluation": "Not authorized by this next Move."
+  },
+  "review_activity": {"external_access": 0, "google_writes": 0, "outcome_mutations": 0, "attachments": 0, "evaluations": 0}
+}
