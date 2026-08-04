@@ -1,0 +1,12 @@
+{
+  "all_route_availability_blocked": true,
+  "blockers": [
+    "seven conservative completed-period availability rules",
+    "PACK_E_PROSPECTIVE_V1_STALE_AUTHORITY_BLOCKED",
+    "PACK_E_PROSPECTIVE_V1_TIMEOUT_AUTHORITY_BLOCKED",
+    "PACK_E_PROSPECTIVE_V1_LEAD_TIME_BLOCKED"
+  ],
+  "decision": "PACK_E_PROSPECTIVE_V1_FIELD_CONTRACT_BLOCKED",
+  "historical_pack_e_equivalence_claim": false,
+  "partial_contract_not_labeled_frozen": true
+}

@@ -1,0 +1,30 @@
+{
+  "EODHD": {
+    "client": "UrlFetchApp.fetch",
+    "connection_timeout": null,
+    "read_timeout": null,
+    "total_timeout": null
+  },
+  "FMP": {
+    "client": "UrlFetchApp.fetch",
+    "connection_timeout": null,
+    "read_timeout": null,
+    "total_timeout": null
+  },
+  "FRED": {
+    "client": "UrlFetchApp.fetch",
+    "connection_timeout": null,
+    "read_timeout": null,
+    "total_timeout": null
+  },
+  "accepted_infrastructure_inspected": "authoritative_provider_bridge.js hard_timeout_seconds applies to forecast provider calls, not the frozen FRED/EODHD/FMP source routes",
+  "decision": "PACK_E_PROSPECTIVE_V1_TIMEOUT_AUTHORITY_BLOCKED",
+  "reason": "No accepted source-route client configuration or governing source-operation contract sets a hard timeout. Choosing a value would be a new ungoverned parameter, so no maximum duration can be derived.",
+  "retry_boundary": 0,
+  "safe_resume": "STATUS_UNKNOWN remains non-reusable until a future exact request journal proves a complete raw response was persisted.",
+  "terminal_states_when_future_authority_exists": [
+    "SUCCESS",
+    "TRANSPORT_FAILED",
+    "STATUS_UNKNOWN"
+  ]
+}

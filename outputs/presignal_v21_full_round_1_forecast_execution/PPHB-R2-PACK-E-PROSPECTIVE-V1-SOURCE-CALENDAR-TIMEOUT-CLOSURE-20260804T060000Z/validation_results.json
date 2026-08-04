@@ -1,0 +1,21 @@
+{
+  "activity": {
+    "authenticated_provider_calls": 0,
+    "documentation_pages": {
+      "EODHD": 2,
+      "FMP": 1,
+      "FRED": 3,
+      "total": 6
+    },
+    "evaluation": 0,
+    "forecasts": 0,
+    "google_reads": 0,
+    "google_writes": 0,
+    "market_data_calls": 0,
+    "outcomes": 0,
+    "retries": 0
+  },
+  "no_market_data_endpoint_calls": true,
+  "no_source_substitution": true,
+  "passed": true
+}

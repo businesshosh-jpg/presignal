@@ -1,0 +1,8 @@
+{
+  "admission_deadline_formula": "admission_deadline_utc = episode_t_minus_15_cutoff_utc - maximum_prerequisite_execution_window_seconds - safety_margin_seconds",
+  "decision": "PACK_E_PROSPECTIVE_V1_LEAD_TIME_BLOCKED",
+  "execution_model": "not authorized or implemented",
+  "maximum_prerequisite_execution_window_seconds": null,
+  "reason": "Hard per-route timeout authority is absent and none of the seven routes has a strict pre-cutoff availability rule.",
+  "safety_margin_seconds": null
+}

@@ -1,0 +1,20 @@
+{
+  "allowed_statuses": [
+    "AVAILABLE",
+    "STALE",
+    "UNAVAILABLE",
+    "SOURCE_CLOSED",
+    "TIMESTAMP_UNRESOLVED",
+    "SOURCE_FAILURE"
+  ],
+  "decision": "PACK_E_PROSPECTIVE_V1_STALE_AUTHORITY_BLOCKED",
+  "prohibitions": [
+    "elapsed-hour surrogate",
+    "invented holiday calendar",
+    "cross-market calendar substitution",
+    "zero substitution",
+    "unbounded carry-forward"
+  ],
+  "reason": "Every frozen route lacks a governed completed-period and observation-availability rule; expected periods, source-closed classification, and missed-period stale bounds cannot be frozen without inventing calendars.",
+  "route_count": 7
+}

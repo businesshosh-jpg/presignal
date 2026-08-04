@@ -1,0 +1,5 @@
+{
+  "COMPLETE": "all seven fields use eligible completed periods, pass strict cutoff and stale validation, preserve raw evidence, and normalize successfully",
+  "COMPLETE_WITH_GOVERNED_MISSING": "not available until a future frozen source-calendar rule explains normal closure; never API failure, timestamp ambiguity, stale data, or implementation failure",
+  "INCOMPLETE": "required for unresolved calendar/availability, stale data, raw-evidence absence, source failure/timeout, parser/normalization failure, or silent field absence"
+}

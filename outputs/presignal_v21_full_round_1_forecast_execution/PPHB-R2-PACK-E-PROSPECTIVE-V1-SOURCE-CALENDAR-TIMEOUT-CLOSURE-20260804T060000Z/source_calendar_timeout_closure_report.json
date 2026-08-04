@@ -1,0 +1,296 @@
+{
+  "activity": {
+    "authenticated_provider_calls": 0,
+    "documentation_pages": {
+      "EODHD": 2,
+      "FMP": 1,
+      "FRED": 3,
+      "total": 6
+    },
+    "evaluation": 0,
+    "forecasts": 0,
+    "google_reads": 0,
+    "google_writes": 0,
+    "market_data_calls": 0,
+    "outcomes": 0,
+    "retries": 0
+  },
+  "artifact_id": "PPHB-R2-PACK-E-PROSPECTIVE-V1-SOURCE-CALENDAR-TIMEOUT-CLOSURE-20260804T060000Z",
+  "availability_rules_decision": "PACK_E_PROSPECTIVE_V1_AVAILABILITY_RULES_BLOCKED",
+  "bindings": {
+    "historical_pack_e_equivalence_claim": false,
+    "pack_identity": "PACK_E_PROSPECTIVE_V1",
+    "prior_closure_fingerprint": "sha256:7db3bee8b4d85a03ea41966f11ecb19909e67356a8afe63cffa1e34a1d62e7a2"
+  },
+  "completeness_contract": {
+    "COMPLETE": "all seven fields use eligible completed periods, pass strict cutoff and stale validation, preserve raw evidence, and normalize successfully",
+    "COMPLETE_WITH_GOVERNED_MISSING": "not available until a future frozen source-calendar rule explains normal closure; never API failure, timestamp ambiguity, stale data, or implementation failure",
+    "INCOMPLETE": "required for unresolved calendar/availability, stale data, raw-evidence absence, source failure/timeout, parser/normalization failure, or silent field absence"
+  },
+  "documentation_register": {
+    "actual_documentation_pages": {
+      "EODHD": 2,
+      "FMP": 1,
+      "FRED": 3,
+      "total": 6
+    },
+    "authenticated_requests": 0,
+    "authorization": {
+      "allowed_domains": [
+        "fred.stlouisfed.org",
+        "eodhd.com",
+        "site.financialmodelingprep.com"
+      ],
+      "maximum_requests": {
+        "EODHD": 6,
+        "FMP": 6,
+        "FRED": 6,
+        "total": 18
+      },
+      "retries": 0
+    },
+    "direct_raw_fetch_attempt": {
+      "result": "HTTP_403_NO_BODY",
+      "url": "https://fred.stlouisfed.org/docs/api/fred/series_observations.html",
+      "used_as_evidence": false
+    },
+    "market_data_endpoint_calls": 0,
+    "official_evidence": [
+      {
+        "deterministic_summary": "The observations response supplies date, value, realtime_start, and realtime_end. Vintage dates and real-time periods can select data as known on dates, but the observation schema does not provide a publication-time-of-day field.",
+        "page_content_extract_fingerprint": "sha256:619775d7c715e605aa41016566fc395db41dd66ad210fce747c99f3ebc7199b1",
+        "supports": "FRED observation schema and vintage/revision capability",
+        "title": "St. Louis Fed Web Services: fred/series/observations",
+        "url": "https://fred.stlouisfed.org/docs/api/fred/series_observations.html"
+      },
+      {
+        "deterministic_summary": "The series page identifies DGS2 as a daily, not-seasonally-adjusted H.15 Selected Interest Rates series and displays missing observations as a dot. A page-level current update display is not a historical per-observation availability timestamp.",
+        "page_content_extract_fingerprint": "sha256:f6ed44318d4113500e780a7c01b9c6782bbbf30f3a7a5cf4cc8ada29aa6db306",
+        "supports": "DGS2 series frequency and source-release linkage",
+        "title": "Market Yield on U.S. Treasury Securities at 2-Year Constant Maturity",
+        "url": "https://fred.stlouisfed.org/series/DGS2"
+      },
+      {
+        "deterministic_summary": "The series page identifies DGS10 as a daily, not-seasonally-adjusted H.15 Selected Interest Rates series and displays missing observations as a dot. A page-level current update display is not a historical per-observation availability timestamp.",
+        "page_content_extract_fingerprint": "sha256:45fbe0915204d7066ccc4d7080c9990f08dc3415e2cc533cb9d59dc6a63ec6c3",
+        "supports": "DGS10 series frequency and source-release linkage",
+        "title": "Market Yield on U.S. Treasury Securities at 10-Year Constant Maturity",
+        "url": "https://fred.stlouisfed.org/series/DGS10"
+      },
+      {
+        "deterministic_summary": "The endpoint returns daily, weekly, or monthly OHLC-style historical data for a symbol, including forex and indices. The documented daily description does not establish a UTC publication instant, completed-bar flag, or historical availability timestamp for an individual row.",
+        "page_content_extract_fingerprint": "sha256:79ab5c0bbc64efc79360a9b7db30d90bb783479745b915ceb18c3ac7dea84897",
+        "supports": "EODHD EOD route cadence and OHLC bar content",
+        "title": "End-Of-Day Historical Stock Market Data API",
+        "url": "https://eodhd.com/financial-apis/api-for-historical-data-and-volumes"
+      },
+      {
+        "deterministic_summary": "The official support page identifies the EOD historical route for FOREX symbols. It does not define an intraday availability field for a daily row.",
+        "page_content_extract_fingerprint": "sha256:01f699a0133bd4171d3354e4201c817608246923d6cba86dd6a4f450e5fd597d",
+        "supports": "EODHD FOREX symbol route",
+        "title": "List of Supported FOREX Currencies",
+        "url": "https://eodhd.com/financial-apis/list-supported-forex-currencies"
+      },
+      {
+        "deterministic_summary": "The endpoint provides end-of-day historical open, high, low, close, volume, and related daily fields. Its documented daily date/price content does not establish a source availability timestamp, current-day completion indicator, or a calendar for DX-Y.NYB and CLUSD.",
+        "page_content_extract_fingerprint": "sha256:3bbb78b01fb1047a566e0ad6bbf99b74235adff293a278194ca02be58ebaa268",
+        "supports": "FMP historical EOD route cadence and OHLC content",
+        "title": "Stock Price and Volume Data API",
+        "url": "https://site.financialmodelingprep.com/developer/docs/stable/historical-price-eod-full"
+      }
+    ]
+  },
+  "field_contract": {
+    "all_route_availability_blocked": true,
+    "blockers": [
+      "seven conservative completed-period availability rules",
+      "PACK_E_PROSPECTIVE_V1_STALE_AUTHORITY_BLOCKED",
+      "PACK_E_PROSPECTIVE_V1_TIMEOUT_AUTHORITY_BLOCKED",
+      "PACK_E_PROSPECTIVE_V1_LEAD_TIME_BLOCKED"
+    ],
+    "decision": "PACK_E_PROSPECTIVE_V1_FIELD_CONTRACT_BLOCKED",
+    "historical_pack_e_equivalence_claim": false,
+    "partial_contract_not_labeled_frozen": true
+  },
+  "fingerprint": "sha256:5eab19cc4dd7d1d36915fab0aba35eec93265270129eb67ec97ea816eafde549",
+  "implementation_authorization": {
+    "decision": "PACK_E_PROSPECTIVE_V1_IMPLEMENTATION_REMAINS_BLOCKED",
+    "prior_inputs": "PPHB-R2-PACK-E-PROSPECTIVE-V1-IMPLEMENTATION-AUTHORIZATION-INPUTS-20260804T043000Z",
+    "prior_inputs_fingerprint": "sha256:8e8cce92fe0f5cc0577048362c7619ba8e3e1cb9f631665054cb27c004c42866",
+    "reason": "The final contract did not freeze; earlier inactive implementation inputs remain unchanged and unactivated."
+  },
+  "lead_time": {
+    "admission_deadline_formula": "admission_deadline_utc = episode_t_minus_15_cutoff_utc - maximum_prerequisite_execution_window_seconds - safety_margin_seconds",
+    "decision": "PACK_E_PROSPECTIVE_V1_LEAD_TIME_BLOCKED",
+    "execution_model": "not authorized or implemented",
+    "maximum_prerequisite_execution_window_seconds": null,
+    "reason": "Hard per-route timeout authority is absent and none of the seven routes has a strict pre-cutoff availability rule.",
+    "safety_margin_seconds": null
+  },
+  "numeric_only_treatment": {
+    "categorical_directions": "omitted; no RISING/FALLING/FLAT threshold is introduced",
+    "change_24h": "numeric only; requires two eligible completed observations selected in ascending source-period order",
+    "change_5d": "numeric only; requires the latest eligible observation and the fifth preceding eligible source observation",
+    "decision": "PACK_E_PROSPECTIVE_V1_NUMERIC_ONLY_TREATMENT_CONFIRMED",
+    "latest_value": "use only the latest eligible completed observation after availability and stale authority close",
+    "missing_prior_observation": "UNAVAILABLE; do not substitute zero or a non-governed date",
+    "rounding_order": "calculate from normalized source-unit values; round only at final Pack serialization under the frozen construction contract"
+  },
+  "source_calendar_authority": [
+    {
+      "availability_decision": "PACK_E_PROSPECTIVE_V1_AVAILABILITY_RULES_BLOCKED",
+      "calendar_authority": "US business-day H.15 linkage is identified, but retained evidence provides no observation-level UTC publication time.",
+      "current_adapter_schema": "daily date/value row only",
+      "decision": "SOURCE_CALENDAR_AUTHORITY_PARTIALLY_CONFIRMED",
+      "field": "US_2_YEAR_TREASURY_YIELD",
+      "official_period_semantics": "Daily series observation date; observations API has date/value plus real-time vintage dates.",
+      "prior_period_availability_before_arbitrary_cutoff": "NOT_PROVEN",
+      "reason": "No official retained evidence supplies a conservative observation-level availability instant or a source-specific completed-period/calendar rule proving strict pre-T-15 availability.",
+      "revision_behavior": "FRED supports real-time vintage selection; EODHD/FMP correction timing is not documented by retained evidence",
+      "same_day_completed_period": "NOT_PROVEN",
+      "series_or_symbol": "DGS2",
+      "source_family": "FRED",
+      "timestamp_semantics": "date-only source-period identity; not a publication, availability, or retrieval timestamp"
+    },
+    {
+      "availability_decision": "PACK_E_PROSPECTIVE_V1_AVAILABILITY_RULES_BLOCKED",
+      "calendar_authority": "US business-day H.15 linkage is identified, but retained evidence provides no observation-level UTC publication time.",
+      "current_adapter_schema": "daily date/value row only",
+      "decision": "SOURCE_CALENDAR_AUTHORITY_PARTIALLY_CONFIRMED",
+      "field": "US_10_YEAR_TREASURY_YIELD",
+      "official_period_semantics": "Daily series observation date; observations API has date/value plus real-time vintage dates.",
+      "prior_period_availability_before_arbitrary_cutoff": "NOT_PROVEN",
+      "reason": "No official retained evidence supplies a conservative observation-level availability instant or a source-specific completed-period/calendar rule proving strict pre-T-15 availability.",
+      "revision_behavior": "FRED supports real-time vintage selection; EODHD/FMP correction timing is not documented by retained evidence",
+      "same_day_completed_period": "NOT_PROVEN",
+      "series_or_symbol": "DGS10",
+      "source_family": "FRED",
+      "timestamp_semantics": "date-only source-period identity; not a publication, availability, or retrieval timestamp"
+    },
+    {
+      "availability_decision": "PACK_E_PROSPECTIVE_V1_AVAILABILITY_RULES_BLOCKED",
+      "calendar_authority": "Official EOD documentation states daily data but not a completed-bar signal, source timezone, or calendar for this symbol.",
+      "current_adapter_schema": "daily date/value row only",
+      "decision": "SOURCE_CALENDAR_AUTHORITY_PARTIALLY_CONFIRMED",
+      "field": "USDJPY_MARKET_STATE",
+      "official_period_semantics": "Historical EOD daily OHLC bar represented by date/close after the accepted normalizer drops other source fields.",
+      "prior_period_availability_before_arbitrary_cutoff": "NOT_PROVEN",
+      "reason": "No official retained evidence supplies a conservative observation-level availability instant or a source-specific completed-period/calendar rule proving strict pre-T-15 availability.",
+      "revision_behavior": "FRED supports real-time vintage selection; EODHD/FMP correction timing is not documented by retained evidence",
+      "same_day_completed_period": "NOT_PROVEN",
+      "series_or_symbol": "USDJPY.FOREX",
+      "source_family": "EODHD",
+      "timestamp_semantics": "date-only source-period identity; not a publication, availability, or retrieval timestamp"
+    },
+    {
+      "availability_decision": "PACK_E_PROSPECTIVE_V1_AVAILABILITY_RULES_BLOCKED",
+      "calendar_authority": "Official EOD documentation states daily data but not a completed-bar signal, source timezone, or calendar for this symbol.",
+      "current_adapter_schema": "daily date/value row only",
+      "decision": "SOURCE_CALENDAR_AUTHORITY_PARTIALLY_CONFIRMED",
+      "field": "SP500_MARKET_STATE",
+      "official_period_semantics": "Historical EOD daily OHLC bar represented by date/close after the accepted normalizer drops other source fields.",
+      "prior_period_availability_before_arbitrary_cutoff": "NOT_PROVEN",
+      "reason": "No official retained evidence supplies a conservative observation-level availability instant or a source-specific completed-period/calendar rule proving strict pre-T-15 availability.",
+      "revision_behavior": "FRED supports real-time vintage selection; EODHD/FMP correction timing is not documented by retained evidence",
+      "same_day_completed_period": "NOT_PROVEN",
+      "series_or_symbol": "GSPC.INDX",
+      "source_family": "EODHD",
+      "timestamp_semantics": "date-only source-period identity; not a publication, availability, or retrieval timestamp"
+    },
+    {
+      "availability_decision": "PACK_E_PROSPECTIVE_V1_AVAILABILITY_RULES_BLOCKED",
+      "calendar_authority": "Official EOD documentation states daily data but not a completed-bar signal, source timezone, or calendar for this symbol.",
+      "current_adapter_schema": "daily date/value row only",
+      "decision": "SOURCE_CALENDAR_AUTHORITY_PARTIALLY_CONFIRMED",
+      "field": "GOLD_MARKET_STATE",
+      "official_period_semantics": "Historical EOD daily OHLC bar represented by date/close after the accepted normalizer drops other source fields.",
+      "prior_period_availability_before_arbitrary_cutoff": "NOT_PROVEN",
+      "reason": "No official retained evidence supplies a conservative observation-level availability instant or a source-specific completed-period/calendar rule proving strict pre-T-15 availability.",
+      "revision_behavior": "FRED supports real-time vintage selection; EODHD/FMP correction timing is not documented by retained evidence",
+      "same_day_completed_period": "NOT_PROVEN",
+      "series_or_symbol": "XAUUSD.FOREX",
+      "source_family": "EODHD",
+      "timestamp_semantics": "date-only source-period identity; not a publication, availability, or retrieval timestamp"
+    },
+    {
+      "availability_decision": "PACK_E_PROSPECTIVE_V1_AVAILABILITY_RULES_BLOCKED",
+      "calendar_authority": "Official EOD documentation states end-of-day data but not a completed-bar signal, source timezone, or calendar for this symbol.",
+      "current_adapter_schema": "daily date/value row only",
+      "decision": "SOURCE_CALENDAR_AUTHORITY_PARTIALLY_CONFIRMED",
+      "field": "US_DOLLAR_INDEX_MARKET_STATE",
+      "official_period_semantics": "Historical EOD daily OHLC bar represented by date/close after the accepted normalizer drops other source fields.",
+      "prior_period_availability_before_arbitrary_cutoff": "NOT_PROVEN",
+      "reason": "No official retained evidence supplies a conservative observation-level availability instant or a source-specific completed-period/calendar rule proving strict pre-T-15 availability.",
+      "revision_behavior": "FRED supports real-time vintage selection; EODHD/FMP correction timing is not documented by retained evidence",
+      "same_day_completed_period": "NOT_PROVEN",
+      "series_or_symbol": "DX-Y.NYB",
+      "source_family": "FMP",
+      "timestamp_semantics": "date-only source-period identity; not a publication, availability, or retrieval timestamp"
+    },
+    {
+      "availability_decision": "PACK_E_PROSPECTIVE_V1_AVAILABILITY_RULES_BLOCKED",
+      "calendar_authority": "Official EOD documentation states end-of-day data but not a completed-bar signal, source timezone, or calendar for this symbol.",
+      "current_adapter_schema": "daily date/value row only",
+      "decision": "SOURCE_CALENDAR_AUTHORITY_PARTIALLY_CONFIRMED",
+      "field": "WTI_CRUDE_OIL_MARKET_STATE",
+      "official_period_semantics": "Historical EOD daily OHLC bar represented by date/close after the accepted normalizer drops other source fields.",
+      "prior_period_availability_before_arbitrary_cutoff": "NOT_PROVEN",
+      "reason": "No official retained evidence supplies a conservative observation-level availability instant or a source-specific completed-period/calendar rule proving strict pre-T-15 availability.",
+      "revision_behavior": "FRED supports real-time vintage selection; EODHD/FMP correction timing is not documented by retained evidence",
+      "same_day_completed_period": "NOT_PROVEN",
+      "series_or_symbol": "CLUSD",
+      "source_family": "FMP",
+      "timestamp_semantics": "date-only source-period identity; not a publication, availability, or retrieval timestamp"
+    }
+  ],
+  "stale_authority": {
+    "allowed_statuses": [
+      "AVAILABLE",
+      "STALE",
+      "UNAVAILABLE",
+      "SOURCE_CLOSED",
+      "TIMESTAMP_UNRESOLVED",
+      "SOURCE_FAILURE"
+    ],
+    "decision": "PACK_E_PROSPECTIVE_V1_STALE_AUTHORITY_BLOCKED",
+    "prohibitions": [
+      "elapsed-hour surrogate",
+      "invented holiday calendar",
+      "cross-market calendar substitution",
+      "zero substitution",
+      "unbounded carry-forward"
+    ],
+    "reason": "Every frozen route lacks a governed completed-period and observation-availability rule; expected periods, source-closed classification, and missed-period stale bounds cannot be frozen without inventing calendars.",
+    "route_count": 7
+  },
+  "timeout_authority": {
+    "EODHD": {
+      "client": "UrlFetchApp.fetch",
+      "connection_timeout": null,
+      "read_timeout": null,
+      "total_timeout": null
+    },
+    "FMP": {
+      "client": "UrlFetchApp.fetch",
+      "connection_timeout": null,
+      "read_timeout": null,
+      "total_timeout": null
+    },
+    "FRED": {
+      "client": "UrlFetchApp.fetch",
+      "connection_timeout": null,
+      "read_timeout": null,
+      "total_timeout": null
+    },
+    "accepted_infrastructure_inspected": "authoritative_provider_bridge.js hard_timeout_seconds applies to forecast provider calls, not the frozen FRED/EODHD/FMP source routes",
+    "decision": "PACK_E_PROSPECTIVE_V1_TIMEOUT_AUTHORITY_BLOCKED",
+    "reason": "No accepted source-route client configuration or governing source-operation contract sets a hard timeout. Choosing a value would be a new ungoverned parameter, so no maximum duration can be derived.",
+    "retry_boundary": 0,
+    "safe_resume": "STATUS_UNKNOWN remains non-reusable until a future exact request journal proves a complete raw response was persisted.",
+    "terminal_states_when_future_authority_exists": [
+      "SUCCESS",
+      "TRANSPORT_FAILED",
+      "STATUS_UNKNOWN"
+    ]
+  }
+}

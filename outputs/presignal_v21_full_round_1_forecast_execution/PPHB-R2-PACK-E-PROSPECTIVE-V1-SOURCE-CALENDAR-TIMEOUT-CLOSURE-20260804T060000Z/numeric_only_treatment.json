@@ -1,0 +1,9 @@
+{
+  "categorical_directions": "omitted; no RISING/FALLING/FLAT threshold is introduced",
+  "change_24h": "numeric only; requires two eligible completed observations selected in ascending source-period order",
+  "change_5d": "numeric only; requires the latest eligible observation and the fifth preceding eligible source observation",
+  "decision": "PACK_E_PROSPECTIVE_V1_NUMERIC_ONLY_TREATMENT_CONFIRMED",
+  "latest_value": "use only the latest eligible completed observation after availability and stale authority close",
+  "missing_prior_observation": "UNAVAILABLE; do not substitute zero or a non-governed date",
+  "rounding_order": "calculate from normalized source-unit values; round only at final Pack serialization under the frozen construction contract"
+}

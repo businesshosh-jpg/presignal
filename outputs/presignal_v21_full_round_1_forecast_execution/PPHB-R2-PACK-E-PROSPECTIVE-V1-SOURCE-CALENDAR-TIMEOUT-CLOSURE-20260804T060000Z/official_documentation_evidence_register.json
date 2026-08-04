@@ -1,0 +1,73 @@
+{
+  "actual_documentation_pages": {
+    "EODHD": 2,
+    "FMP": 1,
+    "FRED": 3,
+    "total": 6
+  },
+  "authenticated_requests": 0,
+  "authorization": {
+    "allowed_domains": [
+      "fred.stlouisfed.org",
+      "eodhd.com",
+      "site.financialmodelingprep.com"
+    ],
+    "maximum_requests": {
+      "EODHD": 6,
+      "FMP": 6,
+      "FRED": 6,
+      "total": 18
+    },
+    "retries": 0
+  },
+  "direct_raw_fetch_attempt": {
+    "result": "HTTP_403_NO_BODY",
+    "url": "https://fred.stlouisfed.org/docs/api/fred/series_observations.html",
+    "used_as_evidence": false
+  },
+  "market_data_endpoint_calls": 0,
+  "official_evidence": [
+    {
+      "deterministic_summary": "The observations response supplies date, value, realtime_start, and realtime_end. Vintage dates and real-time periods can select data as known on dates, but the observation schema does not provide a publication-time-of-day field.",
+      "page_content_extract_fingerprint": "sha256:619775d7c715e605aa41016566fc395db41dd66ad210fce747c99f3ebc7199b1",
+      "supports": "FRED observation schema and vintage/revision capability",
+      "title": "St. Louis Fed Web Services: fred/series/observations",
+      "url": "https://fred.stlouisfed.org/docs/api/fred/series_observations.html"
+    },
+    {
+      "deterministic_summary": "The series page identifies DGS2 as a daily, not-seasonally-adjusted H.15 Selected Interest Rates series and displays missing observations as a dot. A page-level current update display is not a historical per-observation availability timestamp.",
+      "page_content_extract_fingerprint": "sha256:f6ed44318d4113500e780a7c01b9c6782bbbf30f3a7a5cf4cc8ada29aa6db306",
+      "supports": "DGS2 series frequency and source-release linkage",
+      "title": "Market Yield on U.S. Treasury Securities at 2-Year Constant Maturity",
+      "url": "https://fred.stlouisfed.org/series/DGS2"
+    },
+    {
+      "deterministic_summary": "The series page identifies DGS10 as a daily, not-seasonally-adjusted H.15 Selected Interest Rates series and displays missing observations as a dot. A page-level current update display is not a historical per-observation availability timestamp.",
+      "page_content_extract_fingerprint": "sha256:45fbe0915204d7066ccc4d7080c9990f08dc3415e2cc533cb9d59dc6a63ec6c3",
+      "supports": "DGS10 series frequency and source-release linkage",
+      "title": "Market Yield on U.S. Treasury Securities at 10-Year Constant Maturity",
+      "url": "https://fred.stlouisfed.org/series/DGS10"
+    },
+    {
+      "deterministic_summary": "The endpoint returns daily, weekly, or monthly OHLC-style historical data for a symbol, including forex and indices. The documented daily description does not establish a UTC publication instant, completed-bar flag, or historical availability timestamp for an individual row.",
+      "page_content_extract_fingerprint": "sha256:79ab5c0bbc64efc79360a9b7db30d90bb783479745b915ceb18c3ac7dea84897",
+      "supports": "EODHD EOD route cadence and OHLC bar content",
+      "title": "End-Of-Day Historical Stock Market Data API",
+      "url": "https://eodhd.com/financial-apis/api-for-historical-data-and-volumes"
+    },
+    {
+      "deterministic_summary": "The official support page identifies the EOD historical route for FOREX symbols. It does not define an intraday availability field for a daily row.",
+      "page_content_extract_fingerprint": "sha256:01f699a0133bd4171d3354e4201c817608246923d6cba86dd6a4f450e5fd597d",
+      "supports": "EODHD FOREX symbol route",
+      "title": "List of Supported FOREX Currencies",
+      "url": "https://eodhd.com/financial-apis/list-supported-forex-currencies"
+    },
+    {
+      "deterministic_summary": "The endpoint provides end-of-day historical open, high, low, close, volume, and related daily fields. Its documented daily date/price content does not establish a source availability timestamp, current-day completion indicator, or a calendar for DX-Y.NYB and CLUSD.",
+      "page_content_extract_fingerprint": "sha256:3bbb78b01fb1047a566e0ad6bbf99b74235adff293a278194ca02be58ebaa268",
+      "supports": "FMP historical EOD route cadence and OHLC content",
+      "title": "Stock Price and Volume Data API",
+      "url": "https://site.financialmodelingprep.com/developer/docs/stable/historical-price-eod-full"
+    }
+  ]
+}
