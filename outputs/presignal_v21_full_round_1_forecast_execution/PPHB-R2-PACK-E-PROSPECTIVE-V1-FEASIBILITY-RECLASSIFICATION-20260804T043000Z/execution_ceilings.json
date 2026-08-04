@@ -1,0 +1,19 @@
+{
+  "per_episode": {
+    "EODHD": 3,
+    "FMP": 2,
+    "FRED": 2,
+    "google_writes": 0,
+    "outcome_calls": 0,
+    "provider_forecast_calls": 0,
+    "retries": 0,
+    "total_source_calls": 7
+  },
+  "per_existing_48_episode_slice_upper_bound": {
+    "EODHD": 144,
+    "FMP": 96,
+    "FRED": 96,
+    "total_source_calls": 336
+  },
+  "status": "IMPLEMENTATION_INPUT_ONLY_NOT_ACTIVE_AUTHORITY"
+}

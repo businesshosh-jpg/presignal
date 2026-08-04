@@ -1,0 +1,69 @@
+{
+  "blocked_by": [
+    "authoritative UTC availability timestamp absent from every current normalized source row",
+    "source-calendar stale threshold absent",
+    "per-family directional flat threshold absent",
+    "No accepted per-source transport timeout or bounded return-only adapter duration exists; therefore neither the maximum window nor smallest defensible safety margin can be derived."
+  ],
+  "ceilings": {
+    "per_episode": {
+      "EODHD": 3,
+      "FMP": 2,
+      "FRED": 2,
+      "google_writes": 0,
+      "outcome_calls": 0,
+      "provider_forecast_calls": 0,
+      "retries": 0,
+      "total_source_calls": 7
+    },
+    "per_existing_48_episode_slice_upper_bound": {
+      "EODHD": 144,
+      "FMP": 96,
+      "FRED": 96,
+      "total_source_calls": 336
+    },
+    "status": "IMPLEMENTATION_INPUT_ONLY_NOT_ACTIVE_AUTHORITY"
+  },
+  "fingerprint": "sha256:8e8cce92fe0f5cc0577048362c7619ba8e3e1cb9f631665054cb27c004c42866",
+  "package_id": "PPHB-R2-PACK-E-PROSPECTIVE-V1-IMPLEMENTATION-AUTHORIZATION-INPUTS-20260804T043000Z",
+  "prohibitions": [
+    "source calls",
+    "Google writes",
+    "provider forecasts",
+    "Outcome activity",
+    "evaluation",
+    "adapter deployment"
+  ],
+  "scope": "return-only local adapter only; raw preservation, deterministic normalization, strict timestamp enforcement, safe resume, duplicate prevention, and immutable artifact generation",
+  "source_families": [
+    {
+      "provider": "FRED",
+      "symbol": "DGS2"
+    },
+    {
+      "provider": "FRED",
+      "symbol": "DGS10"
+    },
+    {
+      "provider": "EODHD",
+      "symbol": "USDJPY.FOREX"
+    },
+    {
+      "provider": "FMP",
+      "symbol": "DX-Y.NYB"
+    },
+    {
+      "provider": "EODHD",
+      "symbol": "GSPC.INDX"
+    },
+    {
+      "provider": "EODHD",
+      "symbol": "XAUUSD.FOREX"
+    },
+    {
+      "provider": "FMP",
+      "symbol": "CLUSD"
+    }
+  ],
+  "status": "PACK_E_PROSPECTIVE_V1_IMPLEMENTATION_REMAINS_BLOCKED"
+}

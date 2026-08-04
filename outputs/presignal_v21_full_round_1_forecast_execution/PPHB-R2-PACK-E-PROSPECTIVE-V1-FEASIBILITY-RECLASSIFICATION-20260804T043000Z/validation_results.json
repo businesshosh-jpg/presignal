@@ -1,0 +1,13 @@
+{
+  "activity": {
+    "evaluation_activity": 0,
+    "google_access": 0,
+    "google_writes": 0,
+    "market_data_calls": 0,
+    "outcome_activity": 0,
+    "provider_calls": 0,
+    "retries": 0
+  },
+  "no_historical_pack_e_equivalence_claim": true,
+  "passed": true
+}

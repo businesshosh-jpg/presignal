@@ -1,0 +1,16 @@
+{
+  "current_validation": "BLOCKED: _v2bFetchFredHistory_, _v2bFetchEodhdHistory_, and _v2bFetchFmpHistory_ normalize rows to date/value and do not retain an authoritative UTC availability timestamp.",
+  "eligibility": "source_available_timestamp_utc < episode_t_minus_15_cutoff_utc",
+  "rejection_rules": [
+    "post-cutoff observation",
+    "post-cutoff revision",
+    "missing or ambiguous timestamp",
+    "current value backfilled to earlier cutoff"
+  ],
+  "required_precedence": [
+    "authoritative observation timestamp",
+    "authoritative publication timestamp when observation time is not availability",
+    "retrieval timestamp as operational lineage only, never as availability substitution"
+  ],
+  "strict_boundary": "equality at cutoff is ineligible; timestamps normalize to UTC; latest eligible observation is selected after explicit ascending sort"
+}

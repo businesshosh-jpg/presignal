@@ -1,0 +1,34 @@
+{
+  "fixed_values": {
+    "google_writes": 0,
+    "pack_identity": "PACK_E_PROSPECTIVE_V1",
+    "retries": 0,
+    "source_mode": "PROSPECTIVE"
+  },
+  "required_fields": [
+    "pack_id",
+    "pack_identity",
+    "contract_id",
+    "contract_fingerprint",
+    "episode_id",
+    "event_snapshot_id",
+    "release_timestamp_utc",
+    "forecast_cutoff_utc",
+    "construction_timestamp_utc",
+    "source_mode",
+    "field_contract_version",
+    "source_request_inventory",
+    "raw_response_references",
+    "source_schema_bindings",
+    "normalized_market_state",
+    "field_statuses",
+    "source_timestamps",
+    "stale_decisions",
+    "missing_decisions",
+    "leakage_decision",
+    "completeness_state",
+    "deterministic_serialization_version",
+    "artifact_fingerprint"
+  ],
+  "status": "PROPOSED_INACTIVE_RETURN_ONLY_SCHEMA"
+}

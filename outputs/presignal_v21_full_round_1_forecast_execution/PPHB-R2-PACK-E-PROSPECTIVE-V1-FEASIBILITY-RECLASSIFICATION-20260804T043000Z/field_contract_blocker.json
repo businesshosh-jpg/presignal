@@ -1,0 +1,21 @@
+{
+  "blockers": [
+    "authoritative UTC availability timestamp absent from every current normalized source row",
+    "source-calendar stale threshold absent",
+    "per-family directional flat threshold absent"
+  ],
+  "closed_source_family_count": 7,
+  "decision": "PACK_E_PROSPECTIVE_V1_FIELD_CONTRACT_BLOCKED",
+  "historical_equivalence_claim": false,
+  "pack_identity": "PACK_E_PROSPECTIVE_V1",
+  "reason": "The seven-source family inventory is fixed, but strict timestamp, stale, and directional-normalization rules cannot be completed from accepted local evidence.",
+  "source_family_names": [
+    "US_2_YEAR_TREASURY_YIELD",
+    "US_10_YEAR_TREASURY_YIELD",
+    "USDJPY_MARKET_STATE",
+    "US_DOLLAR_INDEX_MARKET_STATE",
+    "SP500_MARKET_STATE",
+    "GOLD_MARKET_STATE",
+    "WTI_CRUDE_OIL_MARKET_STATE"
+  ]
+}

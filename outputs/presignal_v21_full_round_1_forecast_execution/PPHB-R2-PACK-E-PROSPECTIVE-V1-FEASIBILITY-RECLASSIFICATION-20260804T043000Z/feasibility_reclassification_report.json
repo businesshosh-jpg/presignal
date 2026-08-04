@@ -1,0 +1,428 @@
+{
+  "activity": {
+    "evaluation_activity": 0,
+    "google_access": 0,
+    "google_writes": 0,
+    "market_data_calls": 0,
+    "outcome_activity": 0,
+    "provider_calls": 0,
+    "retries": 0
+  },
+  "amendment": {
+    "amendment_id": "PPHB-R2-PROSPECTIVE-FEASIBILITY-PACK-E-V1-AMENDMENT-20260804T043000Z",
+    "bindings": {
+      "equivalence_sample_fingerprint": "sha256:4cf4abed6c9b5a908bcbac40922407652488797f80a7ae86f4ef4f134d3dceb9",
+      "prior_pack_e_study_fingerprint": "sha256:80ebe505eb636467e2dbb86f4358525199c6a7837cb5b3a6cba4fe7e11e1c862",
+      "round_2_envelope_fingerprint": "sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0",
+      "round_2_protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+      "t_minus_15_amendment_fingerprint": "sha256:a4200c3e5704ea1ba172967847e71d664f63b75d64c013fe2fbaf78ee0290085"
+    },
+    "confirmatory_protocol": {
+      "existing_dispatch_authorizations_reusable": false,
+      "inactive_targets": [
+        "120 eligible Episodes",
+        "240 common paired-scoreable observations",
+        "200-pair inference minimum"
+      ],
+      "status": "CLOSED_NON_EXECUTABLE"
+    },
+    "decisions": [
+      "ROUND_2_CONFIRMATORY_PROTOCOL_CLOSED_PACK_E_NON_EQUIVALENT",
+      "ROUND_2_RECLASSIFIED_AS_PROSPECTIVE_FEASIBILITY"
+    ],
+    "feasibility_boundary": "Broader enrollment is prohibited pending one-Episode/one-provider smoke-test success under separately frozen authority.",
+    "fingerprint": "sha256:13b998d4a25538794fea1df193cca0381722f280e9c12fb7eba16b65bf5bdd17",
+    "non_equivalence": [
+      "not historical PACK_E",
+      "not an equivalent historical Pack E implementation",
+      "no historical replication claim",
+      "no inference about historical Pack E"
+    ],
+    "pack_identity": "PACK_E_PROSPECTIVE_V1",
+    "preserved_boundary": {
+      "blocked_slice_001_non_reusable": true,
+      "fixed_provider_routes": true,
+      "pack_a": "BASELINE",
+      "primary_endpoint": "T+15 directional accuracy",
+      "strict_secondary": "Immediate Impulse"
+    }
+  },
+  "artifact_id": "PPHB-R2-PACK-E-PROSPECTIVE-V1-FEASIBILITY-RECLASSIFICATION-20260804T043000Z",
+  "execution_ceilings": {
+    "per_episode": {
+      "EODHD": 3,
+      "FMP": 2,
+      "FRED": 2,
+      "google_writes": 0,
+      "outcome_calls": 0,
+      "provider_forecast_calls": 0,
+      "retries": 0,
+      "total_source_calls": 7
+    },
+    "per_existing_48_episode_slice_upper_bound": {
+      "EODHD": 144,
+      "FMP": 96,
+      "FRED": 96,
+      "total_source_calls": 336
+    },
+    "status": "IMPLEMENTATION_INPUT_ONLY_NOT_ACTIVE_AUTHORITY"
+  },
+  "field_contract": {
+    "blockers": [
+      "authoritative UTC availability timestamp absent from every current normalized source row",
+      "source-calendar stale threshold absent",
+      "per-family directional flat threshold absent"
+    ],
+    "closed_source_family_count": 7,
+    "decision": "PACK_E_PROSPECTIVE_V1_FIELD_CONTRACT_BLOCKED",
+    "historical_equivalence_claim": false,
+    "pack_identity": "PACK_E_PROSPECTIVE_V1",
+    "reason": "The seven-source family inventory is fixed, but strict timestamp, stale, and directional-normalization rules cannot be completed from accepted local evidence.",
+    "source_family_names": [
+      "US_2_YEAR_TREASURY_YIELD",
+      "US_10_YEAR_TREASURY_YIELD",
+      "USDJPY_MARKET_STATE",
+      "US_DOLLAR_INDEX_MARKET_STATE",
+      "SP500_MARKET_STATE",
+      "GOLD_MARKET_STATE",
+      "WTI_CRUDE_OIL_MARKET_STATE"
+    ]
+  },
+  "fingerprint": "sha256:5d3cf2741c839d1f71351999ff3a34b057cc90d895c92378a4b42ddcd3311b41",
+  "implementation_authorization_inputs": {
+    "blocked_by": [
+      "authoritative UTC availability timestamp absent from every current normalized source row",
+      "source-calendar stale threshold absent",
+      "per-family directional flat threshold absent",
+      "No accepted per-source transport timeout or bounded return-only adapter duration exists; therefore neither the maximum window nor smallest defensible safety margin can be derived."
+    ],
+    "ceilings": {
+      "per_episode": {
+        "EODHD": 3,
+        "FMP": 2,
+        "FRED": 2,
+        "google_writes": 0,
+        "outcome_calls": 0,
+        "provider_forecast_calls": 0,
+        "retries": 0,
+        "total_source_calls": 7
+      },
+      "per_existing_48_episode_slice_upper_bound": {
+        "EODHD": 144,
+        "FMP": 96,
+        "FRED": 96,
+        "total_source_calls": 336
+      },
+      "status": "IMPLEMENTATION_INPUT_ONLY_NOT_ACTIVE_AUTHORITY"
+    },
+    "fingerprint": "sha256:8e8cce92fe0f5cc0577048362c7619ba8e3e1cb9f631665054cb27c004c42866",
+    "package_id": "PPHB-R2-PACK-E-PROSPECTIVE-V1-IMPLEMENTATION-AUTHORIZATION-INPUTS-20260804T043000Z",
+    "prohibitions": [
+      "source calls",
+      "Google writes",
+      "provider forecasts",
+      "Outcome activity",
+      "evaluation",
+      "adapter deployment"
+    ],
+    "scope": "return-only local adapter only; raw preservation, deterministic normalization, strict timestamp enforcement, safe resume, duplicate prevention, and immutable artifact generation",
+    "source_families": [
+      {
+        "provider": "FRED",
+        "symbol": "DGS2"
+      },
+      {
+        "provider": "FRED",
+        "symbol": "DGS10"
+      },
+      {
+        "provider": "EODHD",
+        "symbol": "USDJPY.FOREX"
+      },
+      {
+        "provider": "FMP",
+        "symbol": "DX-Y.NYB"
+      },
+      {
+        "provider": "EODHD",
+        "symbol": "GSPC.INDX"
+      },
+      {
+        "provider": "EODHD",
+        "symbol": "XAUUSD.FOREX"
+      },
+      {
+        "provider": "FMP",
+        "symbol": "CLUSD"
+      }
+    ],
+    "status": "PACK_E_PROSPECTIVE_V1_IMPLEMENTATION_REMAINS_BLOCKED"
+  },
+  "lead_time": {
+    "decision": "PACK_E_PROSPECTIVE_V1_LEAD_TIME_BLOCKED",
+    "formula": "admission_deadline = T_minus_15_cutoff - maximum_prerequisite_execution_window - safety_margin",
+    "reason": "No accepted per-source transport timeout or bounded return-only adapter duration exists; therefore neither the maximum window nor smallest defensible safety margin can be derived."
+  },
+  "prompt_compatibility": {
+    "decision": "PACK_E_PROSPECTIVE_V1_PROMPT_COMPATIBILITY_CONFIRMED",
+    "evidence": "The frozen arm_context binds FULL_CONTEXT through information_pack and information_pack_fingerprint; the prospective Pack can populate that existing container without prompt text changes.",
+    "limitations": "Compatibility does not cure timestamp, stale, direction-threshold, or lead-time blockers.",
+    "prompt_fingerprint": "sha256:2515e6c09742e58507efe8d9196ba58473c01f2d5bb9e8b5405405088d323a77"
+  },
+  "recorded_utc": "2026-08-04T04:30:00Z",
+  "return_only_artifact_schema": {
+    "fixed_values": {
+      "google_writes": 0,
+      "pack_identity": "PACK_E_PROSPECTIVE_V1",
+      "retries": 0,
+      "source_mode": "PROSPECTIVE"
+    },
+    "required_fields": [
+      "pack_id",
+      "pack_identity",
+      "contract_id",
+      "contract_fingerprint",
+      "episode_id",
+      "event_snapshot_id",
+      "release_timestamp_utc",
+      "forecast_cutoff_utc",
+      "construction_timestamp_utc",
+      "source_mode",
+      "field_contract_version",
+      "source_request_inventory",
+      "raw_response_references",
+      "source_schema_bindings",
+      "normalized_market_state",
+      "field_statuses",
+      "source_timestamps",
+      "stale_decisions",
+      "missing_decisions",
+      "leakage_decision",
+      "completeness_state",
+      "deterministic_serialization_version",
+      "artifact_fingerprint"
+    ],
+    "status": "PROPOSED_INACTIVE_RETURN_ONLY_SCHEMA"
+  },
+  "schema_version": "1.0.0",
+  "source_authority": {
+    "decision": "PACK_E_PROSPECTIVE_V1_SOURCE_AUTHORITY_FROZEN",
+    "scope": "Exact source identities are frozen; return-only acquisition implementation is not authorized.",
+    "source_families": [
+      {
+        "accepted_source_route": true,
+        "adapter": "apps_script/market_context_v2b.js::_v2bFetchFredHistory_",
+        "authentication_route": "Apps Script FRED_API_KEY Script Property",
+        "blocking_reason": "Current adapter discards provider availability timestamps and has no return-only artifact surface; implementation must preserve raw responses and authoritative UTC availability timestamps.",
+        "classification": "PROSPECTIVE_SOURCE_REQUIRES_IMPLEMENTATION_AUTHORITY",
+        "deterministic_sorting_supported": true,
+        "field_family": "US_2_YEAR_TREASURY_YIELD",
+        "lookback_supported": "previous available observation and fifth prior available observation",
+        "normalized_fields": [
+          "latest_value",
+          "latest_observation_timestamp_utc",
+          "change_24h_basis_points",
+          "change_5d_basis_points",
+          "direction_24h",
+          "direction_5d"
+        ],
+        "provider": "FRED",
+        "raw_response_preservation": "REQUIRES_RETURN_ONLY_ADAPTER_IMPLEMENTATION",
+        "response_schema": "fred.series.observations[] {date, value}",
+        "symbol": "DGS2",
+        "timestamp_capability": "DATE_ONLY_NORMALIZATION_IN_CURRENT_ADAPTER",
+        "value_unit": "percent",
+        "zero_write_fetch_helper": true
+      },
+      {
+        "accepted_source_route": true,
+        "adapter": "apps_script/market_context_v2b.js::_v2bFetchFredHistory_",
+        "authentication_route": "Apps Script FRED_API_KEY Script Property",
+        "blocking_reason": "Current adapter discards provider availability timestamps and has no return-only artifact surface; implementation must preserve raw responses and authoritative UTC availability timestamps.",
+        "classification": "PROSPECTIVE_SOURCE_REQUIRES_IMPLEMENTATION_AUTHORITY",
+        "deterministic_sorting_supported": true,
+        "field_family": "US_10_YEAR_TREASURY_YIELD",
+        "lookback_supported": "previous available observation and fifth prior available observation",
+        "normalized_fields": [
+          "latest_value",
+          "latest_observation_timestamp_utc",
+          "change_24h_basis_points",
+          "change_5d_basis_points",
+          "direction_24h",
+          "direction_5d"
+        ],
+        "provider": "FRED",
+        "raw_response_preservation": "REQUIRES_RETURN_ONLY_ADAPTER_IMPLEMENTATION",
+        "response_schema": "fred.series.observations[] {date, value}",
+        "symbol": "DGS10",
+        "timestamp_capability": "DATE_ONLY_NORMALIZATION_IN_CURRENT_ADAPTER",
+        "value_unit": "percent",
+        "zero_write_fetch_helper": true
+      },
+      {
+        "accepted_source_route": true,
+        "adapter": "apps_script/market_context_v2b.js::_v2bFetchEodhdHistory_",
+        "authentication_route": "Apps Script EODHD_API_KEY Script Property via _getEodhdApiKey_",
+        "blocking_reason": "Current adapter discards provider availability timestamps and has no return-only artifact surface; implementation must preserve raw responses and authoritative UTC availability timestamps.",
+        "classification": "PROSPECTIVE_SOURCE_REQUIRES_IMPLEMENTATION_AUTHORITY",
+        "deterministic_sorting_supported": true,
+        "field_family": "USDJPY_MARKET_STATE",
+        "lookback_supported": "previous available observation and fifth prior available observation",
+        "normalized_fields": [
+          "latest_value",
+          "latest_observation_timestamp_utc",
+          "change_24h_pips",
+          "change_5d_pips",
+          "direction_24h",
+          "direction_5d"
+        ],
+        "provider": "EODHD",
+        "raw_response_preservation": "REQUIRES_RETURN_ONLY_ADAPTER_IMPLEMENTATION",
+        "response_schema": "eodhd.eod[] {date, close}",
+        "symbol": "USDJPY.FOREX",
+        "timestamp_capability": "DATE_ONLY_NORMALIZATION_IN_CURRENT_ADAPTER",
+        "value_unit": "USDJPY_level_and_pips",
+        "zero_write_fetch_helper": true
+      },
+      {
+        "accepted_source_route": true,
+        "adapter": "apps_script/market_context_v2b.js::_v2bFetchFmpHistory_",
+        "authentication_route": "Apps Script FMP_API_KEY Script Property or CFG.FMP_API_KEY",
+        "blocking_reason": "Current adapter discards provider availability timestamps and has no return-only artifact surface; implementation must preserve raw responses and authoritative UTC availability timestamps.",
+        "classification": "PROSPECTIVE_SOURCE_REQUIRES_IMPLEMENTATION_AUTHORITY",
+        "deterministic_sorting_supported": true,
+        "field_family": "US_DOLLAR_INDEX_MARKET_STATE",
+        "lookback_supported": "previous available observation and fifth prior available observation",
+        "normalized_fields": [
+          "latest_value",
+          "latest_observation_timestamp_utc",
+          "change_24h_percent",
+          "change_5d_percent",
+          "direction_24h",
+          "direction_5d"
+        ],
+        "provider": "FMP",
+        "raw_response_preservation": "REQUIRES_RETURN_ONLY_ADAPTER_IMPLEMENTATION",
+        "response_schema": "fmp.historical[] {date, close}",
+        "symbol": "DX-Y.NYB",
+        "timestamp_capability": "DATE_ONLY_NORMALIZATION_IN_CURRENT_ADAPTER",
+        "value_unit": "index_points_and_percent",
+        "zero_write_fetch_helper": true
+      },
+      {
+        "accepted_source_route": true,
+        "adapter": "apps_script/market_context_v2b.js::_v2bFetchEodhdHistory_",
+        "authentication_route": "Apps Script EODHD_API_KEY Script Property via _getEodhdApiKey_",
+        "blocking_reason": "Current adapter discards provider availability timestamps and has no return-only artifact surface; implementation must preserve raw responses and authoritative UTC availability timestamps.",
+        "classification": "PROSPECTIVE_SOURCE_REQUIRES_IMPLEMENTATION_AUTHORITY",
+        "deterministic_sorting_supported": true,
+        "field_family": "SP500_MARKET_STATE",
+        "lookback_supported": "previous available observation and fifth prior available observation",
+        "normalized_fields": [
+          "latest_value",
+          "latest_observation_timestamp_utc",
+          "change_24h_percent",
+          "change_5d_percent",
+          "direction_24h",
+          "direction_5d"
+        ],
+        "provider": "EODHD",
+        "raw_response_preservation": "REQUIRES_RETURN_ONLY_ADAPTER_IMPLEMENTATION",
+        "response_schema": "eodhd.eod[] {date, close}",
+        "symbol": "GSPC.INDX",
+        "timestamp_capability": "DATE_ONLY_NORMALIZATION_IN_CURRENT_ADAPTER",
+        "value_unit": "index_points_and_percent",
+        "zero_write_fetch_helper": true
+      },
+      {
+        "accepted_source_route": true,
+        "adapter": "apps_script/market_context_v2b.js::_v2bFetchEodhdHistory_",
+        "authentication_route": "Apps Script EODHD_API_KEY Script Property via _getEodhdApiKey_",
+        "blocking_reason": "Current adapter discards provider availability timestamps and has no return-only artifact surface; implementation must preserve raw responses and authoritative UTC availability timestamps.",
+        "classification": "PROSPECTIVE_SOURCE_REQUIRES_IMPLEMENTATION_AUTHORITY",
+        "deterministic_sorting_supported": true,
+        "field_family": "GOLD_MARKET_STATE",
+        "lookback_supported": "previous available observation and fifth prior available observation",
+        "normalized_fields": [
+          "latest_value",
+          "latest_observation_timestamp_utc",
+          "change_24h_percent",
+          "change_5d_percent",
+          "direction_24h",
+          "direction_5d"
+        ],
+        "provider": "EODHD",
+        "raw_response_preservation": "REQUIRES_RETURN_ONLY_ADAPTER_IMPLEMENTATION",
+        "response_schema": "eodhd.eod[] {date, close}",
+        "symbol": "XAUUSD.FOREX",
+        "timestamp_capability": "DATE_ONLY_NORMALIZATION_IN_CURRENT_ADAPTER",
+        "value_unit": "price_and_percent",
+        "zero_write_fetch_helper": true
+      },
+      {
+        "accepted_source_route": true,
+        "adapter": "apps_script/market_context_v2b.js::_v2bFetchFmpHistory_",
+        "authentication_route": "Apps Script FMP_API_KEY Script Property or CFG.FMP_API_KEY",
+        "blocking_reason": "Current adapter discards provider availability timestamps and has no return-only artifact surface; implementation must preserve raw responses and authoritative UTC availability timestamps.",
+        "classification": "PROSPECTIVE_SOURCE_REQUIRES_IMPLEMENTATION_AUTHORITY",
+        "deterministic_sorting_supported": true,
+        "field_family": "WTI_CRUDE_OIL_MARKET_STATE",
+        "lookback_supported": "previous available observation and fifth prior available observation",
+        "normalized_fields": [
+          "latest_value",
+          "latest_observation_timestamp_utc",
+          "change_24h_percent",
+          "change_5d_percent",
+          "direction_24h",
+          "direction_5d"
+        ],
+        "provider": "FMP",
+        "raw_response_preservation": "REQUIRES_RETURN_ONLY_ADAPTER_IMPLEMENTATION",
+        "response_schema": "fmp.historical[] {date, close}",
+        "symbol": "CLUSD",
+        "timestamp_capability": "DATE_ONLY_NORMALIZATION_IN_CURRENT_ADAPTER",
+        "value_unit": "price_and_percent",
+        "zero_write_fetch_helper": true
+      }
+    ]
+  },
+  "stale_missing_rules": {
+    "allowed_field_statuses": [
+      "AVAILABLE",
+      "STALE",
+      "UNAVAILABLE",
+      "TIMESTAMP_UNRESOLVED",
+      "SOURCE_FAILURE"
+    ],
+    "completeness_states": {
+      "COMPLETE": "all seven source families AVAILABLE",
+      "COMPLETE_WITH_GOVERNED_MISSING": "one or more UNAVAILABLE values under a frozen source-calendar rule, without substitution",
+      "INCOMPLETE": "source, timestamp, or required-field authority is unresolved"
+    },
+    "direction_threshold": "UNRESOLVED_PROTOCOL_PARAMETER: no accepted per-family flat threshold governs prospective 24h/5d market-state direction labels.",
+    "prohibited_missing_substitutions": [
+      "zero",
+      "nearest unrelated series",
+      "AI estimate",
+      "prose",
+      "post-release data"
+    ],
+    "stale_threshold": "UNRESOLVED_PROTOCOL_PARAMETER: the accepted adapter selects prior available rows but provides no source-calendar stale threshold for FRED, EODHD, or FMP."
+  },
+  "timestamp_rules": {
+    "current_validation": "BLOCKED: _v2bFetchFredHistory_, _v2bFetchEodhdHistory_, and _v2bFetchFmpHistory_ normalize rows to date/value and do not retain an authoritative UTC availability timestamp.",
+    "eligibility": "source_available_timestamp_utc < episode_t_minus_15_cutoff_utc",
+    "rejection_rules": [
+      "post-cutoff observation",
+      "post-cutoff revision",
+      "missing or ambiguous timestamp",
+      "current value backfilled to earlier cutoff"
+    ],
+    "required_precedence": [
+      "authoritative observation timestamp",
+      "authoritative publication timestamp when observation time is not availability",
+      "retrieval timestamp as operational lineage only, never as availability substitution"
+    ],
+    "strict_boundary": "equality at cutoff is ineligible; timestamps normalize to UTC; latest eligible observation is selected after explicit ascending sort"
+  }
+}

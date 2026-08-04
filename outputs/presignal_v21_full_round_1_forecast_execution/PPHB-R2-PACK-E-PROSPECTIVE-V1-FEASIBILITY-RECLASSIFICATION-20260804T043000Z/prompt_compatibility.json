@@ -1,0 +1,6 @@
+{
+  "decision": "PACK_E_PROSPECTIVE_V1_PROMPT_COMPATIBILITY_CONFIRMED",
+  "evidence": "The frozen arm_context binds FULL_CONTEXT through information_pack and information_pack_fingerprint; the prospective Pack can populate that existing container without prompt text changes.",
+  "limitations": "Compatibility does not cure timestamp, stale, direction-threshold, or lead-time blockers.",
+  "prompt_fingerprint": "sha256:2515e6c09742e58507efe8d9196ba58473c01f2d5bb9e8b5405405088d323a77"
+}

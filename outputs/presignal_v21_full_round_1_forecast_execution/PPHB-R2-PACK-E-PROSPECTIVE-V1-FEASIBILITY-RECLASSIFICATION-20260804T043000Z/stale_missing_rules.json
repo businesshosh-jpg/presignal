@@ -1,0 +1,23 @@
+{
+  "allowed_field_statuses": [
+    "AVAILABLE",
+    "STALE",
+    "UNAVAILABLE",
+    "TIMESTAMP_UNRESOLVED",
+    "SOURCE_FAILURE"
+  ],
+  "completeness_states": {
+    "COMPLETE": "all seven source families AVAILABLE",
+    "COMPLETE_WITH_GOVERNED_MISSING": "one or more UNAVAILABLE values under a frozen source-calendar rule, without substitution",
+    "INCOMPLETE": "source, timestamp, or required-field authority is unresolved"
+  },
+  "direction_threshold": "UNRESOLVED_PROTOCOL_PARAMETER: no accepted per-family flat threshold governs prospective 24h/5d market-state direction labels.",
+  "prohibited_missing_substitutions": [
+    "zero",
+    "nearest unrelated series",
+    "AI estimate",
+    "prose",
+    "post-release data"
+  ],
+  "stale_threshold": "UNRESOLVED_PROTOCOL_PARAMETER: the accepted adapter selects prior available rows but provides no source-calendar stale threshold for FRED, EODHD, or FMP."
+}

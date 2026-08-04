@@ -1,0 +1,39 @@
+{
+  "amendment_id": "PPHB-R2-PROSPECTIVE-FEASIBILITY-PACK-E-V1-AMENDMENT-20260804T043000Z",
+  "bindings": {
+    "equivalence_sample_fingerprint": "sha256:4cf4abed6c9b5a908bcbac40922407652488797f80a7ae86f4ef4f134d3dceb9",
+    "prior_pack_e_study_fingerprint": "sha256:80ebe505eb636467e2dbb86f4358525199c6a7837cb5b3a6cba4fe7e11e1c862",
+    "round_2_envelope_fingerprint": "sha256:3fe721eee816e48a5eca00c50cbcbc397bec6258d60bdfc7857e8169869efdd0",
+    "round_2_protocol_fingerprint": "sha256:d417e4c76d3d38d471dbc76cbf361be4a28dac1b615ecccdc8aa18c37262362f",
+    "t_minus_15_amendment_fingerprint": "sha256:a4200c3e5704ea1ba172967847e71d664f63b75d64c013fe2fbaf78ee0290085"
+  },
+  "confirmatory_protocol": {
+    "existing_dispatch_authorizations_reusable": false,
+    "inactive_targets": [
+      "120 eligible Episodes",
+      "240 common paired-scoreable observations",
+      "200-pair inference minimum"
+    ],
+    "status": "CLOSED_NON_EXECUTABLE"
+  },
+  "decisions": [
+    "ROUND_2_CONFIRMATORY_PROTOCOL_CLOSED_PACK_E_NON_EQUIVALENT",
+    "ROUND_2_RECLASSIFIED_AS_PROSPECTIVE_FEASIBILITY"
+  ],
+  "feasibility_boundary": "Broader enrollment is prohibited pending one-Episode/one-provider smoke-test success under separately frozen authority.",
+  "fingerprint": "sha256:13b998d4a25538794fea1df193cca0381722f280e9c12fb7eba16b65bf5bdd17",
+  "non_equivalence": [
+    "not historical PACK_E",
+    "not an equivalent historical Pack E implementation",
+    "no historical replication claim",
+    "no inference about historical Pack E"
+  ],
+  "pack_identity": "PACK_E_PROSPECTIVE_V1",
+  "preserved_boundary": {
+    "blocked_slice_001_non_reusable": true,
+    "fixed_provider_routes": true,
+    "pack_a": "BASELINE",
+    "primary_endpoint": "T+15 directional accuracy",
+    "strict_secondary": "Immediate Impulse"
+  }
+}

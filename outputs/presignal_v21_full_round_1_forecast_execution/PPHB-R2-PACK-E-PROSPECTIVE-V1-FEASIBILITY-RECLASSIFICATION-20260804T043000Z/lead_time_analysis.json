@@ -1,0 +1,5 @@
+{
+  "decision": "PACK_E_PROSPECTIVE_V1_LEAD_TIME_BLOCKED",
+  "formula": "admission_deadline = T_minus_15_cutoff - maximum_prerequisite_execution_window - safety_margin",
+  "reason": "No accepted per-source transport timeout or bounded return-only adapter duration exists; therefore neither the maximum window nor smallest defensible safety margin can be derived."
+}
