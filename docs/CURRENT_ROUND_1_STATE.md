@@ -445,3 +445,16 @@ Before any implementation, select and govern a genuinely closed prospective Pack
 ## Exact Next Round 2 Move
 
 Freeze the smallest missing implementation authority: authoritative UTC availability-time schemas and raw-preservation rules for all seven fixed routes, source-calendar stale thresholds, per-family flat thresholds, and bounded transport timeouts. Only then may a return-only `PACK_E_PROSPECTIVE_V1` adapter be implemented and locally validated; no live acquisition is authorized.
+
+## Round 2 Pack E Prospective V1 Authority Closure Reconciliation
+
+- `PACK_E_PROSPECTIVE_V1_RAW_PRESERVATION_FROZEN` requires local append-only raw evidence before normalization, including request identity/parameters without secrets, terminal transport state, lossless raw payload and SHA-256, returned timestamp fields, parser and normalization fingerprints, availability/stale decisions, and duplicate/remote-state lineage. Google writes remain `0`.
+- Availability-time authority is not closed for any fixed source: FRED `DGS2`/`DGS10`, EODHD `USDJPY.FOREX`/`GSPC.INDX`/`XAUUSD.FOREX`, and FMP `DX-Y.NYB`/`CLUSD` are all `AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE`. Their accepted current adapters normalize daily `date` plus value/close rows; no local schema contains a UTC publication or availability timestamp. Midnight UTC, retrieval time, and a daily close must not be inferred as source availability before T-15.
+- `PACK_E_PROSPECTIVE_V1_FLAT_THRESHOLDS_FROZEN`: V1 retains numeric 24-hour and five-observation changes only and explicitly omits `direction_24h` and `direction_5d`. The existing `market_scoring.js` flat threshold is an Outcome-reaction pip rule and cannot be repurposed for cross-asset market-state direction.
+- `PACK_E_PROSPECTIVE_V1_STALE_AUTHORITY_BLOCKED`, `PACK_E_PROSPECTIVE_V1_TIMEOUT_AUTHORITY_BLOCKED`, `PACK_E_PROSPECTIVE_V1_LEAD_TIME_BLOCKED`, `PACK_E_PROSPECTIVE_V1_FIELD_CONTRACT_BLOCKED`, and `PACK_E_PROSPECTIVE_V1_IMPLEMENTATION_REMAINS_BLOCKED`. No accepted local source calendar supplies cadence/holiday/stale bounds, and no source helper exposes a hard transport timeout. Therefore no maximum prerequisite duration, safety margin, or admission deadline can be derived.
+- Completeness remains fail-closed: only all-seven `AVAILABLE`, timestamp-eligible, non-stale, raw-preserved fields are `COMPLETE`; `COMPLETE_WITH_GOVERNED_MISSING` awaits a future source-calendar closure rule and cannot cover API failure, stale data, or timestamp ambiguity. No implementation package was activated or superseded.
+- Evidence: `PPHB-R2-PACK-E-PROSPECTIVE-V1-AUTHORITY-CLOSURE-RECONCILIATION-20260804T050000Z/authority_closure_report.json` (`sha256:7db3bee8b4d85a03ea41966f11ecb19909e67356a8afe63cffa1e34a1d62e7a2`). All external, Google, forecast, Outcome, evaluation, and retry actuals remain `0`.
+
+## Exact Next Round 2 Move
+
+Freeze authoritative source-calendar availability/cadence rules and source-specific hard timeout authority for the seven fixed routes. Without those two precise authorities, strict pre-T-15 eligibility, stale classification, and a bounded admission deadline remain unavailable.

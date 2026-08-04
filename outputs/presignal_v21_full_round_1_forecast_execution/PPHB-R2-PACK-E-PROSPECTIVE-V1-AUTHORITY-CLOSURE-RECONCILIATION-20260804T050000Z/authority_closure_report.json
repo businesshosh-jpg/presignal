@@ -1,0 +1,281 @@
+{
+  "activity": {
+    "evaluation_activity": 0,
+    "google_access": 0,
+    "google_writes": 0,
+    "outcome_activity": 0,
+    "provider_calls": 0,
+    "retries": 0,
+    "source_calls": 0
+  },
+  "artifact_id": "PPHB-R2-PACK-E-PROSPECTIVE-V1-AUTHORITY-CLOSURE-RECONCILIATION-20260804T050000Z",
+  "availability_time_authority": [
+    {
+      "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+      "provider": "FRED",
+      "publication_availability_meaning": "not present in accepted local schema",
+      "raw_timestamp_fields": [
+        "date"
+      ],
+      "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+      "resolution": "daily/date-only",
+      "response_schema": "observations[] {date, value}",
+      "revision_behavior": "not represented in current normalized source row",
+      "same_second_boundary": "unresolvable from date-only source data",
+      "series_or_symbol": "DGS2",
+      "source_family": "US_2_YEAR_TREASURY_YIELD",
+      "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+      "timestamp_format": "YYYY-MM-DD",
+      "timezone": "not supplied by the current normalized source row",
+      "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+    },
+    {
+      "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+      "provider": "FRED",
+      "publication_availability_meaning": "not present in accepted local schema",
+      "raw_timestamp_fields": [
+        "date"
+      ],
+      "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+      "resolution": "daily/date-only",
+      "response_schema": "observations[] {date, value}",
+      "revision_behavior": "not represented in current normalized source row",
+      "same_second_boundary": "unresolvable from date-only source data",
+      "series_or_symbol": "DGS10",
+      "source_family": "US_10_YEAR_TREASURY_YIELD",
+      "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+      "timestamp_format": "YYYY-MM-DD",
+      "timezone": "not supplied by the current normalized source row",
+      "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+    },
+    {
+      "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+      "provider": "EODHD",
+      "publication_availability_meaning": "not present in accepted local schema",
+      "raw_timestamp_fields": [
+        "date"
+      ],
+      "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+      "resolution": "daily/date-only",
+      "response_schema": "eod[] {date, close}",
+      "revision_behavior": "not represented in current normalized source row",
+      "same_second_boundary": "unresolvable from date-only source data",
+      "series_or_symbol": "USDJPY.FOREX",
+      "source_family": "USDJPY_MARKET_STATE",
+      "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+      "timestamp_format": "YYYY-MM-DD",
+      "timezone": "not supplied by the current normalized source row",
+      "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+    },
+    {
+      "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+      "provider": "FMP",
+      "publication_availability_meaning": "not present in accepted local schema",
+      "raw_timestamp_fields": [
+        "date"
+      ],
+      "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+      "resolution": "daily/date-only",
+      "response_schema": "historical[] {date, close}",
+      "revision_behavior": "not represented in current normalized source row",
+      "same_second_boundary": "unresolvable from date-only source data",
+      "series_or_symbol": "DX-Y.NYB",
+      "source_family": "US_DOLLAR_INDEX_MARKET_STATE",
+      "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+      "timestamp_format": "YYYY-MM-DD",
+      "timezone": "not supplied by the current normalized source row",
+      "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+    },
+    {
+      "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+      "provider": "EODHD",
+      "publication_availability_meaning": "not present in accepted local schema",
+      "raw_timestamp_fields": [
+        "date"
+      ],
+      "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+      "resolution": "daily/date-only",
+      "response_schema": "eod[] {date, close}",
+      "revision_behavior": "not represented in current normalized source row",
+      "same_second_boundary": "unresolvable from date-only source data",
+      "series_or_symbol": "GSPC.INDX",
+      "source_family": "SP500_MARKET_STATE",
+      "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+      "timestamp_format": "YYYY-MM-DD",
+      "timezone": "not supplied by the current normalized source row",
+      "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+    },
+    {
+      "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+      "provider": "EODHD",
+      "publication_availability_meaning": "not present in accepted local schema",
+      "raw_timestamp_fields": [
+        "date"
+      ],
+      "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+      "resolution": "daily/date-only",
+      "response_schema": "eod[] {date, close}",
+      "revision_behavior": "not represented in current normalized source row",
+      "same_second_boundary": "unresolvable from date-only source data",
+      "series_or_symbol": "XAUUSD.FOREX",
+      "source_family": "GOLD_MARKET_STATE",
+      "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+      "timestamp_format": "YYYY-MM-DD",
+      "timezone": "not supplied by the current normalized source row",
+      "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+    },
+    {
+      "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+      "provider": "FMP",
+      "publication_availability_meaning": "not present in accepted local schema",
+      "raw_timestamp_fields": [
+        "date"
+      ],
+      "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+      "resolution": "daily/date-only",
+      "response_schema": "historical[] {date, close}",
+      "revision_behavior": "not represented in current normalized source row",
+      "same_second_boundary": "unresolvable from date-only source data",
+      "series_or_symbol": "CLUSD",
+      "source_family": "WTI_CRUDE_OIL_MARKET_STATE",
+      "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+      "timestamp_format": "YYYY-MM-DD",
+      "timezone": "not supplied by the current normalized source row",
+      "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+    }
+  ],
+  "bindings": {
+    "amendment_fingerprint": "sha256:13b998d4a25538794fea1df193cca0381722f280e9c12fb7eba16b65bf5bdd17",
+    "historical_pack_e_identity_retained": false,
+    "pack_identity": "PACK_E_PROSPECTIVE_V1"
+  },
+  "completeness_contract": {
+    "complete": "all seven fields structurally present, AVAILABLE, timestamp-eligible, non-stale, raw-preserved, and normalized",
+    "complete_with_governed_missing": "structurally present explicit unavailable status only when a future accepted source-calendar rule proves normal source closure; never for API failure, timestamp ambiguity, or stale data",
+    "incomplete": "any unresolved timestamp, missing raw evidence, source failure, stale field, unresolved stale rule, or failed normalization",
+    "smoke_test_admission": "only COMPLETE or explicitly governed COMPLETE_WITH_GOVERNED_MISSING"
+  },
+  "field_contract": {
+    "availability_decisions": [
+      "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+      "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE"
+    ],
+    "decision": "PACK_E_PROSPECTIVE_V1_FIELD_CONTRACT_BLOCKED",
+    "fixed_source_family_count": 7,
+    "historical_pack_e_equivalence_claim": false,
+    "resolved_parts": [
+      "PACK_E_PROSPECTIVE_V1_RAW_PRESERVATION_FROZEN",
+      "PACK_E_PROSPECTIVE_V1_FLAT_THRESHOLDS_FROZEN"
+    ],
+    "unresolved_parts": [
+      "PACK_E_PROSPECTIVE_V1_STALE_AUTHORITY_BLOCKED",
+      "PACK_E_PROSPECTIVE_V1_TIMEOUT_AUTHORITY_BLOCKED",
+      "PACK_E_PROSPECTIVE_V1_LEAD_TIME_BLOCKED"
+    ]
+  },
+  "fingerprint": "sha256:7db3bee8b4d85a03ea41966f11ecb19909e67356a8afe63cffa1e34a1d62e7a2",
+  "flat_thresholds": {
+    "authority": "market_scoring.js flat threshold is an Outcome-reaction pip rule, not an accepted cross-asset market-state threshold; it cannot be reused.",
+    "decision": "PACK_E_PROSPECTIVE_V1_FLAT_THRESHOLDS_FROZEN",
+    "fields_omitted_with_explicit_reason": [
+      "direction_24h",
+      "direction_5d"
+    ],
+    "fields_retained": [
+      "latest_value",
+      "latest_observation_timestamp_utc",
+      "change_24h",
+      "change_5d"
+    ],
+    "no_performance_optimization": true,
+    "rule": "Retain numeric 24-hour and five-observation changes only; omit ungoverned categorical direction fields from PACK_E_PROSPECTIVE_V1 V1 output."
+  },
+  "implementation_authorization": {
+    "blocked_by": [
+      "accepted UTC availability calendar/derivation",
+      "source-calendar stale rule",
+      "source-specific hard timeout"
+    ],
+    "decision": "PACK_E_PROSPECTIVE_V1_IMPLEMENTATION_REMAINS_BLOCKED",
+    "not_activated": true,
+    "prior_input_fingerprint": "sha256:8e8cce92fe0f5cc0577048362c7619ba8e3e1cb9f631665054cb27c004c42866",
+    "prior_input_package": "PPHB-R2-PACK-E-PROSPECTIVE-V1-IMPLEMENTATION-AUTHORIZATION-INPUTS-20260804T043000Z"
+  },
+  "lead_time": {
+    "decision": "PACK_E_PROSPECTIVE_V1_LEAD_TIME_BLOCKED",
+    "formula": "admission_deadline_utc = episode_t_minus_15_cutoff_utc - maximum_prerequisite_execution_window_seconds - safety_margin_seconds",
+    "maximum_prerequisite_execution_window_seconds": null,
+    "reason": "Source-specific hard timeouts are not accepted and strict source availability cannot be calculated from date-only rows.",
+    "safety_margin_seconds": null
+  },
+  "raw_preservation": {
+    "decision": "PACK_E_PROSPECTIVE_V1_RAW_PRESERVATION_FROZEN",
+    "forbidden_secret_fields": [
+      "api_key",
+      "access_token",
+      "authorization",
+      "authorization_header",
+      "cookie"
+    ],
+    "google_writes": 0,
+    "implementation_note": "Current v2B fetch normalizers do not provide this artifact; a future return-only adapter must implement it under separate authority.",
+    "required_fields": [
+      "request_id",
+      "episode_id",
+      "source",
+      "series_or_symbol",
+      "endpoint_or_adapter_identity",
+      "request_parameters_without_secrets",
+      "request_timestamp_utc",
+      "http_status_or_transport_terminal_state",
+      "raw_response_body_or_lossless_canonical_payload",
+      "raw_response_sha256",
+      "provider_returned_timestamp_fields",
+      "parser_version",
+      "normalized_output",
+      "normalization_fingerprint",
+      "source_availability_decision",
+      "stale_missing_decision",
+      "duplicate_prevention_identity",
+      "remote_state_classification"
+    ],
+    "write_order": "persist append-only local raw evidence before normalized Pack materialization"
+  },
+  "stale_authority": {
+    "allowed_statuses": [
+      "AVAILABLE",
+      "STALE",
+      "UNAVAILABLE",
+      "SOURCE_CLOSED",
+      "TIMESTAMP_UNRESOLVED",
+      "SOURCE_FAILURE"
+    ],
+    "decision": "PACK_E_PROSPECTIVE_V1_STALE_AUTHORITY_BLOCKED",
+    "prohibitions": [
+      "global arbitrary duration",
+      "zero substitution",
+      "carry-forward beyond an accepted bound",
+      "unrelated replacement series"
+    ],
+    "reason": "No accepted local source calendar identifies expected publication cadence, holidays, or a maximum acceptable age for any of the seven daily/date-only routes."
+  },
+  "timeout_authority": {
+    "current_transport": "UrlFetchApp.fetch with HTTP failure handling but no adapter-level hard timeout parameter in the FRED, EODHD, or FMP market-context helpers",
+    "decision": "PACK_E_PROSPECTIVE_V1_TIMEOUT_AUTHORITY_BLOCKED",
+    "reason": "No accepted source-specific connection/request or total-operation timeout exists, so a bounded maximum prerequisite execution window cannot be derived.",
+    "retry_boundary": 0,
+    "safe_resume_requirement": "A future adapter must record request intent before transport, terminal response evidence on completion, and REMOTE_STATE_UNRESOLVED on interruption; no duplicate read may be assumed safe without its frozen request identity."
+  }
+}

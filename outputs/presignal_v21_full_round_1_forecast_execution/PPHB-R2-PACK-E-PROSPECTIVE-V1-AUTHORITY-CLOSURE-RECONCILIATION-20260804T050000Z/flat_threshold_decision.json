@@ -1,0 +1,16 @@
+{
+  "authority": "market_scoring.js flat threshold is an Outcome-reaction pip rule, not an accepted cross-asset market-state threshold; it cannot be reused.",
+  "decision": "PACK_E_PROSPECTIVE_V1_FLAT_THRESHOLDS_FROZEN",
+  "fields_omitted_with_explicit_reason": [
+    "direction_24h",
+    "direction_5d"
+  ],
+  "fields_retained": [
+    "latest_value",
+    "latest_observation_timestamp_utc",
+    "change_24h",
+    "change_5d"
+  ],
+  "no_performance_optimization": true,
+  "rule": "Retain numeric 24-hour and five-observation changes only; omit ungoverned categorical direction fields from PACK_E_PROSPECTIVE_V1 V1 output."
+}

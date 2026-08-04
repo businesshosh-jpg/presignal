@@ -1,0 +1,11 @@
+{
+  "blocked_by": [
+    "accepted UTC availability calendar/derivation",
+    "source-calendar stale rule",
+    "source-specific hard timeout"
+  ],
+  "decision": "PACK_E_PROSPECTIVE_V1_IMPLEMENTATION_REMAINS_BLOCKED",
+  "not_activated": true,
+  "prior_input_fingerprint": "sha256:8e8cce92fe0f5cc0577048362c7619ba8e3e1cb9f631665054cb27c004c42866",
+  "prior_input_package": "PPHB-R2-PACK-E-PROSPECTIVE-V1-IMPLEMENTATION-AUTHORIZATION-INPUTS-20260804T043000Z"
+}

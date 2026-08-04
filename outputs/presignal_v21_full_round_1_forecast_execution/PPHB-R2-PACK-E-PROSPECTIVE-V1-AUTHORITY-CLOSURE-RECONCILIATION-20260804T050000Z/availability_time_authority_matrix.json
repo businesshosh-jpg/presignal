@@ -1,0 +1,142 @@
+[
+  {
+    "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+    "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+    "provider": "FRED",
+    "publication_availability_meaning": "not present in accepted local schema",
+    "raw_timestamp_fields": [
+      "date"
+    ],
+    "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+    "resolution": "daily/date-only",
+    "response_schema": "observations[] {date, value}",
+    "revision_behavior": "not represented in current normalized source row",
+    "same_second_boundary": "unresolvable from date-only source data",
+    "series_or_symbol": "DGS2",
+    "source_family": "US_2_YEAR_TREASURY_YIELD",
+    "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+    "timestamp_format": "YYYY-MM-DD",
+    "timezone": "not supplied by the current normalized source row",
+    "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+  },
+  {
+    "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+    "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+    "provider": "FRED",
+    "publication_availability_meaning": "not present in accepted local schema",
+    "raw_timestamp_fields": [
+      "date"
+    ],
+    "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+    "resolution": "daily/date-only",
+    "response_schema": "observations[] {date, value}",
+    "revision_behavior": "not represented in current normalized source row",
+    "same_second_boundary": "unresolvable from date-only source data",
+    "series_or_symbol": "DGS10",
+    "source_family": "US_10_YEAR_TREASURY_YIELD",
+    "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+    "timestamp_format": "YYYY-MM-DD",
+    "timezone": "not supplied by the current normalized source row",
+    "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+  },
+  {
+    "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+    "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+    "provider": "EODHD",
+    "publication_availability_meaning": "not present in accepted local schema",
+    "raw_timestamp_fields": [
+      "date"
+    ],
+    "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+    "resolution": "daily/date-only",
+    "response_schema": "eod[] {date, close}",
+    "revision_behavior": "not represented in current normalized source row",
+    "same_second_boundary": "unresolvable from date-only source data",
+    "series_or_symbol": "USDJPY.FOREX",
+    "source_family": "USDJPY_MARKET_STATE",
+    "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+    "timestamp_format": "YYYY-MM-DD",
+    "timezone": "not supplied by the current normalized source row",
+    "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+  },
+  {
+    "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+    "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+    "provider": "FMP",
+    "publication_availability_meaning": "not present in accepted local schema",
+    "raw_timestamp_fields": [
+      "date"
+    ],
+    "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+    "resolution": "daily/date-only",
+    "response_schema": "historical[] {date, close}",
+    "revision_behavior": "not represented in current normalized source row",
+    "same_second_boundary": "unresolvable from date-only source data",
+    "series_or_symbol": "DX-Y.NYB",
+    "source_family": "US_DOLLAR_INDEX_MARKET_STATE",
+    "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+    "timestamp_format": "YYYY-MM-DD",
+    "timezone": "not supplied by the current normalized source row",
+    "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+  },
+  {
+    "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+    "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+    "provider": "EODHD",
+    "publication_availability_meaning": "not present in accepted local schema",
+    "raw_timestamp_fields": [
+      "date"
+    ],
+    "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+    "resolution": "daily/date-only",
+    "response_schema": "eod[] {date, close}",
+    "revision_behavior": "not represented in current normalized source row",
+    "same_second_boundary": "unresolvable from date-only source data",
+    "series_or_symbol": "GSPC.INDX",
+    "source_family": "SP500_MARKET_STATE",
+    "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+    "timestamp_format": "YYYY-MM-DD",
+    "timezone": "not supplied by the current normalized source row",
+    "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+  },
+  {
+    "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+    "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+    "provider": "EODHD",
+    "publication_availability_meaning": "not present in accepted local schema",
+    "raw_timestamp_fields": [
+      "date"
+    ],
+    "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+    "resolution": "daily/date-only",
+    "response_schema": "eod[] {date, close}",
+    "revision_behavior": "not represented in current normalized source row",
+    "same_second_boundary": "unresolvable from date-only source data",
+    "series_or_symbol": "XAUUSD.FOREX",
+    "source_family": "GOLD_MARKET_STATE",
+    "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+    "timestamp_format": "YYYY-MM-DD",
+    "timezone": "not supplied by the current normalized source row",
+    "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+  },
+  {
+    "decision": "AVAILABILITY_TIMESTAMP_REQUIRES_DERIVED_CALENDAR_RULE",
+    "observation_meaning": "trading or series observation date only; not an intraday availability assertion",
+    "provider": "FMP",
+    "publication_availability_meaning": "not present in accepted local schema",
+    "raw_timestamp_fields": [
+      "date"
+    ],
+    "request_schema": "historical window: source symbol plus start/end ISO dates; source key is resolved only at execution",
+    "resolution": "daily/date-only",
+    "response_schema": "historical[] {date, close}",
+    "revision_behavior": "not represented in current normalized source row",
+    "same_second_boundary": "unresolvable from date-only source data",
+    "series_or_symbol": "CLUSD",
+    "source_family": "WTI_CRUDE_OIL_MARKET_STATE",
+    "strict_cutoff_usability": "BLOCKED until an accepted calendar/publication-time rule supplies source_available_timestamp_utc",
+    "timestamp_format": "YYYY-MM-DD",
+    "timezone": "not supplied by the current normalized source row",
+    "utc_normalization": "date is preserved, but midnight UTC must not be inferred as publication time"
+  }
+]

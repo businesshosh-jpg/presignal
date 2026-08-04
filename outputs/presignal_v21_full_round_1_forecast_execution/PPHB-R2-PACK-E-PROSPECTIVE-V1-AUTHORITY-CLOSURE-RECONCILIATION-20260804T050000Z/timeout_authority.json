@@ -1,0 +1,7 @@
+{
+  "current_transport": "UrlFetchApp.fetch with HTTP failure handling but no adapter-level hard timeout parameter in the FRED, EODHD, or FMP market-context helpers",
+  "decision": "PACK_E_PROSPECTIVE_V1_TIMEOUT_AUTHORITY_BLOCKED",
+  "reason": "No accepted source-specific connection/request or total-operation timeout exists, so a bounded maximum prerequisite execution window cannot be derived.",
+  "retry_boundary": 0,
+  "safe_resume_requirement": "A future adapter must record request intent before transport, terminal response evidence on completion, and REMOTE_STATE_UNRESOLVED on interruption; no duplicate read may be assumed safe without its frozen request identity."
+}

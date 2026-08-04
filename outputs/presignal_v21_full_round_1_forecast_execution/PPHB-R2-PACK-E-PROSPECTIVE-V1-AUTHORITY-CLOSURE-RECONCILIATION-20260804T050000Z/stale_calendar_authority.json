@@ -1,0 +1,18 @@
+{
+  "allowed_statuses": [
+    "AVAILABLE",
+    "STALE",
+    "UNAVAILABLE",
+    "SOURCE_CLOSED",
+    "TIMESTAMP_UNRESOLVED",
+    "SOURCE_FAILURE"
+  ],
+  "decision": "PACK_E_PROSPECTIVE_V1_STALE_AUTHORITY_BLOCKED",
+  "prohibitions": [
+    "global arbitrary duration",
+    "zero substitution",
+    "carry-forward beyond an accepted bound",
+    "unrelated replacement series"
+  ],
+  "reason": "No accepted local source calendar identifies expected publication cadence, holidays, or a maximum acceptable age for any of the seven daily/date-only routes."
+}

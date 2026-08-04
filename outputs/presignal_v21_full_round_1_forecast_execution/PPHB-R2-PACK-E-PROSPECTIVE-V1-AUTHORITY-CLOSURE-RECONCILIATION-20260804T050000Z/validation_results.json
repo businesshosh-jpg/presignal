@@ -1,0 +1,13 @@
+{
+  "activity": {
+    "evaluation_activity": 0,
+    "google_access": 0,
+    "google_writes": 0,
+    "outcome_activity": 0,
+    "provider_calls": 0,
+    "retries": 0,
+    "source_calls": 0
+  },
+  "no_source_substitution": true,
+  "passed": true
+}

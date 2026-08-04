@@ -1,0 +1,7 @@
+{
+  "decision": "PACK_E_PROSPECTIVE_V1_LEAD_TIME_BLOCKED",
+  "formula": "admission_deadline_utc = episode_t_minus_15_cutoff_utc - maximum_prerequisite_execution_window_seconds - safety_margin_seconds",
+  "maximum_prerequisite_execution_window_seconds": null,
+  "reason": "Source-specific hard timeouts are not accepted and strict source availability cannot be calculated from date-only rows.",
+  "safety_margin_seconds": null
+}

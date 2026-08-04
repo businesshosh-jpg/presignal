@@ -1,0 +1,6 @@
+{
+  "complete": "all seven fields structurally present, AVAILABLE, timestamp-eligible, non-stale, raw-preserved, and normalized",
+  "complete_with_governed_missing": "structurally present explicit unavailable status only when a future accepted source-calendar rule proves normal source closure; never for API failure, timestamp ambiguity, or stale data",
+  "incomplete": "any unresolved timestamp, missing raw evidence, source failure, stale field, unresolved stale rule, or failed normalization",
+  "smoke_test_admission": "only COMPLETE or explicitly governed COMPLETE_WITH_GOVERNED_MISSING"
+}
