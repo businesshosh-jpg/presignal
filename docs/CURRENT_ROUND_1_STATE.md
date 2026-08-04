@@ -405,3 +405,15 @@ Freeze a narrow prospective shared-market-state source and acquisition contract,
 ## Exact Next Round 2 Move
 
 Create a separately governed prospective Pack E field/source specification and deploy a return-only/no-write acquisition adapter with exact source, timestamp, schema, identity, and bounded-time authority. This is required before a shared-market-state contract, lead-time rule, or exact prerequisite acquisition authorization can be frozen.
+
+## Round 2 Prospective Shared-Market-State Deployment Reconciliation
+
+- `ROUND_2_SHARED_MARKET_STATE_FIELD_CONTRACT_BLOCKED`; `ROUND_2_SHARED_MARKET_STATE_SOURCE_AUTHORITY_CONFLICT`; `ROUND_2_SHARED_MARKET_STATE_CONTRACT_BLOCKED`; `ROUND_2_PROSPECTIVE_SHARED_MARKET_STATE_ADAPTER_BLOCKED`; `ROUND_2_SHARED_MARKET_STATE_LEAD_TIME_BLOCKED`; `CONTINUOUS_ROUND_2_PRE_CUTOFF_ORCHESTRATION_BLOCKED`; and `ROUND_2_NEW_SLICE_GOVERNANCE_BLOCKED`.
+- The accepted historical builder proves an 18-field base universe: USD/JPY pre-session returns, trend, realized volatility; upcoming-event/calendar features; US 2Y/10Y yield level/change/curve fields; and DXY level/change/direction. It explicitly excludes two proxy fields and adds request-dependent capabilities only when historical request wording and mutable audit inputs select them.
+- This is not a unique prospective field contract. The builder depends on mutable `Market_State_Pack_*` sheets, historical request-fulfillment audit rows, and optional source bundles; several historical capabilities are expressly unimplemented or unacquirable. No current Apps Script return-only shared-market-state endpoint exists, and no accepted exact source/schema/timestamp precedence maps every possible item to one live source. Deploying an adapter would therefore choose new Pack E semantics rather than implement accepted authority.
+- Controller correction: its shared-market-state source gate now blocks acquisition authorization, Pack-input materialization, and forecast-call identity creation until a separately accepted prospective field/source contract supplies each route, timestamp rule, exact ceiling, and completion bound.
+- Artifact: `PPHB-R2-PROSPECTIVE-MARKET-STATE-DEPLOYMENT-RECONCILIATION-20260804T030000Z/prospective_market_state_deployment_reconciliation.json` (`sha256:582995c4c2403591e92eda3c40eb4bcb0d89a52b7cc2b118005c060e9efb4c47`). Deployment attempted `false`; provider, Google, market-data, Outcome, evaluation, and retry activity `0`; no Event snapshot admission or prerequisite authorization inputs were created. Slice 001 remains non-reusable.
+
+## Exact Next Round 2 Move
+
+Freeze a scientific prospective Pack E specification that chooses a closed field subset, one accepted live source/schema per field, timestamp precedence, explicit unavailable treatment, and bounded completion times. That decision is required before implementation or deployment of a return-only acquisition adapter.

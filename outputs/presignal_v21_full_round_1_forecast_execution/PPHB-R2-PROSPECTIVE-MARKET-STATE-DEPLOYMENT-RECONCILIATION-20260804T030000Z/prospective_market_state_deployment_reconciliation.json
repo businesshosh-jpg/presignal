@@ -1,0 +1,85 @@
+{
+  "decisions": {
+    "adapter": "ROUND_2_PROSPECTIVE_SHARED_MARKET_STATE_ADAPTER_BLOCKED",
+    "contract": "ROUND_2_SHARED_MARKET_STATE_CONTRACT_BLOCKED",
+    "controller": "CONTINUOUS_ROUND_2_PRE_CUTOFF_ORCHESTRATION_BLOCKED",
+    "field_contract": "ROUND_2_SHARED_MARKET_STATE_FIELD_CONTRACT_BLOCKED",
+    "lead_time": "ROUND_2_SHARED_MARKET_STATE_LEAD_TIME_BLOCKED",
+    "new_slice": "ROUND_2_NEW_SLICE_GOVERNANCE_BLOCKED",
+    "source_authority": "ROUND_2_SHARED_MARKET_STATE_SOURCE_AUTHORITY_CONFLICT"
+  },
+  "deployment": {
+    "attempted": false,
+    "google_writes": 0,
+    "market_data_calls": 0,
+    "provider_calls": 0,
+    "reason": "Deployment would encode an ungoverned field/source selection and change Pack E semantics.",
+    "retries": 0
+  },
+  "fingerprint": "sha256:582995c4c2403591e92eda3c40eb4bcb0d89a52b7cc2b118005c060e9efb4c47",
+  "historical_evidence": {
+    "base_field_universe": [
+      "DXY_CHANGE_PRESESSION",
+      "DXY_DIRECTION_LABEL",
+      "DXY_LEVEL",
+      "EVENT_CLUSTER_DENSITY_NEXT_24H",
+      "NEXT_CPI_OR_FOMC_WITHIN_72H",
+      "NEXT_HIGH_IMPORTANCE_EVENT_WITHIN_24H",
+      "NEXT_HIGH_IMPORTANCE_EVENT_WITHIN_48H",
+      "NEXT_NFP_WITHIN_7D",
+      "US10Y_CHANGE_FROM_PRIOR_CLOSE",
+      "US10Y_MINUS_US2Y_CURVE",
+      "US10Y_YIELD_LEVEL",
+      "US2Y_CHANGE_FROM_PRIOR_CLOSE",
+      "US2Y_YIELD_LEVEL",
+      "USDJPY_REALIZED_VOL_1H_PRESESSION",
+      "USDJPY_RETURN_1H_PRESESSION",
+      "USDJPY_RETURN_24H_PRESESSION",
+      "USDJPY_RETURN_4H_PRESESSION",
+      "USDJPY_TREND_LABEL"
+    ],
+    "historical_dependencies": [
+      "Market_State_Pack_Shadow",
+      "Market_Session_Members",
+      "Market_State_Pack_Candidates",
+      "Market_State_Pack_Acquisition_Backlog",
+      "historical request-fulfillment audit",
+      "source bundles"
+    ],
+    "non_acquirable_or_ungoverned_capabilities": [
+      "EQUITY_PRESESSION_TONE",
+      "USDJPY_OPTION_IMPLIED_VOLATILITY",
+      "LABOR_MARKET_CONTEXT",
+      "GROWTH_CONTEXT",
+      "USDJPY_CROSS_ASSET_CORRELATION",
+      "HISTORICAL_EVENT_SENSITIVITY"
+    ],
+    "proxy_fields_explicitly_excluded": [
+      "USD_INDEX_PROXY_LEVEL",
+      "USD_INDEX_PROXY_CHANGE"
+    ],
+    "request_dependent_capabilities": [
+      "EVENT_CONSENSUS_PRIOR_DETAIL",
+      "INFLATION_NARRATIVE_SOURCE_GROUNDED",
+      "TREASURY_2Y_10Y_PRESESSION_STATE",
+      "DXY_PRESESSION_STATE",
+      "USDJPY_PRESESSION_STATE",
+      "UPCOMING_EVENT_CALENDAR"
+    ],
+    "source_commit": "e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f",
+    "source_fingerprint": "sha256:ceec2555014a15c6cc29ac754a17901afd94985022e03ae1ecca0f0760b40627",
+    "source_path": "automation/build_true_shared_market_state_pack_e_v0.py"
+  },
+  "prospective_source_status": {
+    "current_deployed_equivalent": "NONE",
+    "reason": "The historical universe is not a fixed prospective field contract: values and capabilities depend on mutable historical sheets, request wording, source bundles, and explicitly unimplemented categories. No accepted source precedence, response schema, timestamp rule, or exact ceiling maps every admissible field to one live route.",
+    "return_only_adapter_present": false
+  },
+  "reconciliation_id": "PPHB-R2-PROSPECTIVE-MARKET-STATE-DEPLOYMENT-RECONCILIATION-20260804T030000Z",
+  "recorded_utc": "2026-08-04T00:13:26Z",
+  "required_next_authority": "Freeze a scientific prospective Pack E specification that selects a closed field subset, a single exact live source/schema for each field, and explicit unavailable treatment before implementing or deploying an acquisition adapter.",
+  "snapshot_application": {
+    "performed": false,
+    "reason": "No admission deadline can be calculated before every source route has a bounded completion time."
+  }
+}
