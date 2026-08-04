@@ -417,3 +417,17 @@ Create a separately governed prospective Pack E field/source specification and d
 ## Exact Next Round 2 Move
 
 Freeze a scientific prospective Pack E specification that chooses a closed field subset, one accepted live source/schema per field, timestamp precedence, explicit unavailable treatment, and bounded completion times. That decision is required before implementation or deployment of a return-only acquisition adapter.
+
+## Round 2 Prospective Pack E Equivalence Study
+
+- Current status is `ROUND_2_PROSPECTIVE_EXECUTION_BLOCKED_PACK_E_UNDEFINED`. Slice 001 remains permanently `ROUND_2_SLICE_001_PRE_CUTOFF_PACK_INPUTS_MISSING_NON_REUSABLE`; its 31 Episodes and 186 undispatched calls remain unchanged and non-reusable.
+- `HISTORICAL_PACK_E_AUTHORITY_CONFIRMED`: the accepted historical evidence is `PPHB-R1-PACK-POPULATION-CONSTRUCTION-20260729T113217Z-88b9664e9bd2/pack_e_population.jsonl` plus its `pack_e_construction_contract.json`, read with the historical builder `automation/build_true_shared_market_state_pack_e_v0.py::build` at accepted commit `e5a0ff288eb1f6fc228936cb1c693ed2bb2ab80f`. The builder is historical-only and has no deployed prospective equivalent.
+- The historical builder's exact 18 required semantic fields are USDJPY 1H/4H/24H pre-session returns, trend label, realized volatility; four next-event flags plus cluster density; US2Y/US10Y levels and changes plus curve; and DXY level/change/direction. They are not audit metadata, but each depends on mutable historical shadow/source lineage with no accepted live source/schema/availability contract.
+- Across 282 accepted valid Pack E records for 151 Episodes, the accepted provider-visible request-specific item-key union is 682 and the intersection is 0. These request-specific items are conditional capabilities, not a fixed closed Pack E field set; no provider-visible item is present in every valid historical Pack E record.
+- Frozen local-only sample `PPHB-R2-PACK-E-EQUIVALENCE-SAMPLE-20260804T031500Z` contains 12 preselected authoritative records over 12 chronological dates, with both clustered and standalone Episodes and 11 primary event families; fingerprint `sha256:4cf4abed6c9b5a908bcbac40922407652488797f80a7ae86f4ef4f134d3dceb9`. Selection used only release timestamp, Episode identity, provider/model, and event family; it did not use Outcomes, forecasts, or evaluation results.
+- `PROSPECTIVE_PACK_E_FIELD_SPECIFICATION_BLOCKED`; `PROSPECTIVE_PACK_E_SPECIFICATION_NOT_FEASIBLE`; and `ROUND_2_EXECUTION_REMAINS_BLOCKED`. A closed candidate has zero retained fields: preserving all 18 historical semantic fields requires unaccepted live source authority, while an empty candidate fails prompt compatibility and the intended `FULL_CONTEXT` distinction from Pack A. No inactive prospective Pack contract was created.
+- Evidence: `PPHB-R2-PROSPECTIVE-PACK-E-SPECIFICATION-STUDY-20260804T031500Z/study_report.json` (`sha256:80ebe505eb636467e2dbb86f4358525199c6a7837cb5b3a6cba4fe7e11e1c862`). Local-only actuals: provider, Google, market-data, Outcome, evaluation, and retry activity all `0`.
+
+## Exact Next Round 2 Move
+
+Before any implementation, select and govern a genuinely closed prospective Pack E field/source contract. Because no equivalent historical Pack E specification exists, that decision must explicitly determine whether to create `PACK_E_PROSPECTIVE_V1` and reclassify Round 2 as a prospective feasibility study; otherwise prospective execution remains blocked.

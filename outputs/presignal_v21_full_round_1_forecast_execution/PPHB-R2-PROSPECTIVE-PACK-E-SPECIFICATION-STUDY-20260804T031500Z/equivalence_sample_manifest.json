@@ -1,0 +1,129 @@
+{
+  "algorithm": "sort accepted CONSTRUCTED_VALID Pack E records by release_ts, episode_id, provider, model; keep one record per Episode; select the first 12 distinct release dates without Outcome, forecast, or evaluation fields. Record primary-event family and require more than one family.",
+  "family_distribution": {
+    "CPI MoM (Apr)": 1,
+    "Consumer Inflation Expectation (Apr)": 1,
+    "Economic Optimism Index (May)": 1,
+    "Exports (Mar)": 1,
+    "FOMC Economic Projections": 1,
+    "Fed Barkin Speech": 1,
+    "Fed Bowman Speech": 1,
+    "Fed Cook Speech": 1,
+    "Fed Jefferson Speech": 2,
+    "Industrial Production MoM (Apr)": 1,
+    "U-6 Unemployment Rate (Apr)": 1
+  },
+  "fingerprint": "sha256:4cf4abed6c9b5a908bcbac40922407652488797f80a7ae86f4ef4f134d3dceb9",
+  "records": [
+    {
+      "episode_id": "EP_BATCH_851b7d8bd3661e168de1",
+      "episode_shape": "CLUSTERED",
+      "event_family": "FOMC Economic Projections",
+      "model": "claude-haiku-4-5",
+      "pack_source_fingerprint": "sha256:d5d9cc9922b492c5fdf84e7017a8bf787adde0f5fa4373dbcaf09dbb18d9c81c",
+      "provider": "Anthropic",
+      "release_ts": "2024-05-01T11:00:00Z"
+    },
+    {
+      "episode_id": "EP_BATCH_f7f52f894ce4f1929d5a",
+      "episode_shape": "CLUSTERED",
+      "event_family": "Exports (Mar)",
+      "model": "claude-haiku-4-5",
+      "pack_source_fingerprint": "sha256:0a52b0eb6da03551512e49997293a63c770a2be4e62a4db69d8b92a8eb103b97",
+      "provider": "Anthropic",
+      "release_ts": "2024-05-02T12:30:00Z"
+    },
+    {
+      "episode_id": "EP_BATCH_1c2cb957d0760e40f81e",
+      "episode_shape": "CLUSTERED",
+      "event_family": "U-6 Unemployment Rate (Apr)",
+      "model": "claude-haiku-4-5",
+      "pack_source_fingerprint": "sha256:5d90da439619b5240d76c3f9f297b4897260cbd19d8d8f7047d1d464e452e321",
+      "provider": "Anthropic",
+      "release_ts": "2024-05-03T05:30:00Z"
+    },
+    {
+      "episode_id": "EP_EVENT_4b80366594480b554889",
+      "episode_shape": "STANDALONE",
+      "event_family": "Fed Cook Speech",
+      "model": "claude-haiku-4-5",
+      "pack_source_fingerprint": "sha256:018301c6467d21af600eb66d08f2bf4b6b99ec6e530cb264781c2f36bb96640b",
+      "provider": "Anthropic",
+      "release_ts": "2024-05-04T18:20:00Z"
+    },
+    {
+      "episode_id": "EP_EVENT_e8d9ca85a946bdcbc5d9",
+      "episode_shape": "STANDALONE",
+      "event_family": "Fed Barkin Speech",
+      "model": "claude-haiku-4-5",
+      "pack_source_fingerprint": "sha256:17dbc68e8c18569b0cfe244fd5420e7def0dbd306f1c788d80fc93161d36a056",
+      "provider": "Anthropic",
+      "release_ts": "2024-05-06T16:50:00Z"
+    },
+    {
+      "episode_id": "EP_EVENT_13e6e3247eaea46e42de",
+      "episode_shape": "STANDALONE",
+      "event_family": "Economic Optimism Index (May)",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_source_fingerprint": "sha256:a0556b220c8eee3bdf8bf599a453d043f3aec8b5a043625878921058296d86dc",
+      "provider": "OpenAI",
+      "release_ts": "2024-05-07T14:10:00Z"
+    },
+    {
+      "episode_id": "EP_EVENT_08246fe90d4f62b05721",
+      "episode_shape": "STANDALONE",
+      "event_family": "Fed Jefferson Speech",
+      "model": "gemini-2.5-flash-lite",
+      "pack_source_fingerprint": "sha256:d7151decc04cf18f8a1a88680e5725dc3a13c3489c085cd8960d4dd32b88548c",
+      "provider": "Gemini",
+      "release_ts": "2024-05-09T00:00:00Z"
+    },
+    {
+      "episode_id": "EP_EVENT_a8905547406656cf53ae",
+      "episode_shape": "STANDALONE",
+      "event_family": "Fed Bowman Speech",
+      "model": "claude-haiku-4-5",
+      "pack_source_fingerprint": "sha256:00b835e97e920cb2239cf21c81a85a8315f75451a502164cf2d58d8ba706ee92",
+      "provider": "Anthropic",
+      "release_ts": "2024-05-10T13:00:00Z"
+    },
+    {
+      "episode_id": "EP_BATCH_e14769aca1aaacc9c230",
+      "episode_shape": "CLUSTERED",
+      "event_family": "Fed Jefferson Speech",
+      "model": "claude-haiku-4-5",
+      "pack_source_fingerprint": "sha256:673df6f9be8b949c8c2e4b7c403d2762b9320ba8641750e638cdeb80a452f166",
+      "provider": "Anthropic",
+      "release_ts": "2024-05-13T13:00:00Z"
+    },
+    {
+      "episode_id": "EP_EVENT_ef630a47cf9a4a6f79fd",
+      "episode_shape": "STANDALONE",
+      "event_family": "Consumer Inflation Expectation (Apr)",
+      "model": "gpt-4o-mini-2024-07-18",
+      "pack_source_fingerprint": "sha256:673df6f9be8b949c8c2e4b7c403d2762b9320ba8641750e638cdeb80a452f166",
+      "provider": "OpenAI",
+      "release_ts": "2024-05-14T00:00:00Z"
+    },
+    {
+      "episode_id": "EP_BATCH_5fe2f38977eb016fa947",
+      "episode_shape": "CLUSTERED",
+      "event_family": "CPI MoM (Apr)",
+      "model": "claude-haiku-4-5",
+      "pack_source_fingerprint": "sha256:1c77dbad1f767c5a74596bf7d004390c952ab8f5e90a44682b1c81425d2bfa29",
+      "provider": "Anthropic",
+      "release_ts": "2024-05-15T05:30:00Z"
+    },
+    {
+      "episode_id": "EP_BATCH_f537c8eb93513ab66253",
+      "episode_shape": "CLUSTERED",
+      "event_family": "Industrial Production MoM (Apr)",
+      "model": "gemini-2.5-flash-lite",
+      "pack_source_fingerprint": "sha256:faab750a7a197e7b57d27e6ada6343812c89700d5b59f2a05f5779187977e33f",
+      "provider": "Gemini",
+      "release_ts": "2024-05-16T13:15:00Z"
+    }
+  ],
+  "sample_id": "PPHB-R2-PACK-E-EQUIVALENCE-SAMPLE-20260804T031500Z",
+  "size": 12
+}

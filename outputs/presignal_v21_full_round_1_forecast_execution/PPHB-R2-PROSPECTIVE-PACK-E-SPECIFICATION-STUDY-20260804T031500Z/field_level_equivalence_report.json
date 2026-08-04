@@ -1,0 +1,14 @@
+{
+  "historical_field_intersection_count": 0,
+  "historical_field_union_count": 682,
+  "historical_required_semantic_field_count": 18,
+  "rule_failures": [
+    "all 18 STABLE_REQUIRED_SEMANTIC_FIELD values are excluded for lack of prospective source authority",
+    "empty candidate would remove all provider-visible context",
+    "Pack A/E FULL_CONTEXT distinction would not survive",
+    "no retained field has a governable prospective source contract",
+    "bounded pre-cutoff acquisition cannot be derived"
+  ],
+  "sample_id": "PPHB-R2-PACK-E-EQUIVALENCE-SAMPLE-20260804T031500Z",
+  "semantic_equivalence": "FAIL"
+}

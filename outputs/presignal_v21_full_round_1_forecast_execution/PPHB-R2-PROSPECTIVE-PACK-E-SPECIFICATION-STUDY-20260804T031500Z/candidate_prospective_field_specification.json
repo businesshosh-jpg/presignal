@@ -1,0 +1,26 @@
+{
+  "closed_field_count": 0,
+  "decision": "PROSPECTIVE_PACK_E_FIELD_SPECIFICATION_BLOCKED",
+  "disposition": "The 18 historical semantic fields have no accepted prospective source, schema, timestamp, stale-data, or bounded-acquisition authority. The 722 accepted provider-visible item keys are request-specific and have no common fixed set. No closed live-capable field set can preserve historical Pack E identity.",
+  "fields": [],
+  "historical_required_semantic_fields": [
+    "USDJPY_RETURN_1H_PRESESSION",
+    "USDJPY_RETURN_4H_PRESESSION",
+    "USDJPY_RETURN_24H_PRESESSION",
+    "USDJPY_TREND_LABEL",
+    "USDJPY_REALIZED_VOL_1H_PRESESSION",
+    "NEXT_HIGH_IMPORTANCE_EVENT_WITHIN_24H",
+    "NEXT_HIGH_IMPORTANCE_EVENT_WITHIN_48H",
+    "NEXT_CPI_OR_FOMC_WITHIN_72H",
+    "NEXT_NFP_WITHIN_7D",
+    "EVENT_CLUSTER_DENSITY_NEXT_24H",
+    "US2Y_YIELD_LEVEL",
+    "US10Y_YIELD_LEVEL",
+    "US2Y_CHANGE_FROM_PRIOR_CLOSE",
+    "US10Y_CHANGE_FROM_PRIOR_CLOSE",
+    "US10Y_MINUS_US2Y_CURVE",
+    "DXY_LEVEL",
+    "DXY_CHANGE_PRESESSION",
+    "DXY_DIRECTION_LABEL"
+  ]
+}

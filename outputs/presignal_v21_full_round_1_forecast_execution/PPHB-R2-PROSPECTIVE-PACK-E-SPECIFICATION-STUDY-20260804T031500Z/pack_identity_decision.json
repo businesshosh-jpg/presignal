@@ -1,0 +1,14 @@
+{
+  "external_activity": {
+    "evaluation_activity": 0,
+    "google_reads": 0,
+    "google_writes": 0,
+    "market_data_calls": 0,
+    "outcome_activity": 0,
+    "provider_calls": 0,
+    "retries": 0
+  },
+  "field_specification": "PROSPECTIVE_PACK_E_FIELD_SPECIFICATION_BLOCKED",
+  "pack_identity": "PROSPECTIVE_PACK_E_SPECIFICATION_NOT_FEASIBLE",
+  "round_2": "ROUND_2_EXECUTION_REMAINS_BLOCKED"
+}

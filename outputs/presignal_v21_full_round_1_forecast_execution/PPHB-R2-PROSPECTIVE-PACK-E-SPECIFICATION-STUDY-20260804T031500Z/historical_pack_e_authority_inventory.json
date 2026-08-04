@@ -1,0 +1,28 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": "PPHB-R1-PACK-POPULATION-CONSTRUCTION-20260729T113217Z-88b9664e9bd2",
+      "construction_version": "presignal_v21_pack_population",
+      "fingerprint": "sha256:31e1e77cb5be5797f1b58cd19ca690b1f3e1bb5e08e77b4bbf88f261c7078d0a",
+      "path": "outputs/presignal_v21_full_round_1_pack_population/PPHB-R1-PACK-POPULATION-CONSTRUCTION-20260729T113217Z-88b9664e9bd2/pack_e_population.jsonl",
+      "semantic_control": true,
+      "source_mode": "HISTORICAL_SQUARE_ONE_RETROSPECTIVE_SIMULATION",
+      "status": "AUTHORITATIVE_CURRENT"
+    },
+    {
+      "artifact_id": "PPHB-R1-PACK-POPULATION-CONSTRUCTION-20260729T113217Z-88b9664e9bd2",
+      "construction_version": "pack_e_construction_contract",
+      "fingerprint": "sha256:e0c566e9cd5d3a7ee4c652cbe89648365b4cecc0b49629070f54245e48c4f877",
+      "path": "outputs/presignal_v21_full_round_1_pack_population/PPHB-R1-PACK-POPULATION-CONSTRUCTION-20260729T113217Z-88b9664e9bd2/pack_e_construction_contract.json",
+      "semantic_control": true,
+      "source_mode": "HISTORICAL_RECONSTRUCTION",
+      "status": "AUTHORITATIVE_CURRENT"
+    },
+    {
+      "artifact_id": "PPHB-R2-PROSPECTIVE-MARKET-STATE-DEPLOYMENT-RECONCILIATION-20260804T030000Z",
+      "semantic_control": false,
+      "status": "FROZEN_EVIDENCE"
+    }
+  ],
+  "decision": "HISTORICAL_PACK_E_AUTHORITY_CONFIRMED"
+}

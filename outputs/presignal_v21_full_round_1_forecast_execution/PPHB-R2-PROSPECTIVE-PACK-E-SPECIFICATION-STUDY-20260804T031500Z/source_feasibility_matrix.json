@@ -1,0 +1,96 @@
+{
+  "decision": "NO_DEFENSIBLE_LIVE_SOURCE: no closed retained set exists; no external source was accessed.",
+  "excluded_required_fields": [
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "USDJPY_RETURN_1H_PRESESSION",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "USDJPY_RETURN_4H_PRESESSION",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "USDJPY_RETURN_24H_PRESESSION",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "USDJPY_TREND_LABEL",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "USDJPY_REALIZED_VOL_1H_PRESESSION",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "NEXT_HIGH_IMPORTANCE_EVENT_WITHIN_24H",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "NEXT_HIGH_IMPORTANCE_EVENT_WITHIN_48H",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "NEXT_CPI_OR_FOMC_WITHIN_72H",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "NEXT_NFP_WITHIN_7D",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "EVENT_CLUSTER_DENSITY_NEXT_24H",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "US2Y_YIELD_LEVEL",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "US10Y_YIELD_LEVEL",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "US2Y_CHANGE_FROM_PRIOR_CLOSE",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "US10Y_CHANGE_FROM_PRIOR_CLOSE",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "US10Y_MINUS_US2Y_CURVE",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "DXY_LEVEL",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "DXY_CHANGE_PRESESSION",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    },
+    {
+      "classification": "NO_DEFENSIBLE_LIVE_SOURCE",
+      "field": "DXY_DIRECTION_LABEL",
+      "reason": "Historical mutable-shadow input has no accepted prospective adapter or timestamp-availability authority."
+    }
+  ],
+  "retained_fields": []
+}

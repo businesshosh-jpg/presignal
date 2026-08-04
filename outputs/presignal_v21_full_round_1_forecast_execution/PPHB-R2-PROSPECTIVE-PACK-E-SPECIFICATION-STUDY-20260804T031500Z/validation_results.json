@@ -1,0 +1,14 @@
+{
+  "external_activity": {
+    "evaluation_activity": 0,
+    "google_reads": 0,
+    "google_writes": 0,
+    "market_data_calls": 0,
+    "outcome_activity": 0,
+    "provider_calls": 0,
+    "retries": 0
+  },
+  "historical_semantic_fields_not_mislabeled_as_audit": true,
+  "no_outcome_or_forecast_selection": true,
+  "passed": true
+}
